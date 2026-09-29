@@ -1,5 +1,5 @@
-const CACHE = "wordsmith-v3";
-const FILES = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2","pdf.min.js","pdf.worker.min.js"];
+const CACHE = "wordsmith-v4";
+const FILES = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2","pdf.min.js","pdf.worker.min.js","dictionary.json"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });

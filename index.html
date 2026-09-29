@@ -25,6 +25,10 @@
 }
 :root[data-theme="light"]{--bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;--accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light}
 :root[data-theme="sepia"]{--bg:#f1e6cf;--surface:#f8f0dc;--ink:#3b2f22;--muted:#7a6a55;--line:#dccdae;--accent:#b5341f;--btn:#3b2f22;--btn-ink:#f8f0dc;color-scheme:light}
+:root[data-theme="midnight"]{--bg:#0d1424;--surface:#141d33;--ink:#e6ecfa;--muted:#93a0bd;--line:#26324f;--accent:#ff7a6b;--btn:#e6ecfa;--btn-ink:#0d1424;color-scheme:dark}
+:root[data-theme="forest"]{--bg:#0f1a14;--surface:#16241c;--ink:#e3efe6;--muted:#8fa89a;--line:#263a2f;--accent:#ffb454;--btn:#e3efe6;--btn-ink:#0f1a14;color-scheme:dark}
+:root[data-theme="sunset"]{--bg:#fde8d8;--surface:#fff4ea;--ink:#33201a;--muted:#86604f;--line:#f0c9b1;--accent:#c2410c;--btn:#33201a;--btn-ink:#fff4ea;color-scheme:light}
+:root[data-theme="contrast"]{--bg:#fff;--surface:#fff;--ink:#000;--muted:#2b2b2b;--line:#000;--accent:#c00000;--btn:#000;--btn-ink:#fff;color-scheme:light}
 :root[data-theme="dark"]{--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
 :root[data-theme="black"]{--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
 :root[data-theme="parchment"]{--bg:#e6d6ae;--surface:#f1e5c4;--ink:#372a18;--muted:#75623f;--line:#cdb987;--accent:#a3301b;--btn:#372a18;--btn-ink:#f1e5c4;color-scheme:light}
@@ -102,7 +106,7 @@ svg{display:block}
 .word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;
   font:500 var(--fs,44px)/1.25 var(--rf);letter-spacing:var(--ls);word-spacing:var(--ws);white-space:pre;overflow:hidden}
 .l{text-align:right}.p{color:var(--accent)}.r{text-align:left}
-.hint{position:absolute;bottom:24px;width:100%;text-align:center;color:var(--muted);font-size:13px}
+.hint{text-align:center;color:var(--muted);font-size:13px;margin:0 0 6px}
 body.playing .hint{visibility:hidden}
 .ctx{color:var(--muted);font:17px/1.65 var(--rf);letter-spacing:var(--ls);flex:1 1 auto;min-height:3.3em;overflow-y:auto;-webkit-overflow-scrolling:touch}
 body[data-screen="reader"] #reader{height:100vh;height:100dvh;min-height:0;overflow-y:auto}
@@ -284,8 +288,66 @@ body.focus.playing .focusbar{opacity:.3}
 body.focus #reader header,body.focus #chapterBox,body.focus .ctx,body.focus .player{display:none}
 body.focus .stage{flex:1;height:auto;border-color:transparent}
 body.focus .stage::before,body.focus .stage::after{display:none}
-body.focus .hint{bottom:max(24px,env(safe-area-inset-bottom))}
+body.focus .hint{display:none}
 mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;border-radius:3px;padding:0 2px}
+
+/* ---- polish ---- */
+button,.btn{box-shadow:0 1px 1px rgba(0,0,0,.04),0 3px 8px -2px rgba(0,0,0,.10);transition:transform .12s,box-shadow .15s,background .15s,opacity .2s}
+button:active,.btn:active{box-shadow:none}
+.primary{box-shadow:0 5px 14px -4px color-mix(in srgb,var(--btn) 50%,transparent)}
+.ptoggle,.bk-del,[role=tab],.chapter select,.transport .icon:not(.play),dialog .icon,header .icon.plain{box-shadow:none}
+.icon{width:46px;min-height:46px}
+.card,.tile{border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 20px -10px rgba(0,0,0,.14)}
+.bk-main{border-radius:18px}
+.cover{box-shadow:0 3px 8px -2px rgba(0,0,0,.28)}
+body.hc button,body.hc .card{box-shadow:none}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+body[data-screen="library"] #library>*,body[data-screen="stats"] #stats>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+body[data-screen="reader"] #reader{animation:fade .3s ease both}
+body[data-screen] .screen>*:nth-child(2){animation-delay:.04s!important}
+body[data-screen] .screen>*:nth-child(3){animation-delay:.08s!important}
+body[data-screen] .screen>*:nth-child(4){animation-delay:.12s!important}
+body[data-screen] .screen>*:nth-child(5){animation-delay:.16s!important}
+body[data-screen] .screen>*:nth-child(6){animation-delay:.2s!important}
+body[data-screen] .screen>*:nth-child(n+7){animation-delay:.24s!important}
+.bar i{transform-origin:left;animation:grow .8s cubic-bezier(.2,.8,.2,1) both;transition:width .5s ease}
+.badge.earned .bico{animation:pop .5s ease both}
+@media (prefers-reduced-motion:reduce){body[data-screen] .screen>*,body[data-screen] #reader,.bar i,.badge.earned .bico{animation:none!important}}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+/* player */
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;--pct:0%}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--accent) var(--pct),var(--line) var(--pct))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);margin-top:-8px;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.transport .icon:not(.play){background:transparent;border-color:transparent;color:var(--muted)}
+.transport .icon:not(.play):active{background:var(--surface)}
+body.playing .controls{opacity:.22}
+.stage{border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+/* home */
+.hero{display:flex;gap:14px;align-items:center;padding:14px;position:relative}
+.hero .cover{width:84px;height:126px;font-size:26px;border-radius:8px;align-self:flex-start}
+.hero .hbody{flex:1;min-width:0;display:grid;gap:6px;align-content:center}
+.hero .bk-title{white-space:normal;font-size:20px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hero .hrow{display:flex;align-items:center;gap:12px}
+.hero .ring{flex:none}
+.hero .ring text{font:600 12px system-ui,sans-serif;fill:var(--ink)}
+.hero .ring .trk{stroke:var(--line)}.hero .ring .val{stroke:var(--accent);stroke-linecap:round;animation:ringin .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ringin{from{stroke-dashoffset:var(--full)}}
+.hero .hdel{position:absolute;top:4px;right:4px;width:38px;min-height:38px}
+.hero .go{justify-self:start}
+.flame{color:#f08a24;display:inline-block;vertical-align:-3px;margin-right:4px}
+.bico{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--muted);margin-bottom:4px}
+.badge.earned .bico{background:var(--accent);color:var(--bg)}
+.tile b .flame{vertical-align:-2px}
+.mini{min-height:30px;padding:3px 12px;font-size:13px;margin-left:8px;box-shadow:none}
+#defBody ol{margin:6px 0 0;padding-left:1.3em;display:grid;gap:8px;font:17px/1.45 Georgia,serif}
+#defBody i{color:var(--muted);font:italic 13px system-ui,sans-serif;margin-right:4px}
+.bico .flame{color:inherit;margin:0;vertical-align:0}
 </style>
 </head>
 <body data-screen="library">
@@ -372,13 +434,13 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <button class="icon" id="bmBtn" aria-label="Bookmark this spot"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h10v16l-5-3.6L7 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="icon" id="menuBtn" aria-label="Bookmarks and goal"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
   </header>
+  <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini" id="defBtn" type="button">Define</button></div>
   <div id="chapterBox" hidden>
     <div class="chapter"><select id="chapters" aria-label="Chapter"></select></div>
     <div class="chbar" aria-hidden="true"><i id="chfill"></i></div>
   </div>
   <div class="stage" id="stage">
     <div class="word" id="wordbox"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
-    <div class="hint">Tap or press Space to play</div>
   </div>
   <div class="ctx" id="ctx"></div>
   <div class="card coach" id="coach" hidden>
@@ -399,12 +461,18 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     </div>
     <label class="setting">Speed <input type="range" id="wpm" min="50" max="300" step="25"><b id="wpmVal"></b></label>
     <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
-    <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed</span></div>
+    <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed · D define</span></div>
   </div>
   </div>
 </section>
 
 <!-- SHEETS -->
+<dialog id="defDlg"><div class="sheet">
+  <div class="sheet-head"><h2 id="defWord">Definition</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="defBody"></div>
+  <p class="fine">Basic definitions from WordNet (Princeton University). Works offline.</p>
+</div></dialog>
+
 <dialog id="pdfDlg"><div class="sheet">
   <div class="sheet-head"><h2>PDF warning</h2></div>
   <p style="font-weight:700;font-size:17px;margin:0">SCANNED PDF DOCUMENTS WILL NOT WORK PROPERLY</p>
@@ -480,7 +548,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   </div>
   <h2>Theme</h2>
   <div class="seg" id="themeSeg">
-    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="parchment">Parchment</button><button data-theme="butter">Butter</button><button data-theme="mint">Mint</button><button data-theme="sky">Sky</button><button data-theme="rose">Rose</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button>
+    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="parchment">Parchment</button><button data-theme="butter">Butter</button><button data-theme="mint">Mint</button><button data-theme="sky">Sky</button><button data-theme="rose">Rose</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button><button data-theme="midnight">Midnight</button><button data-theme="forest">Forest</button><button data-theme="sunset">Sunset</button><button data-theme="contrast">Contrast</button>
   </div>
   <h2>Accent color</h2>
   <div class="seg" id="accentSeg">
@@ -2185,9 +2253,9 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.ad
 /* ---------- settings + themes ---------- */
 const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, pauses: [], focusStart: false }, store.get("pace:settings", {}));
 settings.goal = Math.max(1000, +settings.goal || 1000);
-if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
+if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
-const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000" };
+const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
   const root = document.documentElement;
@@ -2196,7 +2264,7 @@ function applyTheme() {
   if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
   const a = ACCENTS[settings.accent];
-  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black") ? 1 : 0]); else root.style.removeProperty("--accent");
+  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || key === "midnight" || key === "forest") ? 1 : 0]); else root.style.removeProperty("--accent");
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
@@ -2600,7 +2668,7 @@ function render() {
   const mask = settings.bionic ? boldMask(text) : null;
   paintPart(L, text, 0, p, mask); paintPart(P, text, p, p + 1, mask); paintPart(R, text, p + 1, text.length, mask);
   fitWord(text, p, mask);
-  prog.value = cur;
+  prog.value = cur; fillR(prog);
   updateStats(); syncChapter(); updateBmIcon();
 }
 
@@ -2690,7 +2758,7 @@ const BADGES = [
   { id: "day5k", name: "Marathon", desc: "5,000 words in one day", val: m => m.best, goal: 5000 }
 ];
 const tq = []; let tqBusy = false;
-function toastLater(m) { tq.push(m); if (!tqBusy) nextToast(); }
+function toastLater(m) { if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
 function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
@@ -2740,7 +2808,7 @@ function renderWeekly() {
     const g = el("div", "badges");
     keys.forEach(k => {
       const ch = WEEKLY.find(x => x.id === have[k].id) || WEEKLY[0], d = el("div", "badge earned");
-      d.append(el("b", "", ch.name), el("span", "", "Week of " + keyToDate(k).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })));
+      d.append(badgeIcon(ch.id, true), el("b", "", ch.name), el("span", "", "Week of " + keyToDate(k).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })));
       g.append(d);
     });
     box.append(g);
@@ -2829,7 +2897,7 @@ function flush() {
 function curMeta() { return lib.find(x => x.id === bookId); }
 function finishBook() {
   const m = curMeta();
-  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); checkBadges(); checkWeekly(); }
+  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); checkBadges(); checkWeekly(); confetti(); }
 }
 
 function step() {
@@ -2931,13 +2999,13 @@ function save() { if (docKey) store.set(docKey, cur); saveRd(); }
 function setWpm(v) {
   wpm = Math.max(50, Math.min(speedCap(), Math.round(v / 25) * 25));
   coachMark = shownWords; sessBacks = 0;
-  $("#wpm").value = wpm; $("#wpmVal").textContent = `${wpm} wpm`;
+  $("#wpm").value = wpm; fillR($("#wpm")); $("#wpmVal").textContent = `${wpm} wpm`;
   store.set("pace:wpm", wpm); if (tokens.length) updateStats();
 }
 
 function setFs(v) {
   fs = v; document.documentElement.style.setProperty("--fs", fs + "px");
-  $("#fs").value = fs; $("#fsVal").textContent = `${fs}px`;
+  $("#fs").value = fs; fillR($("#fs")); $("#fsVal").textContent = `${fs}px`;
   store.set("pace:fs", fs);
 }
 
@@ -2956,7 +3024,7 @@ async function openBook(id) {
   shownWords = 0;
   sessionWords = 0; playedMs = 0; skipCount = 0; noRewind = false; hasPaused = cur > 0; wordsSince = 0;
   sessBacks = 0; coachMark = 0; $("#coach").hidden = true;
-  prog.max = Math.max(0, tokens.length - 1);
+  prog.max = Math.max(0, tokens.length - 1); fillR(prog);
   $("#title").textContent = rec.title;
   document.title = rec.title + " · Wordsmith";
   chapSel.replaceChildren(...chapters.map((c, i) => {
@@ -3076,6 +3144,7 @@ async function pwOk(v) {
 }
 function refreshStreaks() { renderLibrary(); if (document.body.dataset.screen === "stats") { renderStats(); } }
 function syncSettingsUI() {
+  setTimeout(fillAll, 0);
   renderPreview(); renderPresets(); renderPauses();
   $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
@@ -3103,13 +3172,14 @@ function showTab(t) {
 function openSettings(tab) { syncSettingsUI(); syncBackupInfo(); prepareBackup(); showTab(typeof tab === "string" ? tab : setTab); $("#setDlg").showModal(); }
 
 /* ---------- library screen ---------- */
-function coverEl(m) {
+function coverEl(m, still) {
   const d = el("div", "cover"); d.setAttribute("aria-hidden", "true");
   if (m.cover) { const img = new Image(); img.src = m.cover; img.alt = ""; d.append(img); }
   else {
     d.style.background = `hsl(${parseInt(hash(m.title || "x"), 36) % 360} 30% 38%)`;
     d.textContent = (String(m.title || "?").match(/[\p{L}\p{N}]+/gu) || ["?"]).slice(0, 2).map(w => w[0]).join("").toUpperCase();
   }
+  if (still) { d.setAttribute("aria-hidden", "true"); return d; }
   d.removeAttribute("aria-hidden"); d.setAttribute("role", "button"); d.tabIndex = 0; d.setAttribute("aria-label", "Change cover for " + (m.title || "book"));
   d.style.cursor = "pointer"; d.onclick = () => pickCover(m);
   d.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickCover(m); } };
@@ -3128,6 +3198,69 @@ function pickCover(m) {
     };
   }
   inp.click();
+}
+
+const FLAME = (n = 18) => `<svg class="flame" viewBox="0 0 24 24" width="${n}" height="${n}" aria-hidden="true"><path d="M12 2c.9 3.6 5.5 5.6 5.5 10.6a5.5 5.5 0 0 1-11 0c0-2.2 1-3.8 2.2-4.9.3 1.5 1 2.2 1.9 2.5C10.3 7.6 10.6 4.6 12 2z" fill="currentColor"/></svg>`;
+const ICO = {
+  spark: '<path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  pages: '<path d="M6 3h8l4 4v14H6z"/><path d="M9 11h6M9 15h6"/>',
+  book: '<path d="M3 5h7a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H3z"/><path d="M21 5h-7a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h7z"/>',
+  cal: '<path d="M4 6h16v14H4z"/><path d="M4 10h16M8 3v4M16 3v4"/>',
+  cup: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/>',
+  medal: '<circle cx="12" cy="14.5" r="5"/><path d="M8.5 3l3.5 6.5L15.5 3"/>'
+};
+function badgeIcon(id, weekly) {
+  const d = document.createElement("div"); d.className = "bico"; d.setAttribute("aria-hidden", "true");
+  if (!weekly && /^str/.test(id)) { d.innerHTML = FLAME(20); return d; }
+  const k = weekly ? "medal" : id === "first" ? "spark" : /^hour/.test(id) ? "clock" : /^w\d/.test(id) ? "pages" : /^book/.test(id) ? "book" : id === "steady" ? "cal" : id === "day5k" ? "cup" : "spark";
+  d.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICO[k]}</svg>`;
+  return d;
+}
+/* confetti */
+function confetti() {
+  if (settings.motion || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+  let cv = $("#confetti");
+  if (!cv) { cv = document.createElement("canvas"); cv.id = "confetti"; cv.setAttribute("aria-hidden", "true"); document.body.append(cv); }
+  const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.width = innerWidth * dpr, H = cv.height = innerHeight * dpr, c = cv.getContext("2d");
+  const cols = [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#f2b84b", "#3fa7d6", "#59c17a", "#b07cf0"];
+  const ps = Array.from({ length: 90 }, () => ({ x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35, vx: (Math.random() - .5) * 14 * dpr, vy: (-Math.random() * 13 - 4) * dpr,
+    w: (5 + Math.random() * 6) * dpr, h: (3 + Math.random() * 5) * dpr, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[(Math.random() * cols.length) | 0] }));
+  const t0 = performance.now();
+  (function tick(t) {
+    const e = t - t0; c.clearRect(0, 0, W, H);
+    ps.forEach(q => { q.vy += .42 * dpr; q.x += q.vx; q.y += q.vy; q.vx *= .99; q.r += q.vr; c.save(); c.globalAlpha = Math.max(0, 1 - e / 2200); c.translate(q.x, q.y); c.rotate(q.r); c.fillStyle = q.c; c.fillRect(-q.w / 2, -q.h / 2, q.w, q.h); c.restore(); });
+    if (e < 2200) requestAnimationFrame(tick); else c.clearRect(0, 0, W, H);
+  })(t0);
+}
+/* sliders: fill colour up to the thumb */
+function fillR(r) { const mn = +r.min || 0, mx = +r.max || 100; r.style.setProperty("--pct", ((r.value - mn) / ((mx - mn) || 1) * 100) + "%"); }
+function fillAll() { document.querySelectorAll("input[type=range]").forEach(fillR); }
+document.addEventListener("input", e => { if (e.target.type === "range") fillR(e.target); });
+function animNum(node, n, fmtFn) {
+  if (settings.motion || n < 2 || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) { node.textContent = fmtFn(n); return; }
+  const t0 = performance.now(), dur = 700; node.textContent = fmtFn(0);
+  requestAnimationFrame(function f(t) { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); node.textContent = fmtFn(Math.round(n * e)); if (k < 1) requestAnimationFrame(f); });
+}
+function ringSvg(pct) {
+  const r = 22, C = 2 * Math.PI * r, off = C * (1 - pct / 100);
+  return `<svg class="ring" viewBox="0 0 56 56" width="56" height="56" role="img" aria-label="${pct}% read"><circle class="trk" cx="28" cy="28" r="${r}" fill="none" stroke-width="5"/><circle class="val" cx="28" cy="28" r="${r}" fill="none" stroke-width="5" stroke-dasharray="${C}" stroke-dashoffset="${off}" style="--full:${C}" transform="rotate(-90 28 28)"/><text x="28" y="32" text-anchor="middle">${pct}%</text></svg>`;
+}
+function heroCard(m) {
+  const pos = store.get("pace:pos:" + m.id, 0), total = m.total || 0;
+  const pct = total > 1 ? Math.min(100, Math.floor(pos / (total - 1) * 100)) : 0, left = Math.max(0, total - 1 - pos);
+  const c = el("div", "card hero"), body = el("div", "hbody");
+  const row = el("div", "hrow"), info = el("div"); info.style.cssText = "display:grid;gap:2px;min-width:0";
+  info.append(el("span", "bk-meta", left ? `~${fmtMin(Math.max(1, Math.round(left / wpm)))} left` : "Finished"));
+  const g = goalInfo(m, pos); if (g) info.append(el("span", "bk-goal", g.short));
+  const ring = document.createElement("span"); ring.innerHTML = ringSvg(pct); ring.style.display = "contents";
+  row.append(ring, info);
+  const go = el("button", "primary go", left ? (pos > 0 ? "Continue" : "Start reading") : "Read again"); go.type = "button"; go.onclick = () => openBook(m.id);
+  body.append(el("span", "bk-title", m.title), row, go);
+  const del = el("button", "icon bk-del hdel"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title); del.onclick = () => removeBook(m);
+  const cv = coverEl(m); cv.title = "Tap to change cover";
+  c.append(cv, body, del);
+  return c;
 }
 function bookItem(m, featured) {
   const pos = store.get("pace:pos:" + m.id, 0), total = m.total || 0;
@@ -3153,7 +3286,7 @@ function updateDayCard() {
     $("#dayTxt").textContent = w >= settings.goal ? `Goal reached: ${fmt(w)} words today` : `Today: ${fmt(w)} of ${fmt(settings.goal)} words`;
     $("#dayFill").style.width = Math.min(100, w / settings.goal * 100) + "%";
   } else { $("#dayTxt").textContent = `Today: ${fmt(w)} words`; $("#dayFill").style.width = "0%"; }
-  $("#dayStreak").textContent = si.cur ? `${si.cur}-day streak` : "No streak yet";
+  { const d = $("#dayStreak"); if (si.cur) { d.innerHTML = FLAME(16); d.append(`${si.cur}-day streak`); } else d.textContent = "No streak yet"; }
 }
 function renderLibrary() {
   updateDayCard();
@@ -3164,9 +3297,7 @@ function renderLibrary() {
   $("#empty").hidden = sorted.length > 0;
   $("#libHead").hidden = sorted.length < 2;
   if (sorted.length) {
-    const ul = el("ul", "books");
-    cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), ul);
-    ul.append(bookItem(sorted[0], true));
+    cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
   }
   sorted.slice(1).forEach(m => list.append(bookItem(m)));
 }
@@ -3200,8 +3331,13 @@ function renderStats() {
   const avg = wpmOf(week, weekMs);
 
   const tiles = $("#tiles"); tiles.replaceChildren();
-  [["Today", fmt(today.w), "words"], ["This week", fmt(week), "words"], ["Streak", String(streak), streak === 1 ? "day" : "days"], ["Avg speed, 7 days", avg ? String(avg) : "–", avg ? "wpm" : ""]]
-    .forEach(([a, b, u]) => { const t = el("div", "tile"), v = el("b", "", b); if (u) v.append(el("small", "", " " + u)); t.append(el("span", "", a), v); tiles.append(t); });
+  [["Today", fmt(today.w), "words", today.w], ["This week", fmt(week), "words", week], ["Streak", String(streak), streak === 1 ? "day" : "days", streak], ["Avg speed, 7 days", avg ? String(avg) : "–", avg ? "wpm" : ""]]
+    .forEach(([a, b, u, n]) => {
+      const t = el("div", "tile"), v = el("b"), num = el("span", "", b);
+      if (a === "Streak" && streak > 0) v.insertAdjacentHTML("beforeend", FLAME(22));
+      v.append(num); if (u) v.append(el("small", "", " " + u)); t.append(el("span", "", a), v); tiles.append(t);
+      if (n) animNum(num, n, fmt);
+    });
 
   const chart = $("#chart"), cap = $("#chartCap"), tbl = $("#chartTable");
   chart.replaceChildren(); tbl.replaceChildren(); cap.textContent = "";
@@ -3262,7 +3398,7 @@ function renderBadges() {
   BADGES.forEach(b => {
     const got = have[b.id], v = b.val(m); if (got) n++;
     const d = el("div", "badge" + (got ? " earned" : ""));
-    d.append(el("b", "", b.name), el("span", "", b.desc));
+    d.append(badgeIcon(b.id), el("b", "", b.name), el("span", "", b.desc));
     const cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
     d.append(el("small", "", got ? "Earned " + keyToDate(got).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : `${cnt(Math.min(v, b.goal))} / ${fmt(b.goal)}${b.unit ? " " + b.unit : ""}`));
     box.append(d);
@@ -3522,6 +3658,59 @@ ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !
 $("#wpm").oninput = e => setWpm(+e.target.value);
 $("#fs").oninput = e => setFs(+e.target.value);
 
+
+/* ---------- dictionary ---------- */
+let DICT = null, dictLoading = null;
+function loadDict() {
+  if (DICT) return Promise.resolve(DICT);
+  return dictLoading || (dictLoading = fetch("dictionary.json").then(r => { if (!r.ok) throw new Error("missing"); return r.json(); }).then(j => (DICT = j)).catch(e => { dictLoading = null; throw e; }));
+}
+function dictCands(w) {
+  const c = [w], add = x => { if (x.length > 1 && !c.includes(x)) c.push(x); };
+  if (/['’]s$/.test(w)) add(w.slice(0, -2));
+  if (/s['’]$/.test(w)) add(w.slice(0, -2));
+  const dbl = b => b.length > 2 && b[b.length - 1] === b[b.length - 2];
+  if (w.endsWith("ies")) add(w.slice(0, -3) + "y");
+  if (w.endsWith("ied")) add(w.slice(0, -3) + "y");
+  if (w.endsWith("ves")) { add(w.slice(0, -3) + "f"); add(w.slice(0, -3) + "fe"); }
+  if (w.endsWith("es")) { add(w.slice(0, -2)); add(w.slice(0, -1)); }
+  if (w.endsWith("s") && !w.endsWith("ss")) add(w.slice(0, -1));
+  if (w.endsWith("ing") && w.length > 4) { const b = w.slice(0, -3); add(b); add(b + "e"); if (dbl(b)) add(b.slice(0, -1)); }
+  if (w.endsWith("ed") && w.length > 3) { const b = w.slice(0, -2); add(b); add(b + "e"); if (dbl(b)) add(b.slice(0, -1)); }
+  if (w.endsWith("er") && w.length > 3) { const b = w.slice(0, -2); add(b); add(b + "e"); if (dbl(b)) add(b.slice(0, -1)); if (b.endsWith("i")) add(b.slice(0, -1) + "y"); }
+  if (w.endsWith("est") && w.length > 4) { const b = w.slice(0, -3); add(b); add(b + "e"); if (dbl(b)) add(b.slice(0, -1)); if (b.endsWith("i")) add(b.slice(0, -1) + "y"); }
+  if (w.endsWith("ily")) add(w.slice(0, -3) + "y");
+  if (w.endsWith("ly") && w.length > 3) add(w.slice(0, -2));
+  return c;
+}
+function dictFind(raw) {
+  const w = raw.replace(/[’‘]/g, "'").replace(/^[^\p{L}]+|[^\p{L}]+$/gu, "").toLowerCase();
+  if (!w) return null;
+  const one = x => {
+    if (DICT.d[x]) return { word: x, base: x, defs: DICT.d[x] };
+    if (DICT.x[x] && DICT.d[DICT.x[x]]) return { word: x, base: DICT.x[x], defs: DICT.d[DICT.x[x]] };
+    for (const c of dictCands(x)) if (DICT.d[c]) return { word: x, base: c, defs: DICT.d[c] };
+    return null;
+  };
+  let r = one(w);
+  if (!r && /[-–—]/.test(w)) { const parts = w.split(/[-–—]+/).filter(Boolean).sort((a, b) => b.length - a.length); for (const x of parts) { r = one(x); if (r) break; } }
+  return r || { word: w, base: w, defs: null };
+}
+async function defineCurrent() {
+  if (!tokens.length) return;
+  if (playing) pause();
+  const raw = tokens[cur].w, dlg = $("#defDlg"), body = $("#defBody");
+  const shown = raw.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, "") || raw;
+  $("#defWord").textContent = shown; body.replaceChildren(el("p", "fine", "Looking up…")); dlg.showModal();
+  try { await loadDict(); } catch (e) { body.replaceChildren(el("p", "", "The dictionary file isn't here yet. Upload dictionary.json to the site.")); return; }
+  const r = dictFind(raw); body.replaceChildren();
+  if (!r.defs) { body.append(el("p", "", `No definition for “${shown}” in the offline dictionary.`)); return; }
+  if (r.base !== r.word) body.append(el("p", "fine", `Form of “${r.base}”`));
+  const ol = el("ol");
+  r.defs.forEach(([pos, d]) => { const li = el("li"); li.append(el("i", "", pos), document.createTextNode(d)); ol.append(li); });
+  body.append(ol);
+}
+$("#defBtn").onclick = defineCurrent;
 document.addEventListener("keydown", e => {
   if (document.body.dataset.screen !== "reader" || document.querySelector("dialog[open]")) return;
   if (e.target.matches("textarea,select,input:not([type=range])")) return;
@@ -3531,6 +3720,7 @@ document.addEventListener("keydown", e => {
     case "ArrowRight": e.preventDefault(); seek(cur + (e.shiftKey ? 50 : 10)); break;
     case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
     case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
+    case "d": defineCurrent(); break;
     case "b": toggleBookmark(); break;
     case "r": replaySentence(); break;
     case "n": nextSentence(); break;
@@ -3547,7 +3737,7 @@ window.addEventListener("blur", () => { if (playing) pause(); });
 
 
 /* ---------- accent, chunk, hold, bionic settings ---------- */
-function syncHint() { $(".hint").textContent = settings.hold ? "Press and hold to read" : "Tap or press Space to play"; }
+function syncHint() { $("#hintTxt").textContent = settings.hold ? "Press and hold to read" : "Tap or press Space to play"; }
 $$("#accentSeg button").forEach(b => b.onclick = () => { settings.accent = b.dataset.accent; saveSettings(); applyTheme(); syncSettingsUI(); });
 $$("#chunkSeg button").forEach(b => b.onclick = () => { settings.chunk = +b.dataset.chunk; saveSettings(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } });
 $("#holdChk").onchange = e => { settings.hold = e.target.checked; saveSettings(); syncHint(); };
