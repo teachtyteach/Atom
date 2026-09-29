@@ -27,6 +27,20 @@
 :root[data-theme="sepia"]{--bg:#f1e6cf;--surface:#f8f0dc;--ink:#3b2f22;--muted:#7a6a55;--line:#dccdae;--accent:#b5341f;--btn:#3b2f22;--btn-ink:#f8f0dc;color-scheme:light}
 :root[data-theme="dark"]{--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
 :root[data-theme="black"]{--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
+:root[data-theme="parchment"]{--bg:#e6d6ae;--surface:#f1e5c4;--ink:#372a18;--muted:#75623f;--line:#cdb987;--accent:#a3301b;--btn:#372a18;--btn-ink:#f1e5c4;color-scheme:light}
+:root[data-theme="butter"]{--bg:#fbf3bd;--surface:#fffbd9;--ink:#26241a;--muted:#67623a;--line:#e3d993;--accent:#c2410c;--btn:#26241a;--btn-ink:#fffbd9;color-scheme:light}
+:root[data-theme="mint"]{--bg:#d9f0e2;--surface:#ecf9f1;--ink:#1b2a21;--muted:#4f6b5b;--line:#b4d9c4;--accent:#c62d2d;--btn:#1b2a21;--btn-ink:#ecf9f1;color-scheme:light}
+:root[data-theme="sky"]{--bg:#d9e9f7;--surface:#ecf5fc;--ink:#182632;--muted:#516879;--line:#b3cfe4;--accent:#c62d2d;--btn:#182632;--btn-ink:#ecf5fc;color-scheme:light}
+:root[data-theme="rose"]{--bg:#f7dfe3;--surface:#fdeff1;--ink:#2d1b1f;--muted:#775860;--line:#e6bac2;--accent:#a3142e;--btn:#2d1b1f;--btn-ink:#fdeff1;color-scheme:light}
+@font-face{font-family:"Lexend";font-weight:400;font-style:normal;font-display:swap;src:url(Lexend-Regular.woff2) format("woff2")}
+@font-face{font-family:"Lexend";font-weight:700;font-style:normal;font-display:swap;src:url(Lexend-Bold.woff2) format("woff2")}
+@font-face{font-family:"OpenDyslexic";font-weight:400;font-style:normal;font-display:swap;src:url(OpenDyslexic-Regular.woff2) format("woff2")}
+@font-face{font-family:"OpenDyslexic";font-weight:700;font-style:normal;font-display:swap;src:url(OpenDyslexic-Bold.woff2) format("woff2")}
+:root{--rf:Georgia,"Iowan Old Style","Times New Roman",serif;--ls:0em;--ws:0em}
+:root[data-font="sans"]{--rf:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root[data-font="mono"]{--rf:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+:root[data-font="lexend"]{--rf:"Lexend",system-ui,sans-serif}
+:root[data-font="dyslexic"]{--rf:"OpenDyslexic","Comic Sans MS",sans-serif}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0;min-height:100%}
@@ -81,16 +95,16 @@ svg{display:block}
 .chapter::after{content:"";position:absolute;right:4px;top:19px;width:7px;height:7px;border-right:2px solid var(--muted);
   border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .chbar{margin:0 0 4px;height:3px}
-.stage{position:relative;height:clamp(170px,30vh,280px);display:flex;align-items:center;cursor:pointer;
+.stage{position:relative;height:clamp(170px,30vh,280px);min-height:calc(var(--fs,44px)*1.7);display:flex;align-items:center;cursor:pointer;
   user-select:none;-webkit-user-select:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .stage::before,.stage::after{content:"";position:absolute;left:50%;width:2px;height:16px;background:var(--muted);transform:translateX(-1px);opacity:.6}
 .stage::before{top:0}.stage::after{bottom:0}
 .word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;
-  font:500 var(--fs,44px)/1.1 Georgia,"Iowan Old Style","Times New Roman",serif;white-space:pre;overflow:hidden}
+  font:500 var(--fs,44px)/1.25 var(--rf);letter-spacing:var(--ls);word-spacing:var(--ws);white-space:pre;overflow:hidden}
 .l{text-align:right}.p{color:var(--accent)}.r{text-align:left}
 .hint{position:absolute;bottom:24px;width:100%;text-align:center;color:var(--muted);font-size:13px}
 body.playing .hint{visibility:hidden}
-.ctx{color:var(--muted);font:17px/1.65 Georgia,"Iowan Old Style",serif;min-height:6.6em}
+.ctx{color:var(--muted);font:17px/1.65 var(--rf);letter-spacing:var(--ls);min-height:6.6em}
 .ctx span{cursor:pointer;border-radius:4px}
 .ctx .now{color:var(--ink);background:color-mix(in srgb,var(--accent) 20%,transparent);padding:0 3px}
 .ctx .done{color:var(--ink);text-align:center;margin:1em 0}
@@ -102,6 +116,7 @@ body.playing .controls:hover,body.playing .controls:focus-within{opacity:1}
 .transport{display:flex;justify-content:center;gap:20px;align-items:center}
 .play{width:68px;height:68px}
 .setting{display:grid;grid-template-columns:3.6em 1fr 5.8em;align-items:center;gap:10px;color:var(--muted);font-size:14px}
+.setting.wide{grid-template-columns:6em 1fr 4.8em}
 .setting b{color:var(--ink);font-weight:600;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .stats{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:4px 12px;font-variant-numeric:tabular-nums}
 @media (hover:none){.keys{display:none}}
@@ -175,6 +190,25 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .passage{font:18px/1.65 Georgia,"Iowan Old Style",serif;margin:0}
 #nudge{display:flex;align-items:center;justify-content:space-between;gap:12px}
 #nudge span{font-size:14px}
+#nudge button{white-space:nowrap;flex:none}
+body.nopivot .p{color:inherit}
+.tabs{flex-wrap:nowrap;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{flex:1;min-width:0;border:0;background:transparent;padding:8px 4px;min-height:40px}
+.tabs button[aria-selected=true]{background:var(--btn);color:var(--btn-ink)}
+.pane{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.preview{position:sticky;top:-16px;z-index:3;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;
+  box-shadow:0 0 0 8px var(--surface),0 8px 12px -6px rgba(0,0,0,.25);overflow:hidden}
+.preview .word{min-height:1.5em}
+.pctx{color:var(--muted);font:15px/1.5 var(--rf);letter-spacing:var(--ls);text-align:center;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.transport{gap:14px}
+.focusbar{display:none;position:fixed;left:12px;right:12px;top:max(10px,env(safe-area-inset-top));justify-content:space-between;z-index:5;transition:opacity .3s}
+body.focus[data-screen="reader"] .focusbar{display:flex}
+body.focus.playing .focusbar{opacity:.3}
+.focusbar button{opacity:.75}
+body.focus #reader header,body.focus #chapterBox,body.focus .ctx,body.focus .controls{display:none}
+body.focus .stage{flex:1;height:auto;border-color:transparent}
+body.focus .stage::before,body.focus .stage::after{display:none}
+body.focus .hint{bottom:max(24px,env(safe-area-inset-bottom))}
 mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;border-radius:3px;padding:0 2px}
 </style>
 </head>
@@ -248,12 +282,13 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <input type="range" id="prog" min="0" max="0" value="0" aria-label="Position in text">
     <div class="stats"><span id="pos"></span><span id="left"></span></div>
     <div class="transport">
+      <button class="icon" id="replay" aria-label="Replay sentence" title="Replay sentence (R)"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5M4.5 4v4.2h4.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="icon" id="rew" aria-label="Back 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 6v12L2.5 12zM20 6v12l-8.5-6z" fill="currentColor"/></svg></button>
       <button class="primary icon play" id="playBtn" aria-label="Play"></button>
       <button class="icon" id="fwd" aria-label="Forward 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M13 6v12l8.5-6zM4 6v12l8.5-6z" fill="currentColor"/></svg></button>
     </div>
-    <label class="setting">Speed <input type="range" id="wpm" min="100" max="1000" step="25"><b id="wpmVal"></b></label>
-    <label class="setting">Size <input type="range" id="fs" min="24" max="84" step="2"><b id="fsVal"></b></label>
+    <label class="setting">Speed <input type="range" id="wpm" min="50" max="1000" step="25"><b id="wpmVal"></b></label>
+    <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
     <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed</span></div>
   </div>
 </section>
@@ -276,15 +311,32 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <p class="fine" id="goalInfo">Pick a finish date and Wordsmith works out how much to read each day.</p>
   <h2>Session timer</h2>
   <label class="setrow">Stop after <select id="timerSel"><option value="0">Off</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></label>
+  <button id="focusBtn">Focus mode</button>
   <button id="openSearch">Search this book…</button>
   <button id="openSettings">Settings…</button>
 </div></dialog>
 
 <dialog id="setDlg"><div class="sheet">
   <div class="sheet-head"><h2>Settings</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="seg tabs" id="setTabs" role="tablist">
+    <button data-tab="general" role="tab">General</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="storage" role="tab">Storage</button>
+  </div>
+  <div class="pane" data-pane="general" hidden>
+  <h2>General</h2>
+  <button id="resetSettings">Reset display and reading settings</button>
+  <button class="danger" id="resetStats">Reset stats</button>
+  <p class="fine">Resetting settings keeps your books, bookmarks and stats.</p>
+  <h2>About</h2>
+  <p class="fine">Wordsmith. Everything stays on this device. Works offline. Fonts: Lexend and OpenDyslexic (SIL Open Font License).</p>
+  </div>
+  <div class="pane" data-pane="display">
+  <div class="preview" id="preview" aria-hidden="true">
+    <div class="word" id="pvWord"><span class="l"></span><span class="p"></span><span class="r"></span></div>
+    <div class="pctx">The quick brown fox jumps over the lazy dog.</div>
+  </div>
   <h2>Theme</h2>
   <div class="seg" id="themeSeg">
-    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button>
+    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="parchment">Parchment</button><button data-theme="butter">Butter</button><button data-theme="mint">Mint</button><button data-theme="sky">Sky</button><button data-theme="rose">Rose</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button>
   </div>
   <h2>Accent color</h2>
   <div class="seg" id="accentSeg">
@@ -295,18 +347,33 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <button class="swatch" data-accent="purple" aria-label="Purple"><i style="background:#7a3fd1"></i></button>
     <button class="swatch" data-accent="pink" aria-label="Pink"><i style="background:#c42a75"></i></button>
   </div>
+  <h2>Reading font</h2>
+  <div class="seg" id="fontSeg">
+    <button data-font="serif">Serif</button><button data-font="sans">Sans</button><button data-font="mono">Mono</button><button data-font="lexend">Lexend</button><button data-font="dyslexic">OpenDyslexic</button>
+  </div>
+  <label class="setting wide">Letter gap <input type="range" id="lsRange" min="0" max="20" step="1"><b id="lsVal"></b></label>
+  <label class="setting wide">Word gap <input type="range" id="wsRange" min="0" max="30" step="1"><b id="wsVal"></b></label>
+  <p class="fine">Word gap shows when you read 2 or 3 words at a time.</p>
+  <label class="setrow">Color the focus letter <input type="checkbox" id="pivotChk"></label>
+  <label class="setrow">Bold word beginnings <input type="checkbox" id="bionicChk"></label>
+  </div>
+  <div class="pane" data-pane="reading" hidden>
   <h2>Reading</h2>
   <div class="setrow">Words at a time <div class="seg" id="chunkSeg"><button data-chunk="1">1</button><button data-chunk="2">2</button><button data-chunk="3">3</button></div></div>
   <label class="setrow">Press and hold to read <input type="checkbox" id="holdChk"></label>
-  <label class="setrow">Bold word beginnings <input type="checkbox" id="bionicChk"></label>
   <label class="setrow">Back up when you resume
     <select id="rewindSel"><option value="0">Off</option><option value="3">3 words</option><option value="5">5 words</option><option value="10">10 words</option></select>
   </label>
   <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
+  </div>
+  <div class="pane" data-pane="storage" hidden>
+  <h2>Storage</h2>
+  <p class="fine" id="storageInfo"></p>
   <h2>Backup</h2>
   <p class="fine" id="backupInfo"></p>
   <div class="row"><button class="primary" id="backupBtn">Save backup</button><label class="btn">Restore backup<input type="file" id="restoreFile" accept=".json,application/json" hidden></label></div>
-  <button class="danger" id="resetStats">Reset stats</button>
+  <p class="fine">Backups are one file with your books, bookmarks, stats and settings. Restore it on any device.</p>
+  </div>
 </div></dialog>
 
 <dialog id="testDlg"><div class="sheet">
@@ -322,6 +389,11 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <p class="fine" id="srInfo"></p>
   <ul class="list" id="srList"></ul>
 </div></dialog>
+
+<div class="focusbar" id="focusbar">
+  <button class="icon" id="fReplay" aria-label="Replay sentence"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5M4.5 4v4.2h4.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="icon" id="fExit" aria-label="Exit focus mode">✕</button>
+</div>
 
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -347,10 +419,10 @@ let toastTimer = null;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
 
 /* ---------- settings + themes ---------- */
-const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default" }, store.get("pace:settings", {}));
-if (!["auto", "light", "sepia", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true }, store.get("pace:settings", {}));
+if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
-const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", dark: "#141311", black: "#000000" };
+const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
   const root = document.documentElement;
@@ -363,6 +435,20 @@ function applyTheme() {
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
+const FONTS = ["serif", "sans", "mono", "lexend", "dyslexic"];
+function applyFont() {
+  if (!FONTS.includes(settings.font)) settings.font = "serif";
+  settings.ls = Math.max(0, Math.min(20, +settings.ls || 0)); settings.ws = Math.max(0, Math.min(30, +settings.ws || 0));
+  const root = document.documentElement;
+  if (settings.font === "serif") delete root.dataset.font; else root.dataset.font = settings.font;
+  root.style.setProperty("--ls", (settings.ls / 100) + "em");
+  root.style.setProperty("--ws", (settings.ws / 50) + "em");
+  document.body.classList.toggle("nopivot", settings.pivot === false);
+  try {
+    const fam = { lexend: '"Lexend"', dyslexic: '"OpenDyslexic"' }[settings.font];
+    if (fam && document.fonts && document.fonts.load) Promise.all([document.fonts.load(`400 40px ${fam}`), document.fonts.load(`700 40px ${fam}`)]).then(() => { renderPreview(); if (tokens.length) render(); }).catch(() => {});
+  } catch (e) {}
+}
 
 /* ---------- saved books (IndexedDB, with a memory fallback) ---------- */
 const mem = new Map();
@@ -694,9 +780,11 @@ function paintPart(node, text, from, to, mask) {
 }
 function fitWord(text, p, mask) {
   const box = $("#wordbox"), avail = box.clientWidth - 8;
-  if (avail <= 0 || text.length * fs * 0.6 < avail) { box.style.fontSize = ""; return; }
-  measure.font = `${mask ? 700 : 500} ${fs}px Georgia, "Times New Roman", serif`;
-  const need = 2 * Math.max(measure.measureText(text.slice(0, p)).width, measure.measureText(text.slice(p + 1)).width) + measure.measureText(text.charAt(p)).width;
+  if (avail <= 0 || text.length * fs * (0.62 + settings.ls / 100 + settings.ws / 50) < avail) { box.style.fontSize = ""; return; }
+  measure.font = `${mask ? 700 : 500} ${fs}px ${getComputedStyle(box).fontFamily}`;
+  const ls = settings.ls / 100, ws = settings.ws / 50;
+  const wd = s => measure.measureText(s).width + s.length * ls * fs + (s.split(" ").length - 1) * ws * fs;
+  const need = 2 * Math.max(wd(text.slice(0, p)), wd(text.slice(p + 1))) + wd(text.charAt(p));
   box.style.fontSize = need > avail ? Math.max(14, Math.floor(fs * avail / need)) + "px" : "";
 }
 function chunkLast(i) {
@@ -803,6 +891,23 @@ function pause() {
 
 function toggle() { playing ? pause() : play(); }
 
+const ABBR = /^(mr|mrs|ms|dr|st|vs|etc|prof|sr|jr|no|inc|e\.g|i\.e)\.$/i;
+function sentEnd(t) { return !!t && (t.end || (/[.!?…]["'”’)\]]*$/.test(t.w) && !ABBR.test(t.w))); }
+function replaySentence() {
+  if (!tokens.length) return;
+  let i = cur;
+  if (i > 0 && sentEnd(tokens[i - 1])) i--;
+  const floor = Math.max(0, cur - 80);
+  while (i > floor && !sentEnd(tokens[i - 1])) i--;
+  const wasPlaying = playing;
+  seek(i);
+  if (!wasPlaying) play();
+}
+function setFocus(on) {
+  document.body.classList.toggle("focus", !!on);
+  if (on) toast("Focus mode. Tap the ✕ to leave.");
+}
+
 function seek(i) {
   if (!tokens.length) return;
   cur = Math.max(0, Math.min(tokens.length - 1, i));
@@ -813,7 +918,7 @@ function seek(i) {
 function save() { if (docKey) store.set(docKey, cur); }
 
 function setWpm(v) {
-  wpm = Math.max(100, Math.min(1000, Math.round(v / 25) * 25));
+  wpm = Math.max(50, Math.min(1000, Math.round(v / 25) * 25));
   $("#wpm").value = wpm; $("#wpmVal").textContent = `${wpm} wpm`;
   store.set("pace:wpm", wpm); if (tokens.length) updateStats();
 }
@@ -900,16 +1005,39 @@ function renderGoal() {
 function openMenu() { pause(); renderBookmarks(); renderGoal(); $("#menuDlg").showModal(); }
 
 /* ---------- settings sheet ---------- */
+function renderPreview() {
+  const box = $("#pvWord"); if (!box) return;
+  const n = Math.max(1, Math.min(3, settings.chunk || 1));
+  const text = ["reading", "quick reads", "read it now"][n - 1];
+  let pv = n === 1 ? pivotOf(text) : Math.floor(text.length / 2);
+  if (text.charAt(pv) === " ") pv--;
+  const mask = settings.bionic ? boldMask(text) : null;
+  const [L2, P2, R2] = box.children;
+  paintPart(L2, text, 0, pv, mask); paintPart(P2, text, pv, pv + 1, mask); paintPart(R2, text, pv + 1, text.length, mask);
+  box.parentNode.style.setProperty("--fs", Math.min(fs, [40, 30, 26][n - 1]) + "px");
+}
 function syncSettingsUI() {
+  renderPreview();
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
   $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
   $$("#chunkSeg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.chunk === settings.chunk)));
+  $$("#fontSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.font === settings.font)));
+  $("#lsRange").value = settings.ls; $("#lsVal").textContent = settings.ls ? (settings.ls / 100).toFixed(2) + " em" : "Off";
+  $("#wsRange").value = settings.ws; $("#wsVal").textContent = settings.ws ? (settings.ws / 50).toFixed(2) + " em" : "Off";
+  $("#pivotChk").checked = settings.pivot !== false;
   $("#rewindSel").value = String(settings.rewind);
   $("#rampChk").checked = !!settings.ramp;
   $("#holdChk").checked = !!settings.hold;
   $("#bionicChk").checked = !!settings.bionic;
 }
-function openSettings() { syncSettingsUI(); syncBackupInfo(); prepareBackup(); $("#setDlg").showModal(); }
+let setTab = "display";
+function showTab(t) {
+  setTab = t;
+  $$("#setTabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  $$("#setDlg .pane").forEach(p => { p.hidden = p.dataset.pane !== t; });
+  const sh = $("#setDlg .sheet"); if (sh) sh.scrollTop = 0;
+}
+function openSettings(tab) { syncSettingsUI(); syncBackupInfo(); prepareBackup(); showTab(typeof tab === "string" ? tab : setTab); $("#setDlg").showModal(); }
 
 /* ---------- library screen ---------- */
 function bookItem(m, featured) {
@@ -1082,7 +1210,7 @@ $$("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
 $("#settingsBtn").addEventListener("click", () => {});
 $("#menuDlg").addEventListener("close", () => { renderLibrary(); });
 
-$("#back").onclick = () => { pause(); flush(); save(); renderLibrary(); document.title = "Wordsmith"; show("library"); };
+$("#back").onclick = () => { setFocus(false); pause(); flush(); save(); renderLibrary(); document.title = "Wordsmith"; show("library"); };
 const stage = $("#stage");
 stage.onclick = () => { if (!settings.hold) toggle(); };
 stage.addEventListener("pointerdown", e => { if (!settings.hold) return; e.preventDefault(); try { stage.setPointerCapture(e.pointerId); } catch (x) {} holdActive = true; play(); });
@@ -1091,6 +1219,10 @@ stage.addEventListener("pointerup", endHold); stage.addEventListener("pointercan
 stage.addEventListener("contextmenu", e => { if (settings.hold) e.preventDefault(); });
 playBtn.onclick = toggle;
 $("#rew").onclick = () => seek(cur - 10);
+$("#replay").onclick = replaySentence;
+$("#fReplay").onclick = replaySentence;
+$("#fExit").onclick = () => setFocus(false);
+$("#focusBtn").onclick = () => { $("#menuDlg").close(); setFocus(true); };
 $("#fwd").onclick = () => seek(cur + 10);
 prog.oninput = () => { if (playing) pause(); seek(+prog.value); };
 chapSel.onchange = () => { const c = chapters[+chapSel.value]; if (c) seek(c.start); };
@@ -1108,7 +1240,9 @@ document.addEventListener("keydown", e => {
     case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
     case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
     case "b": toggleBookmark(); break;
-    case "Escape": pause(); break;
+    case "r": replaySentence(); break;
+    case "f": setFocus(!document.body.classList.contains("focus")); break;
+    case "Escape": if (document.body.classList.contains("focus")) setFocus(false); pause(); break;
   }
 });
 document.addEventListener("keyup", e => {
@@ -1125,6 +1259,11 @@ $$("#chunkSeg button").forEach(b => b.onclick = () => { settings.chunk = +b.data
 $("#holdChk").onchange = e => { settings.hold = e.target.checked; saveSettings(); syncHint(); };
 $("#bionicChk").onchange = e => { settings.bionic = e.target.checked; saveSettings(); if (tokens.length) render(); };
 syncHint();
+$$("#fontSeg button").forEach(b => b.onclick = () => { settings.font = b.dataset.font; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
+$("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
+$("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
+$("#pivotChk").onchange = e => { settings.pivot = e.target.checked; saveSettings(); applyFont(); };
+applyFont();
 
 /* ---------- session timer ---------- */
 $("#timerSel").onchange = e => { const m = +e.target.value; timerOn = m > 0; timerLeft = m * 60000; if (tokens.length) updateStats(); };
@@ -1210,7 +1349,17 @@ function renderHeat() {
 
 /* ---------- backup and restore ---------- */
 let backupFile = null;
+async function syncStorageInfo() {
+  const el2 = $("#storageInfo"); el2.textContent = `${lib.length} book${lib.length === 1 ? "" : "s"} saved on this device.`;
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      const e = await navigator.storage.estimate();
+      if (e.usage) el2.textContent += ` Using about ${e.usage > 1e6 ? (e.usage / 1e6).toFixed(1) + " MB" : Math.max(1, Math.round(e.usage / 1e3)) + " KB"}.`;
+    }
+  } catch (x) {}
+}
 function syncBackupInfo() {
+  syncStorageInfo();
   const last = store.get("pace:lastBackup", 0);
   $("#backupInfo").textContent = `${lib.length} book${lib.length === 1 ? "" : "s"} in your library. Last backup: ${last ? new Date(last).toLocaleDateString() : "never"}.`;
 }
@@ -1262,7 +1411,7 @@ async function restoreBackup(file) {
     Object.entries(s2.books || {}).forEach(([id, days]) => { const b = stats.books[id] || (stats.books[id] = {}); Object.entries(days).forEach(([k, w]) => { b[k] = Math.max(b[k] || 0, w); }); });
     stats.finished = Math.max(stats.finished || 0, s2.finished || 0); if (s2.test) stats.test = s2.test;
     store.set("pace:stats", stats);
-    if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); syncHint(); }
+    if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); applyFont(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
     toast(`Restored ${n} book${n === 1 ? "" : "s"}`);
@@ -1270,7 +1419,13 @@ async function restoreBackup(file) {
 }
 $("#backupBtn").onclick = saveBackup;
 $("#restoreFile").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (f) restoreBackup(f); };
-$("#nudgeBtn").onclick = openSettings;
+$("#nudgeBtn").onclick = () => openSettings("storage");
+$$("#setTabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+$("#resetSettings").onclick = () => {
+  if (!confirm("Reset display and reading settings to the defaults?")) return;
+  Object.assign(settings, { theme: "auto", rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true });
+  saveSettings(); applyTheme(); applyFont(); syncHint(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } toast("Settings reset");
+};
 
 /* ---------- clipboard and link import ---------- */
 async function importText(title, text) {
