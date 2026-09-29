@@ -36,6 +36,10 @@
 :root[data-theme="ocean"]{--bg:#0a1f26;--surface:#0f2a33;--ink:#dcf1f3;--muted:#85aab0;--line:#1e4450;--accent:#4fd6c3;--btn:#dcf1f3;--btn-ink:#0a1f26;color-scheme:dark}
 :root[data-theme="grape"]{--bg:#1a1226;--surface:#231a33;--ink:#efe6fb;--muted:#a693c2;--line:#3a2c52;--accent:#ff8ad0;--btn:#efe6fb;--btn-ink:#1a1226;color-scheme:dark}
 :root[data-theme="terminal"]{--bg:#000;--surface:#06110a;--ink:#7dffa0;--muted:#3fa860;--line:#12301c;--accent:#ffd23f;--btn:#7dffa0;--btn-ink:#000;color-scheme:dark}
+:root[data-theme="autumn"]{--bg:#f6e3cf;--surface:#fdf1e2;--ink:#3a2214;--muted:#8a5f45;--line:#e8c9a8;--accent:#b8431a;--btn:#3a2214;--btn-ink:#fdf1e2;color-scheme:light}
+:root[data-theme="winter"]{--bg:#e3eef7;--surface:#f2f8fd;--ink:#14263a;--muted:#587390;--line:#c2d7e8;--accent:#2f6db5;--btn:#14263a;--btn-ink:#f2f8fd;color-scheme:light}
+:root[data-theme="spring"]{--bg:#eaf5df;--surface:#f6fbef;--ink:#1f2e1a;--muted:#5f7a54;--line:#cfe3bd;--accent:#d6457a;--btn:#1f2e1a;--btn-ink:#f6fbef;color-scheme:light}
+:root[data-theme="summer"]{--bg:#dcf4f1;--surface:#eefaf8;--ink:#12302e;--muted:#4b7f7a;--line:#b5e0da;--accent:#e8590c;--btn:#12302e;--btn-ink:#eefaf8;color-scheme:light}
 :root[data-theme="dark"]{--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
 :root[data-theme="black"]{--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
 :root[data-theme="parchment"]{--bg:#e6d6ae;--surface:#f1e5c4;--ink:#372a18;--muted:#75623f;--line:#cdb987;--accent:#a3301b;--btn:#372a18;--btn-ink:#f1e5c4;color-scheme:light}
@@ -367,6 +371,88 @@ body.playing .controls{opacity:.22}
 .actlist button{width:100%;justify-content:flex-start;flex-direction:column;align-items:flex-start;gap:0;text-align:left;border:0;background:transparent;box-shadow:none;border-radius:12px;padding:10px 14px;min-height:52px}
 .actlist button small{color:var(--muted);font:400 12.5px system-ui,sans-serif}
 .actlist button:active,.actlist button:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.greet{margin:0;font:600 20px/1.25 Georgia,"Iowan Old Style",serif}
+.libsearch{width:100%;padding:12px 16px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:16px system-ui,sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.welcome{text-align:center}
+.wslide{display:grid;gap:10px;justify-items:center;padding:8px 4px;min-height:250px;align-content:center;animation:rise .3s ease both}
+.wslide h2{font:700 22px/1.25 Georgia,serif}
+.wslide p{margin:0;color:var(--muted);max-width:32ch}
+.wslide input{margin-top:6px;text-align:center}
+.wdemo{font:500 52px/1.2 Georgia,serif;margin-bottom:6px}
+.wdemo span{color:var(--accent)}
+.wdemo.small{font-size:44px;letter-spacing:.15em}
+.wdots{display:flex;gap:8px;justify-content:center}
+.wdots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s}
+.wdots i.on{background:var(--accent);transform:scale(1.25)}
+.welcome .row{justify-content:space-between}
+.welcome .row .primary{margin-left:auto}
+/* nav + gradient + dim */
+#library header .icon{display:none}
+body[data-screen="library"] #library,body[data-screen="stats"] #stats{padding-bottom:calc(92px + env(safe-area-inset-bottom));position:relative;z-index:1}
+body[data-screen="library"]::before,body[data-screen="stats"]::before{content:"";position:fixed;top:0;left:0;right:0;height:220px;background:linear-gradient(to bottom,color-mix(in srgb,var(--accent) 16%,transparent),transparent);pointer-events:none;z-index:0}
+#tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;justify-content:center;gap:6px;padding:6px 10px max(8px,env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+body[data-screen="library"] #tabbar,body[data-screen="stats"] #tabbar{display:flex}
+#tabbar button{flex:1;max-width:190px;flex-direction:column;gap:2px;border:0;background:transparent;box-shadow:none;color:var(--muted);font:600 11px system-ui,sans-serif;padding:6px 4px;min-height:52px;border-radius:14px}
+#tabbar button.on{color:var(--accent)}
+#tabbar button.on svg{transform:translateY(-1px) scale(1.08)}
+#tabbar svg{transition:transform .2s}
+#fab{position:fixed;right:18px;bottom:calc(84px + env(safe-area-inset-bottom));width:56px;height:56px;min-height:56px;padding:0;border-radius:50%;z-index:45;box-shadow:0 8px 20px -6px rgba(0,0,0,.4);animation:pop .3s ease both}
+body:not([data-screen="library"]) #fab{display:none}
+.dimmer{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity .7s ease;background:radial-gradient(ellipse 95% 24vh at 50% var(--sy,35%),transparent 50%,color-mix(in srgb,var(--bg) 72%,transparent) 100%)}
+body.playing.dim .dimmer{opacity:1}
+.hero,.bk-main{background:color-mix(in srgb,var(--tint,transparent) 15%,var(--surface));border-color:color-mix(in srgb,var(--tint,var(--line)) 30%,var(--line))}
+.medal.earned .bico{background:var(--accent);color:var(--bg);animation:pop .5s ease both}
+.shelf{display:grid;gap:14px;margin-top:12px}
+.shelfrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 4px 10px;border-bottom:5px solid var(--line);border-radius:0 0 4px 4px;box-shadow:0 6px 8px -6px rgba(0,0,0,.25)}
+.medal{border:0;background:transparent;box-shadow:none;flex-direction:column;gap:4px;padding:4px 0;min-height:0;color:var(--ink);font:500 11px/1.2 system-ui,sans-serif;text-align:center;align-items:center;justify-content:flex-start}
+.medal .bico{width:54px;height:54px;margin:0;border:2px solid transparent}
+.medal .bico svg{width:26px;height:26px}
+.medal.locked .bico{background:transparent;border:2px dashed var(--line);opacity:.75}
+.medal.locked{color:var(--muted)}
+.medal.sel .bico{outline:2px solid var(--accent);outline-offset:2px}
+#badgeDetail{min-height:2.6em}
+.rings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 4px;justify-items:center}
+.rings figure{margin:0;display:grid;gap:4px;justify-items:center;font-size:12px;color:var(--muted);text-align:center}
+.rings svg text{font:700 16px system-ui,sans-serif;fill:var(--ink)}
+.rings .trk{stroke:var(--line)}.rings .val{stroke:var(--accent);stroke-linecap:round;animation:ringin .9s cubic-bezier(.2,.8,.2,1) both}
+.rings figure:nth-child(2) .val{stroke:#f08a24}.rings figure:nth-child(3) .val{stroke:#3fa7d6}
+#toast .tm{width:34px;height:auto;margin:-6px 8px -6px -4px;vertical-align:middle}
+body[data-screen="library"] #toast,body[data-screen="stats"] #toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+body.adult .mascot{display:none!important}
+.mascot{display:block;height:auto}
+.emptybox{display:grid;justify-items:center;gap:6px}
+.emptybox .mascot{width:120px}
+.doneimg{width:110px;margin:0 auto}
+.wmascot{width:130px;margin:0 auto 4px}
+.pickrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:6px}
+.pick{min-height:64px;font:600 17px system-ui,sans-serif;border-radius:18px;flex-direction:column;gap:2px}
+.pick small{font:400 12px system-ui,sans-serif;color:var(--muted)}
+.pick[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface));box-shadow:0 0 0 2px var(--accent)}
+#welcomePw{margin-top:4px;text-align:center}
+#welcomeMsg{min-height:1.4em;color:var(--accent);font-size:14px;margin:0}
+/* toggles, swatches, tabs */
+.setrow input[type=checkbox]{-webkit-appearance:none;appearance:none;width:50px;height:30px;border-radius:999px;background:var(--line);border:0;position:relative;cursor:pointer;flex:none;transition:background .2s}
+.setrow input[type=checkbox]::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s cubic-bezier(.3,.9,.4,1.2)}
+.setrow input[type=checkbox]:checked{background:var(--accent)}
+.setrow input[type=checkbox]:checked::after{transform:translateX(20px)}
+body.big .setrow input[type=checkbox]{width:58px;height:36px}
+body.big .setrow input[type=checkbox]::after{width:30px;height:30px}
+body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
+.setrow{border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);padding:4px 0}
+.themegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tgroup{grid-column:1/-1;margin:8px 0 0;font:600 12px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.themegrid button{flex-direction:column;align-items:stretch;gap:6px;padding:0;min-height:0;border:0;background:transparent;box-shadow:none;border-radius:14px;font:500 13px system-ui,sans-serif}
+.themegrid .sw{display:flex;align-items:flex-end;justify-content:space-between;height:58px;border-radius:14px;padding:8px 10px;border:1px solid rgba(128,128,128,.35);font:600 20px Georgia,serif}
+.themegrid .sw b{font-weight:700}
+.themegrid .sw i{width:16px;height:16px;border-radius:50%;display:block}
+.themegrid .nm{text-align:center;color:var(--ink)}
+.themegrid button[aria-pressed=true]{background:transparent;border:0}
+.themegrid button[aria-pressed=true] .sw{outline:3px solid var(--accent);outline-offset:2px}
+.themegrid button[aria-pressed=true] .nm{font-weight:700}
+.tabs{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 22px),transparent)}
+.tabs.mid{-webkit-mask-image:linear-gradient(to right,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(to right,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+.tabs.end{-webkit-mask-image:linear-gradient(to right,transparent,#000 22px);mask-image:linear-gradient(to right,transparent,#000 22px)}
+#status:empty{display:none}
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 </style>
 </head>
@@ -380,6 +466,7 @@ body.playing .controls{opacity:.22}
     <button class="icon" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h9M19 7h1M4 17h1M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </header>
   <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><b id="rankName"></b><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
+  <p class="greet" id="greet"></p>
   <div class="actmenu">
     <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList"><span>What do you want to do?</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="actlist card" id="actList" role="menu" hidden>
@@ -395,10 +482,11 @@ body.playing .controls{opacity:.22}
   <p class="status" id="status" role="status"></p>
   <div class="card" id="nudge" hidden><span id="nudgeTxt"></span><button id="nudgeBtn">Back up</button></div>
   <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
+  <input type="search" class="libsearch" id="libSearch" placeholder="Search your books" aria-label="Search your books" autocomplete="off" hidden>
   <div id="continue"></div>
   <h2 class="sect" id="libHead">Library</h2>
   <ul id="books" class="books"></ul>
-  <p class="empty" id="empty">No books yet. Add an EPUB or paste some text.</p>
+  <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Add an EPUB or paste some text.</p></div>
   <p class="fine">Everything stays on this device. No internet needed. Books, bookmarks and stats are saved here.</p>
   <p class="fine madeby">Made FOR STEM Launch</p>
 </section>
@@ -411,6 +499,7 @@ body.playing .controls{opacity:.22}
   </header>
   <div class="tiles" id="tiles"></div>
   <div class="card" id="goalCard"></div>
+  <div class="card" id="wkCard"></div>
   <div class="card">
     <h2>Words read, last 7 days</h2>
     <div id="chart"></div>
@@ -437,7 +526,6 @@ body.playing .controls{opacity:.22}
     <div class="life" id="lapseNums"></div>
     <div class="row" style="margin-top:10px"><button id="lapseBtn">Replay time-lapse</button></div>
   </div>
-  <div class="card" id="wkCard"></div>
   <div class="card">
     <h2>Reading report</h2>
     <p class="fine">A one-page summary you can print or save as a PDF.</p>
@@ -446,7 +534,8 @@ body.playing .controls{opacity:.22}
   <div class="card">
     <h2>Badges</h2>
     <p class="fine" id="badgeCap"></p>
-    <div class="badges" id="badges"></div>
+    <div id="badges"></div>
+    <p class="fine" id="badgeDetail">Tap a badge to see what it takes.</p>
   </div>
   <div class="card life" id="life"></div>
 </section>
@@ -492,8 +581,51 @@ body.playing .controls{opacity:.22}
 </section>
 
 <!-- SHEETS -->
+<dialog id="welcomeDlg"><div class="sheet welcome">
+  <div class="wslides">
+    <div class="wslide" data-i="0">
+      <img class="mascot wmascot" src="mascot.png" alt="">
+      <h2>Hi, I'm Atom!</h2>
+      <p>Welcome to Wordsmith. Who is reading?</p>
+      <div class="pickrow" id="modePick">
+        <button type="button" class="pick" data-mode="student" aria-pressed="false">Student<small>Cheers and badges</small></button>
+        <button type="button" class="pick" data-mode="adult" aria-pressed="false">Adult<small>Teacher password</small></button>
+      </div>
+      <input type="password" id="welcomePw" placeholder="Teacher password" autocomplete="off" autocapitalize="off" hidden>
+      <p id="welcomeMsg" role="status"></p>
+    </div>
+    <div class="wslide" data-i="1" hidden>
+      <div class="wdemo" aria-hidden="true">re<span>a</span>ding</div>
+      <h2>Read faster, one word at a time</h2>
+      <p>Words flash in one spot. Your eyes stay still, and your brain keeps up. Try it for a few minutes.</p>
+    </div>
+    <div class="wslide" data-i="2" hidden>
+      <div class="wdemo small" aria-hidden="true">📚 📄 🌐</div>
+      <h2>Read almost anything</h2>
+      <p>Add EPUB books, PDFs, articles or pasted text. Tap a word to see what it means. It all works offline.</p>
+    </div>
+    <div class="wslide" data-i="3" hidden>
+      <div class="wdemo small" aria-hidden="true">🔥 🏅 ⭐</div>
+      <h2>Build a streak. Rank up.</h2>
+      <p>Hit your daily goal to grow your streak, earn badges, and climb from Copper to Champion.</p>
+      <input type="text" id="welcomeName" maxlength="30" placeholder="What should we call you? (optional)" autocomplete="off">
+    </div>
+  </div>
+  <div class="wdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+  <div class="row"><button id="welcomeSkip">Skip</button><button class="primary" id="welcomeNext">Next</button></div>
+</div></dialog>
+
+<dialog id="modeDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Adult mode</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p class="fine">Adult mode turns off the mascot. Enter the teacher password.</p>
+  <input type="password" id="modePw" placeholder="Teacher password" autocomplete="off" autocapitalize="off">
+  <p class="status" id="modeMsg" role="status"></p>
+  <div class="row"><button class="primary" id="modeGo">Unlock</button></div>
+</div></dialog>
+
 <dialog id="doneDlg"><div class="sheet">
   <div class="sheet-head"><h2>Finished!</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <img class="mascot doneimg" src="mascot.png" alt="">
   <p id="doneBook" style="font:600 20px/1.25 Georgia,serif;margin:0"></p>
   <div class="life" id="doneNums"></div>
   <p class="fine" id="doneMsg"></p>
@@ -560,8 +692,11 @@ body.playing .controls{opacity:.22}
   <p class="fine">Your streak counts days you reach the goal. The smallest goal is 1,000 words.</p>
   <p class="fine">Words only count the first time you read them, going forward at your speed. Skipping ahead or re-reading does not add to your total.</p>
   <label class="setrow">School days only <input type="checkbox" id="schoolChk"></label>
+  <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Adult</option></select></label>
+  <p class="fine">Adult mode turns off the mascot. It needs the teacher password.</p>
   <label class="setrow">Web article button <input type="checkbox" id="grabChk"></label>
   <p class="fine">Turn this off to stop Wordsmith from ever contacting another website.</p>
+  <div class="row"><button id="welcomeAgain">Show the welcome again</button></div>
   <p class="fine">Weekends don't count for or against your streak.</p>
   <h2>Pause for breaks</h2>
   <p class="fine">Days in a pause don't count for or against your streak. Adding or removing one needs the teacher password.</p>
@@ -590,8 +725,37 @@ body.playing .controls{opacity:.22}
     <div class="pctx">The quick brown fox jumps over the lazy dog.</div>
   </div>
   <h2>Theme</h2>
-  <div class="seg" id="themeSeg">
-    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="parchment">Parchment</button><button data-theme="butter">Butter</button><button data-theme="mint">Mint</button><button data-theme="sky">Sky</button><button data-theme="rose">Rose</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button><button data-theme="midnight">Midnight</button><button data-theme="forest">Forest</button><button data-theme="sunset">Sunset</button><button data-theme="contrast">Contrast</button><button data-theme="lavender">Lavender</button><button data-theme="newsprint">Newsprint</button><button data-theme="slate">Slate</button><button data-theme="coffee">Coffee</button><button data-theme="ocean">Ocean</button><button data-theme="grape">Grape</button><button data-theme="terminal">Terminal</button>
+  <div class="themegrid" id="themeSeg">
+    <p class="tgroup">Automatic</p>
+    <button type="button" data-theme="auto"><span class="sw" style="background:linear-gradient(115deg,#f6f4ef 50%,#141311 50%);color:#888"><b style="color:#d7372b">Aa</b><i style="background:#d7372b"></i></span><span class="nm">Auto</span></button>
+    <p class="tgroup">Light</p>
+    <button type="button" data-theme="light"><span class="sw" style="background:#f6f4ef;color:#1d1b18"><b style="color:#d7372b">Aa</b><i style="background:#d7372b"></i></span><span class="nm">Light</span></button>
+    <button type="button" data-theme="sepia"><span class="sw" style="background:#f1e6cf;color:#3b2f22"><b style="color:#b5341f">Aa</b><i style="background:#b5341f"></i></span><span class="nm">Sepia</span></button>
+    <button type="button" data-theme="parchment"><span class="sw" style="background:#e6d6ae;color:#372a18"><b style="color:#a3301b">Aa</b><i style="background:#a3301b"></i></span><span class="nm">Parchment</span></button>
+    <button type="button" data-theme="butter"><span class="sw" style="background:#fbf3bd;color:#26241a"><b style="color:#c2410c">Aa</b><i style="background:#c2410c"></i></span><span class="nm">Butter</span></button>
+    <button type="button" data-theme="mint"><span class="sw" style="background:#d9f0e2;color:#1b2a21"><b style="color:#c62d2d">Aa</b><i style="background:#c62d2d"></i></span><span class="nm">Mint</span></button>
+    <button type="button" data-theme="sky"><span class="sw" style="background:#d9e9f7;color:#182632"><b style="color:#c62d2d">Aa</b><i style="background:#c62d2d"></i></span><span class="nm">Sky</span></button>
+    <button type="button" data-theme="rose"><span class="sw" style="background:#f7dfe3;color:#2d1b1f"><b style="color:#a3142e">Aa</b><i style="background:#a3142e"></i></span><span class="nm">Rose</span></button>
+    <button type="button" data-theme="lavender"><span class="sw" style="background:#e9e3f7;color:#251d3a"><b style="color:#b0246a">Aa</b><i style="background:#b0246a"></i></span><span class="nm">Lavender</span></button>
+    <button type="button" data-theme="newsprint"><span class="sw" style="background:#e8e8e6;color:#1a1a1a"><b style="color:#b3261e">Aa</b><i style="background:#b3261e"></i></span><span class="nm">Newsprint</span></button>
+    <button type="button" data-theme="sunset"><span class="sw" style="background:#fde8d8;color:#33201a"><b style="color:#c2410c">Aa</b><i style="background:#c2410c"></i></span><span class="nm">Sunset</span></button>
+    <button type="button" data-theme="contrast"><span class="sw" style="background:#ffffff;color:#000000"><b style="color:#c00000">Aa</b><i style="background:#c00000"></i></span><span class="nm">Contrast</span></button>
+    <p class="tgroup">Dark</p>
+    <button type="button" data-theme="dark"><span class="sw" style="background:#141311;color:#ece8df"><b style="color:#ff5a4a">Aa</b><i style="background:#ff5a4a"></i></span><span class="nm">Dark</span></button>
+    <button type="button" data-theme="black"><span class="sw" style="background:#000000;color:#e8e4da"><b style="color:#ff5a4a">Aa</b><i style="background:#ff5a4a"></i></span><span class="nm">Black</span></button>
+    <button type="button" data-theme="midnight"><span class="sw" style="background:#0d1424;color:#e6ecfa"><b style="color:#ff7a6b">Aa</b><i style="background:#ff7a6b"></i></span><span class="nm">Midnight</span></button>
+    <button type="button" data-theme="forest"><span class="sw" style="background:#0f1a14;color:#e3efe6"><b style="color:#ffb454">Aa</b><i style="background:#ffb454"></i></span><span class="nm">Forest</span></button>
+    <button type="button" data-theme="slate"><span class="sw" style="background:#1a1f26;color:#dde3ea"><b style="color:#5ec2ff">Aa</b><i style="background:#5ec2ff"></i></span><span class="nm">Slate</span></button>
+    <button type="button" data-theme="coffee"><span class="sw" style="background:#1f1712;color:#f0e2d0"><b style="color:#ffb36b">Aa</b><i style="background:#ffb36b"></i></span><span class="nm">Coffee</span></button>
+    <button type="button" data-theme="ocean"><span class="sw" style="background:#0a1f26;color:#dcf1f3"><b style="color:#4fd6c3">Aa</b><i style="background:#4fd6c3"></i></span><span class="nm">Ocean</span></button>
+    <button type="button" data-theme="grape"><span class="sw" style="background:#1a1226;color:#efe6fb"><b style="color:#ff8ad0">Aa</b><i style="background:#ff8ad0"></i></span><span class="nm">Grape</span></button>
+    <button type="button" data-theme="terminal"><span class="sw" style="background:#000000;color:#7dffa0"><b style="color:#ffd23f">Aa</b><i style="background:#ffd23f"></i></span><span class="nm">Terminal</span></button>
+    <p class="tgroup">Seasonal</p>
+    <button type="button" data-theme="season"><span class="sw" style="background:linear-gradient(90deg,#eaf5df 25%,#dcf4f1 25% 50%,#f6e3cf 50% 75%,#e3eef7 75%);color:#444"><b style="color:#d6457a">Aa</b><i style="background:#d6457a"></i></span><span class="nm">Seasonal</span></button>
+    <button type="button" data-theme="autumn"><span class="sw" style="background:#f6e3cf;color:#3a2214"><b style="color:#b8431a">Aa</b><i style="background:#b8431a"></i></span><span class="nm">Autumn</span></button>
+    <button type="button" data-theme="winter"><span class="sw" style="background:#e3eef7;color:#14263a"><b style="color:#2f6db5">Aa</b><i style="background:#2f6db5"></i></span><span class="nm">Winter</span></button>
+    <button type="button" data-theme="spring"><span class="sw" style="background:#eaf5df;color:#1f2e1a"><b style="color:#d6457a">Aa</b><i style="background:#d6457a"></i></span><span class="nm">Spring</span></button>
+    <button type="button" data-theme="summer"><span class="sw" style="background:#dcf4f1;color:#12302e"><b style="color:#e8590c">Aa</b><i style="background:#e8590c"></i></span><span class="nm">Summer</span></button>
   </div>
   <h2>Accent color</h2>
   <div class="seg" id="accentSeg">
@@ -622,6 +786,7 @@ body.playing .controls{opacity:.22}
   <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
   <label class="setrow">Speed coach suggestions <input type="checkbox" id="coachChk"></label>
   <label class="setrow">Open books in focus mode <input type="checkbox" id="focusStartChk"></label>
+  <label class="setrow">Dim the screen edges while reading <input type="checkbox" id="dimChk"></label>
   </div>
   <div class="pane" data-pane="access" hidden>
   <h2>Accessibility</h2>
@@ -664,6 +829,13 @@ body.playing .controls{opacity:.22}
 
 <div id="printArea" aria-hidden="true"></div>
 
+<div class="dimmer" id="dimmer" aria-hidden="true"></div>
+<button class="primary" id="fab" type="button" aria-label="Add a book or article" hidden><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+<nav id="tabbar" aria-label="Main">
+  <button type="button" data-go="library" class="on"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h5a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z"/></svg><span>Library</span></button>
+  <button type="button" data-go="stats"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 20V11M12 20V5M18 20v-7"/></svg><span>Stats</span></button>
+  <button type="button" data-go="settings"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg><span>Settings</span></button>
+</nav>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -2291,19 +2463,22 @@ const keyToDate = k => { const [y, m, d] = k.split("-").map(Number); return new 
 function daysBack(n) { const out = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(todayKey(d)); } return out; }
 
 let toastTimer = null;
-function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
+function toast(msg, mascot) { const t = $("#toast"); t.replaceChildren(); if (mascot) { const i = new Image(); i.src = "mascot.png"; i.alt = ""; i.className = "tm"; t.append(i); } t.append(document.createTextNode(msg)); t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
 
 /* ---------- settings + themes ---------- */
-const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, grab: true, pauses: [], focusStart: false }, store.get("pace:settings", {}));
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, grab: true, dim: true, pauses: [], focusStart: false }, store.get("pace:settings", {}));
 settings.goal = Math.max(1000, +settings.goal || 1000);
-if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal"].includes(settings.theme)) settings.theme = "auto";
+if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal", "autumn", "winter", "spring", "summer", "season"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
-const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000" };
+const isAdult = () => settings.mode === "adult";
+const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000", autumn: "#f6e3cf", winter: "#e3eef7", spring: "#eaf5df", summer: "#dcf4f1" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
   const root = document.documentElement;
-  if (settings.theme === "auto") delete root.dataset.theme; else root.dataset.theme = settings.theme;
-  let key = settings.theme;
+  let th = settings.theme;
+  if (th === "season") { const mo = new Date().getMonth(); th = mo >= 2 && mo <= 4 ? "spring" : mo >= 5 && mo <= 7 ? "summer" : mo >= 8 && mo <= 10 ? "autumn" : "winter"; }
+  if (th === "auto") delete root.dataset.theme; else root.dataset.theme = th;
+  let key = th;
   if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
   const a = ACCENTS[settings.accent];
@@ -2315,6 +2490,8 @@ function applyAccess() {
   document.body.classList.toggle("hc", !!settings.contrast);
   document.body.classList.toggle("big", !!settings.big);
   document.body.classList.toggle("nomotion", !!settings.motion);
+  document.body.classList.toggle("dim", settings.dim !== false);
+  document.body.classList.toggle("adult", isAdult());
 }
 const FONTS = ["serif", "sans", "mono", "lexend", "dyslexic"];
 function applyFont() {
@@ -2802,7 +2979,7 @@ const BADGES = [
 ];
 const tq = []; let tqBusy = false;
 function toastLater(m) { if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
-function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m); setTimeout(nextToast, 2600); }
+function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m, !isAdult() && /^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up)/.test(m)); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
   const have = store.get("pace:badges", {}), m = metrics(); let changed = false;
@@ -2920,6 +3097,44 @@ function afterStats() {
   checkBadges(); checkWeekly(); updateRank(); checkSpeed(false);
 }
 
+
+/* tab bar, add button, dimmer, tints */
+(function () {
+  const tabs = document.querySelectorAll("#tabbar button");
+  const sync = () => tabs.forEach(t => t.classList.toggle("on", t.dataset.go === document.body.dataset.screen));
+  new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ["data-screen"] }); sync();
+  tabs.forEach(t => t.onclick = () => {
+    const g = t.dataset.go, sc = document.body.dataset.screen;
+    if (g === "settings") $("#settingsBtn").click();
+    else if (g === "stats") { if (sc !== "stats") $("#statsBtn").click(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+    else { if (sc === "stats") $("#statsBack").click(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+  });
+  const fab = $("#fab");
+  try {
+    new IntersectionObserver(es => { fab.hidden = es[0].isIntersecting; }, { threshold: 0 }).observe($("#actBtn"));
+  } catch (e) { fab.hidden = true; }
+  fab.onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); setTimeout(() => { if ($("#actList").hidden) $("#actBtn").click(); }, 280); };
+})();
+const tintCache = new Map();
+function avgColor(src) {
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 1; const x = c.getContext("2d"); x.drawImage(im, 0, 0, 1, 1); const d = x.getImageData(0, 0, 1, 1).data; res(`rgb(${d[0]},${d[1]},${d[2]})`); } catch (e) { res(""); } };
+    im.onerror = () => res(""); im.src = src;
+  });
+}
+function applyTint(node, m) {
+  if (m.cover) {
+    const c = tintCache.get(m.id);
+    if (c) node.style.setProperty("--tint", c);
+    else avgColor(m.cover).then(v => { if (v) { tintCache.set(m.id, v); node.style.setProperty("--tint", v); } });
+  } else node.style.setProperty("--tint", `hsl(${parseInt(hash(m.title || "x"), 36) % 360} 30% 38%)`);
+}
+function ringFig(pct, center, label) {
+  const r = 30, C = 2 * Math.PI * r, f = document.createElement("figure");
+  f.innerHTML = `<svg viewBox="0 0 76 76" width="76" height="76" role="img" aria-label="${label}: ${center}"><circle class="trk" cx="38" cy="38" r="${r}" fill="none" stroke-width="7"/><circle class="val" cx="38" cy="38" r="${r}" fill="none" stroke-width="7" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - Math.max(0.02, Math.min(1, pct)))}" style="--full:${C}" transform="rotate(-90 38 38)"/><text x="38" y="44" text-anchor="middle">${center}</text></svg><figcaption>${label}</figcaption>`;
+  return f;
+}
 /* ranks */
 const RANKS = [[0, "Copper"], [10000, "Bronze"], [50000, "Silver"], [100000, "Gold"], [250000, "Platinum"], [500000, "Emerald"], [1000000, "Diamond"], [2000000, "Champion"]];
 const ROMAN = ["I", "II", "III", "IV", "V"];
@@ -2997,6 +3212,7 @@ async function play() {
   noRewind = false;
   playing = true; playStart = performance.now(); flushT = playStart; stepIdx = 0;
   $("#coach").hidden = true;
+  { const r = $("#stage").getBoundingClientRect(); $("#dimmer").style.setProperty("--sy", (r.top + r.height / 2) + "px"); }
   document.body.classList.add("playing");
   playBtn.innerHTML = ICON_PAUSE; playBtn.setAttribute("aria-label", "Pause");
   step();
@@ -3215,6 +3431,8 @@ function syncSettingsUI() {
   renderPreview(); renderPresets(); renderPauses();
   $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
   $("#grabChk").checked = settings.grab !== false; $("#webBtn").hidden = settings.grab === false;
+  $("#modeSel").value = isAdult() ? "adult" : "student";
+  $("#dimChk").checked = settings.dim !== false;
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
   $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
@@ -3327,7 +3545,7 @@ function heroCard(m) {
   body.append(el("span", "bk-title", m.title), row, go);
   const del = el("button", "icon bk-del hdel"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title); del.onclick = () => removeBook(m);
   const cv = coverEl(m); cv.title = "Tap to change cover";
-  c.append(cv, body, del);
+  c.append(cv, body, del); applyTint(c, m);
   return c;
 }
 function bookItem(m, featured) {
@@ -3343,7 +3561,7 @@ function bookItem(m, featured) {
   main.onclick = () => openBook(m.id);
   const del = el("button", "icon bk-del"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title);
   del.onclick = () => removeBook(m);
-  li.append(coverEl(m), main, del);
+  li.append(coverEl(m), main, del); applyTint(main, m);
   return li;
 }
 function updateDayCard() {
@@ -3356,13 +3574,23 @@ function updateDayCard() {
   } else { $("#dayTxt").textContent = `Today: ${fmt(w)} words`; $("#dayFill").style.width = "0%"; }
   { const d = $("#dayStreak"); if (si.cur) { d.innerHTML = FLAME(16); d.append(`${si.cur}-day streak`); } else d.textContent = "No streak yet"; }
 }
+let libQ = "";
 function renderLibrary() {
   updateDayCard(); updateRank(true);
   updateNudge();
   const sorted = lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
   const cont = $("#continue"), list = $("#books");
   cont.replaceChildren(); list.replaceChildren();
+  updateGreet();
+  const sb = $("#libSearch"); sb.hidden = lib.length < 3; if (lib.length < 3) libQ = "";
   $("#empty").hidden = sorted.length > 0;
+  if (libQ) {
+    const hits = sorted.filter(m => (m.title || "").toLowerCase().includes(libQ));
+    $("#libHead").hidden = false; $("#libHead").textContent = hits.length ? `Results (${hits.length})` : "No matches";
+    hits.forEach(m => list.append(bookItem(m)));
+    return;
+  }
+  $("#libHead").textContent = "Library";
   $("#libHead").hidden = sorted.length < 2;
   if (sorted.length) {
     cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
@@ -3457,19 +3685,33 @@ function renderGoalCard(si) {
     const bar = el("span", "bar goalbar"), fill = document.createElement("i"); fill.style.width = Math.min(100, w / settings.goal * 100) + "%"; bar.append(fill);
     c.append(row, bar);
   } else c.append(el("p", "fine", "No daily goal. Turn one on in Settings, General."));
+  { const rg = el("div", "rings"), goal = settings.goal > 0 ? settings.goal : 1000, ws = weekStart(new Date()), d0 = keyToDate(ws);
+    let dr = 0; for (let i = 0; i < 7; i++) { const x = new Date(d0); x.setDate(x.getDate() + i); if (dayW(todayKey(x)) > 0) dr++; }
+    const tgt = [3, 7, 14, 30, 42, 90, 100, 180, 365].find(t => t > si.cur) || 365;
+    rg.append(ringFig(w / goal, w >= goal ? "✓" : Math.round(w / goal * 100) + "%", "Goal"), ringFig(si.cur / tgt, String(si.cur), `Streak, next ${tgt}`), ringFig(dr / 7, `${dr}/7`, "Days this week"));
+    c.append(rg); }
   c.append(el("p", "fine", `Current streak: ${si.cur} day${si.cur === 1 ? "" : "s"} · Longest: ${si.longest} day${si.longest === 1 ? "" : "s"}`));
   c.append(el("p", "fine", si.restUsed ? "Rest day used this week. Your streak is safe." : "One rest day a week is free. Miss a day and your streak survives."));
 }
 function renderBadges() {
-  const have = store.get("pace:badges", {}), m = metrics(), box = $("#badges"); box.replaceChildren();
+  const have = store.get("pace:badges", {}), m = metrics(), box = $("#badges"); box.replaceChildren(); box.className = "shelf";
   let n = 0;
-  BADGES.forEach(b => {
+  const cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
+  const detail = $("#badgeDetail");
+  const show = (b, got, v, btn) => {
+    box.querySelectorAll(".sel").forEach(x => x.classList.remove("sel")); btn.classList.add("sel");
+    detail.textContent = `${b.name}: ${b.desc}. ` + (got ? "Earned " + keyToDate(got).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) + "." : `${cnt(Math.min(v, b.goal))} / ${fmt(b.goal)}${b.unit ? " " + b.unit : ""}.`);
+  };
+  let row = null;
+  BADGES.forEach((b, k) => {
+    if (k % 4 === 0) { row = el("div", "shelfrow"); box.append(row); }
     const got = have[b.id], v = b.val(m); if (got) n++;
-    const d = el("div", "badge" + (got ? " earned" : ""));
-    d.append(badgeIcon(b.id), el("b", "", b.name), el("span", "", b.desc));
-    const cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
-    d.append(el("small", "", got ? "Earned " + keyToDate(got).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : `${cnt(Math.min(v, b.goal))} / ${fmt(b.goal)}${b.unit ? " " + b.unit : ""}`));
-    box.append(d);
+    const btn = el("button", "medal" + (got ? " earned" : " locked")); btn.type = "button";
+    btn.setAttribute("aria-label", `${b.name}, ${got ? "earned" : "locked"}`);
+    const ic = badgeIcon(b.id); if (got) ic.classList.add("on");
+    btn.append(ic, el("span", "", b.name));
+    btn.onclick = () => show(b, got, v, btn);
+    row.append(btn);
   });
   $("#badgeCap").textContent = `${n} of ${BADGES.length} earned`;
 }
@@ -3675,6 +3917,16 @@ $("#cvdChk").onchange = e => { settings.cvd = e.target.checked; saveSettings(); 
 $("#motionChk").onchange = e => { settings.motion = e.target.checked; saveSettings(); applyAccess(); };
 $("#contrastChk").onchange = e => { settings.contrast = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
 $("#bigChk").onchange = e => { settings.big = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
+$("#modeSel").onchange = e => {
+  if (e.target.value === "adult") { e.target.value = "student"; $("#modePw").value = ""; $("#modeMsg").textContent = ""; $("#modeDlg").showModal(); $("#modePw").focus(); }
+  else { settings.mode = "student"; saveSettings(); applyAccess(); toast("Student mode on"); }
+};
+$("#modeGo").onclick = async () => {
+  const pw = $("#modePw").value; if (!pw) return;
+  if (await unlockAdult(pw)) { $("#modeDlg").close(); toast("Adult mode on"); } else $("#modeMsg").textContent = "That password isn't right.";
+};
+$("#modePw").addEventListener("keydown", e => { if (e.key === "Enter") $("#modeGo").click(); });
+$("#dimChk").onchange = e => { settings.dim = e.target.checked; saveSettings(); applyAccess(); };
 $("#focusStartChk").onchange = e => { settings.focusStart = e.target.checked; saveSettings(); renderPresets(); };
 $("#grabChk").onchange = e => { settings.grab = e.target.checked; saveSettings(); $("#webBtn").hidden = !settings.grab; };
 $("#schoolChk").onchange = e => { settings.schoolDays = e.target.checked; saveSettings(); refreshStreaks(); };
@@ -3741,7 +3993,7 @@ function showFinished() {
    ...(sp ? [["Speed this session", sp + " wpm"]] : []), ["Books finished", String(stats.finished || 1)]]
     .forEach(([a, v]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", v)); box.append(r); });
   const n = stats.finished || 1;
-  $("#doneMsg").textContent = n === 1 ? "Your first book. That's a big one." : `That's ${n} books now.`;
+  $("#doneMsg").textContent = (n === 1 ? "Your first book. That's a big one." : `That's ${n} books now.`) + (isAdult() ? "" : " Atom is proud of you!");
   confetti(); $("#doneDlg").showModal();
 }
 $("#doneLib").onclick = () => { $("#doneDlg").close(); $("#back").click(); };
@@ -3749,6 +4001,13 @@ $("#doneAgain").onclick = () => { $("#doneDlg").close(); seek(0); };
 
 
 
+(function () {
+  const t = $("#setTabs"); if (!t) return;
+  const upd = () => { const max = t.scrollWidth - t.clientWidth; t.classList.toggle("end", t.scrollLeft >= max - 2 && max > 2); t.classList.toggle("mid", t.scrollLeft > 2 && t.scrollLeft < max - 2); };
+  t.addEventListener("scroll", upd, { passive: true });
+  t.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); setTimeout(upd, 350); } });
+  new ResizeObserver(upd).observe(t); setTimeout(upd, 100);
+})();
 /* action menu */
 (function () {
   const btn = $("#actBtn"), list = $("#actList");
@@ -3759,6 +4018,47 @@ $("#doneAgain").onclick = () => { $("#doneDlg").close(); seek(0); };
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !list.hidden) { set(false); btn.focus(); } });
   $("#addBtn").onclick = () => $("#file").click();
 })();
+
+/* greeting, search, welcome */
+function updateGreet() {
+  const h = new Date().getHours(), g = h < 5 ? "Up late" : h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+  const n = String(settings.name || "").trim().split(/\s+/)[0];
+  $("#greet").textContent = n ? `${g}, ${n}` : g;
+}
+$("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderLibrary(); };
+async function unlockAdult(pw) {
+  try { if (await sha256("wordsmith:" + pw) !== PW_HASH) return false; } catch (e) { return false; }
+  settings.mode = "adult"; saveSettings(); store.set("pace:pw", true); applyCap(); applyAccess(); syncSettingsUI();
+  return true;
+}
+(function () {
+  const dlg = $("#welcomeDlg"); let i = 0, mode = "";
+  const slides = dlg.querySelectorAll(".wslide"), dots = dlg.querySelectorAll(".wdots i"), nx = $("#welcomeNext"), msg = $("#welcomeMsg");
+  const go = n => { i = n; slides.forEach((x, k) => x.hidden = k !== i); dots.forEach((d, k) => d.classList.toggle("on", k === i)); nx.textContent = i === 3 ? "Get started" : "Next"; $("#welcomeSkip").hidden = i !== 1 && i !== 2; msg.textContent = ""; };
+  dlg.querySelectorAll(".pick").forEach(b => b.onclick = () => {
+    mode = b.dataset.mode; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    $("#welcomePw").hidden = mode !== "adult"; msg.textContent = ""; if (mode === "adult") $("#welcomePw").focus();
+  });
+  const done = () => { const v = $("#welcomeName").value.trim(); if (v) { settings.name = v.slice(0, 30); saveSettings(); $("#nameInput").value = settings.name; updateGreet(); } store.set("pace:welcomed", true); if (dlg.open) dlg.close(); };
+  nx.onclick = async () => {
+    if (i === 0) {
+      if (!mode) { msg.textContent = "Pick student or adult."; return; }
+      if (mode === "adult") {
+        const pw = $("#welcomePw").value; if (!pw) { msg.textContent = "Enter the teacher password."; return; }
+        nx.disabled = true; const ok = await unlockAdult(pw); nx.disabled = false;
+        if (!ok) { msg.textContent = "That password isn't right."; return; }
+      } else { settings.mode = "student"; saveSettings(); applyAccess(); syncSettingsUI(); }
+      go(1);
+    } else if (i < 3) go(i + 1); else done();
+  };
+  $("#welcomePw").addEventListener("keydown", e => { if (e.key === "Enter") nx.click(); });
+  $("#welcomeSkip").onclick = () => go(3);
+  dlg.addEventListener("close", () => store.set("pace:welcomed", true));
+  window.showWelcome = () => { $("#welcomeName").value = settings.name || ""; $("#welcomePw").value = ""; $("#welcomePw").hidden = true; mode = ""; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", "false")); go(0); dlg.showModal(); };
+  $("#welcomeAgain").onclick = () => { $("#setDlg").close(); showWelcome(); };
+  if (!store.get("pace:welcomed", false) && !lib.length && !Object.keys(stats.days).length) setTimeout(showWelcome, 300);
+})();
+
 /* ---------- web article ---------- */
 function mdToText(t) {
   const out = [];
@@ -4100,7 +4400,7 @@ async function restoreBackup(file) {
     store.set("pace:stats", stats); checkSpeed(true);
     { const hb = store.get("pace:badges", {}); Object.entries(data.badges || {}).forEach(([id, dte]) => { if (!hb[id] || dte < hb[id]) hb[id] = dte; }); store.set("pace:badges", hb); }
     { const hw = store.get("pace:wk", {}); Object.entries(data.wk || {}).forEach(([k, v]) => { if (!hw[k]) hw[k] = v; }); store.set("pace:wk", hw); }
-    if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
+    if (data.settings) { const { mode: _m, ...rest } = data.settings; Object.assign(settings, rest); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
     toast(`Restored ${n} book${n === 1 ? "" : "s"}`);
