@@ -154,6 +154,28 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
   font-size:14px;z-index:99;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
+.word b{font-weight:700}
+.stage{-webkit-touch-callout:none;touch-action:manipulation}
+.swatch{width:44px;padding:0;border-radius:50%}
+.swatch i{display:block;width:22px;height:22px;border-radius:50%}
+#accentSeg .swatch[aria-pressed=true]{background:var(--surface);border-color:var(--ink);outline:2px solid var(--ink);outline-offset:1px}
+#accentSeg{gap:10px}
+.setrow .seg{flex-wrap:nowrap}
+.setrow .seg button{padding:8px 14px;min-width:44px}
+.heat{display:grid;grid-template-rows:repeat(7,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;margin-top:10px}
+.hc{all:unset;display:block;aspect-ratio:1;border-radius:3px;cursor:pointer}
+.hc:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.l0{background:color-mix(in srgb,var(--line) 70%,var(--surface))}
+.l1{background:color-mix(in srgb,var(--accent) 25%,var(--surface))}
+.l2{background:color-mix(in srgb,var(--accent) 45%,var(--surface))}
+.l3{background:color-mix(in srgb,var(--accent) 70%,var(--surface))}
+.l4{background:var(--accent)}
+.legend{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:block;width:12px;height:12px;border-radius:3px}
+.passage{font:18px/1.65 Georgia,"Iowan Old Style",serif;margin:0}
+#nudge{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#nudge span{font-size:14px}
+mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;border-radius:3px;padding:0 2px}
 </style>
 </head>
 <body data-screen="library">
@@ -168,9 +190,14 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
   <div class="row">
     <label class="btn primary">Add book<input type="file" id="file" multiple accept=".txt,.md,.epub,.html,.htm,.xhtml,text/plain,application/epub+zip" hidden></label>
     <button id="pasteBtn">Paste text</button>
+    <button id="clipBtn">From clipboard</button>
+  </div>
+  <div class="row">
     <button id="sample">Try a sample</button>
+    <button id="testBtn">Test my speed</button>
   </div>
   <p class="status" id="status" role="status"></p>
+  <div class="card" id="nudge" hidden><span id="nudgeTxt"></span><button id="nudgeBtn">Back up</button></div>
   <div id="continue"></div>
   <h2 class="sect" id="libHead">Library</h2>
   <ul id="books" class="books"></ul>
@@ -191,6 +218,12 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
     <p class="fine" id="chartCap" aria-live="polite"></p>
     <details><summary>Show as table</summary><div id="chartTable"></div></details>
   </div>
+  <div class="card">
+    <h2>Reading calendar</h2>
+    <div class="heat" id="heat" role="group" aria-label="Words read each day, last 13 weeks"></div>
+    <div class="legend"><span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>More</span></div>
+    <p class="fine" id="heatCap" aria-live="polite"></p>
+  </div>
   <div class="card life" id="life"></div>
 </section>
 
@@ -207,7 +240,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
     <div class="chbar" aria-hidden="true"><i id="chfill"></i></div>
   </div>
   <div class="stage" id="stage">
-    <div class="word"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
+    <div class="word" id="wordbox"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
     <div class="hint">Tap or press Space to play</div>
   </div>
   <div class="ctx" id="ctx"></div>
@@ -241,6 +274,9 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
   <h2>Reading goal</h2>
   <div class="goalrow"><input type="date" id="goalDate" aria-label="Finish by"><button id="goalClear">Clear</button></div>
   <p class="fine" id="goalInfo">Pick a finish date and Pace works out how much to read each day.</p>
+  <h2>Session timer</h2>
+  <label class="setrow">Stop after <select id="timerSel"><option value="0">Off</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></label>
+  <button id="openSearch">Search this book…</button>
   <button id="openSettings">Settings…</button>
 </div></dialog>
 
@@ -250,11 +286,41 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
   <div class="seg" id="themeSeg">
     <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button>
   </div>
+  <h2>Accent color</h2>
+  <div class="seg" id="accentSeg">
+    <button class="swatch" data-accent="default" aria-label="Red"><i style="background:#d7372b"></i></button>
+    <button class="swatch" data-accent="blue" aria-label="Blue"><i style="background:#1d5fd1"></i></button>
+    <button class="swatch" data-accent="green" aria-label="Green"><i style="background:#1f8a4c"></i></button>
+    <button class="swatch" data-accent="orange" aria-label="Orange"><i style="background:#c8590a"></i></button>
+    <button class="swatch" data-accent="purple" aria-label="Purple"><i style="background:#7a3fd1"></i></button>
+    <button class="swatch" data-accent="pink" aria-label="Pink"><i style="background:#c42a75"></i></button>
+  </div>
+  <h2>Reading</h2>
+  <div class="setrow">Words at a time <div class="seg" id="chunkSeg"><button data-chunk="1">1</button><button data-chunk="2">2</button><button data-chunk="3">3</button></div></div>
+  <label class="setrow">Press and hold to read <input type="checkbox" id="holdChk"></label>
+  <label class="setrow">Bold word beginnings <input type="checkbox" id="bionicChk"></label>
   <label class="setrow">Back up when you resume
     <select id="rewindSel"><option value="0">Off</option><option value="3">3 words</option><option value="5">5 words</option><option value="10">10 words</option></select>
   </label>
   <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
+  <h2>Backup</h2>
+  <p class="fine" id="backupInfo"></p>
+  <div class="row"><button class="primary" id="backupBtn">Save backup</button><label class="btn">Restore backup<input type="file" id="restoreFile" accept=".json,application/json" hidden></label></div>
   <button class="danger" id="resetStats">Reset stats</button>
+</div></dialog>
+
+<dialog id="testDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Reading speed test</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="testIntro"><p>Read the passage at your normal pace. Tap Done when you finish. Pace times you.</p><button class="primary" id="testStart">Start</button></div>
+  <div id="testRead" hidden><p id="testPassage" class="passage"></p><button class="primary" id="testDone">Done</button></div>
+  <div id="testResult" hidden><p id="testMsg"></p><div class="row"><button class="primary" id="testUse">Use</button><button id="testAgain">Try again</button></div></div>
+</div></dialog>
+
+<dialog id="searchDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Search this book</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <input type="text" id="srInput" placeholder="Word or phrase" autocomplete="off" autocapitalize="off" enterkeyhint="search">
+  <p class="fine" id="srInfo"></p>
+  <ul class="list" id="srList"></ul>
 </div></dialog>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -281,16 +347,19 @@ let toastTimer = null;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
 
 /* ---------- settings + themes ---------- */
-const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true }, store.get("pace:settings", {}));
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default" }, store.get("pace:settings", {}));
 if (!["auto", "light", "sepia", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
 const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", dark: "#141311", black: "#000000" };
+const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
   const root = document.documentElement;
   if (settings.theme === "auto") delete root.dataset.theme; else root.dataset.theme = settings.theme;
   let key = settings.theme;
   if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
+  const a = ACCENTS[settings.accent];
+  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black") ? 1 : 0]); else root.style.removeProperty("--accent");
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
@@ -349,6 +418,7 @@ let bookId = "", docKey = "", bms = [];
 let playedMs = 0, playStart = 0, sessionWords = 0;
 let hasPaused = false, noRewind = false, skipCount = 0, stepIdx = 0, flushT = 0, wordsSince = 0;
 const RAMP = 30;
+let timerOn = false, timerLeft = 0, holdActive = false;
 
 const L = $("#L"), P = $("#P"), R = $("#R"), prog = $("#prog"), ctxEl = $("#ctx");
 const playBtn = $("#playBtn"), chapSel = $("#chapters"), statusEl = $("#status");
@@ -586,8 +656,9 @@ function updateStats() {
   $("#pos").textContent = `${(cur + 1).toLocaleString()} / ${n.toLocaleString()} · ${pct}%`;
   $("#left").textContent = left ? `~${fmtMin(Math.max(1, Math.round(left / wpm)))} left` : "End";
   const ms = playedMs + (playing ? performance.now() - playStart : 0);
-  $("#sess").textContent = sessionWords && ms > 5000
-    ? `${sessionWords.toLocaleString()} words this session · ${Math.round(sessionWords / (ms / 60000))} wpm actual` : "";
+  const base = sessionWords && ms > 5000 ? `${sessionWords.toLocaleString()} words this session · ${Math.round(sessionWords / (ms / 60000))} wpm actual` : "";
+  const tm = timerOn && timerLeft > 0 ? `Timer: ${Math.ceil(timerLeft / 60000)} min left` : "";
+  $("#sess").textContent = [base, tm].filter(Boolean).join(" · ");
 }
 
 function chapterIndexAt(i) {
@@ -607,11 +678,42 @@ function syncChapter() {
 
 function updateBmIcon() { $("#bmBtn").classList.toggle("on", bms.some(b => Math.abs(b.i - cur) <= 10)); }
 
+const measure = document.createElement("canvas").getContext("2d");
+function boldMask(text) {
+  const mask = new Array(text.length).fill(false);
+  const re = /\S+/g; let m;
+  while ((m = re.exec(text))) { const n = Math.ceil(m[0].length / 2); for (let i = 0; i < n; i++) mask[m.index + i] = true; }
+  return mask;
+}
+function paintPart(node, text, from, to, mask) {
+  if (!mask) { node.textContent = text.slice(from, to); return; }
+  const frag = document.createDocumentFragment();
+  let i = from;
+  while (i < to) { const b = mask[i]; let j = i; while (j < to && mask[j] === b) j++; const seg = text.slice(i, j); if (b) frag.append(el("b", "", seg)); else frag.append(seg); i = j; }
+  node.replaceChildren(frag);
+}
+function fitWord(text, p, mask) {
+  const box = $("#wordbox"), avail = box.clientWidth - 8;
+  if (avail <= 0 || text.length * fs * 0.6 < avail) { box.style.fontSize = ""; return; }
+  measure.font = `${mask ? 700 : 500} ${fs}px Georgia, "Times New Roman", serif`;
+  const need = 2 * Math.max(measure.measureText(text.slice(0, p)).width, measure.measureText(text.slice(p + 1)).width) + measure.measureText(text.charAt(p)).width;
+  box.style.fontSize = need > avail ? Math.max(14, Math.floor(fs * avail / need)) + "px" : "";
+}
+function chunkLast(i) {
+  const n = settings.chunk || 1; let j = i;
+  while (j - i + 1 < n && j < tokens.length - 1 && !tokens[j].end && !/[.!?…,;:—–]["'”’)\]]*$/.test(tokens[j].w)) j++;
+  return j;
+}
 function render() {
   const t = tokens[cur];
   if (!t) { L.textContent = P.textContent = R.textContent = ""; return; }
-  const p = pivotOf(t.w);
-  L.textContent = t.w.slice(0, p); P.textContent = t.w.charAt(p); R.textContent = t.w.slice(p + 1);
+  const last = chunkLast(cur);
+  let text, p;
+  if (last === cur) { text = t.w; p = pivotOf(text); }
+  else { text = tokens.slice(cur, last + 1).map(x => x.w).join(" "); p = Math.floor(text.length / 2); if (text.charAt(p) === " ") p--; }
+  const mask = settings.bionic ? boldMask(text) : null;
+  paintPart(L, text, 0, p, mask); paintPart(P, text, p, p + 1, mask); paintPart(R, text, p + 1, text.length, mask);
+  fitWord(text, p, mask);
   prog.value = cur;
   updateStats(); syncChapter(); updateBmIcon();
 }
@@ -655,23 +757,29 @@ function finishBook() {
 function step() {
   if (!playing) return;
   render();
+  const last = chunkLast(cur), n = last - cur + 1;
+  let d = 0; for (let i = cur; i <= last; i++) d += delayFor(tokens[i]);
   const k = stepIdx++;
-  const f = settings.ramp ? Math.max(0.55 + 0.45 * Math.min(1, k / RAMP), Math.min(1, 120 / wpm)) : 1;
+  const easing = settings.ramp && !settings.hold;
+  d /= easing ? Math.max(0.55 + 0.45 * Math.min(1, k / RAMP), Math.min(1, 120 / wpm)) : 1;
+  if (timerOn) timerLeft -= d;
   timer = setTimeout(() => {
     if (!playing) return;
-    if (cur < tokens.length - 1) {
-      cur++;
-      if (skipCount > 0) skipCount--; else { sessionWords++; wordsSince++; }
+    const skip = Math.min(skipCount, n); skipCount -= skip;
+    sessionWords += n - skip; wordsSince += n - skip;
+    if (last < tokens.length - 1) {
+      cur = last + 1;
       if (wordsSince >= 40) { flush(); save(); }
+      if (timerOn && timerLeft <= 0) { timerOn = false; $("#timerSel").value = "0"; pause(); toast(`Time's up. ${fmt(sessionWords)} words this session.`); return; }
       step();
     } else { finishBook(); pause(); ctxEl.innerHTML = '<p class="done">Finished. Nice work.</p>'; }
-  }, delayFor(tokens[cur]) / f);
+  }, d);
 }
 
 async function play() {
   if (!tokens.length || playing) return;
   if (cur >= tokens.length - 1) { cur = 0; noRewind = true; }
-  if (!noRewind && settings.rewind > 0 && hasPaused && cur > 0) { const k = Math.min(settings.rewind, cur); cur -= k; skipCount = k; }
+  if (!noRewind && !settings.hold && settings.rewind > 0 && hasPaused && cur > 0) { const k = Math.min(settings.rewind, cur); cur -= k; skipCount = k; }
   else skipCount = 0;
   noRewind = false;
   playing = true; playStart = performance.now(); flushT = playStart; stepIdx = 0;
@@ -794,10 +902,14 @@ function openMenu() { pause(); renderBookmarks(); renderGoal(); $("#menuDlg").sh
 /* ---------- settings sheet ---------- */
 function syncSettingsUI() {
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
+  $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
+  $$("#chunkSeg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.chunk === settings.chunk)));
   $("#rewindSel").value = String(settings.rewind);
   $("#rampChk").checked = !!settings.ramp;
+  $("#holdChk").checked = !!settings.hold;
+  $("#bionicChk").checked = !!settings.bionic;
 }
-function openSettings() { syncSettingsUI(); $("#setDlg").showModal(); }
+function openSettings() { syncSettingsUI(); syncBackupInfo(); prepareBackup(); $("#setDlg").showModal(); }
 
 /* ---------- library screen ---------- */
 function bookItem(m, featured) {
@@ -817,6 +929,7 @@ function bookItem(m, featured) {
   return li;
 }
 function renderLibrary() {
+  updateNudge();
   const sorted = lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
   const cont = $("#continue"), list = $("#books");
   cont.replaceChildren(); list.replaceChildren();
@@ -899,6 +1012,7 @@ function renderStats() {
   const bestDay = all.reduce((a, b) => (!a || b[1].w > a[1].w) ? b : a, null);
   const life = $("#life"); life.replaceChildren();
   [["Total words read", fmt(totW)], ["Time spent reading", fmtDur(totMs)], ["Books finished", String(stats.finished || 0)],
+   ...(stats.test ? [["Normal reading speed", stats.test.wpm + " wpm"]] : []),
    ["Best day", bestDay && bestDay[1].w ? `${fmt(bestDay[1].w)} words · ${keyToDate(bestDay[0]).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : "–"]]
     .forEach(([a, b]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", b)); life.append(r); });
 }
@@ -948,7 +1062,7 @@ $("#pasteGo").onclick = async () => {
   openBook(r.id);
 };
 
-$("#statsBtn").onclick = () => { renderStats(); show("stats"); };
+$("#statsBtn").onclick = () => { renderStats(); renderHeat(); show("stats"); };
 $("#statsBack").onclick = () => show("library");
 $("#settingsBtn").onclick = openSettings;
 $("#openSettings").onclick = () => { $("#menuDlg").close(); openSettings(); };
@@ -969,7 +1083,12 @@ $("#settingsBtn").addEventListener("click", () => {});
 $("#menuDlg").addEventListener("close", () => { renderLibrary(); });
 
 $("#back").onclick = () => { pause(); flush(); save(); renderLibrary(); document.title = "Pace Reader"; show("library"); };
-$("#stage").onclick = toggle;
+const stage = $("#stage");
+stage.onclick = () => { if (!settings.hold) toggle(); };
+stage.addEventListener("pointerdown", e => { if (!settings.hold) return; e.preventDefault(); try { stage.setPointerCapture(e.pointerId); } catch (x) {} holdActive = true; play(); });
+const endHold = () => { if (holdActive) { holdActive = false; pause(); } };
+stage.addEventListener("pointerup", endHold); stage.addEventListener("pointercancel", endHold);
+stage.addEventListener("contextmenu", e => { if (settings.hold) e.preventDefault(); });
 playBtn.onclick = toggle;
 $("#rew").onclick = () => seek(cur - 10);
 $("#fwd").onclick = () => seek(cur + 10);
@@ -983,7 +1102,7 @@ document.addEventListener("keydown", e => {
   if (document.body.dataset.screen !== "reader" || document.querySelector("dialog[open]")) return;
   if (e.target.matches("textarea,select,input:not([type=range])")) return;
   switch (e.key) {
-    case " ": case "k": e.preventDefault(); toggle(); break;
+    case " ": case "k": e.preventDefault(); if (settings.hold) { if (!e.repeat) play(); } else toggle(); break;
     case "ArrowLeft": e.preventDefault(); seek(cur - (e.shiftKey ? 50 : 10)); break;
     case "ArrowRight": e.preventDefault(); seek(cur + (e.shiftKey ? 50 : 10)); break;
     case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
@@ -992,11 +1111,193 @@ document.addEventListener("keydown", e => {
     case "Escape": pause(); break;
   }
 });
+document.addEventListener("keyup", e => {
+  if (settings.hold && (e.key === " " || e.key === "k") && document.body.dataset.screen === "reader" && !document.querySelector("dialog[open]")) pause();
+});
 document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
 window.addEventListener("pagehide", () => { flush(); save(); });
 
+
+/* ---------- accent, chunk, hold, bionic settings ---------- */
+function syncHint() { $(".hint").textContent = settings.hold ? "Press and hold to read" : "Tap or press Space to play"; }
+$$("#accentSeg button").forEach(b => b.onclick = () => { settings.accent = b.dataset.accent; saveSettings(); applyTheme(); syncSettingsUI(); });
+$$("#chunkSeg button").forEach(b => b.onclick = () => { settings.chunk = +b.dataset.chunk; saveSettings(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } });
+$("#holdChk").onchange = e => { settings.hold = e.target.checked; saveSettings(); syncHint(); };
+$("#bionicChk").onchange = e => { settings.bionic = e.target.checked; saveSettings(); if (tokens.length) render(); };
+syncHint();
+
+/* ---------- session timer ---------- */
+$("#timerSel").onchange = e => { const m = +e.target.value; timerOn = m > 0; timerLeft = m * 60000; if (tokens.length) updateStats(); };
+
+/* ---------- search inside a book ---------- */
+let normCache = null, normFor = "", srT = null;
+function normTokens() {
+  if (normFor !== bookId || !normCache || normCache.length !== tokens.length) { normCache = tokens.map(t => t.w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "")); normFor = bookId; }
+  return normCache;
+}
+function runSearch() {
+  const ul = $("#srList"), info = $("#srInfo"); ul.replaceChildren();
+  const qw = $("#srInput").value.trim().toLowerCase().split(/\s+/).map(w => w.replace(/[^\p{L}\p{N}]/gu, "")).filter(Boolean);
+  if (!qw.length) { info.textContent = ""; return; }
+  const nt = normTokens(), hits = [];
+  for (let i = 0; i + qw.length <= nt.length && hits.length < 100; i++) {
+    let ok = true;
+    for (let k = 0; k < qw.length; k++) if (!nt[i + k].startsWith(qw[k])) { ok = false; break; }
+    if (ok) hits.push(i);
+  }
+  info.textContent = hits.length ? `${hits.length}${hits.length >= 100 ? "+" : ""} match${hits.length === 1 ? "" : "es"}` : "No matches.";
+  hits.forEach(i => {
+    const li = el("li", "bm"), go = el("button", "bm-go"); go.type = "button";
+    const line = el("b"), a = Math.max(0, i - 5), z = Math.min(tokens.length, i + qw.length + 7);
+    line.append("…" + tokens.slice(a, i).map(t => t.w).join(" ") + " ");
+    line.append(el("mark", "", tokens.slice(i, i + qw.length).map(t => t.w).join(" ")));
+    line.append(" " + tokens.slice(i + qw.length, z).map(t => t.w).join(" ") + "…");
+    go.append(line);
+    const pct = tokens.length > 1 ? Math.floor(i / (tokens.length - 1) * 100) : 0, ch = chapterTitleAt(i);
+    go.append(el("span", "", (ch ? ch + " · " : "") + pct + "%"));
+    go.onclick = () => { $("#searchDlg").close(); seek(i); };
+    li.append(go); ul.append(li);
+  });
+}
+$("#openSearch").onclick = () => { $("#menuDlg").close(); $("#srInput").value = ""; $("#srList").replaceChildren(); $("#srInfo").textContent = ""; $("#searchDlg").showModal(); $("#srInput").focus(); };
+$("#srInput").oninput = () => { clearTimeout(srT); srT = setTimeout(runSearch, 200); };
+$("#srInput").addEventListener("keydown", e => { if (e.key === "Enter") { clearTimeout(srT); runSearch(); e.target.blur(); } });
+
+/* ---------- reading speed test ---------- */
+const TEST_TEXT = `The lighthouse at Cape Marrow was built in 1874, after three ships were lost on the rocks in a single winter. Its builders had little to work with. The stone came by barge from a quarry forty miles down the coast, and every block had to be lifted by hand up the cliff. Work stopped whenever the fog rolled in, which was often. It took four years to finish.
+
+The first keeper, a former sailor named Odell Pryce, lived in the tower with his wife and two daughters. Each evening he climbed ninety-two steps to light the great lamp, and each morning he climbed them again to put it out. In between, he polished the lens, trimmed the wick, and wrote down the weather in a leather notebook. Those notebooks, now kept in the county museum, are full of small surprises. One entry records a whale that circled the rocks for an entire afternoon. Another describes a night so still that he could hear his daughters breathing from the stairwell.
+
+In 1956 the lamp was replaced by an automatic light, and the last keeper packed up and left. The tower stood empty for decades. Then a group of local volunteers raised enough money to repair the roof and reopen the lower rooms. Today visitors can climb the same ninety-two steps, though most of them stop halfway to catch their breath and admire the view.`;
+let testStart = 0;
+function openTest() { $("#testIntro").hidden = false; $("#testRead").hidden = true; $("#testResult").hidden = true; $("#testDlg").showModal(); }
+$("#testBtn").onclick = openTest;
+$("#testAgain").onclick = () => { $("#testIntro").hidden = false; $("#testRead").hidden = true; $("#testResult").hidden = true; };
+$("#testStart").onclick = () => { $("#testPassage").textContent = TEST_TEXT; $("#testIntro").hidden = true; $("#testRead").hidden = false; testStart = performance.now(); };
+$("#testDone").onclick = () => {
+  const words = TEST_TEXT.trim().split(/\s+/).length, mins = (performance.now() - testStart) / 60000, w = Math.round(words / mins);
+  $("#testRead").hidden = true; $("#testResult").hidden = false;
+  if (w > 1000) { $("#testMsg").textContent = "That was too fast to be a real read. Try again and read every word."; $("#testUse").hidden = true; return; }
+  stats.test = { wpm: w, date: todayKey() }; store.set("pace:stats", stats);
+  const sug = Math.max(200, Math.min(600, Math.round(w * 1.3 / 25) * 25));
+  $("#testMsg").textContent = `You read about ${w} words per minute. Try Pace at ${sug} wpm.`;
+  const use = $("#testUse"); use.hidden = false; use.textContent = `Use ${sug} wpm`;
+  use.onclick = () => { setWpm(sug); $("#testDlg").close(); toast(`Speed set to ${sug} wpm`); };
+};
+
+/* ---------- reading calendar ---------- */
+function renderHeat() {
+  const wrap = $("#heat"); wrap.replaceChildren();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const start = new Date(today); start.setDate(start.getDate() - today.getDay() - 12 * 7);
+  const vals = [];
+  for (let i = 0; i < 13 * 7; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    vals.push({ d, w: d > today ? -1 : ((stats.days[todayKey(d)] || {}).w || 0) });
+  }
+  const max = Math.max(0, ...vals.map(v => v.w));
+  vals.forEach(v => {
+    const b = el("button", "hc"); b.type = "button";
+    b.classList.add("l" + (v.w <= 0 ? 0 : Math.min(4, Math.ceil(4 * v.w / max))));
+    if (v.w < 0) b.style.visibility = "hidden";
+    const label = `${v.d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}: ${fmt(Math.max(0, v.w))} words`;
+    b.setAttribute("aria-label", label);
+    b.onclick = () => { $("#heatCap").textContent = label; };
+    wrap.append(b);
+  });
+  $("#heatCap").textContent = "Tap a square for details.";
+}
+
+/* ---------- backup and restore ---------- */
+let backupFile = null;
+function syncBackupInfo() {
+  const last = store.get("pace:lastBackup", 0);
+  $("#backupInfo").textContent = `${lib.length} book${lib.length === 1 ? "" : "s"} in your library. Last backup: ${last ? new Date(last).toLocaleDateString() : "never"}.`;
+}
+function updateNudge() {
+  const last = store.get("pace:lastBackup", 0);
+  const need = lib.length > 0 && (!last || Date.now() - last > 14 * 864e5);
+  $("#nudge").hidden = !need;
+  if (need) $("#nudgeTxt").textContent = last ? `Last backup was ${Math.round((Date.now() - last) / 864e5)} days ago.` : "You haven't backed up your library yet.";
+}
+async function makeBackup() {
+  const books = [], pos = {}, bm = {};
+  for (const m of lib) {
+    const rec = await dbGet(m.id); if (rec) books.push(rec);
+    const p = store.get("pace:pos:" + m.id, null); if (p !== null) pos[m.id] = p;
+    const b = store.get("pace:bm:" + m.id, null); if (b && b.length) bm[m.id] = b;
+  }
+  return { format: "pace-backup", version: 1, saved: new Date().toISOString(), lib, books, pos, bm, stats, settings, wpm, fs };
+}
+async function prepareBackup() {
+  const btn = $("#backupBtn"); backupFile = null; btn.disabled = true; btn.textContent = "Preparing…";
+  try { backupFile = new File([JSON.stringify(await makeBackup())], `pace-backup-${todayKey()}.json`, { type: "application/json" }); } catch (e) {}
+  btn.disabled = !backupFile; btn.textContent = "Save backup";
+}
+async function saveBackup() {
+  if (!backupFile) return;
+  const file = backupFile; let done = false;
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: "Pace backup" }); done = true; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  if (!done) {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = file.name;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }
+  store.set("pace:lastBackup", Date.now()); syncBackupInfo(); updateNudge(); toast("Backup saved");
+}
+async function restoreBackup(file) {
+  try {
+    const data = JSON.parse(await file.text());
+    if (!data || data.format !== "pace-backup" || !Array.isArray(data.books)) throw new Error("that isn't a Pace backup file");
+    const n = data.books.length;
+    if (!confirm(`Restore ${n} book${n === 1 ? "" : "s"} from ${data.saved ? new Date(data.saved).toLocaleDateString() : "this backup"}? Books already here are updated.`)) return;
+    for (const rec of data.books) await dbPut(rec);
+    (data.lib || []).forEach(m => { const i = lib.findIndex(x => x.id === m.id); if (i >= 0) lib[i] = Object.assign({}, lib[i], m); else lib.push(m); });
+    saveLib();
+    Object.entries(data.pos || {}).forEach(([id, p]) => store.set("pace:pos:" + id, p));
+    Object.entries(data.bm || {}).forEach(([id, b]) => store.set("pace:bm:" + id, b));
+    const s2 = data.stats || {};
+    Object.entries(s2.days || {}).forEach(([k, v]) => { const d = stats.days[k] || (stats.days[k] = { w: 0, ms: 0 }); d.w = Math.max(d.w, v.w || 0); d.ms = Math.max(d.ms, v.ms || 0); });
+    Object.entries(s2.books || {}).forEach(([id, days]) => { const b = stats.books[id] || (stats.books[id] = {}); Object.entries(days).forEach(([k, w]) => { b[k] = Math.max(b[k] || 0, w); }); });
+    stats.finished = Math.max(stats.finished || 0, s2.finished || 0); if (s2.test) stats.test = s2.test;
+    store.set("pace:stats", stats);
+    if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); syncHint(); }
+    if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
+    syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
+    toast(`Restored ${n} book${n === 1 ? "" : "s"}`);
+  } catch (e) { toast("Couldn't restore: " + e.message); }
+}
+$("#backupBtn").onclick = saveBackup;
+$("#restoreFile").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (f) restoreBackup(f); };
+$("#nudgeBtn").onclick = openSettings;
+
+/* ---------- clipboard and link import ---------- */
+async function importText(title, text) {
+  const b = bookFromText(text);
+  if (!b.tokens.length) { toast("No text found."); return; }
+  const first = text.trim().split(/\s+/).slice(0, 6).join(" ");
+  const r = await saveBook((title || "").trim() || (first.length > 40 ? first.slice(0, 40) + "…" : first), b);
+  if (!r.ok) toast("Couldn't save for later. This text will vanish when you close the app.");
+  openBook(r.id);
+}
+$("#clipBtn").onclick = async () => {
+  try {
+    const t = await navigator.clipboard.readText();
+    if (!t || !t.trim()) { toast("Your clipboard is empty."); return; }
+    importText("", t);
+  } catch (e) { toast("Couldn't read the clipboard. Try Paste text."); }
+};
+function checkHash() {
+  if (!location.hash.includes("text=")) return;
+  const q = new URLSearchParams(location.hash.slice(1)), text = q.get("text"), title = q.get("title");
+  history.replaceState(null, "", location.pathname + location.search);
+  if (text) importText(title, text);
+}
+checkHash(); addEventListener("hashchange", checkHash);
+
 /* test hook (harmless in normal use) */
-window.__pace = { get cur() { return cur; }, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; } };
+window.__pace = { get cur() { return cur; }, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; } };
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
