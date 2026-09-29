@@ -237,6 +237,11 @@ body.nomotion *,body.nomotion *::before,body.nomotion *::after{transition:none!i
 #printArea .qrbox{margin-top:18px;display:flex;align-items:center;gap:14px;break-inside:avoid}
 #printArea .qrbox svg{width:38mm;height:38mm;flex:none}
 @page{margin:16mm}
+#printArea table{width:100%;border-collapse:collapse;margin:0 0 14px;font:10.5pt/1.4 system-ui,sans-serif}
+#printArea th,#printArea td{border-bottom:1px solid #bbb;padding:4px 6px;text-align:left}
+#printArea h2{font:700 13pt/1.3 Georgia,serif;margin:16px 0 6px}
+#printArea .sub{color:#444;font:10.5pt/1.4 system-ui,sans-serif}
+.wkbar{margin:8px 0 6px}
 @media print{
   body>*{display:none!important}
   body>#printArea{display:block!important;color:#000;background:#fff;font:12pt/1.6 Georgia,"Times New Roman",serif}
@@ -293,7 +298,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <button class="icon" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h9M19 7h1M4 17h1M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </header>
   <div class="row">
-    <label class="btn primary">Add book<input type="file" id="file" multiple accept=".txt,.md,.epub,.html,.htm,.xhtml,text/plain,application/epub+zip" hidden></label>
+    <label class="btn primary">Add book<input type="file" id="file" multiple accept=".txt,.md,.epub,.pdf,.html,.htm,.xhtml,text/plain,application/epub+zip,application/pdf" hidden></label>
     <button id="pasteBtn">Paste text</button>
     <button id="clipBtn">From clipboard</button>
   </div>
@@ -345,6 +350,12 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <div class="life" id="lapseNums"></div>
     <div class="row" style="margin-top:10px"><button id="lapseBtn">Replay time-lapse</button></div>
   </div>
+  <div class="card" id="wkCard"></div>
+  <div class="card">
+    <h2>Reading report</h2>
+    <p class="fine">A one-page summary you can print or save as a PDF.</p>
+    <div class="row"><select id="repRange" aria-label="Report range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="0">All time</option></select><button id="repBtn">Print report</button></div>
+  </div>
   <div class="card">
     <h2>Badges</h2>
     <p class="fine" id="badgeCap"></p>
@@ -394,6 +405,13 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
 </section>
 
 <!-- SHEETS -->
+<dialog id="pdfDlg"><div class="sheet">
+  <div class="sheet-head"><h2>PDF warning</h2></div>
+  <p style="font-weight:700;font-size:17px;margin:0">SCANNED PDF DOCUMENTS WILL NOT WORK PROPERLY</p>
+  <p class="fine">PDFs with real text work best. A scan or photo of a page has no text to read. Page numbers and headers are removed automatically.</p>
+  <div class="row"><button id="pdfNo">Cancel</button><button class="primary" id="pdfYes">Continue</button></div>
+</div></dialog>
+
 <dialog id="pasteDlg"><div class="sheet">
   <div class="sheet-head"><h2>Paste text</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <input type="text" id="pasteTitle" placeholder="Title (optional)" autocomplete="off">
@@ -2680,12 +2698,115 @@ function checkBadges() {
   for (const b of BADGES) if (!have[b.id] && b.val(m) >= b.goal) { have[b.id] = todayKey(); changed = true; if (!first) toastLater("Badge earned: " + b.name); }
   if (changed || first) store.set("pace:badges", have);
 }
+
+/* weekly challenge */
+const WEEKLY = [
+  { id: "sprint", name: "Word Sprint", desc: "Read 5,000 words this week", goal: 5000, val: w => w.words },
+  { id: "habit", name: "Goal Getter", desc: "Reach your daily goal on 4 days", goal: 4, val: w => w.goalDays, unit: "days" },
+  { id: "clock", name: "Time Trial", desc: "Read for 60 minutes this week", goal: 60, val: w => w.min, unit: "min" },
+  { id: "show", name: "Show Up", desc: "Read 200+ words on 5 different days", goal: 5, val: w => w.days, unit: "days" },
+  { id: "finish", name: "Book Finisher", desc: "Finish a book this week", goal: 1, val: w => w.finished },
+  { id: "big", name: "Big Week", desc: "Read 10,000 words this week", goal: 10000, val: w => w.words },
+  { id: "run", name: "Hot Streak", desc: "Reach your daily goal 3 days in a row", goal: 3, val: w => w.run, unit: "days" },
+  { id: "deep", name: "Deep Dive", desc: "Read 3,000 words in one day", goal: 3000, val: w => w.best }
+];
+function weekIdx(ws) { const d = keyToDate(ws), u = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5; return Math.floor((u + 4) / 7); }
+function curWeek() {
+  const ws = weekStart(new Date()), c = WEEKLY[weekIdx(ws) % WEEKLY.length], d0 = keyToDate(ws), t0 = d0.getTime(), t1 = t0 + 7 * 864e5;
+  const w = { words: 0, min: 0, days: 0, goalDays: 0, run: 0, best: 0, finished: 0 }; let run = 0;
+  for (let i = 0; i < 7; i++) {
+    const x = new Date(d0); x.setDate(x.getDate() + i); const k = todayKey(x), d = stats.days[k] || { w: 0, ms: 0 };
+    w.words += d.w; w.min += d.ms / 60000; w.best = Math.max(w.best, d.w); if (d.w >= 200) w.days++;
+    if (settings.goal > 0 && d.w >= settings.goal) { w.goalDays++; run++; w.run = Math.max(w.run, run); } else run = 0;
+  }
+  w.finished = lib.filter(m => m.done && m.done >= t0 && m.done < t1).length;
+  return { ws, c, v: c.val(w) };
+}
+function checkWeekly() {
+  const { ws, c, v } = curWeek(), have = store.get("pace:wk", {});
+  if (!have[ws] && v >= c.goal) { have[ws] = { id: c.id, at: todayKey() }; store.set("pace:wk", have); toastLater("Weekly challenge complete: " + c.name); }
+}
+function renderWeekly() {
+  const box = $("#wkCard"); box.replaceChildren();
+  const { ws, c, v } = curWeek(), have = store.get("pace:wk", {}), done = !!have[ws];
+  box.append(el("h2", "", "Weekly challenge"));
+  const row = el("div", "dayrow"); row.append(el("b", "", c.name), el("span", "", done ? "Complete" : "Ends Saturday"));
+  const bar = el("span", "bar wkbar"), fill = document.createElement("i"); fill.style.width = Math.min(100, v / c.goal * 100) + "%"; bar.append(fill);
+  const cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
+  box.append(row, el("p", "fine", c.desc), bar, el("p", "fine", done ? "Badge earned for this week." : `${cnt(Math.min(v, c.goal))} / ${fmt(c.goal)}${c.unit ? " " + c.unit : ""}`));
+  const keys = Object.keys(have).sort().reverse();
+  if (keys.length) {
+    box.append(el("p", "fine", `Weekly badges: ${keys.length}`));
+    const g = el("div", "badges");
+    keys.forEach(k => {
+      const ch = WEEKLY.find(x => x.id === have[k].id) || WEEKLY[0], d = el("div", "badge earned");
+      d.append(el("b", "", ch.name), el("span", "", "Week of " + keyToDate(k).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })));
+      g.append(d);
+    });
+    box.append(g);
+  }
+}
+
+/* reading report */
+function buildReport(range) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const allKeys = Object.keys(stats.days).sort();
+  let from = range > 0 ? new Date(today.getTime() - (range - 1) * 864e5) : (allKeys.length ? keyToDate(allKeys[0]) : today);
+  const fk = todayKey(from), tk = todayKey(today);
+  const inR = k => k >= fk && k <= tk;
+  const rows = allKeys.filter(inR).map(k => [k, stats.days[k]]);
+  const words = rows.reduce((a, [, d]) => a + d.w, 0), ms = rows.reduce((a, [, d]) => a + d.ms, 0);
+  const box = $("#printArea"); box.replaceChildren();
+  const fd = (d, y) => d.toLocaleDateString(undefined, { month: "short", day: "numeric", ...(y ? { year: "numeric" } : {}) });
+  box.append(el("h1", "", "Reading report" + (settings.name ? " · " + settings.name : "")));
+  box.append(el("p", "sub", `${fd(from, true)} to ${fd(today, true)} · Made with Wordsmith`));
+  const tbl = (head, data) => {
+    const t = el("table"), h = el("tr"); head.forEach(x => h.append(el("th", "", x))); t.append(h);
+    data.forEach(r => { const tr = el("tr"); r.forEach(c => tr.append(el("td", "", c))); t.append(tr); }); return t;
+  };
+  const best = rows.reduce((a, b) => (!a || b[1].w > a[1].w) ? b : a, null), si = streakInfo(), goalDays = settings.goal > 0 ? rows.filter(([, d]) => d.w >= settings.goal).length : 0;
+  box.append(el("h2", "", "Summary"));
+  box.append(tbl(["Measure", "Result"], [
+    ["Words read", fmt(words)], ["Time reading", fmtDur(ms)], ["Average speed", wpmOf(words, ms) ? wpmOf(words, ms) + " wpm" : "–"],
+    ["Days read", String(rows.filter(([, d]) => d.w > 0).length)],
+    ...(settings.goal > 0 ? [[`Days reaching the ${fmt(settings.goal)}-word goal`, String(goalDays)]] : []),
+    ["Best day", best && best[1].w ? `${fmt(best[1].w)} words · ${fd(keyToDate(best[0]))}` : "–"],
+    ["Current streak", `${si.cur} day${si.cur === 1 ? "" : "s"}`], ["Longest streak", `${si.longest} day${si.longest === 1 ? "" : "s"}`]
+  ]));
+  const bw = lib.map(m => { const b = stats.books[m.id] || {}; let w = 0; for (const k in b) if (inR(k)) w += b[k]; return { m, w }; }).filter(x => x.w > 0).sort((a, b) => b.w - a.w);
+  const fin = lib.filter(m => m.done && inR(todayKey(new Date(m.done))));
+  if (bw.length || fin.length) {
+    box.append(el("h2", "", "Books"));
+    box.append(tbl(["Book", "Words in this period", "Status"], bw.map(({ m, w }) => [m.title, fmt(w), m.done && inR(todayKey(new Date(m.done))) ? "Finished " + fd(new Date(m.done)) : m.done ? "Finished earlier" : "In progress"])));
+    if (fin.length) box.append(el("p", "", `Books finished: ${fin.length}`));
+  }
+  const tm = (stats.timed || []).filter(x => inR(x.d));
+  if (tm.length || stats.test) {
+    box.append(el("h2", "", "Speed checks"));
+    const r = tm.map(x => [fd(keyToDate(x.d)), "Timed read", x.wpm + " wpm"]);
+    if (stats.test) r.unshift([stats.test.date ? fd(keyToDate(stats.test.date), true) : "–", "Normal reading speed test", stats.test.wpm + " wpm"]);
+    box.append(tbl(["Date", "Check", "Result"], r));
+  }
+  const hv = store.get("pace:badges", {}), wk = store.get("pace:wk", {});
+  const bd = [...BADGES.filter(b => hv[b.id] && inR(hv[b.id])).map(b => [b.name, fd(keyToDate(hv[b.id]))]),
+    ...Object.entries(wk).filter(([, v]) => inR(v.at)).map(([k, v]) => [`Weekly: ${(WEEKLY.find(x => x.id === v.id) || WEEKLY[0]).name}`, fd(keyToDate(v.at))])];
+  if (bd.length) { box.append(el("h2", "", "Badges earned")); box.append(tbl(["Badge", "Date"], bd)); }
+  if (rows.length && range !== 0 || (range === 0 && rows.length <= 60)) {
+    box.append(el("h2", "", "Day by day"));
+    box.append(tbl(["Date", "Words", "Time", "Speed"], rows.map(([k, d]) => [fd(keyToDate(k), true), fmt(d.w), fmtDur(d.ms), wpmOf(d.w, d.ms) ? wpmOf(d.w, d.ms) + " wpm" : "–"])));
+  } else if (rows.length) {
+    const mo = {}; rows.forEach(([k, d]) => { const m = k.slice(0, 7), o = mo[m] || (mo[m] = { w: 0, ms: 0, n: 0 }); o.w += d.w; o.ms += d.ms; if (d.w) o.n++; });
+    box.append(el("h2", "", "Month by month"));
+    box.append(tbl(["Month", "Words", "Days read", "Time"], Object.entries(mo).map(([m, o]) => [keyToDate(m + "-01").toLocaleDateString(undefined, { month: "long", year: "numeric" }), fmt(o.w), String(o.n), fmtDur(o.ms)])));
+  }
+  if (!rows.length) box.append(el("p", "", "No reading recorded in this period."));
+}
 function afterStats() {
   const k = todayKey();
   if (settings.goal > 0 && dayW(k) >= settings.goal && stats.goalDay !== k) {
     stats.goalDay = k; store.set("pace:stats", stats); toastLater(`Daily goal reached: ${fmt(settings.goal)} words`);
   }
-  checkBadges(); checkSpeed(false);
+  checkBadges(); checkWeekly(); checkSpeed(false);
 }
 
 /* stats bookkeeping */
@@ -2708,7 +2829,7 @@ function flush() {
 function curMeta() { return lib.find(x => x.id === bookId); }
 function finishBook() {
   const m = curMeta();
-  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); checkBadges(); }
+  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); checkBadges(); checkWeekly(); }
 }
 
 function step() {
@@ -2989,7 +3110,24 @@ function coverEl(m) {
     d.style.background = `hsl(${parseInt(hash(m.title || "x"), 36) % 360} 30% 38%)`;
     d.textContent = (String(m.title || "?").match(/[\p{L}\p{N}]+/gu) || ["?"]).slice(0, 2).map(w => w[0]).join("").toUpperCase();
   }
+  d.removeAttribute("aria-hidden"); d.setAttribute("role", "button"); d.tabIndex = 0; d.setAttribute("aria-label", "Change cover for " + (m.title || "book"));
+  d.style.cursor = "pointer"; d.onclick = () => pickCover(m);
+  d.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickCover(m); } };
   return d;
+}
+let coverTarget = null;
+function pickCover(m) {
+  coverTarget = m;
+  let inp = $("#coverIn");
+  if (!inp) {
+    inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.id = "coverIn"; inp.hidden = true; document.body.append(inp);
+    inp.onchange = async () => {
+      const f = inp.files[0], t = coverTarget; inp.value = ""; if (!f || !t) return;
+      try { t.cover = await makeThumb(new Uint8Array(await f.arrayBuffer()), f.type); saveLib(); renderLibrary(); toast("Cover updated"); }
+      catch (e) { toast("Couldn't use that picture."); }
+    };
+  }
+  inp.click();
 }
 function bookItem(m, featured) {
   const pos = store.get("pace:pos:" + m.id, 0), total = m.total || 0;
@@ -3104,7 +3242,7 @@ function renderStats() {
    ...(stats.timed && stats.timed.length ? [["Timed reads", `${stats.timed[stats.timed.length - 1].wpm} wpm last · ${Math.max(...stats.timed.map(x => x.wpm))} best`]] : []),
    ["Best day", bestDay && bestDay[1].w ? `${fmt(bestDay[1].w)} words · ${keyToDate(bestDay[0]).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : "–"]]
     .forEach(([a, b]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", b)); life.append(r); });
-  renderGoalCard(si); lapseBuild(); renderBadges();
+  renderGoalCard(si); lapseBuild(); renderWeekly(); renderBadges();
 }
 function renderGoalCard(si) {
   const c = $("#goalCard"); c.replaceChildren();
@@ -3175,8 +3313,88 @@ function lapseRun(n) {
   lapseRaf = requestAnimationFrame(tick);
 }
 
+
+/* ---------- PDF ---------- */
+let pdfLoad = null;
+function loadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve();
+  return pdfLoad || (pdfLoad = new Promise((res, rej) => {
+    const sc = document.createElement("script"); sc.src = "pdf.min.js";
+    sc.onload = () => { try { pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.min.js"; res(); } catch (e) { rej(e); } };
+    sc.onerror = () => { pdfLoad = null; rej(new Error("PDF reader files are missing")); };
+    document.head.append(sc);
+  }));
+}
+async function parsePdf(buf, onPage) {
+  await loadPdfJs();
+  const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+  const pages = [];
+  for (let n = 1; n <= pdf.numPages; n++) {
+    if (onPage) onPage(n, pdf.numPages);
+    const pg = await pdf.getPage(n), tc = await pg.getTextContent(), rows = [];
+    for (const it of tc.items) {
+      if (!it.str && !it.hasEOL) continue;
+      const y = it.transform[5], h = Math.abs(it.transform[3]) || it.height || 10, x = it.transform[4];
+      let r = rows.find(r => Math.abs(r.y - y) < h * 0.4);
+      if (!r) { r = { y, h, parts: [] }; rows.push(r); }
+      r.parts.push({ x, s: it.str, w: it.width || 0 });
+    }
+    rows.sort((a, b) => b.y - a.y);
+    const lines = rows.map(r => {
+      r.parts.sort((a, b) => a.x - b.x);
+      let t = "", end = null;
+      for (const p of r.parts) { if (end !== null && p.x - end > r.h * 0.15 && !/\s$/.test(t) && !/^\s/.test(p.s)) t += " "; t += p.s; end = p.x + p.w; }
+      return { y: r.y, h: r.h, t: t.replace(/\s+/g, " ").trim() };
+    }).filter(l => l.t);
+    pages.push(lines);
+  }
+  const chars = pages.reduce((a, l) => a + l.reduce((b, x) => b + x.t.length, 0), 0);
+  if (chars < 30 * Math.max(1, pages.length) * 0.3 || chars < 40) throw new Error("no text found. This looks like a scanned PDF");
+  // drop repeated headers/footers and bare page numbers
+  const norm = t => t.toLowerCase().replace(/\d+/g, "#").replace(/\s+/g, " ");
+  const cnt = {};
+  pages.forEach(l => { const e = [...l.slice(0, 2), ...l.slice(-2)]; new Set(e.map(x => norm(x.t))).forEach(k => cnt[k] = (cnt[k] || 0) + 1); });
+  const lim = Math.max(3, Math.ceil(pages.length * 0.4));
+  const bare = t => /^(page\s+)?(\d{1,4}|[ivxlc]{1,6})(\s*(of|\/)\s*\d{1,4})?$/i.test(t.trim());
+  let out = [];
+  pages.forEach(l => {
+    l.forEach((x, i) => {
+      const edge = i < 2 || i >= l.length - 2;
+      if (edge && (bare(x.t) || (pages.length >= 3 && cnt[norm(x.t)] >= lim))) return;
+      out.push(x);
+    });
+    out.push({ brk: true });
+  });
+  let text = "", prev = null;
+  for (const x of out) {
+    if (x.brk) { prev = prev && { ...prev, pageEnd: true }; continue; }
+    if (prev === null) text += x.t;
+    else {
+      const gap = prev.y - x.y, para = !prev.pageEnd && gap > prev.h * 1.7;
+      if (para) text += "\n\n" + x.t;
+      else if (/[a-z]-$/.test(text) && /^[a-z]/.test(x.t)) text = text.slice(0, -1) + x.t;
+      else if (prev.pageEnd && /[.!?"”’)]$/.test(text)) text += "\n\n" + x.t;
+      else text += " " + x.t;
+    }
+    prev = x;
+  }
+  return text;
+}
+function askPdfWarning() {
+  return new Promise(res => {
+    const d = $("#pdfDlg"); let ok = false;
+    $("#pdfYes").onclick = () => { ok = true; d.close(); };
+    $("#pdfNo").onclick = () => d.close();
+    d.onclose = () => res(ok);
+    d.showModal();
+  });
+}
+
 /* ---------- import ---------- */
 async function importFiles(files) {
+  if (files.some(f => /\.pdf$/i.test(f.name) || f.type === "application/pdf")) {
+    if (!(await askPdfWarning())) return;
+  }
   statusEl.textContent = "Opening…";
   const added = [], failed = []; let unsaved = false;
   for (const f of files) {
@@ -3188,7 +3406,9 @@ async function importFiles(files) {
         const doc = new DOMParser().parseFromString(await f.text(), "text/html");
         title = doc.title || name; b = bookFromText(htmlToText(doc));
       }
-      else if (/\.pdf$/i.test(f.name)) { failed.push(f.name + " (PDFs aren't supported yet)"); continue; }
+      else if (/\.pdf$/i.test(f.name) || f.type === "application/pdf") {
+        b = bookFromText(await parsePdf(await f.arrayBuffer(), (n, t) => { statusEl.textContent = `Reading PDF, page ${n} of ${t}…`; })); title = name;
+      }
       else { b = bookFromText(await f.text()); title = name; }
       if (!b.tokens.length) { failed.push(f.name + " (no text found)"); continue; }
       const r = await saveBook(title, b); added.push(r.id); if (!r.ok) unsaved = true;
@@ -3493,7 +3713,7 @@ async function makeBackup() {
     const b = store.get("pace:bm:" + m.id, null); if (b && b.length) bm[m.id] = b;
     const r = store.get("pace:rd:" + m.id, null); if (r && r.length) rd[m.id] = r;
   }
-  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, stats, settings, wpm, fs, badges: store.get("pace:badges", {}) };
+  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, stats, settings, wpm, fs, badges: store.get("pace:badges", {}), wk: store.get("pace:wk", {}) };
 }
 async function prepareBackup() {
   const btn = $("#backupBtn"); backupFile = null; btn.disabled = true; btn.textContent = "Preparing…";
@@ -3531,6 +3751,7 @@ async function restoreBackup(file) {
     if (Array.isArray(s2.timed)) { const seen = new Set((stats.timed || []).map(x => x.d + "|" + x.wpm)); stats.timed = (stats.timed || []).concat(s2.timed.filter(x => !seen.has(x.d + "|" + x.wpm))).sort((a, b) => a.d < b.d ? -1 : 1).slice(-30); }
     store.set("pace:stats", stats); checkSpeed(true);
     { const hb = store.get("pace:badges", {}); Object.entries(data.badges || {}).forEach(([id, dte]) => { if (!hb[id] || dte < hb[id]) hb[id] = dte; }); store.set("pace:badges", hb); }
+    { const hw = store.get("pace:wk", {}); Object.entries(data.wk || {}).forEach(([k, v]) => { if (!hw[k]) hw[k] = v; }); store.set("pace:wk", hw); }
     if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
@@ -3600,6 +3821,7 @@ $("#pastePrint").onclick = async () => {
   } catch (e) {}
   $("#pasteDlg").close(); setTimeout(() => window.print(), 100);
 };
+$("#repBtn").onclick = () => { buildReport(+$("#repRange").value); setTimeout(() => window.print(), 100); };
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
