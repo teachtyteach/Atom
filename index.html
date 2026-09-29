@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pace Reader</title>
-<meta name="theme-color" content="#141311">
+<meta name="theme-color" content="#f6f4ef">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Pace">
@@ -12,48 +12,76 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
-
 <style>
 :root{
   --bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;
   --accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
+  :root:not([data-theme]){
     --bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;
     --accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark;
   }
 }
-:root[data-theme="dark"]{
-  --bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;
-  --accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark;
-}
+:root[data-theme="light"]{--bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;--accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light}
+:root[data-theme="sepia"]{--bg:#f1e6cf;--surface:#f8f0dc;--ink:#3b2f22;--muted:#7a6a55;--line:#dccdae;--accent:#b5341f;--btn:#3b2f22;--btn-ink:#f8f0dc;color-scheme:light}
+:root[data-theme="dark"]{--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
+:root[data-theme="black"]{--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%}
+[hidden]{display:none!important}
+html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-.screen{display:none;min-height:100%;max-width:760px;margin:0 auto;
+.screen{display:none;min-height:100vh;max-width:760px;margin:0 auto;
   padding:max(16px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));gap:14px}
-body[data-screen="library"] #library,body[data-screen="reader"] #reader{display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:12px;min-height:44px}
+body[data-screen="library"] #library,body[data-screen="reader"] #reader,body[data-screen="stats"] #stats{display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:8px;min-height:44px}
 h1{font:600 22px/1.2 Georgia,"Iowan Old Style",serif;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+h2{margin:0;font:600 16px/1.3 system-ui,-apple-system,sans-serif}
+.sect{font:600 13px/1.3 system-ui,sans-serif;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin:6px 0 0}
 .brand{font-size:30px}
 .brand span{color:var(--accent)}
 .lede{margin:0;color:var(--muted)}
-textarea{width:100%;min-height:38vh;flex:1;resize:vertical;padding:14px;border:1px solid var(--line);border-radius:12px;
-  background:var(--surface);color:var(--ink);font:17px/1.55 Georgia,"Iowan Old Style",serif}
-textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+textarea,input[type=text],input[type=date]{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+textarea{min-height:34vh;resize:vertical;font:17px/1.55 Georgia,"Iowan Old Style",serif}
+textarea:focus,select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 button,.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);
   font:500 15px system-ui,-apple-system,sans-serif;padding:10px 18px;border-radius:999px;cursor:pointer;
   min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 button:active,.btn:active{transform:scale(.97)}
 .primary{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.danger{color:var(--accent)}
 .icon{width:44px;padding:0;flex:none}
+.icon.on svg path{fill:currentColor}
 .status{color:var(--muted);font-size:14px;min-height:1.5em;margin:0}
 .fine{color:var(--muted);font-size:13px;margin:0}
-select{width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);
+select{min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);
   background:var(--surface);color:var(--ink);font:15px system-ui,sans-serif}
-.stage{position:relative;height:clamp(170px,32vh,280px);display:flex;align-items:center;cursor:pointer;
+svg{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+
+/* library */
+.books{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.book{display:flex;gap:8px;align-items:stretch}
+.bk-main{flex:1;min-width:0;text-align:left;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;
+  align-items:stretch;justify-content:flex-start;gap:4px;min-height:76px}
+.bk-title{font:600 17px/1.25 Georgia,"Iowan Old Style",serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bk-meta,.bk-goal{font-size:13px;color:var(--muted)}
+.bk-goal{color:var(--ink)}
+.bar,.chbar{display:block;height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:4px}
+.bar i,.chbar i{display:block;height:100%;width:0;background:var(--accent)}
+.bk-del{align-self:center;border-color:transparent;background:transparent;color:var(--muted)}
+.empty{color:var(--muted);text-align:center;margin:18px 0}
+
+/* reader */
+.chapter{position:relative}
+.chapter select{display:block;width:100%;appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:6px;
+  padding:8px 24px 8px 0;min-height:40px;font:600 13px system-ui,sans-serif;color:var(--muted);letter-spacing:.02em;text-overflow:ellipsis}
+.chapter::after{content:"";position:absolute;right:4px;top:19px;width:7px;height:7px;border-right:2px solid var(--muted);
+  border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.chbar{margin:0 0 4px;height:3px}
+.stage{position:relative;height:clamp(170px,30vh,280px);display:flex;align-items:center;cursor:pointer;
   user-select:none;-webkit-user-select:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .stage::before,.stage::after{content:"";position:absolute;left:50%;width:2px;height:16px;background:var(--muted);transform:translateX(-1px);opacity:.6}
 .stage::before{top:0}.stage::after{bottom:0}
@@ -73,38 +101,111 @@ body.playing .controls{opacity:.35}
 body.playing .controls:hover,body.playing .controls:focus-within{opacity:1}
 .transport{display:flex;justify-content:center;gap:20px;align-items:center}
 .play{width:68px;height:68px}
-.setting{display:grid;grid-template-columns:3.6em 1fr 4.6em;align-items:center;gap:10px;color:var(--muted);font-size:14px}
-.setting b{color:var(--ink);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.setting{display:grid;grid-template-columns:3.6em 1fr 5.8em;align-items:center;gap:10px;color:var(--muted);font-size:14px}
+.setting b{color:var(--ink);font-weight:600;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .stats{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:4px 12px;font-variant-numeric:tabular-nums}
 @media (hover:none){.keys{display:none}}
-svg{display:block}
+
+/* stats screen */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:2px}
+.tile span{font-size:13px;color:var(--muted)}
+.tile b{font:600 28px/1.15 system-ui,-apple-system,sans-serif}
+.tile b small{font:500 14px system-ui,sans-serif;color:var(--muted)}
+#chartCap{margin-top:10px}
+.plot{position:relative;height:132px;margin-top:22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tick{position:absolute;left:0;top:-19px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cols{position:absolute;inset:0;display:grid;grid-template-columns:repeat(7,1fr)}
+.col{all:unset;box-sizing:border-box;cursor:pointer;position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.col:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:6px}
+.barv{display:block;width:min(24px,64%);border-radius:4px 4px 0 0;background:color-mix(in srgb,var(--accent) 55%,var(--surface))}
+.col.today .barv,.col.sel .barv,.col:hover .barv{background:var(--accent)}
+.val{position:absolute;left:0;right:0;text-align:center;font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums;pointer-events:none}
+.days{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
+.days .today{color:var(--ink);font-weight:600}
+details{margin-top:8px}
+summary{color:var(--muted);font-size:13px;cursor:pointer;min-height:32px;display:flex;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+td:not(:first-child),th:not(:first-child){text-align:right}
+.life{display:grid;gap:8px}
+.life div{display:flex;justify-content:space-between;gap:12px}
+.life span{color:var(--muted)}
+
+/* sheets */
+dialog{border:none;padding:0;background:var(--surface);color:var(--ink);width:min(560px,100vw);max-width:100vw;
+  margin:auto auto 0;border-radius:18px 18px 0 0;max-height:88vh}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.sheet{padding:16px 16px max(20px,env(safe-area-inset-bottom));display:grid;grid-template-columns:minmax(0,1fr);gap:12px;overflow:auto;max-height:88vh}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.bm{display:flex;gap:6px;align-items:stretch}
+.bm-go{flex:1;min-width:0;text-align:left;border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:2px}
+.bm-go b{font:500 15px/1.35 Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bm-go span{font-size:12px;color:var(--muted)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button[aria-pressed=true]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.setrow input[type=checkbox]{width:24px;height:24px;accent-color:var(--accent)}
+.goalrow{display:flex;gap:8px;align-items:center}
+.goalrow input{flex:1;min-width:0;width:auto}
+#toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--btn);
+  color:var(--btn-ink);padding:10px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;
+  font-size:14px;z-index:99;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
 <body data-screen="library">
 
+<!-- LIBRARY -->
 <section id="library" class="screen">
   <header>
     <h1 class="brand">Pace<span>.</span></h1>
-    <button class="icon theme" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+    <button class="icon" id="statsBtn" aria-label="Stats"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 20V11M12 20V5M18 20v-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <button class="icon" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h9M19 7h1M4 17h1M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </header>
-  <p class="lede">Paste text or open a file. Everything runs on this device. No internet needed.</p>
-  <textarea id="paste" placeholder="Paste an article, chapter, or notes…"></textarea>
   <div class="row">
-    <button class="primary" id="startPaste">Read pasted text</button>
-    <label class="btn">Open file<input type="file" id="file" accept=".txt,.md,.epub,.html,.htm,.xhtml,text/plain,application/epub+zip" hidden></label>
+    <label class="btn primary">Add book<input type="file" id="file" multiple accept=".txt,.md,.epub,.html,.htm,.xhtml,text/plain,application/epub+zip" hidden></label>
+    <button id="pasteBtn">Paste text</button>
     <button id="sample">Try a sample</button>
   </div>
-  <p class="status" id="status"></p>
-  <p class="fine">Opens .epub, .txt, .md and .html files. Your place in each book is saved on this device.</p>
+  <p class="status" id="status" role="status"></p>
+  <div id="continue"></div>
+  <h2 class="sect" id="libHead">Library</h2>
+  <ul id="books" class="books"></ul>
+  <p class="empty" id="empty">No books yet. Add an EPUB or paste some text.</p>
+  <p class="fine">Everything stays on this device. No internet needed. Books, bookmarks and stats are saved here.</p>
 </section>
 
+<!-- STATS -->
+<section id="stats" class="screen">
+  <header>
+    <button class="icon" id="statsBack" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1>Stats</h1>
+  </header>
+  <div class="tiles" id="tiles"></div>
+  <div class="card">
+    <h2>Words read, last 7 days</h2>
+    <div id="chart"></div>
+    <p class="fine" id="chartCap" aria-live="polite"></p>
+    <details><summary>Show as table</summary><div id="chartTable"></div></details>
+  </div>
+  <div class="card life" id="life"></div>
+</section>
+
+<!-- READER -->
 <section id="reader" class="screen">
   <header>
     <button class="icon" id="back" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <h1 id="title"></h1>
-    <button class="icon theme" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+    <button class="icon" id="bmBtn" aria-label="Bookmark this spot"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h10v16l-5-3.6L7 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+    <button class="icon" id="menuBtn" aria-label="Bookmarks and goal"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
   </header>
-  <select id="chapters" hidden aria-label="Chapter"></select>
+  <div id="chapterBox" hidden>
+    <div class="chapter"><select id="chapters" aria-label="Chapter"></select></div>
+    <div class="chbar" aria-hidden="true"><i id="chfill"></i></div>
+  </div>
   <div class="stage" id="stage">
     <div class="word"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
     <div class="hint">Tap or press Space to play</div>
@@ -124,17 +225,114 @@ svg{display:block}
   </div>
 </section>
 
+<!-- SHEETS -->
+<dialog id="pasteDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Paste text</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <input type="text" id="pasteTitle" placeholder="Title (optional)" autocomplete="off">
+  <textarea id="paste" placeholder="Paste an article, chapter, or notes…"></textarea>
+  <button class="primary" id="pasteGo">Add and read</button>
+</div></dialog>
+
+<dialog id="menuDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Bookmarks</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <button class="primary" id="addBm">Bookmark this spot</button>
+  <ul class="list" id="bmList"></ul>
+  <p class="fine" id="bmEmpty">No bookmarks yet.</p>
+  <h2>Reading goal</h2>
+  <div class="goalrow"><input type="date" id="goalDate" aria-label="Finish by"><button id="goalClear">Clear</button></div>
+  <p class="fine" id="goalInfo">Pick a finish date and Pace works out how much to read each day.</p>
+  <button id="openSettings">Settings…</button>
+</div></dialog>
+
+<dialog id="setDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Settings</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <h2>Theme</h2>
+  <div class="seg" id="themeSeg">
+    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button>
+  </div>
+  <label class="setrow">Back up when you resume
+    <select id="rewindSel"><option value="0">Off</option><option value="3">3 words</option><option value="5">5 words</option><option value="10">10 words</option></select>
+  </label>
+  <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
+  <button class="danger" id="resetStats">Reset stats</button>
+</div></dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
 <script>
 (() => {
 "use strict";
 const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 };
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+const fmt = n => Math.round(n).toLocaleString();
+const fmtMin = m => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`;
+const fmtDur = ms => fmtMin(Math.max(0, Math.round(ms / 60000)));
+const todayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const keyToDate = k => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+function daysBack(n) { const out = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(todayKey(d)); } return out; }
 
-const ICON_PLAY = '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
-const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>';
+let toastTimer = null;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
+
+/* ---------- settings + themes ---------- */
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true }, store.get("pace:settings", {}));
+if (!["auto", "light", "sepia", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
+const saveSettings = () => store.set("pace:settings", settings);
+const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", dark: "#141311", black: "#000000" };
+function applyTheme() {
+  const root = document.documentElement;
+  if (settings.theme === "auto") delete root.dataset.theme; else root.dataset.theme = settings.theme;
+  let key = settings.theme;
+  if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
+}
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
+applyTheme();
+
+/* ---------- saved books (IndexedDB, with a memory fallback) ---------- */
+const mem = new Map();
+let dbp = null;
+function openDb() {
+  if (dbp) return dbp;
+  dbp = new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open("pace", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("books", { keyPath: "id" });
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+  return dbp;
+}
+async function dbOp(mode, fn) {
+  const db = await openDb();
+  return new Promise((res, rej) => {
+    const tx = db.transaction("books", mode);
+    const req = fn(tx.objectStore("books"));
+    tx.oncomplete = () => res(req && req.result);
+    tx.onerror = tx.onabort = () => rej(tx.error);
+  });
+}
+async function dbPut(rec) { try { await dbOp("readwrite", s => s.put(rec)); mem.delete(rec.id); return true; } catch (e) { mem.set(rec.id, rec); return false; } }
+async function dbGet(id) { if (mem.has(id)) return mem.get(id); try { return await dbOp("readonly", s => s.get(id)); } catch (e) { return null; } }
+async function dbDel(id) { mem.delete(id); try { await dbOp("readwrite", s => s.delete(id)); } catch (e) {} }
+
+let lib = store.get("pace:lib", []);
+const saveLib = () => store.set("pace:lib", lib);
+
+/* ---------- stats storage ---------- */
+let stats = store.get("pace:stats", null) || { days: {}, books: {}, finished: 0 };
+stats.days = stats.days || {}; stats.books = stats.books || {};
+(function prune() {
+  const keys = Object.keys(stats.days).sort();
+  if (keys.length > 500) keys.slice(0, keys.length - 500).forEach(k => delete stats.days[k]);
+})();
 
 const SAMPLE = `Speed reading with RSVP works by holding your eyes still. Instead of sweeping across a line of text, you watch a single spot while the words come to you, one after another.
 
@@ -144,12 +342,19 @@ Notice that the reader slows down slightly at commas, pauses a little longer at 
 
 Try nudging the speed up by fifty words per minute at a time. Most people are comfortable somewhere between three hundred and five hundred. Tap the word to pause, and you will see the surrounding text so you can find your place.`;
 
+/* ---------- reader state ---------- */
 let tokens = [], chapters = [], cur = 0, playing = false, timer = null, wakeLock = null;
 let wpm = store.get("pace:wpm", 350), fs = store.get("pace:fs", 44);
-let docKey = "", playedMs = 0, playStart = 0, sessionWords = 0;
+let bookId = "", docKey = "", bms = [];
+let playedMs = 0, playStart = 0, sessionWords = 0;
+let hasPaused = false, noRewind = false, skipCount = 0, stepIdx = 0, flushT = 0, wordsSince = 0;
+const RAMP = 30;
 
 const L = $("#L"), P = $("#P"), R = $("#R"), prog = $("#prog"), ctxEl = $("#ctx");
 const playBtn = $("#playBtn"), chapSel = $("#chapters"), statusEl = $("#status");
+const ICON_PLAY = '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>';
+const ICON_TRASH = '<svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 7h14M9 7V4.5h6V7M7 7l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 /* ---------- text processing ---------- */
 function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
@@ -162,16 +367,22 @@ function splitLong(w) {
   return out;
 }
 
-function addText(text) {
-  text = text.replace(/\r/g, "").replace(/\u00a0/g, " ");
+function addText(text, out) {
+  text = text.replace(/\r/g, "").replace(/ /g, " ");
   const paras = /\n\s*\n/.test(text) ? text.split(/\n\s*\n/) : text.split(/\n/);
   for (const p of paras) {
     const ws = p.trim().split(/\s+/).filter(Boolean);
     ws.forEach((w, i) => {
       const pieces = splitLong(w);
-      pieces.forEach((pc, j) => tokens.push({ w: pc, end: i === ws.length - 1 && j === pieces.length - 1 }));
+      pieces.forEach((pc, j) => out.push({ w: pc, end: i === ws.length - 1 && j === pieces.length - 1 }));
     });
   }
+}
+
+function tokensFromText(text) {
+  const out = [], re = /(\S+)([ \n])/g; let m;
+  while ((m = re.exec(text))) out.push({ w: m[1], end: m[2] === "\n" });
+  return out;
 }
 
 function pivotOf(w) {
@@ -192,11 +403,15 @@ function delayFor(t) {
   return d;
 }
 
-function htmlToText(doc) {
+function htmlToText(doc, marks) {
   const b = doc.body; if (!b) return "";
   b.querySelectorAll("script,style,nav").forEach(e => e.remove());
   b.querySelectorAll("br").forEach(e => e.replaceWith("\n"));
   b.querySelectorAll("p,div,h1,h2,h3,h4,h5,h6,li,blockquote,section,tr,pre,dt,dd,figcaption").forEach(e => e.append("\n\n"));
+  if (marks) for (const m of marks) {
+    const el2 = doc.getElementById(m.frag) || doc.getElementsByName(m.frag)[0];
+    if (el2 && el2 !== b && b.contains(el2)) el2.before(`\n\u0001${m.id}\u0001\n`);
+  }
   return b.textContent;
 }
 
@@ -240,32 +455,130 @@ function resolvePath(dir, href) {
   return parts.join("/");
 }
 
+const dirOf = p => p.includes("/") ? p.slice(0, p.lastIndexOf("/")) : "";
+const cleanTitle = t => t.replace(/\s+/g, " ").trim().slice(0, 80);
+
+async function readToc(z, dp, dir, items, ncxId) {
+  const out = [];
+  const navItem = Object.values(items).find(it => /(^|\s)nav(\s|$)/.test(it.props));
+  if (navItem) {
+    const navPath = resolvePath(dir, navItem.href), navDir = dirOf(navPath);
+    const html = await z.text(navPath);
+    if (html) {
+      const doc = dp.parseFromString(html, "text/html");
+      const navEl = doc.querySelector('nav[epub\\:type~="toc"]') || doc.querySelector("nav");
+      const walk = (ol, depth) => {
+        for (const li of ol.children) {
+          if (li.tagName !== "LI") continue;
+          let a = null, sub = null;
+          for (const c of li.children) {
+            if (!a && (c.tagName === "A" || c.tagName === "SPAN")) a = c;
+            if (!sub && c.tagName === "OL") sub = c;
+          }
+          const href = a && a.getAttribute("href");
+          if (href) {
+            const [p, f] = href.split("#");
+            if (p) out.push({ title: cleanTitle(a.textContent), path: resolvePath(navDir, p), frag: f ? decodeURIComponent(f) : "", depth });
+          }
+          if (sub) walk(sub, depth + (href ? 1 : 0));
+        }
+      };
+      const ol = navEl && navEl.querySelector("ol");
+      if (ol) walk(ol, 0);
+    }
+  }
+  if (out.length) return out;
+  const ncx = items[ncxId] || Object.values(items).find(it => it.type === "application/x-dtbncx+xml");
+  if (ncx) {
+    const ncxPath = resolvePath(dir, ncx.href), ncxDir = dirOf(ncxPath);
+    const xml = await z.text(ncxPath);
+    if (xml) {
+      const doc = dp.parseFromString(xml, "application/xml");
+      const kid = (e, name) => Array.from(e.children).find(c => c.localName === name);
+      const walk = (parent, depth) => {
+        for (const np of parent.children) {
+          if (np.localName !== "navPoint") continue;
+          const label = kid(np, "navLabel"), content = kid(np, "content");
+          const src = content && content.getAttribute("src");
+          if (src && label) {
+            const [p, f] = src.split("#");
+            if (p) out.push({ title: cleanTitle(label.textContent), path: resolvePath(ncxDir, p), frag: f ? decodeURIComponent(f) : "", depth });
+          }
+          walk(np, depth + 1);
+        }
+      };
+      const map = doc.getElementsByTagNameNS("*", "navMap")[0];
+      if (map) walk(map, 0);
+    }
+  }
+  return out;
+}
+
 async function parseEpub(buf) {
   const z = await unzip(buf), dp = new DOMParser();
   const containerXml = await z.text("META-INF/container.xml");
   if (!containerXml) throw new Error("EPUB is missing its container file");
   const opfPath = dp.parseFromString(containerXml, "application/xml").getElementsByTagNameNS("*", "rootfile")[0].getAttribute("full-path");
   const opf = dp.parseFromString(await z.text(opfPath), "application/xml");
-  const dir = opfPath.includes("/") ? opfPath.slice(0, opfPath.lastIndexOf("/")) : "";
+  const dir = dirOf(opfPath);
   const titleEl = opf.getElementsByTagNameNS("*", "title")[0];
-  const manifest = {};
-  for (const it of opf.getElementsByTagNameNS("*", "item")) manifest[it.getAttribute("id")] = it.getAttribute("href");
+  const items = {};
+  for (const it of opf.getElementsByTagNameNS("*", "item"))
+    items[it.getAttribute("id")] = { href: it.getAttribute("href"), props: it.getAttribute("properties") || "", type: it.getAttribute("media-type") || "" };
+  const spineEl = opf.getElementsByTagNameNS("*", "spine")[0];
+  let toc = [];
+  try { toc = await readToc(z, dp, dir, items, spineEl && spineEl.getAttribute("toc")); } catch (e) { toc = []; }
   const sections = [];
   let n = 0;
   for (const ref of opf.getElementsByTagNameNS("*", "itemref")) {
-    const href = manifest[ref.getAttribute("idref")]; if (!href) continue;
-    const html = await z.text(resolvePath(dir, href)); if (!html) continue;
+    const it = items[ref.getAttribute("idref")]; if (!it || !it.href) continue;
+    const path = resolvePath(dir, it.href);
+    const html = await z.text(path); if (!html) continue;
     const doc = dp.parseFromString(html, "text/html");
     const h = doc.querySelector("h1,h2,h3");
-    const heading = h ? h.textContent.replace(/\s+/g, " ").trim().slice(0, 70) : "";
-    sections.push({ title: heading || `Section ${++n}`, text: htmlToText(doc) });
+    const heading = h ? cleanTitle(h.textContent) : "";
+    const marks = [];
+    toc.forEach((t, i) => { if (t.path === path && t.frag) marks.push({ id: i, frag: t.frag }); });
+    sections.push({ title: heading || `Section ${++n}`, path, text: htmlToText(doc, marks) });
   }
-  return { title: titleEl ? titleEl.textContent.trim() : "", sections };
+  return { title: titleEl ? titleEl.textContent.trim() : "", sections, toc };
+}
+
+function bookFromEpub(book) {
+  const out = [], tocStart = {}, byPath = {}, fallback = [];
+  book.toc.forEach((t, i) => { (byPath[t.path] = byPath[t.path] || []).push(i); });
+  for (const s of book.sections) {
+    const start = out.length, mine = byPath[s.path] || [];
+    mine.forEach(i => { if (!book.toc[i].frag) tocStart[i] = start; });
+    s.text.split(/\u0001(\d+)\u0001/).forEach((part, k) => { if (k % 2 === 0) addText(part, out); else tocStart[+part] = out.length; });
+    mine.forEach(i => { if (tocStart[i] === undefined) tocStart[i] = start; });
+    if (out.length > start) fallback.push({ title: s.title, start, depth: 0 });
+  }
+  let list = [];
+  book.toc.forEach((t, i) => {
+    if (t.title && tocStart[i] !== undefined && tocStart[i] < out.length) list.push({ title: t.title, start: tocStart[i], depth: t.depth });
+  });
+  list.sort((a, b) => a.start - b.start);
+  list = list.filter((c, i) => !(i && c.start === list[i - 1].start && c.title === list[i - 1].title));
+  if (list.length && list[0].start > 0) list.unshift({ title: "Beginning", start: 0, depth: 0 });
+  return { tokens: out, chapters: list.length ? list : fallback };
+}
+function bookFromText(text) { const out = []; addText(text, out); return { tokens: out, chapters: [] }; }
+
+async function saveBook(title, b) {
+  if (b.tokens.length) b.tokens[b.tokens.length - 1].end = true;
+  const id = hash(title + "|" + b.tokens.length + "|" + b.tokens.slice(0, 60).map(t => t.w).join(" "));
+  const rec = { id, title, text: b.tokens.map(t => t.w + (t.end ? "\n" : " ")).join(""), chapters: b.chapters, total: b.tokens.length };
+  const ok = await dbPut(rec);
+  let m = lib.find(x => x.id === id);
+  if (!m) { m = { id, title, added: Date.now(), opened: 0 }; lib.push(m); }
+  m.title = title; m.total = rec.total; m.nch = b.chapters.length;
+  saveLib();
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  return { id, ok };
 }
 
 /* ---------- reader ---------- */
-function fmtMin(m) { return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`; }
-
 function updateStats() {
   const n = tokens.length;
   const pct = n > 1 ? Math.floor(cur / (n - 1) * 100) : 100;
@@ -277,12 +590,22 @@ function updateStats() {
     ? `${sessionWords.toLocaleString()} words this session · ${Math.round(sessionWords / (ms / 60000))} wpm actual` : "";
 }
 
+function chapterIndexAt(i) {
+  if (!chapters.length) return -1;
+  let lo = 0, hi = chapters.length - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (chapters[mid].start <= i) lo = mid; else hi = mid - 1; }
+  return lo;
+}
+
 function syncChapter() {
   if (chapters.length < 2) return;
-  let lo = 0, hi = chapters.length - 1;
-  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (chapters[mid].start <= cur) lo = mid; else hi = mid - 1; }
+  const lo = chapterIndexAt(cur);
   if (chapSel.selectedIndex !== lo) chapSel.selectedIndex = lo;
+  const start = chapters[lo].start, end = lo + 1 < chapters.length ? chapters[lo + 1].start : tokens.length;
+  $("#chfill").style.width = Math.max(0, Math.min(100, (cur - start) / Math.max(1, end - start) * 100)) + "%";
 }
+
+function updateBmIcon() { $("#bmBtn").classList.toggle("on", bms.some(b => Math.abs(b.i - cur) <= 10)); }
 
 function render() {
   const t = tokens[cur];
@@ -290,7 +613,7 @@ function render() {
   const p = pivotOf(t.w);
   L.textContent = t.w.slice(0, p); P.textContent = t.w.charAt(p); R.textContent = t.w.slice(p + 1);
   prog.value = cur;
-  updateStats(); syncChapter();
+  updateStats(); syncChapter(); updateBmIcon();
 }
 
 function showContext() {
@@ -307,20 +630,51 @@ function showContext() {
   ctxEl.replaceChildren(frag);
 }
 
+/* stats bookkeeping */
+function commitStats(ms, w) {
+  if (!w && !ms) return;
+  const k = todayKey();
+  const d = stats.days[k] || (stats.days[k] = { w: 0, ms: 0 });
+  d.w += w; d.ms += ms;
+  if (bookId && w) { const b = stats.books[bookId] || (stats.books[bookId] = {}); b[k] = (b[k] || 0) + w; }
+  store.set("pace:stats", stats);
+}
+function flush() {
+  const now = performance.now();
+  const ms = playing ? now - flushT : 0;
+  flushT = now;
+  const w = wordsSince; wordsSince = 0;
+  commitStats(ms, w);
+}
+function curMeta() { return lib.find(x => x.id === bookId); }
+function finishBook() {
+  const m = curMeta();
+  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); }
+}
+
 function step() {
   if (!playing) return;
   render();
+  const k = stepIdx++;
+  const f = settings.ramp ? Math.max(0.55 + 0.45 * Math.min(1, k / RAMP), Math.min(1, 120 / wpm)) : 1;
   timer = setTimeout(() => {
     if (!playing) return;
-    if (cur < tokens.length - 1) { cur++; sessionWords++; step(); }
-    else { pause(); ctxEl.innerHTML = '<p class="done">Finished. Nice work.</p>'; }
-  }, delayFor(tokens[cur]));
+    if (cur < tokens.length - 1) {
+      cur++;
+      if (skipCount > 0) skipCount--; else { sessionWords++; wordsSince++; }
+      if (wordsSince >= 40) { flush(); save(); }
+      step();
+    } else { finishBook(); pause(); ctxEl.innerHTML = '<p class="done">Finished. Nice work.</p>'; }
+  }, delayFor(tokens[cur]) / f);
 }
 
 async function play() {
   if (!tokens.length || playing) return;
-  if (cur >= tokens.length - 1) cur = 0;
-  playing = true; playStart = performance.now();
+  if (cur >= tokens.length - 1) { cur = 0; noRewind = true; }
+  if (!noRewind && settings.rewind > 0 && hasPaused && cur > 0) { const k = Math.min(settings.rewind, cur); cur -= k; skipCount = k; }
+  else skipCount = 0;
+  noRewind = false;
+  playing = true; playStart = performance.now(); flushT = playStart; stepIdx = 0;
   document.body.classList.add("playing");
   playBtn.innerHTML = ICON_PAUSE; playBtn.setAttribute("aria-label", "Pause");
   step();
@@ -329,11 +683,13 @@ async function play() {
 
 function pause() {
   if (!playing) return;
+  flush();
   playing = false; clearTimeout(timer);
   playedMs += performance.now() - playStart;
   document.body.classList.remove("playing");
   playBtn.innerHTML = ICON_PLAY; playBtn.setAttribute("aria-label", "Play");
   try { if (wakeLock) wakeLock.release(); } catch (e) {} wakeLock = null;
+  hasPaused = true; noRewind = false;
   save(); render(); showContext();
 }
 
@@ -342,7 +698,8 @@ function toggle() { playing ? pause() : play(); }
 function seek(i) {
   if (!tokens.length) return;
   cur = Math.max(0, Math.min(tokens.length - 1, i));
-  if (playing) { clearTimeout(timer); step(); } else { render(); showContext(); save(); }
+  noRewind = true; skipCount = 0;
+  if (playing) { clearTimeout(timer); stepIdx = 0; step(); } else { render(); showContext(); save(); }
 }
 
 function save() { if (docKey) store.set(docKey, cur); }
@@ -350,7 +707,7 @@ function save() { if (docKey) store.set(docKey, cur); }
 function setWpm(v) {
   wpm = Math.max(100, Math.min(1000, Math.round(v / 25) * 25));
   $("#wpm").value = wpm; $("#wpmVal").textContent = `${wpm} wpm`;
-  store.set("pace:wpm", wpm); updateStats();
+  store.set("pace:wpm", wpm); if (tokens.length) updateStats();
 }
 
 function setFs(v) {
@@ -359,64 +716,259 @@ function setFs(v) {
   store.set("pace:fs", fs);
 }
 
-function loadDoc(title, build) {
-  tokens = []; chapters = [];
-  build();
-  if (!tokens.length) { statusEl.textContent = "No readable text found in that."; return; }
-  docKey = "pace:pos:" + hash(title + "|" + tokens.length + "|" + tokens.slice(0, 60).map(t => t.w).join(" "));
-  cur = Math.min(store.get(docKey, 0), tokens.length - 1);
-  sessionWords = 0; playedMs = 0;
-  prog.max = tokens.length - 1;
-  $("#title").textContent = title || "Untitled";
-  document.title = (title || "Untitled") + " · Pace";
-  chapSel.replaceChildren(...chapters.map((c, i) => new Option(c.title, i)));
-  chapSel.hidden = chapters.length < 2;
-  statusEl.textContent = "";
-  document.body.dataset.screen = "reader";
+function show(name) { document.body.dataset.screen = name; window.scrollTo(0, 0); }
+
+async function openBook(id) {
+  pause();
+  const rec = await dbGet(id);
+  if (!rec) { toast("That book's saved text is missing. Remove it and add it again."); return; }
+  tokens = tokensFromText(rec.text); chapters = rec.chapters || [];
+  bookId = id; docKey = "pace:pos:" + id;
+  cur = Math.max(0, Math.min(store.get(docKey, 0), tokens.length - 1));
+  bms = store.get("pace:bm:" + id, []);
+  sessionWords = 0; playedMs = 0; skipCount = 0; noRewind = false; hasPaused = cur > 0; wordsSince = 0;
+  prog.max = Math.max(0, tokens.length - 1);
+  $("#title").textContent = rec.title;
+  document.title = rec.title + " · Pace";
+  chapSel.replaceChildren(...chapters.map((c, i) => new Option("  ".repeat(c.depth || 0) + c.title, i)));
+  $("#chapterBox").hidden = chapters.length < 2;
+  const m = curMeta(); if (m) { m.opened = Date.now(); saveLib(); }
   ctxEl.textContent = "";
-  render(); showContext();
+  show("reader"); render(); showContext();
+}
+
+/* ---------- goals ---------- */
+function goalInfo(m, pos) {
+  if (!m || !m.goal) return null;
+  const end = keyToDate(m.goal), now = new Date();
+  const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((end - t0) / 86400000);
+  const remaining = Math.max(0, (m.total || 0) - 1 - pos);
+  const label = end.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  if (!remaining) return { short: `Finished · goal was ${label}`, long: `You finished this book. Your goal was ${label}.` };
+  if (diff < 0) return { short: `Goal passed (${label})`, long: `Your ${label} goal has passed. ${fmt(remaining)} words left. Pick a new date if you like.` };
+  const days = diff + 1;
+  const done = (stats.books[m.id] || {})[todayKey()] || 0;
+  const perDay = Math.max(1, Math.ceil((remaining + done) / days));
+  const mins = Math.max(1, Math.round(perDay / wpm));
+  const today = done >= perDay ? "Today's target is done." : `Today: ${fmt(done)} of ${fmt(perDay)} words.`;
+  return {
+    short: `Due ${label} · ${fmt(perDay)} words/day`,
+    long: `Finish by ${label}. ${days} day${days > 1 ? "s" : ""} left, counting today. About ${fmt(perDay)} words a day, roughly ${mins} min at ${wpm} wpm. ${today}`
+  };
+}
+
+/* ---------- bookmarks ---------- */
+function setBms(a) { bms = a; store.set("pace:bm:" + bookId, a); updateBmIcon(); }
+function snippet(i) { return tokens.slice(i, i + 8).map(t => t.w).join(" "); }
+function chapterTitleAt(i) { const k = chapterIndexAt(i); return k >= 0 ? chapters[k].title : ""; }
+function toggleBookmark() {
+  const near = bms.findIndex(b => Math.abs(b.i - cur) <= 10);
+  if (near >= 0) { const a = bms.slice(); a.splice(near, 1); setBms(a); toast("Bookmark removed"); }
+  else { setBms(bms.concat({ i: cur, s: snippet(cur), c: chapterTitleAt(cur), t: Date.now() }).sort((a, b) => a.i - b.i)); toast("Bookmarked"); }
+}
+function renderBookmarks() {
+  const ul = $("#bmList"); ul.replaceChildren();
+  $("#bmEmpty").hidden = bms.length > 0;
+  bms.forEach(b => {
+    const li = el("li", "bm");
+    const go = el("button", "bm-go"); go.type = "button";
+    go.append(el("b", "", "…" + b.s + "…"));
+    const pct = tokens.length > 1 ? Math.floor(b.i / (tokens.length - 1) * 100) : 0;
+    go.append(el("span", "", (b.c ? b.c + " · " : "") + pct + "%"));
+    go.onclick = () => { $("#menuDlg").close(); seek(b.i); };
+    const del = el("button", "icon"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Delete bookmark");
+    del.onclick = () => { setBms(bms.filter(x => x !== b)); renderBookmarks(); };
+    li.append(go, del); ul.append(li);
+  });
+}
+function renderGoal() {
+  const m = curMeta();
+  $("#goalDate").min = todayKey();
+  $("#goalDate").value = (m && m.goal) || "";
+  const g = goalInfo(m, cur);
+  $("#goalInfo").textContent = g ? g.long : "Pick a finish date and Pace works out how much to read each day.";
+}
+function openMenu() { pause(); renderBookmarks(); renderGoal(); $("#menuDlg").showModal(); }
+
+/* ---------- settings sheet ---------- */
+function syncSettingsUI() {
+  $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
+  $("#rewindSel").value = String(settings.rewind);
+  $("#rampChk").checked = !!settings.ramp;
+}
+function openSettings() { syncSettingsUI(); $("#setDlg").showModal(); }
+
+/* ---------- library screen ---------- */
+function bookItem(m, featured) {
+  const pos = store.get("pace:pos:" + m.id, 0), total = m.total || 0;
+  const pct = total > 1 ? Math.min(100, Math.floor(pos / (total - 1) * 100)) : 0;
+  const left = Math.max(0, total - 1 - pos);
+  const li = el("li", "book");
+  const main = el("button", "bk-main"); main.type = "button";
+  main.append(el("span", "bk-title", m.title));
+  main.append(el("span", "bk-meta", left ? `${pct}% · ~${fmtMin(Math.max(1, Math.round(left / wpm)))} left` : "Finished"));
+  const g = goalInfo(m, pos); if (g) main.append(el("span", "bk-goal", g.short));
+  const bar = el("span", "bar"), fill = document.createElement("i"); fill.style.width = pct + "%"; bar.append(fill); main.append(bar);
+  main.onclick = () => openBook(m.id);
+  const del = el("button", "icon bk-del"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title);
+  del.onclick = () => removeBook(m);
+  li.append(main, del);
+  return li;
+}
+function renderLibrary() {
+  const sorted = lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
+  const cont = $("#continue"), list = $("#books");
+  cont.replaceChildren(); list.replaceChildren();
+  $("#empty").hidden = sorted.length > 0;
+  $("#libHead").hidden = sorted.length < 2;
+  if (sorted.length) {
+    const ul = el("ul", "books");
+    cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), ul);
+    ul.append(bookItem(sorted[0], true));
+  }
+  sorted.slice(1).forEach(m => list.append(bookItem(m)));
+}
+async function removeBook(m) {
+  if (!confirm(`Remove "${m.title}" from your library? Its bookmarks go too.`)) return;
+  lib = lib.filter(x => x.id !== m.id); saveLib();
+  await dbDel(m.id);
+  store.del("pace:pos:" + m.id); store.del("pace:bm:" + m.id);
+  delete stats.books[m.id]; store.set("pace:stats", stats);
+  renderLibrary();
+}
+
+/* ---------- stats screen ---------- */
+function niceMax(m) {
+  const pow = Math.pow(10, Math.floor(Math.log10(Math.max(1, m))));
+  for (const c of [1, 2, 5, 10]) if (c * pow >= m) return c * pow;
+  return 10 * pow;
+}
+function wpmOf(w, ms) { return ms >= 10000 && w > 0 ? Math.round(w / (ms / 60000)) : 0; }
+
+function renderStats() {
+  const keys = daysBack(7);
+  const rows = keys.map(k => {
+    const d = stats.days[k] || { w: 0, ms: 0 }, dt = keyToDate(k);
+    return { k, w: d.w, ms: d.ms, letter: dt.toLocaleDateString(undefined, { weekday: "narrow" }),
+             full: dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) };
+  });
+  const week = rows.reduce((s, r) => s + r.w, 0), weekMs = rows.reduce((s, r) => s + r.ms, 0);
+  const today = rows[rows.length - 1];
+  let streak = 0; const d = new Date();
+  if (((stats.days[todayKey(d)] || {}).w || 0) < 20) d.setDate(d.getDate() - 1);
+  while (((stats.days[todayKey(d)] || {}).w || 0) >= 20) { streak++; d.setDate(d.getDate() - 1); }
+  const avg = wpmOf(week, weekMs);
+
+  const tiles = $("#tiles"); tiles.replaceChildren();
+  [["Today", fmt(today.w), "words"], ["This week", fmt(week), "words"], ["Streak", String(streak), streak === 1 ? "day" : "days"], ["Avg speed, 7 days", avg ? String(avg) : "–", avg ? "wpm" : ""]]
+    .forEach(([a, b, u]) => { const t = el("div", "tile"), v = el("b", "", b); if (u) v.append(el("small", "", " " + u)); t.append(el("span", "", a), v); tiles.append(t); });
+
+  const chart = $("#chart"), cap = $("#chartCap"), tbl = $("#chartTable");
+  chart.replaceChildren(); tbl.replaceChildren(); cap.textContent = "";
+  const max = Math.max(...rows.map(r => r.w));
+  if (!max) { chart.append(el("p", "fine", "Nothing yet. Read something and your week shows up here.")); }
+  else {
+    const top = niceMax(max), best = rows.reduce((a, b) => b.w > a.w ? b : a);
+    const plot = el("div", "plot"), cols = el("div", "cols"), days = el("div", "days");
+    plot.append(el("span", "tick", fmt(top)));
+    rows.forEach((r, i) => {
+      const col = el("button", "col" + (i === rows.length - 1 ? " today" : "")); col.type = "button";
+      const wp = wpmOf(r.w, r.ms);
+      const desc = `${r.full}: ${fmt(r.w)} words` + (wp ? `, ${wp} wpm` : "");
+      col.setAttribute("aria-label", desc);
+      const pct = r.w / top * 100;
+      const bar = el("span", "barv"); bar.style.height = r.w ? `max(3px, ${pct}%)` : "0";
+      col.append(bar);
+      if (r.w && (i === rows.length - 1 || r === best)) { const v = el("span", "val", fmt(r.w)); v.style.bottom = `calc(${pct}% + 4px)`; col.append(v); }
+      const pick = () => { cols.querySelectorAll(".sel").forEach(x => x.classList.remove("sel")); col.classList.add("sel"); cap.textContent = desc; };
+      col.onclick = pick; col.onmouseenter = pick; col.onfocus = pick;
+      cols.append(col);
+      days.append(el("span", i === rows.length - 1 ? "today" : "", r.letter));
+    });
+    plot.append(cols); chart.append(plot, days);
+    cap.textContent = `Today: ${fmt(today.w)} words. Tap a bar for details.`;
+    const t = el("table"), head = el("tr");
+    ["Day", "Words", "Speed"].forEach(h => head.append(el("th", "", h))); t.append(head);
+    rows.forEach(r => { const tr = el("tr"); const wp = wpmOf(r.w, r.ms); tr.append(el("td", "", r.full), el("td", "", fmt(r.w)), el("td", "", wp ? wp + " wpm" : "–")); t.append(tr); });
+    tbl.append(t);
+  }
+
+  const all = Object.entries(stats.days);
+  const totW = all.reduce((s, [, v]) => s + v.w, 0), totMs = all.reduce((s, [, v]) => s + v.ms, 0);
+  const bestDay = all.reduce((a, b) => (!a || b[1].w > a[1].w) ? b : a, null);
+  const life = $("#life"); life.replaceChildren();
+  [["Total words read", fmt(totW)], ["Time spent reading", fmtDur(totMs)], ["Books finished", String(stats.finished || 0)],
+   ["Best day", bestDay && bestDay[1].w ? `${fmt(bestDay[1].w)} words · ${keyToDate(bestDay[0]).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : "–"]]
+    .forEach(([a, b]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", b)); life.append(r); });
+}
+
+/* ---------- import ---------- */
+async function importFiles(files) {
+  statusEl.textContent = "Opening…";
+  const added = [], failed = []; let unsaved = false;
+  for (const f of files) {
+    try {
+      const name = f.name.replace(/\.[^.]+$/, "");
+      let title, b;
+      if (/\.epub$/i.test(f.name)) { const book = await parseEpub(await f.arrayBuffer()); title = book.title || name; b = bookFromEpub(book); }
+      else if (/\.(html?|xhtml)$/i.test(f.name)) {
+        const doc = new DOMParser().parseFromString(await f.text(), "text/html");
+        title = doc.title || name; b = bookFromText(htmlToText(doc));
+      }
+      else if (/\.pdf$/i.test(f.name)) { failed.push(f.name + " (PDFs aren't supported yet)"); continue; }
+      else { b = bookFromText(await f.text()); title = name; }
+      if (!b.tokens.length) { failed.push(f.name + " (no text found)"); continue; }
+      const r = await saveBook(title, b); added.push(r.id); if (!r.ok) unsaved = true;
+    } catch (err) { failed.push(f.name + " (" + err.message + ")"); }
+  }
+  statusEl.textContent = failed.length ? "Couldn't add: " + failed.join("; ") : "";
+  renderLibrary();
+  if (unsaved) toast("Couldn't save for later. This book will vanish when you close the app.");
+  if (added.length === 1 && !failed.length) openBook(added[0]);
+  else if (added.length) toast(`Added ${added.length} book${added.length > 1 ? "s" : ""}`);
 }
 
 /* ---------- wiring ---------- */
 playBtn.innerHTML = ICON_PLAY;
 setWpm(wpm); setFs(fs);
+renderLibrary();
 
-$("#startPaste").onclick = () => {
+$("#file").onchange = e => { const fs2 = Array.from(e.target.files); e.target.value = ""; if (fs2.length) importFiles(fs2); };
+$("#sample").onclick = async () => { const r = await saveBook("How RSVP works", bookFromText(SAMPLE)); openBook(r.id); };
+$("#pasteBtn").onclick = () => { $("#pasteDlg").showModal(); $("#paste").focus(); };
+$("#pasteGo").onclick = async () => {
   const text = $("#paste").value;
-  if (!text.trim()) { statusEl.textContent = "Paste some text first."; return; }
+  if (!text.trim()) { toast("Paste some text first."); return; }
   const first = text.trim().split(/\s+/).slice(0, 6).join(" ");
-  loadDoc(first.length > 40 ? first.slice(0, 40) + "…" : first, () => addText(text));
-};
-$("#sample").onclick = () => loadDoc("How RSVP works", () => addText(SAMPLE));
-
-$("#file").onchange = async e => {
-  const f = e.target.files[0]; if (!f) return;
-  statusEl.textContent = "Opening…";
-  const name = f.name.replace(/\.[^.]+$/, "");
-  try {
-    if (/\.epub$/i.test(f.name)) {
-      const book = await parseEpub(await f.arrayBuffer());
-      loadDoc(book.title || name, () => {
-        for (const s of book.sections) {
-          const start = tokens.length; addText(s.text);
-          if (tokens.length > start) chapters.push({ title: s.title, start });
-        }
-      });
-    } else if (/\.(html?|xhtml)$/i.test(f.name)) {
-      const doc = new DOMParser().parseFromString(await f.text(), "text/html");
-      loadDoc(doc.title || name, () => addText(htmlToText(doc)));
-    } else if (/\.pdf$/i.test(f.name)) {
-      statusEl.textContent = "PDFs aren't supported yet. Copy the text and paste it in for now.";
-    } else {
-      const text = await f.text();
-      loadDoc(name, () => addText(text));
-    }
-  } catch (err) {
-    statusEl.textContent = "Couldn't open that file: " + err.message;
-  } finally { e.target.value = ""; }
+  const title = $("#pasteTitle").value.trim() || (first.length > 40 ? first.slice(0, 40) + "…" : first);
+  const r = await saveBook(title, bookFromText(text));
+  $("#paste").value = ""; $("#pasteTitle").value = ""; $("#pasteDlg").close();
+  if (!r.ok) toast("Couldn't save for later. This text will vanish when you close the app.");
+  openBook(r.id);
 };
 
-$("#back").onclick = () => { pause(); document.body.dataset.screen = "library"; document.title = "Pace Reader"; };
+$("#statsBtn").onclick = () => { renderStats(); show("stats"); };
+$("#statsBack").onclick = () => show("library");
+$("#settingsBtn").onclick = openSettings;
+$("#openSettings").onclick = () => { $("#menuDlg").close(); openSettings(); };
+$("#menuBtn").onclick = openMenu;
+$("#bmBtn").onclick = toggleBookmark;
+$("#addBm").onclick = () => { if (!bms.some(b => Math.abs(b.i - cur) <= 10)) toggleBookmark(); renderBookmarks(); };
+$("#goalDate").onchange = e => { const m = curMeta(); if (!m) return; m.goal = e.target.value || null; saveLib(); renderGoal(); };
+$("#goalClear").onclick = () => { const m = curMeta(); if (!m) return; m.goal = null; saveLib(); renderGoal(); };
+
+$$("#themeSeg button").forEach(b => b.onclick = () => { settings.theme = b.dataset.theme; saveSettings(); applyTheme(); syncSettingsUI(); });
+$("#rewindSel").onchange = e => { settings.rewind = +e.target.value; saveSettings(); };
+$("#rampChk").onchange = e => { settings.ramp = e.target.checked; saveSettings(); };
+$("#resetStats").onclick = () => { if (!confirm("Reset all reading stats? Your books and bookmarks stay.")) return; stats = { days: {}, books: {}, finished: 0 }; store.set("pace:stats", stats); toast("Stats reset"); };
+
+$$("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
+$$("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
+$("#settingsBtn").addEventListener("click", () => {});
+$("#menuDlg").addEventListener("close", () => { renderLibrary(); });
+
+$("#back").onclick = () => { pause(); flush(); save(); renderLibrary(); document.title = "Pace Reader"; show("library"); };
 $("#stage").onclick = toggle;
 playBtn.onclick = toggle;
 $("#rew").onclick = () => seek(cur - 10);
@@ -427,17 +979,8 @@ ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !
 $("#wpm").oninput = e => setWpm(+e.target.value);
 $("#fs").oninput = e => setFs(+e.target.value);
 
-document.querySelectorAll(".theme").forEach(b => b.onclick = () => {
-  const root = document.documentElement;
-  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-  root.dataset.theme = dark ? "light" : "dark";
-  store.set("pace:theme", root.dataset.theme);
-});
-const savedTheme = store.get("pace:theme", null);
-if (savedTheme) document.documentElement.dataset.theme = savedTheme;
-
 document.addEventListener("keydown", e => {
-  if (document.body.dataset.screen !== "reader") return;
+  if (document.body.dataset.screen !== "reader" || document.querySelector("dialog[open]")) return;
   if (e.target.matches("textarea,select,input:not([type=range])")) return;
   switch (e.key) {
     case " ": case "k": e.preventDefault(); toggle(); break;
@@ -445,11 +988,15 @@ document.addEventListener("keydown", e => {
     case "ArrowRight": e.preventDefault(); seek(cur + (e.shiftKey ? 50 : 10)); break;
     case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
     case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
+    case "b": toggleBookmark(); break;
     case "Escape": pause(); break;
   }
 });
 document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
-window.addEventListener("pagehide", save);
+window.addEventListener("pagehide", () => { flush(); save(); });
+
+/* test hook (harmless in normal use) */
+window.__pace = { get cur() { return cur; }, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; } };
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
