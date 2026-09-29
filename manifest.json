@@ -1,14 +1,22 @@
 {
-  "name": "Pace Reader",
-  "short_name": "Pace",
-  "description": "Offline speed reader",
+  "name": "Wordsmith",
+  "short_name": "Wordsmith",
+  "description": "Offline speed reader, one word at a time",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#141311",
   "theme_color": "#141311",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
