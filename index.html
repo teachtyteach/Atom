@@ -104,7 +104,13 @@ svg{display:block}
 .l{text-align:right}.p{color:var(--accent)}.r{text-align:left}
 .hint{position:absolute;bottom:24px;width:100%;text-align:center;color:var(--muted);font-size:13px}
 body.playing .hint{visibility:hidden}
-.ctx{color:var(--muted);font:17px/1.65 var(--rf);letter-spacing:var(--ls);min-height:6.6em}
+.ctx{color:var(--muted);font:17px/1.65 var(--rf);letter-spacing:var(--ls);flex:1 1 auto;min-height:3.3em;overflow-y:auto;-webkit-overflow-scrolling:touch}
+body[data-screen="reader"] #reader{height:100vh;height:100dvh;min-height:0;overflow-y:auto}
+.player{margin-top:auto;display:grid;gap:8px}
+.ptoggle{justify-self:center;min-height:32px;padding:4px 14px;font-size:13px;color:var(--muted);border-color:transparent;background:transparent}
+.ptoggle svg{transition:transform .2s}
+.player.collapsed .ptoggle svg{transform:rotate(180deg)}
+.player.collapsed .controls>:not(.transport){display:none}
 .ctx span{cursor:pointer;border-radius:4px}
 .ctx .now{color:var(--ink);background:color-mix(in srgb,var(--accent) 20%,transparent);padding:0 3px}
 .ctx .done{color:var(--ink);text-align:center;margin:1em 0}
@@ -182,7 +188,16 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .calhead button:disabled{opacity:.3}
 .calwk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
 .heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:4px}
-.hc{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:8px;cursor:pointer;font:500 13px system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--ink)}
+.hc{all:unset;box-sizing:border-box;position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:8px;cursor:pointer;font:500 13px system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--ink)}
+#calCard{--hi:#0072B2;--mid:#009E73;--lo:#E6B800}
+#calCard.cvd{--hi:#0072B2;--mid:#8a8a8a;--lo:#E69F00}
+.hc.cc{background:color-mix(in srgb,var(--c) var(--p),var(--surface));color:var(--tx)}
+.hc[data-m]::after{content:attr(data-m);position:absolute;top:2px;right:4px;font-size:8px;line-height:1}
+.hc.goal::before{content:"";position:absolute;bottom:3px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor}
+.hc.off{opacity:.55}
+.lg{display:inline-flex;align-items:center;gap:5px}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px}
+#calLegend{flex-wrap:wrap;justify-content:flex-start;gap:6px 14px}
 .hc.today{outline:2px solid var(--ink);outline-offset:-2px;font-weight:700}
 .hc.future{cursor:default;color:var(--muted);opacity:.5}
 .hc.l3,.hc.l4{color:var(--bg);font-weight:600}
@@ -199,6 +214,21 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 #nudge span{font-size:14px}
 #nudge button{white-space:nowrap;flex:none}
 body.nopivot .p{color:inherit}
+body.hc{--muted:color-mix(in srgb,var(--ink) 82%,var(--bg));--line:color-mix(in srgb,var(--ink) 55%,var(--bg))}
+body.hc button,body.hc .btn,body.hc .card,body.hc select,body.hc input[type=text],body.hc input[type=date],body.hc input[type=password],body.hc textarea{border-width:2px}
+body.big button,body.big .btn{min-height:54px;font-size:17px}
+body.big .icon{width:54px}
+body.big select{min-height:54px;font-size:17px}
+body.big .setrow input[type=checkbox]{width:30px;height:30px}
+body.nomotion *,body.nomotion *::before,body.nomotion *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+.cover{width:48px;height:72px;border-radius:6px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font:600 18px Georgia,"Iowan Old Style",serif;align-self:center;border:1px solid var(--line)}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.plist{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.preset{display:grid;gap:6px}
+.preset b{font:600 16px system-ui,-apple-system,sans-serif}
+.preset span{font-size:13px;color:var(--muted)}
+.preset .tag{color:var(--accent);font-weight:600}
+.pauseli{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:12px;padding:4px 4px 4px 12px}
 #printArea{display:none}
 #printArea .qrbox{margin-top:18px;display:flex;align-items:center;gap:14px;break-inside:avoid}
 #printArea .qrbox svg{width:38mm;height:38mm;flex:none}
@@ -228,8 +258,9 @@ body.nopivot .p{color:inherit}
 #lapse svg{width:100%;height:auto;display:block;margin-top:6px}
 .coach{display:grid;gap:10px}
 body.playing .coach,body.focus .coach{display:none}
-.tabs{flex-wrap:nowrap;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px}
-.tabs button{flex:1;min-width:0;border:0;background:transparent;padding:8px 4px;min-height:40px}
+.tabs{flex-wrap:nowrap;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;border:0;background:transparent;padding:8px 14px;min-height:40px;white-space:nowrap}
 .tabs button[aria-selected=true]{background:var(--btn);color:var(--btn-ink)}
 .pane{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .preview{position:sticky;top:-16px;z-index:3;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;
@@ -241,7 +272,7 @@ body.playing .coach,body.focus .coach{display:none}
 body.focus[data-screen="reader"] .focusbar{display:flex}
 body.focus.playing .focusbar{opacity:.3}
 .focusbar button{opacity:.75}
-body.focus #reader header,body.focus #chapterBox,body.focus .ctx,body.focus .controls{display:none}
+body.focus #reader header,body.focus #chapterBox,body.focus .ctx,body.focus .player{display:none}
 body.focus .stage{flex:1;height:auto;border-color:transparent}
 body.focus .stage::before,body.focus .stage::after{display:none}
 body.focus .hint{bottom:max(24px,env(safe-area-inset-bottom))}
@@ -290,7 +321,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <p class="fine" id="chartCap" aria-live="polite"></p>
     <details><summary>Show as table</summary><div id="chartTable"></div></details>
   </div>
-  <div class="card">
+  <div class="card" id="calCard">
     <h2>Reading calendar</h2>
     <div class="calhead">
       <button class="icon" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -299,7 +330,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     </div>
     <div class="calwk" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
     <div class="heat" id="heat" role="group" aria-label="Words read each day this month"></div>
-    <div class="legend"><span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>More</span></div>
+    <div class="legend" id="calLegend"></div>
     <p class="fine" id="heatCap" aria-live="polite"></p>
   </div>
   <div class="card">
@@ -339,7 +370,9 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <span id="coachTxt"></span>
     <div class="row"><button class="primary" id="coachYes">Try it</button><button id="coachNo">No thanks</button></div>
   </div>
-  <div class="controls">
+  <div class="player" id="player">
+  <button class="ptoggle" id="pToggle" aria-expanded="true" aria-controls="controls"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Hide controls</span></button>
+  <div class="controls" id="controls">
     <input type="range" id="prog" min="0" max="0" value="0" aria-label="Position in text">
     <div class="stats"><span id="pos"></span><span id="left"></span></div>
     <div class="transport">
@@ -351,6 +384,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <label class="setting">Speed <input type="range" id="wpm" min="50" max="300" step="25"><b id="wpmVal"></b></label>
     <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
     <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed</span></div>
+  </div>
   </div>
 </section>
 
@@ -383,15 +417,22 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
 <dialog id="setDlg"><div class="sheet">
   <div class="sheet-head"><h2>Settings</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div class="seg tabs" id="setTabs" role="tablist">
-    <button data-tab="general" role="tab">General</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="storage" role="tab">Storage</button>
+    <button data-tab="general" role="tab">General</button><button data-tab="presets" role="tab">Presets</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="access" role="tab">Accessibility</button><button data-tab="storage" role="tab">Storage</button>
   </div>
   <div class="pane" data-pane="general" hidden>
   <h2>Your name</h2>
   <input type="text" id="nameInput" maxlength="30" placeholder="Name" autocomplete="off">
   <p class="fine">Used to name your backup file, like Dan.Wordsmith.</p>
   <h2>Daily goal</h2>
-  <label class="setrow">Words per day <select id="goalSel"><option value="0">Off</option><option value="250">250</option><option value="500">500</option><option value="1000">1,000</option><option value="2000">2,000</option><option value="3000">3,000</option></select></label>
-  <p class="fine">Your streak counts days you reach the goal. With the goal off, a day counts at 20 words.</p>
+  <label class="setrow">Words per day <select id="goalSel"><option value="1000">1,000</option><option value="1500">1,500</option><option value="2000">2,000</option><option value="3000">3,000</option><option value="5000">5,000</option></select></label>
+  <p class="fine">Your streak counts days you reach the goal. The smallest goal is 1,000 words.</p>
+  <label class="setrow">School days only <input type="checkbox" id="schoolChk"></label>
+  <p class="fine">Weekends don't count for or against your streak.</p>
+  <h2>Pause for breaks</h2>
+  <p class="fine">Days in a pause don't count for or against your streak. Adding or removing one needs the teacher password.</p>
+  <ul class="list" id="pauseList"></ul>
+  <div class="goalrow"><input type="date" id="pauseFrom" aria-label="Pause starts"><input type="date" id="pauseTo" aria-label="Pause ends"></div>
+  <div class="goalrow"><input type="password" id="pausePw" placeholder="Teacher password" autocomplete="off"><button id="pauseAdd">Add pause</button></div>
   <h2>Speed limit</h2>
   <p class="fine" id="speedInfo"></p>
   <div class="goalrow" id="pwBox"><input type="password" id="pwInput" placeholder="Teacher password" autocomplete="off" autocapitalize="off"><button id="pwBtn">Unlock</button></div>
@@ -402,6 +443,11 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <p class="fine">Resetting settings keeps your books, bookmarks and stats.</p>
   <h2>About</h2>
   <p class="fine">Wordsmith. Everything stays on this device. Works offline. Fonts: Lexend and OpenDyslexic (SIL Open Font License).</p>
+  </div>
+  <div class="pane" data-pane="presets" hidden>
+  <h2>Presets</h2>
+  <p class="fine">One tap sets up a whole look. You can still change anything after.</p>
+  <div class="plist" id="presetList"></div>
   </div>
   <div class="pane" data-pane="display">
   <div class="preview" id="preview" aria-hidden="true">
@@ -440,6 +486,17 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   </label>
   <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
   <label class="setrow">Speed coach suggestions <input type="checkbox" id="coachChk"></label>
+  <label class="setrow">Open books in focus mode <input type="checkbox" id="focusStartChk"></label>
+  </div>
+  <div class="pane" data-pane="access" hidden>
+  <h2>Accessibility</h2>
+  <label class="setrow">Color-blind friendly colors <input type="checkbox" id="cvdChk"></label>
+  <p class="fine">Changes the calendar colors to blue, gray and orange. Small marks (▲ ● ▼) always show too.</p>
+  <label class="setrow">Reduce motion <input type="checkbox" id="motionChk"></label>
+  <p class="fine">Turns off animations, like the year time-lapse.</p>
+  <label class="setrow">High contrast <input type="checkbox" id="contrastChk"></label>
+  <label class="setrow">Bigger buttons <input type="checkbox" id="bigChk"></label>
+  <p class="fine">Looking for dyslexia-friendly settings? Try the Dyslexia-friendly preset in Presets.</p>
   </div>
   <div class="pane" data-pane="storage" hidden>
   <h2>Storage</h2>
@@ -2102,7 +2159,8 @@ let toastTimer = null;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
 
 /* ---------- settings + themes ---------- */
-const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 500, coach: true, name: "" }, store.get("pace:settings", {}));
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, pauses: [], focusStart: false }, store.get("pace:settings", {}));
+settings.goal = Math.max(1000, +settings.goal || 1000);
 if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
 const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000" };
@@ -2118,6 +2176,11 @@ function applyTheme() {
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
+function applyAccess() {
+  document.body.classList.toggle("hc", !!settings.contrast);
+  document.body.classList.toggle("big", !!settings.big);
+  document.body.classList.toggle("nomotion", !!settings.motion);
+}
 const FONTS = ["serif", "sans", "mono", "lexend", "dyslexic"];
 function applyFont() {
   if (!FONTS.includes(settings.font)) settings.font = "serif";
@@ -2273,17 +2336,15 @@ async function unzip(buf) {
     off += 46 + nlen + elen + clen;
   }
   return {
-    async text(name) {
+    async bytes(name) {
       const f = files[name]; if (!f) return null;
       const start = f.lho + 30 + dv.getUint16(f.lho + 26, true) + dv.getUint16(f.lho + 28, true);
       const data = u8.subarray(start, start + f.csize);
-      if (f.method === 0) return td.decode(data);
-      if (f.method === 8) {
-        const out = await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
-        return td.decode(out);
-      }
+      if (f.method === 0) return data;
+      if (f.method === 8) return new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
       throw new Error("unsupported compression in EPUB");
-    }
+    },
+    async text(name) { const d = await this.bytes(name); return d ? td.decode(d) : null; }
   };
 }
 
@@ -2354,6 +2415,15 @@ async function readToc(z, dp, dir, items, ncxId) {
   return out;
 }
 
+async function makeThumb(bytes, type) {
+  if (!bytes || !bytes.length) return "";
+  const bmp = await createImageBitmap(new Blob([bytes], { type: type || "image/jpeg" }));
+  const W = 96, H = 144, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const sc = Math.max(W / bmp.width, H / bmp.height), w = bmp.width * sc, h = bmp.height * sc, c2 = cv.getContext("2d");
+  c2.fillStyle = "#fff"; c2.fillRect(0, 0, W, H); c2.drawImage(bmp, (W - w) / 2, (H - h) / 2, w, h);
+  try { bmp.close(); } catch (e) {}
+  return cv.toDataURL("image/jpeg", 0.7);
+}
 async function parseEpub(buf) {
   const z = await unzip(buf), dp = new DOMParser();
   const containerXml = await z.text("META-INF/container.xml");
@@ -2381,7 +2451,14 @@ async function parseEpub(buf) {
     toc.forEach((t, i) => { if (t.path === path && t.frag) marks.push({ id: i, frag: t.frag }); });
     sections.push({ title: heading || `Section ${++n}`, path, text: htmlToText(doc, marks) });
   }
-  return { title: titleEl ? titleEl.textContent.trim() : "", sections, toc };
+  let cover = "";
+  try {
+    const mc = Array.from(opf.getElementsByTagNameNS("*", "meta")).find(m => m.getAttribute("name") === "cover");
+    let ci = (mc && items[mc.getAttribute("content")]) || Object.values(items).find(it => /(^|\s)cover-image(\s|$)/.test(it.props));
+    if (!ci) ci = Object.values(items).find(it => /^image\//.test(it.type) && /cover/i.test(it.href));
+    if (ci) cover = await makeThumb(await z.bytes(resolvePath(dir, ci.href)), ci.type);
+  } catch (e) { cover = ""; }
+  return { title: titleEl ? titleEl.textContent.trim() : "", sections, toc, cover };
 }
 
 function bookFromEpub(book) {
@@ -2413,6 +2490,7 @@ async function saveBook(title, b) {
   let m = lib.find(x => x.id === id);
   if (!m) { m = { id, title, added: Date.now(), opened: 0 }; lib.push(m); }
   m.title = title; m.total = rec.total; m.nch = b.chapters.length;
+  if (b.cover) m.cover = b.cover;
   saveLib();
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   return { id, ok };
@@ -2507,6 +2585,7 @@ function showContext() {
 /* goals, streaks, badges */
 const dayW = k => (stats.days[k] || {}).w || 0;
 const goalTarget = () => settings.goal > 0 ? settings.goal : 20;
+const isPaused = k => (settings.pauses || []).some(pz => k >= pz.from && k <= pz.to);
 function weekStart(d) { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); return todayKey(x); }
 function streakInfo() {
   const t = goalTarget(), keys = Object.keys(stats.days).sort(), today = new Date(); today.setHours(0, 0, 0, 0);
@@ -2515,6 +2594,7 @@ function streakInfo() {
     const d = keyToDate(keys[0]);
     for (; d <= today; d.setDate(d.getDate() + 1)) {
       const k = todayKey(d), met = dayW(k) >= t;
+      if ((settings.schoolDays && (d.getDay() === 0 || d.getDay() === 6)) || isPaused(k)) continue;
       if (met) { run++; lastRest = false; longest = Math.max(longest, run); }
       else if (k === tk) { /* today is still open */ }
       else if (run > 0 && !lastRest && !rest.has(weekStart(d))) { rest.add(weekStart(d)); lastRest = true; }
@@ -2526,7 +2606,7 @@ function streakInfo() {
 function metrics() {
   const all = Object.values(stats.days);
   return { w: all.reduce((a, v) => a + v.w, 0), ms: all.reduce((a, v) => a + v.ms, 0), books: stats.finished || 0,
-    best: all.reduce((a, v) => Math.max(a, v.w), 0), d500: all.filter(v => v.w >= 500).length, streak: streakInfo().longest };
+    best: all.reduce((a, v) => Math.max(a, v.w), 0), d500: all.filter(v => v.w >= 1000).length, streak: streakInfo().longest };
 }
 const HOUR = 3600000;
 /* speed limit: 300 wpm until unlocked by reading milestones or the teacher password */
@@ -2570,7 +2650,7 @@ const BADGES = [
   { id: "str100", name: "Hundred days", desc: "100-day streak", val: m => m.streak, goal: 100, unit: "days" },
   { id: "str180", name: "Half a year", desc: "180-day streak", val: m => m.streak, goal: 180, unit: "days" },
   { id: "str365", name: "A full year", desc: "365-day streak", val: m => m.streak, goal: 365, unit: "days" },
-  { id: "steady", name: "Steady reader", desc: "7 days of 500+ words", val: m => m.d500, goal: 7, unit: "days" },
+  { id: "steady", name: "Steady reader", desc: "7 days of 1,000+ words", val: m => m.d500, goal: 7, unit: "days" },
   { id: "day5k", name: "Marathon", desc: "5,000 words in one day", val: m => m.best, goal: 5000 }
 ];
 const tq = []; let tqBusy = false;
@@ -2689,9 +2769,9 @@ function replaySentence() {
   seek(i);
   if (!wasPlaying) play();
 }
-function setFocus(on) {
+function setFocus(on, quiet) {
   document.body.classList.toggle("focus", !!on);
-  if (on) toast("Focus mode. Tap the ✕ to leave.");
+  if (on && !quiet) toast("Focus mode. Tap the ✕ to leave.");
 }
 
 function seek(i) {
@@ -2739,6 +2819,7 @@ async function openBook(id) {
   const m = curMeta(); if (m) { m.opened = Date.now(); saveLib(); }
   ctxEl.textContent = "";
   show("reader"); render(); showContext();
+  setFocus(!!settings.focusStart, true);
 }
 
 /* ---------- goals ---------- */
@@ -2807,8 +2888,49 @@ function renderPreview() {
   paintPart(L2, text, 0, pv, mask); paintPart(P2, text, pv, pv + 1, mask); paintPart(R2, text, pv + 1, text.length, mask);
   box.parentNode.style.setProperty("--fs", Math.min(fs, [40, 30, 26][n - 1]) + "px");
 }
+const PRESETS = [
+  { id: "std", name: "Standard", desc: "The original look. One word at a time, serif font.", fs: 44,
+    set: { theme: "auto", font: "serif", ls: 0, ws: 0, pivot: true, bionic: false, chunk: 1, contrast: false, big: false, focusStart: false, accent: "default" } },
+  { id: "dys", name: "Dyslexia-friendly", desc: "Lexend font, wider letter and word gaps, cream background, larger text.", fs: 56,
+    set: { theme: "butter", font: "lexend", ls: 8, ws: 12, pivot: true, bionic: false, chunk: 1, contrast: false, big: false, focusStart: false } },
+  { id: "low", name: "Low vision", desc: "Very large text, high contrast, black background, bigger buttons.", fs: 100,
+    set: { theme: "black", font: "sans", ls: 4, ws: 0, pivot: true, bionic: false, chunk: 1, contrast: true, big: true, focusStart: false } },
+  { id: "foc", name: "Focus", desc: "Calm parchment look. Books open in focus mode with nothing else on screen.", fs: 52,
+    set: { theme: "parchment", font: "serif", ls: 0, ws: 0, pivot: true, bionic: false, chunk: 1, contrast: false, big: false, focusStart: true } }
+];
+const presetActive = p => p.fs === fs && Object.keys(p.set).every(k => settings[k] === p.set[k]);
+function renderPresets() {
+  const box = $("#presetList"); if (!box) return; box.replaceChildren();
+  PRESETS.forEach(p => {
+    const c = el("div", "card preset"), on = presetActive(p);
+    c.append(el("b", "", p.name), el("span", "", p.desc));
+    const b = el("button", on ? "" : "primary", on ? "In use" : "Use this preset"); b.type = "button"; b.disabled = on;
+    b.onclick = () => { Object.assign(settings, p.set); setFs(p.fs); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } toast(`Preset applied: ${p.name}`); };
+    c.append(b); box.append(c);
+  });
+}
+function renderPauses() {
+  const ul = $("#pauseList"); if (!ul) return; ul.replaceChildren();
+  const fd = k => keyToDate(k).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  (settings.pauses || []).forEach((pz, i) => {
+    const li = el("li", "pauseli"); li.append(el("span", "", `${fd(pz.from)} to ${fd(pz.to)}`));
+    const d = el("button", "icon"); d.type = "button"; d.innerHTML = ICON_TRASH; d.setAttribute("aria-label", "Remove pause");
+    d.onclick = async () => { if (await pwOk($("#pausePw").value)) { settings.pauses.splice(i, 1); saveSettings(); renderPauses(); refreshStreaks(); toast("Pause removed"); } };
+    li.append(d); ul.append(li);
+  });
+  if (!(settings.pauses || []).length) ul.append(el("li", "fine", "No pauses set."));
+}
+async function pwOk(v) {
+  if (!v) { toast("Enter the teacher password first."); return false; }
+  try { if (await sha256("wordsmith:" + v) === PW_HASH) return true; toast("That password isn't right."); }
+  catch (e) { toast("Couldn't check the password here."); }
+  return false;
+}
+function refreshStreaks() { renderLibrary(); if (document.body.dataset.screen === "stats") { renderStats(); } }
 function syncSettingsUI() {
-  renderPreview();
+  renderPreview(); renderPresets(); renderPauses();
+  $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
+  $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
   $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
   $$("#chunkSeg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.chunk === settings.chunk)));
@@ -2826,13 +2948,22 @@ function syncSettingsUI() {
 let setTab = "display";
 function showTab(t) {
   setTab = t;
-  $$("#setTabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  $$("#setTabs button").forEach(b => { const on = b.dataset.tab === t; b.setAttribute("aria-selected", String(on)); if (on) { try { b.scrollIntoView({ inline: "center", block: "nearest" }); } catch (e) {} } });
   $$("#setDlg .pane").forEach(p => { p.hidden = p.dataset.pane !== t; });
   const sh = $("#setDlg .sheet"); if (sh) sh.scrollTop = 0;
 }
 function openSettings(tab) { syncSettingsUI(); syncBackupInfo(); prepareBackup(); showTab(typeof tab === "string" ? tab : setTab); $("#setDlg").showModal(); }
 
 /* ---------- library screen ---------- */
+function coverEl(m) {
+  const d = el("div", "cover"); d.setAttribute("aria-hidden", "true");
+  if (m.cover) { const img = new Image(); img.src = m.cover; img.alt = ""; d.append(img); }
+  else {
+    d.style.background = `hsl(${parseInt(hash(m.title || "x"), 36) % 360} 30% 38%)`;
+    d.textContent = (String(m.title || "?").match(/[\p{L}\p{N}]+/gu) || ["?"]).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+  }
+  return d;
+}
 function bookItem(m, featured) {
   const pos = store.get("pace:pos:" + m.id, 0), total = m.total || 0;
   const pct = total > 1 ? Math.min(100, Math.floor(pos / (total - 1) * 100)) : 0;
@@ -2846,7 +2977,7 @@ function bookItem(m, featured) {
   main.onclick = () => openBook(m.id);
   const del = el("button", "icon bk-del"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title);
   del.onclick = () => removeBook(m);
-  li.append(main, del);
+  li.append(coverEl(m), main, del);
   return li;
 }
 function updateDayCard() {
@@ -3011,7 +3142,7 @@ function lapseBuild() {
 }
 function lapseRun(n) {
   cancelAnimationFrame(lapseRaf); if (!lapseDraw) return;
-  if (n < 2 || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) { lapseDraw(n - 1); return; }
+  if (n < 2 || settings.motion || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) { lapseDraw(n - 1); return; }
   const t0 = performance.now(), dur = 3500;
   const tick = t => { const f = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - f, 3); lapseDraw(Math.round(e * (n - 1))); if (f < 1) lapseRaf = requestAnimationFrame(tick); };
   lapseRaf = requestAnimationFrame(tick);
@@ -3025,7 +3156,7 @@ async function importFiles(files) {
     try {
       const name = f.name.replace(/\.[^.]+$/, "");
       let title, b;
-      if (/\.epub$/i.test(f.name)) { const book = await parseEpub(await f.arrayBuffer()); title = book.title || name; b = bookFromEpub(book); }
+      if (/\.epub$/i.test(f.name)) { const book = await parseEpub(await f.arrayBuffer()); title = book.title || name; b = bookFromEpub(book); b.cover = book.cover; }
       else if (/\.(html?|xhtml)$/i.test(f.name)) {
         const doc = new DOMParser().parseFromString(await f.text(), "text/html");
         title = doc.title || name; b = bookFromText(htmlToText(doc));
@@ -3089,6 +3220,21 @@ $("#pwBtn").onclick = async () => {
 };
 $("#pwInput").addEventListener("keydown", e => { if (e.key === "Enter") $("#pwBtn").click(); });
 $("#pwRelock").onclick = () => { store.del("pace:pw"); applyCap(); toast("Speed limit is back on"); };
+$("#cvdChk").onchange = e => { settings.cvd = e.target.checked; saveSettings(); };
+$("#motionChk").onchange = e => { settings.motion = e.target.checked; saveSettings(); applyAccess(); };
+$("#contrastChk").onchange = e => { settings.contrast = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
+$("#bigChk").onchange = e => { settings.big = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
+$("#focusStartChk").onchange = e => { settings.focusStart = e.target.checked; saveSettings(); renderPresets(); };
+$("#schoolChk").onchange = e => { settings.schoolDays = e.target.checked; saveSettings(); refreshStreaks(); };
+$("#pauseAdd").onclick = async () => {
+  const from = $("#pauseFrom").value, to = $("#pauseTo").value;
+  if (!from || !to) { toast("Pick a start and end date."); return; }
+  if (to < from) { toast("The end date is before the start date."); return; }
+  if ((settings.pauses || []).length >= 20) { toast("That's the most pauses you can have. Remove an old one first."); return; }
+  if (!(await pwOk($("#pausePw").value))) return;
+  settings.pauses = (settings.pauses || []).concat({ from, to }).sort((a, b) => a.from < b.from ? -1 : 1);
+  saveSettings(); $("#pauseFrom").value = ""; $("#pauseTo").value = ""; renderPauses(); refreshStreaks(); toast("Pause added");
+};
 $("#nameInput").oninput = e => { settings.name = e.target.value.slice(0, 30); saveSettings(); };
 $("#nameInput").onchange = () => prepareBackup();
 $("#coachChk").onchange = e => { settings.coach = e.target.checked; saveSettings(); if (!settings.coach) $("#coach").hidden = true; };
@@ -3109,6 +3255,12 @@ stage.addEventListener("pointerup", endHold); stage.addEventListener("pointercan
 stage.addEventListener("contextmenu", e => { if (settings.hold) e.preventDefault(); });
 playBtn.onclick = toggle;
 $("#rew").onclick = () => { sessBacks++; seek(cur - 10); };
+function setPlayer(hide) {
+  $("#player").classList.toggle("collapsed", !!hide); $("#pToggle").setAttribute("aria-expanded", String(!hide));
+  $("#pToggle span").textContent = hide ? "Show controls" : "Hide controls"; store.set("pace:plHide", !!hide);
+}
+$("#pToggle").onclick = () => setPlayer(!$("#player").classList.contains("collapsed"));
+setPlayer(store.get("pace:plHide", false));
 $("#coachYes").onclick = () => { if (coachNext) setWpm(coachNext); $("#coach").hidden = true; toast(`Speed set to ${wpm} wpm`); };
 $("#coachNo").onclick = () => { $("#coach").hidden = true; };
 $("#replay").onclick = replaySentence;
@@ -3155,7 +3307,7 @@ $$("#fontSeg button").forEach(b => b.onclick = () => { settings.font = b.dataset
 $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#pivotChk").onchange = e => { settings.pivot = e.target.checked; saveSettings(); applyFont(); };
-applyFont();
+applyFont(); applyAccess();
 
 /* ---------- session timer ---------- */
 $("#timerSel").onchange = e => { const m = +e.target.value; timerOn = m > 0; timerLeft = m * 60000; if (tokens.length) updateStats(); };
@@ -3235,26 +3387,44 @@ $("#testDone").onclick = () => {
 
 /* ---------- reading calendar ---------- */
 let calY = new Date().getFullYear(), calM = new Date().getMonth();
+function calBand(w, avg) {
+  if (w <= 0) return null;
+  if (!avg) return { k: "mid", p: 55, m: "●" };
+  const r = w / avg;
+  if (r < 0.8) return { k: "lo", p: r < 0.35 ? 90 : r < 0.6 ? 60 : 35, m: "▼" };
+  if (r > 1.2) return { k: "hi", p: r > 2.4 ? 85 : r > 1.6 ? 55 : 30, m: "▲" };
+  return { k: "mid", p: 55, m: "●" };
+}
 function renderHeat() {
   const wrap = $("#heat"); wrap.replaceChildren();
+  $("#calCard").classList.toggle("cvd", !!settings.cvd);
   const now = new Date(); now.setHours(0, 0, 0, 0);
   const first = new Date(calY, calM, 1), n = new Date(calY, calM + 1, 0).getDate();
   $("#calTitle").textContent = first.toLocaleDateString(undefined, { month: "long", year: "numeric" });
   $("#calNext").disabled = calY === now.getFullYear() && calM === now.getMonth();
-  const goal = settings.goal > 0 ? settings.goal : 0; let mx = 0, tot = 0, dr = 0;
-  for (let d = 1; d <= n; d++) { const w = dayW(todayKey(new Date(calY, calM, d))); mx = Math.max(mx, w); tot += w; if (w > 0) dr++; }
-  const lvl = w => { if (w <= 0) return 0; if (goal) { const f = w / goal; return f >= 2 ? 4 : f >= 1 ? 3 : f >= .5 ? 2 : 1; } return Math.min(4, Math.ceil(4 * w / mx)); };
+  let sum30 = 0, cnt30 = 0;
+  for (let i = 0; i < 30; i++) { const d = new Date(now); d.setDate(d.getDate() - i); const w = dayW(todayKey(d)); if (w > 0) { sum30 += w; cnt30++; } }
+  const avg = cnt30 ? sum30 / cnt30 : 0, goal = settings.goal > 0 ? settings.goal : 0;
+  let tot = 0, dr = 0;
   for (let i = 0; i < first.getDay(); i++) wrap.append(el("span"));
   for (let d = 1; d <= n; d++) {
     const dt = new Date(calY, calM, d), k = todayKey(dt), w = dayW(k), future = dt > now;
-    const b = el("button", "hc l" + (future ? 0 : lvl(w)) + (dt.getTime() === now.getTime() ? " today" : "") + (future ? " future" : ""), String(d)); b.type = "button";
+    tot += w; if (w > 0) dr++;
+    const band = future ? null : calBand(w, avg);
+    const off = (settings.schoolDays && (dt.getDay() === 0 || dt.getDay() === 6)) || isPaused(k);
+    const b = el("button", "hc" + (dt.getTime() === now.getTime() ? " today" : "") + (future ? " future" : "") + (off && !future ? " off" : "") + (goal && w >= goal && !future ? " goal" : ""), String(d)); b.type = "button";
+    if (band) { b.classList.add("cc"); b.style.setProperty("--c", `var(--${band.k})`); b.style.setProperty("--p", band.p + "%"); b.style.setProperty("--tx", band.k === "lo" ? "#1d1b18" : band.p >= 55 ? "#fff" : "var(--ink)"); b.dataset.m = band.m; }
     const wp = wpmOf(w, (stats.days[k] || {}).ms || 0);
-    const label = `${dt.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}: ${fmt(w)} words` + (wp ? `, ${wp} wpm` : "");
+    const rel = band ? (band.k === "hi" ? "above your average" : band.k === "lo" ? "below your average" : "about your average") : "";
+    const label = `${dt.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}: ${fmt(w)} words` + (wp ? `, ${wp} wpm` : "") + (rel && avg ? `, ${rel}` : "") + (goal && w >= goal ? ", goal met" : "") + (off && !future ? (isPaused(k) ? " (paused)" : " (weekend)") : "");
     b.setAttribute("aria-label", label);
     if (future) b.disabled = true; else b.onclick = () => { $("#heatCap").textContent = label; };
     wrap.append(b);
   }
-  $("#heatCap").textContent = `${first.toLocaleDateString(undefined, { month: "long" })}: ${fmt(tot)} words · ${dr} day${dr === 1 ? "" : "s"} read. Tap a day for details.`;
+  const lg = $("#calLegend"); lg.replaceChildren();
+  [["lo", "▼ Less than average"], ["mid", "● About average"], ["hi", "▲ More than average"]].forEach(([k, t]) => { const sp = el("span", "lg"), i2 = document.createElement("i"); i2.style.background = `var(--${k})`; sp.append(i2, t); lg.append(sp); });
+  if (goal) { const sp = el("span", "lg"); sp.append("• Goal met"); lg.append(sp); }
+  $("#heatCap").textContent = `${first.toLocaleDateString(undefined, { month: "long" })}: ${fmt(tot)} words · ${dr} day${dr === 1 ? "" : "s"} read.` + (avg ? ` Your average is ${fmt(Math.round(avg))} words on days you read.` : "") + " Tap a day for details.";
 }
 $("#calPrev").onclick = () => { calM--; if (calM < 0) { calM = 11; calY--; } renderHeat(); };
 $("#calNext").onclick = () => { calM++; if (calM > 11) { calM = 0; calY++; } renderHeat(); };
@@ -3329,7 +3499,7 @@ async function restoreBackup(file) {
     if (Array.isArray(s2.timed)) { const seen = new Set((stats.timed || []).map(x => x.d + "|" + x.wpm)); stats.timed = (stats.timed || []).concat(s2.timed.filter(x => !seen.has(x.d + "|" + x.wpm))).sort((a, b) => a.d < b.d ? -1 : 1).slice(-30); }
     store.set("pace:stats", stats); checkSpeed(true);
     { const hb = store.get("pace:badges", {}); Object.entries(data.badges || {}).forEach(([id, dte]) => { if (!hb[id] || dte < hb[id]) hb[id] = dte; }); store.set("pace:badges", hb); }
-    if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); applyFont(); syncHint(); }
+    if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
     toast(`Restored ${n} book${n === 1 ? "" : "s"}`);
@@ -3341,8 +3511,8 @@ $("#nudgeBtn").onclick = () => openSettings("storage");
 $$("#setTabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 $("#resetSettings").onclick = () => {
   if (!confirm("Reset display and reading settings to the defaults?")) return;
-  Object.assign(settings, { theme: "auto", rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 500, coach: true });
-  saveSettings(); applyTheme(); applyFont(); syncHint(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } toast("Settings reset");
+  Object.assign(settings, { theme: "auto", rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, cvd: false, motion: false, contrast: false, big: false, focusStart: false });
+  saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } toast("Settings reset");
 };
 
 /* ---------- clipboard and link import ---------- */
