@@ -29,6 +29,13 @@
 :root[data-theme="forest"]{--bg:#0f1a14;--surface:#16241c;--ink:#e3efe6;--muted:#8fa89a;--line:#263a2f;--accent:#ffb454;--btn:#e3efe6;--btn-ink:#0f1a14;color-scheme:dark}
 :root[data-theme="sunset"]{--bg:#fde8d8;--surface:#fff4ea;--ink:#33201a;--muted:#86604f;--line:#f0c9b1;--accent:#c2410c;--btn:#33201a;--btn-ink:#fff4ea;color-scheme:light}
 :root[data-theme="contrast"]{--bg:#fff;--surface:#fff;--ink:#000;--muted:#2b2b2b;--line:#000;--accent:#c00000;--btn:#000;--btn-ink:#fff;color-scheme:light}
+:root[data-theme="lavender"]{--bg:#e9e3f7;--surface:#f4f0fc;--ink:#251d3a;--muted:#6b5f8f;--line:#cfc4ea;--accent:#b0246a;--btn:#251d3a;--btn-ink:#f4f0fc;color-scheme:light}
+:root[data-theme="newsprint"]{--bg:#e8e8e6;--surface:#f3f3f1;--ink:#1a1a1a;--muted:#666;--line:#cfcfcb;--accent:#b3261e;--btn:#1a1a1a;--btn-ink:#f3f3f1;color-scheme:light}
+:root[data-theme="slate"]{--bg:#1a1f26;--surface:#222932;--ink:#dde3ea;--muted:#8f9aa8;--line:#333d49;--accent:#5ec2ff;--btn:#dde3ea;--btn-ink:#1a1f26;color-scheme:dark}
+:root[data-theme="coffee"]{--bg:#1f1712;--surface:#2a1f18;--ink:#f0e2d0;--muted:#a8927a;--line:#43332a;--accent:#ffb36b;--btn:#f0e2d0;--btn-ink:#1f1712;color-scheme:dark}
+:root[data-theme="ocean"]{--bg:#0a1f26;--surface:#0f2a33;--ink:#dcf1f3;--muted:#85aab0;--line:#1e4450;--accent:#4fd6c3;--btn:#dcf1f3;--btn-ink:#0a1f26;color-scheme:dark}
+:root[data-theme="grape"]{--bg:#1a1226;--surface:#231a33;--ink:#efe6fb;--muted:#a693c2;--line:#3a2c52;--accent:#ff8ad0;--btn:#efe6fb;--btn-ink:#1a1226;color-scheme:dark}
+:root[data-theme="terminal"]{--bg:#000;--surface:#06110a;--ink:#7dffa0;--muted:#3fa860;--line:#12301c;--accent:#ffd23f;--btn:#7dffa0;--btn-ink:#000;color-scheme:dark}
 :root[data-theme="dark"]{--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
 :root[data-theme="black"]{--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
 :root[data-theme="parchment"]{--bg:#e6d6ae;--surface:#f1e5c4;--ink:#372a18;--muted:#75623f;--line:#cdb987;--accent:#a3301b;--btn:#372a18;--btn-ink:#f1e5c4;color-scheme:light}
@@ -348,6 +355,18 @@ body.playing .controls{opacity:.22}
 #defBody ol{margin:6px 0 0;padding-left:1.3em;display:grid;gap:8px;font:17px/1.45 Georgia,serif}
 #defBody i{color:var(--muted);font:italic 13px system-ui,sans-serif;margin-right:4px}
 .madeby{text-align:center;margin-top:auto;padding:18px 0 4px;letter-spacing:.04em}
+.rank{display:grid;align-self:stretch;justify-content:stretch;gap:5px;text-align:left;background:transparent;border:0;box-shadow:none;padding:0;min-height:0;margin:-6px 0 0;width:100%;font:inherit;color:inherit;cursor:pointer}
+.rank .rk{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;color:var(--muted)}
+.rank .rk b{color:var(--accent);font:700 14px system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.rank .bar{margin:0;height:5px}
+.actmenu{position:relative;z-index:40}
+.actbtn{width:100%;justify-content:space-between;min-height:52px;font-size:16px;padding:12px 20px}
+.actbtn svg{transition:transform .2s}
+.actbtn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.actlist{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 8px);padding:6px;display:grid;gap:2px;animation:rise .2s ease both}
+.actlist button{width:100%;justify-content:flex-start;flex-direction:column;align-items:flex-start;gap:0;text-align:left;border:0;background:transparent;box-shadow:none;border-radius:12px;padding:10px 14px;min-height:52px}
+.actlist button small{color:var(--muted);font:400 12.5px system-ui,sans-serif}
+.actlist button:active,.actlist button:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 </style>
 </head>
@@ -360,16 +379,19 @@ body.playing .controls{opacity:.22}
     <button class="icon" id="statsBtn" aria-label="Stats"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 20V11M12 20V5M18 20v-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <button class="icon" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h9M19 7h1M4 17h1M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </header>
-  <div class="row">
-    <label class="btn primary">Add book<input type="file" id="file" multiple accept=".txt,.md,.epub,.pdf,.html,.htm,.xhtml,text/plain,application/epub+zip,application/pdf" hidden></label>
-    <button id="pasteBtn">Paste text</button>
-    <button id="clipBtn">From clipboard</button>
+  <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><b id="rankName"></b><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
+  <div class="actmenu">
+    <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList"><span>What do you want to do?</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="actlist card" id="actList" role="menu" hidden>
+      <button role="menuitem" id="addBtn" type="button">Add a book or PDF<small>EPUB, PDF, text or web page file</small></button>
+      <button role="menuitem" id="pasteBtn" type="button">Paste text<small>Type or paste anything</small></button>
+      <button role="menuitem" id="clipBtn" type="button">Read from clipboard<small>Read what you copied</small></button>
+      <button role="menuitem" id="webBtn" type="button">Web article<small>Get an article from a link</small></button>
+      <button role="menuitem" id="sample" type="button">Try a sample<small>See how it works</small></button>
+      <button role="menuitem" id="testBtn" type="button">Test my speed<small>Find your normal reading speed</small></button>
+    </div>
   </div>
-  <div class="row">
-    <button id="sample">Try a sample</button>
-    <button id="webBtn">Web article</button>
-    <button id="testBtn">Test my speed</button>
-  </div>
+  <input type="file" id="file" multiple accept=".txt,.md,.epub,.pdf,.html,.htm,.xhtml,text/plain,application/epub+zip,application/pdf" hidden>
   <p class="status" id="status" role="status"></p>
   <div class="card" id="nudge" hidden><span id="nudgeTxt"></span><button id="nudgeBtn">Back up</button></div>
   <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
@@ -378,7 +400,7 @@ body.playing .controls{opacity:.22}
   <ul id="books" class="books"></ul>
   <p class="empty" id="empty">No books yet. Add an EPUB or paste some text.</p>
   <p class="fine">Everything stays on this device. No internet needed. Books, bookmarks and stats are saved here.</p>
-  <p class="fine madeby">Made by Mr. Lovrien 2026</p>
+  <p class="fine madeby">Made FOR STEM Launch</p>
 </section>
 
 <!-- STATS -->
@@ -470,6 +492,14 @@ body.playing .controls{opacity:.22}
 </section>
 
 <!-- SHEETS -->
+<dialog id="doneDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Finished!</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p id="doneBook" style="font:600 20px/1.25 Georgia,serif;margin:0"></p>
+  <div class="life" id="doneNums"></div>
+  <p class="fine" id="doneMsg"></p>
+  <div class="row"><button id="doneAgain">Read again</button><button class="primary" id="doneLib">Back to library</button></div>
+</div></dialog>
+
 <dialog id="webDlg"><div class="sheet">
   <div class="sheet-head"><h2>Web article</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <input type="text" id="webUrl" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Paste a web address" autocomplete="off">
@@ -561,7 +591,7 @@ body.playing .controls{opacity:.22}
   </div>
   <h2>Theme</h2>
   <div class="seg" id="themeSeg">
-    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="parchment">Parchment</button><button data-theme="butter">Butter</button><button data-theme="mint">Mint</button><button data-theme="sky">Sky</button><button data-theme="rose">Rose</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button><button data-theme="midnight">Midnight</button><button data-theme="forest">Forest</button><button data-theme="sunset">Sunset</button><button data-theme="contrast">Contrast</button>
+    <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="sepia">Sepia</button><button data-theme="parchment">Parchment</button><button data-theme="butter">Butter</button><button data-theme="mint">Mint</button><button data-theme="sky">Sky</button><button data-theme="rose">Rose</button><button data-theme="dark">Dark</button><button data-theme="black">Black</button><button data-theme="midnight">Midnight</button><button data-theme="forest">Forest</button><button data-theme="sunset">Sunset</button><button data-theme="contrast">Contrast</button><button data-theme="lavender">Lavender</button><button data-theme="newsprint">Newsprint</button><button data-theme="slate">Slate</button><button data-theme="coffee">Coffee</button><button data-theme="ocean">Ocean</button><button data-theme="grape">Grape</button><button data-theme="terminal">Terminal</button>
   </div>
   <h2>Accent color</h2>
   <div class="seg" id="accentSeg">
@@ -2266,9 +2296,9 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.ad
 /* ---------- settings + themes ---------- */
 const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, grab: true, pauses: [], focusStart: false }, store.get("pace:settings", {}));
 settings.goal = Math.max(1000, +settings.goal || 1000);
-if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast"].includes(settings.theme)) settings.theme = "auto";
+if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
-const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff" };
+const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
   const root = document.documentElement;
@@ -2277,7 +2307,7 @@ function applyTheme() {
   if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
   const a = ACCENTS[settings.accent];
-  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || key === "midnight" || key === "forest") ? 1 : 0]); else root.style.removeProperty("--accent");
+  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || ["midnight", "forest", "slate", "coffee", "ocean", "grape", "terminal"].includes(key)) ? 1 : 0]); else root.style.removeProperty("--accent");
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
@@ -2771,7 +2801,7 @@ const BADGES = [
   { id: "day5k", name: "Marathon", desc: "5,000 words in one day", val: m => m.best, goal: 5000 }
 ];
 const tq = []; let tqBusy = false;
-function toastLater(m) { if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
+function toastLater(m) { if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
 function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
@@ -2887,8 +2917,32 @@ function afterStats() {
   if (settings.goal > 0 && dayW(k) >= settings.goal && stats.goalDay !== k) {
     stats.goalDay = k; store.set("pace:stats", stats); toastLater(`Daily goal reached: ${fmt(settings.goal)} words`);
   }
-  checkBadges(); checkWeekly(); checkSpeed(false);
+  checkBadges(); checkWeekly(); updateRank(); checkSpeed(false);
 }
+
+/* ranks */
+const RANKS = [[0, "Copper"], [10000, "Bronze"], [50000, "Silver"], [100000, "Gold"], [250000, "Platinum"], [500000, "Emerald"], [1000000, "Diamond"], [2000000, "Champion"]];
+const ROMAN = ["I", "II", "III", "IV", "V"];
+const LEVELS = [];
+RANKS.forEach((r, k) => {
+  const nx = RANKS[k + 1];
+  if (!nx) { LEVELS.push([r[0], r[1]]); return; }
+  for (let t = 0; t < 5; t++) LEVELS.push([Math.round(r[0] + (nx[0] - r[0]) * t / 5), `${r[1]} ${ROMAN[4 - t]}`]);
+});
+function rankInfo(w) {
+  let i = 0; LEVELS.forEach((r, k) => { if (w >= r[0]) i = k; });
+  const nx = LEVELS[i + 1];
+  return { i, name: LEVELS[i][1], next: nx ? nx[1] : "", need: nx ? nx[0] - w : 0, pct: nx ? (w - LEVELS[i][0]) / (nx[0] - LEVELS[i][0]) * 100 : 100 };
+}
+function updateRank(silent) {
+  const w = metrics().w, r = rankInfo(w);
+  $("#rankName").textContent = r.name;
+  $("#rankNext").textContent = r.next ? `${fmt(r.need)} words to ${r.next}` : "Top rank";
+  $("#rankFill").style.width = Math.max(2, r.pct) + "%";
+  const had = store.get("pace:rank", null);
+  if (had === null || r.i > had) { store.set("pace:rank", r.i); if (had !== null && !silent && r.i > 0) toastLater("Rank up: " + r.name); }
+}
+$("#rankBtn").onclick = () => $("#statsBtn").click();
 
 /* stats bookkeeping */
 function commitStats(ms, w) {
@@ -2931,7 +2985,7 @@ function step() {
       if (wordsSince >= 40) { flush(); save(); }
       if (timerOn && timerLeft <= 0) { timerOn = false; $("#timerSel").value = "0"; pause(); toast(`Time's up. ${fmt(sessionWords)} words this session.`); return; }
       step();
-    } else { finishBook(); pause(); ctxEl.innerHTML = '<p class="done">Finished. Nice work.</p>'; }
+    } else { finishBook(); pause(); ctxEl.innerHTML = '<p class="done">Finished. Nice work.</p>'; setTimeout(showFinished, 450); }
   }, d);
 }
 
@@ -3303,7 +3357,7 @@ function updateDayCard() {
   { const d = $("#dayStreak"); if (si.cur) { d.innerHTML = FLAME(16); d.append(`${si.cur}-day streak`); } else d.textContent = "No streak yet"; }
 }
 function renderLibrary() {
-  updateDayCard();
+  updateDayCard(); updateRank(true);
   updateNudge();
   const sorted = lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
   const cont = $("#continue"), list = $("#books");
@@ -3387,7 +3441,7 @@ function renderStats() {
   const totW = all.reduce((s, [, v]) => s + v.w, 0), totMs = all.reduce((s, [, v]) => s + v.ms, 0);
   const bestDay = all.reduce((a, b) => (!a || b[1].w > a[1].w) ? b : a, null);
   const life = $("#life"); life.replaceChildren();
-  [["Total words read", fmt(totW)], ["Time spent reading", fmtDur(totMs)], ["Books finished", String(stats.finished || 0)],
+  [["Rank", rankInfo(totW).name], ["Total words read", fmt(totW)], ["Time spent reading", fmtDur(totMs)], ["Books finished", String(stats.finished || 0)],
    ...(stats.test ? [["Normal reading speed", stats.test.wpm + " wpm"]] : []),
    ...(stats.timed && stats.timed.length ? [["Timed reads", `${stats.timed[stats.timed.length - 1].wpm} wpm last · ${Math.max(...stats.timed.map(x => x.wpm))} best`]] : []),
    ["Best day", bestDay && bestDay[1].w ? `${fmt(bestDay[1].w)} words · ${keyToDate(bestDay[0]).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : "–"]]
@@ -3675,6 +3729,36 @@ $("#fs").oninput = e => setFs(+e.target.value);
 
 
 
+
+function showFinished() {
+  const m = curMeta(); if (!m || document.body.dataset.screen !== "reader" || playing) return;
+  const b = stats.books[m.id] || {}, keys = Object.keys(b).sort(), read = keys.reduce((a, k) => a + b[k], 0);
+  const days = keys.length ? Math.max(1, Math.round((keyToDate(todayKey()) - keyToDate(keys[0])) / 864e5) + 1) : 1;
+  const sp = playedMs > 10000 && shownWords ? Math.round(shownWords / (playedMs / 60000)) : 0;
+  $("#doneBook").textContent = m.title;
+  const box = $("#doneNums"); box.replaceChildren();
+  [["Words in this book", fmt(m.total || tokens.length)], ["Words you read", fmt(read)], ["Time to finish", days === 1 ? "1 day" : `${days} days`],
+   ...(sp ? [["Speed this session", sp + " wpm"]] : []), ["Books finished", String(stats.finished || 1)]]
+    .forEach(([a, v]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", v)); box.append(r); });
+  const n = stats.finished || 1;
+  $("#doneMsg").textContent = n === 1 ? "Your first book. That's a big one." : `That's ${n} books now.`;
+  confetti(); $("#doneDlg").showModal();
+}
+$("#doneLib").onclick = () => { $("#doneDlg").close(); $("#back").click(); };
+$("#doneAgain").onclick = () => { $("#doneDlg").close(); seek(0); };
+
+
+
+/* action menu */
+(function () {
+  const btn = $("#actBtn"), list = $("#actList");
+  const set = on => { list.hidden = !on; btn.setAttribute("aria-expanded", on ? "true" : "false"); };
+  btn.onclick = e => { e.stopPropagation(); set(list.hidden); };
+  list.addEventListener("click", () => set(false));
+  document.addEventListener("click", e => { if (!list.hidden && !e.target.closest(".actmenu")) set(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !list.hidden) { set(false); btn.focus(); } });
+  $("#addBtn").onclick = () => $("#file").click();
+})();
 /* ---------- web article ---------- */
 function mdToText(t) {
   const out = [];
