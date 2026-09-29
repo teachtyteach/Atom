@@ -384,6 +384,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
       <button class="icon" id="rew" aria-label="Back 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 6v12L2.5 12zM20 6v12l-8.5-6z" fill="currentColor"/></svg></button>
       <button class="primary icon play" id="playBtn" aria-label="Play"></button>
       <button class="icon" id="fwd" aria-label="Forward 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M13 6v12l8.5-6zM4 6v12l8.5-6z" fill="currentColor"/></svg></button>
+      <button class="icon" id="nextSent" aria-label="Next sentence" title="Next sentence (N)"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M19.5 12a7.5 7.5 0 1 1-2.4-5.5M19.5 4v4.2h-4.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <label class="setting">Speed <input type="range" id="wpm" min="50" max="300" step="25"><b id="wpmVal"></b></label>
     <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
@@ -430,6 +431,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <h2>Daily goal</h2>
   <label class="setrow">Words per day <select id="goalSel"><option value="1000">1,000</option><option value="1500">1,500</option><option value="2000">2,000</option><option value="3000">3,000</option><option value="5000">5,000</option></select></label>
   <p class="fine">Your streak counts days you reach the goal. The smallest goal is 1,000 words.</p>
+  <p class="fine">Words only count the first time you read them, going forward at your speed. Skipping ahead or re-reading does not add to your total.</p>
   <label class="setrow">School days only <input type="checkbox" id="schoolChk"></label>
   <p class="fine">Weekends don't count for or against your streak.</p>
   <h2>Pause for breaks</h2>
@@ -2256,6 +2258,18 @@ let hasPaused = false, noRewind = false, skipCount = 0, stepIdx = 0, flushT = 0,
 const RAMP = 30;
 let timerOn = false, timerLeft = 0, holdActive = false;
 let sessBacks = 0, coachMark = 0, coachNext = 0;
+let readRanges = [], shownWords = 0;
+function newWordsIn(a, b) {
+  let n = b - a + 1;
+  for (const [x, y] of readRanges) { const lo = Math.max(a, x), hi = Math.min(b, y); if (hi >= lo) n -= hi - lo + 1; }
+  return n;
+}
+function markRead(a, b) {
+  readRanges.push([a, b]); readRanges.sort((p, q) => p[0] - q[0]);
+  const out = [];
+  for (const r of readRanges) { const l = out[out.length - 1]; if (l && r[0] <= l[1] + 1) l[1] = Math.max(l[1], r[1]); else out.push([r[0], r[1]]); }
+  readRanges = out;
+}
 
 const L = $("#L"), P = $("#P"), R = $("#R"), prog = $("#prog"), ctxEl = $("#ctx");
 const playBtn = $("#playBtn"), chapSel = $("#chapters"), statusEl = $("#status");
@@ -2508,7 +2522,7 @@ function updateStats() {
   $("#pos").textContent = `${(cur + 1).toLocaleString()} / ${n.toLocaleString()} · ${pct}%`;
   $("#left").textContent = left ? `~${fmtMin(Math.max(1, Math.round(left / wpm)))} left` : "End";
   const ms = playedMs + (playing ? performance.now() - playStart : 0);
-  const base = sessionWords && ms > 5000 ? `${sessionWords.toLocaleString()} words this session · ${Math.round(sessionWords / (ms / 60000))} wpm actual` : "";
+  const base = sessionWords && ms > 5000 ? `${sessionWords.toLocaleString()} new words this session · ${Math.round(shownWords / (ms / 60000))} wpm actual` : "";
   const tm = timerOn && timerLeft > 0 ? `Timer: ${Math.ceil(timerLeft / 60000)} min left` : "";
   $("#sess").textContent = [base, tm].filter(Boolean).join(" · ");
 }
@@ -2708,8 +2722,8 @@ function step() {
   if (timerOn) timerLeft -= d;
   timer = setTimeout(() => {
     if (!playing) return;
-    const skip = Math.min(skipCount, n); skipCount -= skip;
-    sessionWords += n - skip; wordsSince += n - skip;
+    const nw = newWordsIn(cur, last); markRead(cur, last);
+    shownWords += n; sessionWords += nw; wordsSince += nw;
     if (last < tokens.length - 1) {
       cur = last + 1;
       if (wordsSince >= 40) { flush(); save(); }
@@ -2721,7 +2735,7 @@ function step() {
 
 async function play() {
   if (!tokens.length || playing) return;
-  if (cur >= tokens.length - 1) { cur = 0; noRewind = true; }
+  if (cur >= tokens.length - 1) { cur = 0; noRewind = true; readRanges = []; saveRd(); }
   if (!noRewind && !settings.hold && settings.rewind > 0 && hasPaused && cur > 0) { const k = Math.min(settings.rewind, cur); cur -= k; skipCount = k; }
   else skipCount = 0;
   noRewind = false;
@@ -2750,9 +2764,9 @@ function toggle() { playing ? pause() : play(); }
 
 function coachCheck() {
   if (!settings.coach || document.body.classList.contains("focus")) return;
-  const words = sessionWords - coachMark; if (words < 200) return;
+  const words = shownWords - coachMark; if (words < 200) return;
   const backs = sessBacks, per100 = backs / (words / 100);
-  coachMark = sessionWords; sessBacks = 0;
+  coachMark = shownWords; sessBacks = 0;
   let next = 0, msg = "";
   if (per100 <= 0.6 && wpm < speedCap()) { next = wpm + 25; msg = `Smooth read: ${fmt(words)} words, ${backs ? backs + " rewind" + (backs > 1 ? "s" : "") : "no rewinds"}. Try ${next} wpm?`; }
   else if (per100 >= 3 && wpm > 50) { next = wpm - 25; msg = `You went back ${backs} times in ${fmt(words)} words. Try ${next} wpm?`; }
@@ -2773,6 +2787,11 @@ function replaySentence() {
   seek(i);
   if (!wasPlaying) play();
 }
+function nextSentence() {
+  if (!tokens.length) return;
+  let e = cur; while (e < tokens.length - 1 && !sentEnd(tokens[e])) e++;
+  seek(Math.min(tokens.length - 1, e + 1));
+}
 function setFocus(on, quiet) {
   document.body.classList.toggle("focus", !!on);
   if (on && !quiet) toast("Focus mode. Tap the ✕ to leave.");
@@ -2782,14 +2801,15 @@ function seek(i) {
   if (!tokens.length) return;
   cur = Math.max(0, Math.min(tokens.length - 1, i));
   noRewind = true; skipCount = 0;
-  if (playing) { clearTimeout(timer); stepIdx = 0; step(); } else { render(); showContext(); save(); }
+  if (playing) { clearTimeout(timer); step(); } else { render(); showContext(); save(); }
 }
 
-function save() { if (docKey) store.set(docKey, cur); }
+function saveRd() { if (bookId) { if (readRanges.length) store.set("pace:rd:" + bookId, readRanges); else store.del("pace:rd:" + bookId); } }
+function save() { if (docKey) store.set(docKey, cur); saveRd(); }
 
 function setWpm(v) {
   wpm = Math.max(50, Math.min(speedCap(), Math.round(v / 25) * 25));
-  coachMark = sessionWords; sessBacks = 0;
+  coachMark = shownWords; sessBacks = 0;
   $("#wpm").value = wpm; $("#wpmVal").textContent = `${wpm} wpm`;
   store.set("pace:wpm", wpm); if (tokens.length) updateStats();
 }
@@ -2810,6 +2830,9 @@ async function openBook(id) {
   bookId = id; docKey = "pace:pos:" + id;
   cur = Math.max(0, Math.min(store.get(docKey, 0), tokens.length - 1));
   bms = store.get("pace:bm:" + id, []);
+  readRanges = store.get("pace:rd:" + id, null);
+  if (!Array.isArray(readRanges)) readRanges = cur > 0 ? [[0, cur - 1]] : [];
+  shownWords = 0;
   sessionWords = 0; playedMs = 0; skipCount = 0; noRewind = false; hasPaused = cur > 0; wordsSince = 0;
   sessBacks = 0; coachMark = 0; $("#coach").hidden = true;
   prog.max = Math.max(0, tokens.length - 1);
@@ -3013,7 +3036,7 @@ async function removeBook(m) {
   if (!confirm(`Remove "${m.title}" from your library? Its bookmarks go too.`)) return;
   lib = lib.filter(x => x.id !== m.id); saveLib();
   await dbDel(m.id);
-  store.del("pace:pos:" + m.id); store.del("pace:bm:" + m.id);
+  store.del("pace:pos:" + m.id); store.del("pace:bm:" + m.id); store.del("pace:rd:" + m.id);
   delete stats.books[m.id]; store.set("pace:stats", stats);
   renderLibrary();
 }
@@ -3268,6 +3291,7 @@ setPlayer(store.get("pace:plHide", false));
 $("#coachYes").onclick = () => { if (coachNext) setWpm(coachNext); $("#coach").hidden = true; toast(`Speed set to ${wpm} wpm`); };
 $("#coachNo").onclick = () => { $("#coach").hidden = true; };
 $("#replay").onclick = replaySentence;
+$("#nextSent").onclick = nextSentence;
 $("#fReplay").onclick = replaySentence;
 $("#fExit").onclick = () => setFocus(false);
 $("#focusBtn").onclick = () => { $("#menuDlg").close(); setFocus(true); };
@@ -3289,6 +3313,7 @@ document.addEventListener("keydown", e => {
     case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
     case "b": toggleBookmark(); break;
     case "r": replaySentence(); break;
+    case "n": nextSentence(); break;
     case "f": setFocus(!document.body.classList.contains("focus")); break;
     case "Escape": if (document.body.classList.contains("focus")) setFocus(false); pause(); break;
   }
@@ -3298,6 +3323,7 @@ document.addEventListener("keyup", e => {
 });
 document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
 window.addEventListener("pagehide", () => { flush(); save(); });
+window.addEventListener("blur", () => { if (playing) pause(); });
 
 
 /* ---------- accent, chunk, hold, bionic settings ---------- */
@@ -3460,13 +3486,14 @@ function updateNudge() {
   if (need) $("#nudgeTxt").textContent = last ? `Last backup was ${Math.round((Date.now() - last) / 864e5)} days ago.` : "You haven't backed up your library yet.";
 }
 async function makeBackup() {
-  const books = [], pos = {}, bm = {};
+  const books = [], pos = {}, bm = {}, rd = {};
   for (const m of lib) {
     const rec = await dbGet(m.id); if (rec) books.push(rec);
     const p = store.get("pace:pos:" + m.id, null); if (p !== null) pos[m.id] = p;
     const b = store.get("pace:bm:" + m.id, null); if (b && b.length) bm[m.id] = b;
+    const r = store.get("pace:rd:" + m.id, null); if (r && r.length) rd[m.id] = r;
   }
-  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, stats, settings, wpm, fs, badges: store.get("pace:badges", {}) };
+  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, stats, settings, wpm, fs, badges: store.get("pace:badges", {}) };
 }
 async function prepareBackup() {
   const btn = $("#backupBtn"); backupFile = null; btn.disabled = true; btn.textContent = "Preparing…";
@@ -3496,6 +3523,7 @@ async function restoreBackup(file) {
     saveLib();
     Object.entries(data.pos || {}).forEach(([id, p]) => store.set("pace:pos:" + id, p));
     Object.entries(data.bm || {}).forEach(([id, b]) => store.set("pace:bm:" + id, b));
+    Object.entries(data.rd || {}).forEach(([id, r]) => store.set("pace:rd:" + id, r));
     const s2 = data.stats || {};
     Object.entries(s2.days || {}).forEach(([k, v]) => { const d = stats.days[k] || (stats.days[k] = { w: 0, ms: 0 }); d.w = Math.max(d.w, v.w || 0); d.ms = Math.max(d.ms, v.ms || 0); });
     Object.entries(s2.books || {}).forEach(([id, days]) => { const b = stats.books[id] || (stats.books[id] = {}); Object.entries(days).forEach(([k, w]) => { b[k] = Math.max(b[k] || 0, w); }); });
@@ -3575,7 +3603,7 @@ $("#pastePrint").onclick = async () => {
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
-window.__pace = { get cur() { return cur; }, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+window.__pace = { get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
