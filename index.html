@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pace Reader</title>
+<meta name="theme-color" content="#141311">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pace">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+
+<style>
+:root{
+  --bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;
+  --accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;
+    --accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;
+  --accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+.screen{display:none;min-height:100%;max-width:760px;margin:0 auto;
+  padding:max(16px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));gap:14px}
+body[data-screen="library"] #library,body[data-screen="reader"] #reader{display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;min-height:44px}
+h1{font:600 22px/1.2 Georgia,"Iowan Old Style",serif;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brand{font-size:30px}
+.brand span{color:var(--accent)}
+.lede{margin:0;color:var(--muted)}
+textarea{width:100%;min-height:38vh;flex:1;resize:vertical;padding:14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);color:var(--ink);font:17px/1.55 Georgia,"Iowan Old Style",serif}
+textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button,.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  font:500 15px system-ui,-apple-system,sans-serif;padding:10px 18px;border-radius:999px;cursor:pointer;
+  min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+button:active,.btn:active{transform:scale(.97)}
+.primary{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.icon{width:44px;padding:0;flex:none}
+.status{color:var(--muted);font-size:14px;min-height:1.5em;margin:0}
+.fine{color:var(--muted);font-size:13px;margin:0}
+select{width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);font:15px system-ui,sans-serif}
+.stage{position:relative;height:clamp(170px,32vh,280px);display:flex;align-items:center;cursor:pointer;
+  user-select:none;-webkit-user-select:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stage::before,.stage::after{content:"";position:absolute;left:50%;width:2px;height:16px;background:var(--muted);transform:translateX(-1px);opacity:.6}
+.stage::before{top:0}.stage::after{bottom:0}
+.word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;
+  font:500 var(--fs,44px)/1.1 Georgia,"Iowan Old Style","Times New Roman",serif;white-space:pre;overflow:hidden}
+.l{text-align:right}.p{color:var(--accent)}.r{text-align:left}
+.hint{position:absolute;bottom:24px;width:100%;text-align:center;color:var(--muted);font-size:13px}
+body.playing .hint{visibility:hidden}
+.ctx{color:var(--muted);font:17px/1.65 Georgia,"Iowan Old Style",serif;min-height:6.6em}
+.ctx span{cursor:pointer;border-radius:4px}
+.ctx .now{color:var(--ink);background:color-mix(in srgb,var(--accent) 20%,transparent);padding:0 3px}
+.ctx .done{color:var(--ink);text-align:center;margin:1em 0}
+body.playing .ctx{visibility:hidden}
+input[type=range]{width:100%;accent-color:var(--accent);min-height:32px}
+.controls{display:grid;gap:12px;margin-top:auto;transition:opacity .3s}
+body.playing .controls{opacity:.35}
+body.playing .controls:hover,body.playing .controls:focus-within{opacity:1}
+.transport{display:flex;justify-content:center;gap:20px;align-items:center}
+.play{width:68px;height:68px}
+.setting{display:grid;grid-template-columns:3.6em 1fr 4.6em;align-items:center;gap:10px;color:var(--muted);font-size:14px}
+.setting b{color:var(--ink);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.stats{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:4px 12px;font-variant-numeric:tabular-nums}
+@media (hover:none){.keys{display:none}}
+svg{display:block}
+</style>
+</head>
+<body data-screen="library">
+
+<section id="library" class="screen">
+  <header>
+    <h1 class="brand">Pace<span>.</span></h1>
+    <button class="icon theme" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </header>
+  <p class="lede">Paste text or open a file. Everything runs on this device. No internet needed.</p>
+  <textarea id="paste" placeholder="Paste an article, chapter, or notes…"></textarea>
+  <div class="row">
+    <button class="primary" id="startPaste">Read pasted text</button>
+    <label class="btn">Open file<input type="file" id="file" accept=".txt,.md,.epub,.html,.htm,.xhtml,text/plain,application/epub+zip" hidden></label>
+    <button id="sample">Try a sample</button>
+  </div>
+  <p class="status" id="status"></p>
+  <p class="fine">Opens .epub, .txt, .md and .html files. Your place in each book is saved on this device.</p>
+</section>
+
+<section id="reader" class="screen">
+  <header>
+    <button class="icon" id="back" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1 id="title"></h1>
+    <button class="icon theme" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </header>
+  <select id="chapters" hidden aria-label="Chapter"></select>
+  <div class="stage" id="stage">
+    <div class="word"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
+    <div class="hint">Tap or press Space to play</div>
+  </div>
+  <div class="ctx" id="ctx"></div>
+  <div class="controls">
+    <input type="range" id="prog" min="0" max="0" value="0" aria-label="Position in text">
+    <div class="stats"><span id="pos"></span><span id="left"></span></div>
+    <div class="transport">
+      <button class="icon" id="rew" aria-label="Back 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M11 6v12L2.5 12zM20 6v12l-8.5-6z" fill="currentColor"/></svg></button>
+      <button class="primary icon play" id="playBtn" aria-label="Play"></button>
+      <button class="icon" id="fwd" aria-label="Forward 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M13 6v12l8.5-6zM4 6v12l8.5-6z" fill="currentColor"/></svg></button>
+    </div>
+    <label class="setting">Speed <input type="range" id="wpm" min="100" max="1000" step="25"><b id="wpmVal"></b></label>
+    <label class="setting">Size <input type="range" id="fs" min="24" max="84" step="2"><b id="fsVal"></b></label>
+    <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed</span></div>
+  </div>
+</section>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const ICON_PLAY = '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>';
+
+const SAMPLE = `Speed reading with RSVP works by holding your eyes still. Instead of sweeping across a line of text, you watch a single spot while the words come to you, one after another.
+
+The red letter marks the point your eye naturally lands on in each word. Keeping that letter in the same place means your eyes never have to hunt for the next word.
+
+Notice that the reader slows down slightly at commas, pauses a little longer at the end of a sentence, and takes a breath between paragraphs. Those small pauses give your brain time to catch up, which keeps comprehension high.
+
+Try nudging the speed up by fifty words per minute at a time. Most people are comfortable somewhere between three hundred and five hundred. Tap the word to pause, and you will see the surrounding text so you can find your place.`;
+
+let tokens = [], chapters = [], cur = 0, playing = false, timer = null, wakeLock = null;
+let wpm = store.get("pace:wpm", 350), fs = store.get("pace:fs", 44);
+let docKey = "", playedMs = 0, playStart = 0, sessionWords = 0;
+
+const L = $("#L"), P = $("#P"), R = $("#R"), prog = $("#prog"), ctxEl = $("#ctx");
+const playBtn = $("#playBtn"), chapSel = $("#chapters"), statusEl = $("#status");
+
+/* ---------- text processing ---------- */
+function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+
+function splitLong(w) {
+  if (w.length <= 14) return [w];
+  const out = []; let rest = w;
+  while (rest.length > 14) { out.push(rest.slice(0, 10) + "-"); rest = rest.slice(10); }
+  out.push(rest);
+  return out;
+}
+
+function addText(text) {
+  text = text.replace(/\r/g, "").replace(/\u00a0/g, " ");
+  const paras = /\n\s*\n/.test(text) ? text.split(/\n\s*\n/) : text.split(/\n/);
+  for (const p of paras) {
+    const ws = p.trim().split(/\s+/).filter(Boolean);
+    ws.forEach((w, i) => {
+      const pieces = splitLong(w);
+      pieces.forEach((pc, j) => tokens.push({ w: pc, end: i === ws.length - 1 && j === pieces.length - 1 }));
+    });
+  }
+}
+
+function pivotOf(w) {
+  const lead = w.match(/^[^\p{L}\p{N}]*/u)[0].length;
+  const trail = w.match(/[^\p{L}\p{N}]*$/u)[0].length;
+  const core = Math.max(1, w.length - lead - trail);
+  const o = core <= 1 ? 0 : core <= 5 ? 1 : core <= 9 ? 2 : core <= 13 ? 3 : 4;
+  return Math.max(0, Math.min(w.length - 1, lead + o));
+}
+
+function delayFor(t) {
+  let d = 60000 / wpm;
+  const w = t.w;
+  if (/[.!?…]["'”’)\]]*$/.test(w)) d *= 2.2;
+  else if (/[,;:—–]["'”’)\]]*$/.test(w)) d *= 1.5;
+  if (t.end) d *= 1.6;
+  if (w.length > 8) d *= 1 + (w.length - 8) * 0.04;
+  return d;
+}
+
+function htmlToText(doc) {
+  const b = doc.body; if (!b) return "";
+  b.querySelectorAll("script,style,nav").forEach(e => e.remove());
+  b.querySelectorAll("br").forEach(e => e.replaceWith("\n"));
+  b.querySelectorAll("p,div,h1,h2,h3,h4,h5,h6,li,blockquote,section,tr,pre,dt,dd,figcaption").forEach(e => e.append("\n\n"));
+  return b.textContent;
+}
+
+/* ---------- minimal zip + epub reader (no libraries) ---------- */
+async function unzip(buf) {
+  const dv = new DataView(buf), u8 = new Uint8Array(buf), td = new TextDecoder();
+  let e = buf.byteLength - 22;
+  while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  if (e < 0) throw new Error("not a valid EPUB file");
+  const count = dv.getUint16(e + 10, true);
+  let off = dv.getUint32(e + 16, true);
+  const files = {};
+  for (let i = 0; i < count; i++) {
+    if (dv.getUint32(off, true) !== 0x02014b50) break;
+    const method = dv.getUint16(off + 10, true), csize = dv.getUint32(off + 20, true);
+    const nlen = dv.getUint16(off + 28, true), elen = dv.getUint16(off + 30, true), clen = dv.getUint16(off + 32, true);
+    const lho = dv.getUint32(off + 42, true);
+    files[td.decode(u8.subarray(off + 46, off + 46 + nlen))] = { method, csize, lho };
+    off += 46 + nlen + elen + clen;
+  }
+  return {
+    async text(name) {
+      const f = files[name]; if (!f) return null;
+      const start = f.lho + 30 + dv.getUint16(f.lho + 26, true) + dv.getUint16(f.lho + 28, true);
+      const data = u8.subarray(start, start + f.csize);
+      if (f.method === 0) return td.decode(data);
+      if (f.method === 8) {
+        const out = await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
+        return td.decode(out);
+      }
+      throw new Error("unsupported compression in EPUB");
+    }
+  };
+}
+
+function resolvePath(dir, href) {
+  const parts = dir ? dir.split("/") : [];
+  for (const seg of decodeURIComponent(href.split("#")[0]).split("/")) {
+    if (seg === "..") parts.pop(); else if (seg && seg !== ".") parts.push(seg);
+  }
+  return parts.join("/");
+}
+
+async function parseEpub(buf) {
+  const z = await unzip(buf), dp = new DOMParser();
+  const containerXml = await z.text("META-INF/container.xml");
+  if (!containerXml) throw new Error("EPUB is missing its container file");
+  const opfPath = dp.parseFromString(containerXml, "application/xml").getElementsByTagNameNS("*", "rootfile")[0].getAttribute("full-path");
+  const opf = dp.parseFromString(await z.text(opfPath), "application/xml");
+  const dir = opfPath.includes("/") ? opfPath.slice(0, opfPath.lastIndexOf("/")) : "";
+  const titleEl = opf.getElementsByTagNameNS("*", "title")[0];
+  const manifest = {};
+  for (const it of opf.getElementsByTagNameNS("*", "item")) manifest[it.getAttribute("id")] = it.getAttribute("href");
+  const sections = [];
+  let n = 0;
+  for (const ref of opf.getElementsByTagNameNS("*", "itemref")) {
+    const href = manifest[ref.getAttribute("idref")]; if (!href) continue;
+    const html = await z.text(resolvePath(dir, href)); if (!html) continue;
+    const doc = dp.parseFromString(html, "text/html");
+    const h = doc.querySelector("h1,h2,h3");
+    const heading = h ? h.textContent.replace(/\s+/g, " ").trim().slice(0, 70) : "";
+    sections.push({ title: heading || `Section ${++n}`, text: htmlToText(doc) });
+  }
+  return { title: titleEl ? titleEl.textContent.trim() : "", sections };
+}
+
+/* ---------- reader ---------- */
+function fmtMin(m) { return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60} min`; }
+
+function updateStats() {
+  const n = tokens.length;
+  const pct = n > 1 ? Math.floor(cur / (n - 1) * 100) : 100;
+  const left = Math.max(0, n - cur - 1);
+  $("#pos").textContent = `${(cur + 1).toLocaleString()} / ${n.toLocaleString()} · ${pct}%`;
+  $("#left").textContent = left ? `~${fmtMin(Math.max(1, Math.round(left / wpm)))} left` : "End";
+  const ms = playedMs + (playing ? performance.now() - playStart : 0);
+  $("#sess").textContent = sessionWords && ms > 5000
+    ? `${sessionWords.toLocaleString()} words this session · ${Math.round(sessionWords / (ms / 60000))} wpm actual` : "";
+}
+
+function syncChapter() {
+  if (chapters.length < 2) return;
+  let lo = 0, hi = chapters.length - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (chapters[mid].start <= cur) lo = mid; else hi = mid - 1; }
+  if (chapSel.selectedIndex !== lo) chapSel.selectedIndex = lo;
+}
+
+function render() {
+  const t = tokens[cur];
+  if (!t) { L.textContent = P.textContent = R.textContent = ""; return; }
+  const p = pivotOf(t.w);
+  L.textContent = t.w.slice(0, p); P.textContent = t.w.charAt(p); R.textContent = t.w.slice(p + 1);
+  prog.value = cur;
+  updateStats(); syncChapter();
+}
+
+function showContext() {
+  if (playing || !tokens.length) return;
+  const a = Math.max(0, cur - 24), b = Math.min(tokens.length, cur + 28);
+  const frag = document.createDocumentFragment();
+  for (let i = a; i < b; i++) {
+    const s = document.createElement("span");
+    s.textContent = tokens[i].w; s.dataset.i = i;
+    if (i === cur) s.className = "now";
+    frag.append(s);
+    frag.append(tokens[i].end && i < b - 1 ? document.createElement("br") : " ");
+  }
+  ctxEl.replaceChildren(frag);
+}
+
+function step() {
+  if (!playing) return;
+  render();
+  timer = setTimeout(() => {
+    if (!playing) return;
+    if (cur < tokens.length - 1) { cur++; sessionWords++; step(); }
+    else { pause(); ctxEl.innerHTML = '<p class="done">Finished. Nice work.</p>'; }
+  }, delayFor(tokens[cur]));
+}
+
+async function play() {
+  if (!tokens.length || playing) return;
+  if (cur >= tokens.length - 1) cur = 0;
+  playing = true; playStart = performance.now();
+  document.body.classList.add("playing");
+  playBtn.innerHTML = ICON_PAUSE; playBtn.setAttribute("aria-label", "Pause");
+  step();
+  try { if (navigator.wakeLock) wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
+}
+
+function pause() {
+  if (!playing) return;
+  playing = false; clearTimeout(timer);
+  playedMs += performance.now() - playStart;
+  document.body.classList.remove("playing");
+  playBtn.innerHTML = ICON_PLAY; playBtn.setAttribute("aria-label", "Play");
+  try { if (wakeLock) wakeLock.release(); } catch (e) {} wakeLock = null;
+  save(); render(); showContext();
+}
+
+function toggle() { playing ? pause() : play(); }
+
+function seek(i) {
+  if (!tokens.length) return;
+  cur = Math.max(0, Math.min(tokens.length - 1, i));
+  if (playing) { clearTimeout(timer); step(); } else { render(); showContext(); save(); }
+}
+
+function save() { if (docKey) store.set(docKey, cur); }
+
+function setWpm(v) {
+  wpm = Math.max(100, Math.min(1000, Math.round(v / 25) * 25));
+  $("#wpm").value = wpm; $("#wpmVal").textContent = `${wpm} wpm`;
+  store.set("pace:wpm", wpm); updateStats();
+}
+
+function setFs(v) {
+  fs = v; document.documentElement.style.setProperty("--fs", fs + "px");
+  $("#fs").value = fs; $("#fsVal").textContent = `${fs}px`;
+  store.set("pace:fs", fs);
+}
+
+function loadDoc(title, build) {
+  tokens = []; chapters = [];
+  build();
+  if (!tokens.length) { statusEl.textContent = "No readable text found in that."; return; }
+  docKey = "pace:pos:" + hash(title + "|" + tokens.length + "|" + tokens.slice(0, 60).map(t => t.w).join(" "));
+  cur = Math.min(store.get(docKey, 0), tokens.length - 1);
+  sessionWords = 0; playedMs = 0;
+  prog.max = tokens.length - 1;
+  $("#title").textContent = title || "Untitled";
+  document.title = (title || "Untitled") + " · Pace";
+  chapSel.replaceChildren(...chapters.map((c, i) => new Option(c.title, i)));
+  chapSel.hidden = chapters.length < 2;
+  statusEl.textContent = "";
+  document.body.dataset.screen = "reader";
+  ctxEl.textContent = "";
+  render(); showContext();
+}
+
+/* ---------- wiring ---------- */
+playBtn.innerHTML = ICON_PLAY;
+setWpm(wpm); setFs(fs);
+
+$("#startPaste").onclick = () => {
+  const text = $("#paste").value;
+  if (!text.trim()) { statusEl.textContent = "Paste some text first."; return; }
+  const first = text.trim().split(/\s+/).slice(0, 6).join(" ");
+  loadDoc(first.length > 40 ? first.slice(0, 40) + "…" : first, () => addText(text));
+};
+$("#sample").onclick = () => loadDoc("How RSVP works", () => addText(SAMPLE));
+
+$("#file").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  statusEl.textContent = "Opening…";
+  const name = f.name.replace(/\.[^.]+$/, "");
+  try {
+    if (/\.epub$/i.test(f.name)) {
+      const book = await parseEpub(await f.arrayBuffer());
+      loadDoc(book.title || name, () => {
+        for (const s of book.sections) {
+          const start = tokens.length; addText(s.text);
+          if (tokens.length > start) chapters.push({ title: s.title, start });
+        }
+      });
+    } else if (/\.(html?|xhtml)$/i.test(f.name)) {
+      const doc = new DOMParser().parseFromString(await f.text(), "text/html");
+      loadDoc(doc.title || name, () => addText(htmlToText(doc)));
+    } else if (/\.pdf$/i.test(f.name)) {
+      statusEl.textContent = "PDFs aren't supported yet. Copy the text and paste it in for now.";
+    } else {
+      const text = await f.text();
+      loadDoc(name, () => addText(text));
+    }
+  } catch (err) {
+    statusEl.textContent = "Couldn't open that file: " + err.message;
+  } finally { e.target.value = ""; }
+};
+
+$("#back").onclick = () => { pause(); document.body.dataset.screen = "library"; document.title = "Pace Reader"; };
+$("#stage").onclick = toggle;
+playBtn.onclick = toggle;
+$("#rew").onclick = () => seek(cur - 10);
+$("#fwd").onclick = () => seek(cur + 10);
+prog.oninput = () => { if (playing) pause(); seek(+prog.value); };
+chapSel.onchange = () => { const c = chapters[+chapSel.value]; if (c) seek(c.start); };
+ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) seek(+i); };
+$("#wpm").oninput = e => setWpm(+e.target.value);
+$("#fs").oninput = e => setFs(+e.target.value);
+
+document.querySelectorAll(".theme").forEach(b => b.onclick = () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  store.set("pace:theme", root.dataset.theme);
+});
+const savedTheme = store.get("pace:theme", null);
+if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+
+document.addEventListener("keydown", e => {
+  if (document.body.dataset.screen !== "reader") return;
+  if (e.target.matches("textarea,select,input:not([type=range])")) return;
+  switch (e.key) {
+    case " ": case "k": e.preventDefault(); toggle(); break;
+    case "ArrowLeft": e.preventDefault(); seek(cur - (e.shiftKey ? 50 : 10)); break;
+    case "ArrowRight": e.preventDefault(); seek(cur + (e.shiftKey ? 50 : 10)); break;
+    case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
+    case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
+    case "Escape": pause(); break;
+  }
+});
+document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
+window.addEventListener("pagehide", save);
+})();
+</script>
+<script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+</body>
+</html>
