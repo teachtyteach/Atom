@@ -177,8 +177,15 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 #accentSeg{gap:10px}
 .setrow .seg{flex-wrap:nowrap}
 .setrow .seg button{padding:8px 14px;min-width:44px}
-.heat{display:grid;grid-template-rows:repeat(7,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;margin-top:10px}
-.hc{all:unset;display:block;aspect-ratio:1;border-radius:3px;cursor:pointer}
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px}
+.calhead b{font:600 16px system-ui,-apple-system,sans-serif}
+.calhead button:disabled{opacity:.3}
+.calwk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
+.heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:4px}
+.hc{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:8px;cursor:pointer;font:500 13px system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--ink)}
+.hc.today{outline:2px solid var(--ink);outline-offset:-2px;font-weight:700}
+.hc.future{cursor:default;color:var(--muted);opacity:.5}
+.hc.l3,.hc.l4{color:var(--bg);font-weight:600}
 .hc:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .l0{background:color-mix(in srgb,var(--line) 70%,var(--surface))}
 .l1{background:color-mix(in srgb,var(--accent) 25%,var(--surface))}
@@ -192,6 +199,35 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 #nudge span{font-size:14px}
 #nudge button{white-space:nowrap;flex:none}
 body.nopivot .p{color:inherit}
+#printArea{display:none}
+#printArea .qrbox{margin-top:18px;display:flex;align-items:center;gap:14px;break-inside:avoid}
+#printArea .qrbox svg{width:38mm;height:38mm;flex:none}
+@page{margin:16mm}
+@media print{
+  body>*{display:none!important}
+  body>#printArea{display:block!important;color:#000;background:#fff;font:12pt/1.6 Georgia,"Times New Roman",serif}
+  #printArea h1{font:700 20pt/1.25 Georgia,serif;white-space:normal;margin:0 0 12px}
+  #printArea p{margin:0 0 10px}
+}
+#dayCard{display:grid;gap:8px}
+.dayrow{display:flex;justify-content:space-between;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.dayrow b{font:600 16px system-ui,-apple-system,sans-serif}
+.dayrow span{color:var(--muted);font-size:14px}
+#dayCard .bar,.goalbar{margin:0;height:6px}
+.goalbar{margin:8px 0 10px}
+.badges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.badge{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px;align-content:start}
+.badge b{font:600 14px/1.3 system-ui,-apple-system,sans-serif}
+.badge span,.badge small{font-size:12px;color:var(--muted)}
+.badge small{font-variant-numeric:tabular-nums}
+.badge.earned{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.badge.earned small{color:var(--ink)}
+.lapseHead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:6px}
+.lapseHead b{font:600 28px/1.15 system-ui,-apple-system,sans-serif}
+.lapseHead span{color:var(--muted);font-size:13px}
+#lapse svg{width:100%;height:auto;display:block;margin-top:6px}
+.coach{display:grid;gap:10px}
+body.playing .coach,body.focus .coach{display:none}
 .tabs{flex-wrap:nowrap;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px}
 .tabs button{flex:1;min-width:0;border:0;background:transparent;padding:8px 4px;min-height:40px}
 .tabs button[aria-selected=true]{background:var(--btn);color:var(--btn-ink)}
@@ -232,6 +268,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   </div>
   <p class="status" id="status" role="status"></p>
   <div class="card" id="nudge" hidden><span id="nudgeTxt"></span><button id="nudgeBtn">Back up</button></div>
+  <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
   <div id="continue"></div>
   <h2 class="sect" id="libHead">Library</h2>
   <ul id="books" class="books"></ul>
@@ -246,6 +283,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <h1>Stats</h1>
   </header>
   <div class="tiles" id="tiles"></div>
+  <div class="card" id="goalCard"></div>
   <div class="card">
     <h2>Words read, last 7 days</h2>
     <div id="chart"></div>
@@ -254,9 +292,28 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   </div>
   <div class="card">
     <h2>Reading calendar</h2>
-    <div class="heat" id="heat" role="group" aria-label="Words read each day, last 13 weeks"></div>
+    <div class="calhead">
+      <button class="icon" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <b id="calTitle"></b>
+      <button class="icon" id="calNext" aria-label="Next month"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="calwk" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+    <div class="heat" id="heat" role="group" aria-label="Words read each day this month"></div>
     <div class="legend"><span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>More</span></div>
     <p class="fine" id="heatCap" aria-live="polite"></p>
+  </div>
+  <div class="card">
+    <h2>Your year</h2>
+    <div class="lapseHead"><b id="lapseVal"></b><span id="lapseDate"></span></div>
+    <div id="lapse"></div>
+    <p class="fine" id="lapseCap"></p>
+    <div class="life" id="lapseNums"></div>
+    <div class="row" style="margin-top:10px"><button id="lapseBtn">Replay time-lapse</button></div>
+  </div>
+  <div class="card">
+    <h2>Badges</h2>
+    <p class="fine" id="badgeCap"></p>
+    <div class="badges" id="badges"></div>
   </div>
   <div class="card life" id="life"></div>
 </section>
@@ -278,6 +335,10 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <div class="hint">Tap or press Space to play</div>
   </div>
   <div class="ctx" id="ctx"></div>
+  <div class="card coach" id="coach" hidden>
+    <span id="coachTxt"></span>
+    <div class="row"><button class="primary" id="coachYes">Try it</button><button id="coachNo">No thanks</button></div>
+  </div>
   <div class="controls">
     <input type="range" id="prog" min="0" max="0" value="0" aria-label="Position in text">
     <div class="stats"><span id="pos"></span><span id="left"></span></div>
@@ -287,7 +348,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
       <button class="primary icon play" id="playBtn" aria-label="Play"></button>
       <button class="icon" id="fwd" aria-label="Forward 10 words"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M13 6v12l8.5-6zM4 6v12l8.5-6z" fill="currentColor"/></svg></button>
     </div>
-    <label class="setting">Speed <input type="range" id="wpm" min="50" max="1000" step="25"><b id="wpmVal"></b></label>
+    <label class="setting">Speed <input type="range" id="wpm" min="50" max="300" step="25"><b id="wpmVal"></b></label>
     <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
     <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed</span></div>
   </div>
@@ -298,6 +359,8 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <div class="sheet-head"><h2>Paste text</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <input type="text" id="pasteTitle" placeholder="Title (optional)" autocomplete="off">
   <textarea id="paste" placeholder="Paste an article, chapter, or notes…"></textarea>
+  <p class="fine" id="pasteEst"></p>
+  <div class="row"><button id="pasteLink">Copy share link</button><button id="pastePrint">Print handout</button></div>
   <button class="primary" id="pasteGo">Add and read</button>
 </div></dialog>
 
@@ -312,6 +375,7 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <h2>Session timer</h2>
   <label class="setrow">Stop after <select id="timerSel"><option value="0">Off</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></label>
   <button id="focusBtn">Focus mode</button>
+  <button id="timedBtn">Timed read</button>
   <button id="openSearch">Search this book…</button>
   <button id="openSettings">Settings…</button>
 </div></dialog>
@@ -322,6 +386,16 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <button data-tab="general" role="tab">General</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="storage" role="tab">Storage</button>
   </div>
   <div class="pane" data-pane="general" hidden>
+  <h2>Your name</h2>
+  <input type="text" id="nameInput" maxlength="30" placeholder="Name" autocomplete="off">
+  <p class="fine">Used to name your backup file, like Dan.Wordsmith.</p>
+  <h2>Daily goal</h2>
+  <label class="setrow">Words per day <select id="goalSel"><option value="0">Off</option><option value="250">250</option><option value="500">500</option><option value="1000">1,000</option><option value="2000">2,000</option><option value="3000">3,000</option></select></label>
+  <p class="fine">Your streak counts days you reach the goal. With the goal off, a day counts at 20 words.</p>
+  <h2>Speed limit</h2>
+  <p class="fine" id="speedInfo"></p>
+  <div class="goalrow" id="pwBox"><input type="password" id="pwInput" placeholder="Teacher password" autocomplete="off" autocapitalize="off"><button id="pwBtn">Unlock</button></div>
+  <button id="pwRelock" hidden>Lock speed again</button>
   <h2>General</h2>
   <button id="resetSettings">Reset display and reading settings</button>
   <button class="danger" id="resetStats">Reset stats</button>
@@ -365,20 +439,21 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
     <select id="rewindSel"><option value="0">Off</option><option value="3">3 words</option><option value="5">5 words</option><option value="10">10 words</option></select>
   </label>
   <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
+  <label class="setrow">Speed coach suggestions <input type="checkbox" id="coachChk"></label>
   </div>
   <div class="pane" data-pane="storage" hidden>
   <h2>Storage</h2>
   <p class="fine" id="storageInfo"></p>
   <h2>Backup</h2>
   <p class="fine" id="backupInfo"></p>
-  <div class="row"><button class="primary" id="backupBtn">Save backup</button><label class="btn">Restore backup<input type="file" id="restoreFile" accept=".json,application/json" hidden></label></div>
+  <div class="row"><button class="primary" id="backupBtn">Save backup</button><label class="btn">Restore backup<input type="file" id="restoreFile" hidden></label></div>
   <p class="fine">Backups are one file with your books, bookmarks, stats and settings. Restore it on any device.</p>
   </div>
 </div></dialog>
 
 <dialog id="testDlg"><div class="sheet">
-  <div class="sheet-head"><h2>Reading speed test</h2><button class="icon" data-close aria-label="Close">✕</button></div>
-  <div id="testIntro"><p>Read the passage at your normal pace. Tap Done when you finish. Wordsmith times you.</p><button class="primary" id="testStart">Start</button></div>
+  <div class="sheet-head"><h2 id="testTitle">Reading speed test</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="testIntro"><p id="testIntroP">Read the passage at your normal pace. Tap Done when you finish. Wordsmith times you.</p><button class="primary" id="testStart">Start</button></div>
   <div id="testRead" hidden><p id="testPassage" class="passage"></p><button class="primary" id="testDone">Done</button></div>
   <div id="testResult" hidden><p id="testMsg"></p><div class="row"><button class="primary" id="testUse">Use</button><button id="testAgain">Try again</button></div></div>
 </div></dialog>
@@ -395,8 +470,1616 @@ mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;b
   <button class="icon" id="fExit" aria-label="Exit focus mode">✕</button>
 </div>
 
+<div id="printArea" aria-hidden="true"></div>
+
 <div id="toast" role="status" aria-live="polite"></div>
 
+<script>
+/*! QR Code Generator for JavaScript, (c) 2009 Kazuhiko Arase, MIT license. QR Code is a registered trademark of DENSO WAVE INCORPORATED. */
+var qrcode = function() {
+var qrcode = function(typeNumber, errorCorrectionLevel) {
+var PAD0 = 0xEC;
+var PAD1 = 0x11;
+var _typeNumber = typeNumber;
+var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+var _modules = null;
+var _moduleCount = 0;
+var _dataCache = null;
+var _dataList = [];
+var _this = {};
+var makeImpl = function(test, maskPattern) {
+_moduleCount = _typeNumber * 4 + 17;
+_modules = function(moduleCount) {
+var modules = new Array(moduleCount);
+for (var row = 0; row < moduleCount; row += 1) {
+modules[row] = new Array(moduleCount);
+for (var col = 0; col < moduleCount; col += 1) {
+modules[row][col] = null;
+}
+}
+return modules;
+}(_moduleCount);
+setupPositionProbePattern(0, 0);
+setupPositionProbePattern(_moduleCount - 7, 0);
+setupPositionProbePattern(0, _moduleCount - 7);
+setupPositionAdjustPattern();
+setupTimingPattern();
+setupTypeInfo(test, maskPattern);
+if (_typeNumber >= 7) {
+setupTypeNumber(test);
+}
+if (_dataCache == null) {
+_dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+}
+mapData(_dataCache, maskPattern);
+};
+var setupPositionProbePattern = function(row, col) {
+for (var r = -1; r <= 7; r += 1) {
+if (row + r <= -1 || _moduleCount <= row + r) continue;
+for (var c = -1; c <= 7; c += 1) {
+if (col + c <= -1 || _moduleCount <= col + c) continue;
+if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+|| (0 <= c && c <= 6 && (r == 0 || r == 6) )
+|| (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+_modules[row + r][col + c] = true;
+} else {
+_modules[row + r][col + c] = false;
+}
+}
+}
+};
+var getBestMaskPattern = function() {
+var minLostPoint = 0;
+var pattern = 0;
+for (var i = 0; i < 8; i += 1) {
+makeImpl(true, i);
+var lostPoint = QRUtil.getLostPoint(_this);
+if (i == 0 || minLostPoint > lostPoint) {
+minLostPoint = lostPoint;
+pattern = i;
+}
+}
+return pattern;
+};
+var setupTimingPattern = function() {
+for (var r = 8; r < _moduleCount - 8; r += 1) {
+if (_modules[r][6] != null) {
+continue;
+}
+_modules[r][6] = (r % 2 == 0);
+}
+for (var c = 8; c < _moduleCount - 8; c += 1) {
+if (_modules[6][c] != null) {
+continue;
+}
+_modules[6][c] = (c % 2 == 0);
+}
+};
+var setupPositionAdjustPattern = function() {
+var pos = QRUtil.getPatternPosition(_typeNumber);
+for (var i = 0; i < pos.length; i += 1) {
+for (var j = 0; j < pos.length; j += 1) {
+var row = pos[i];
+var col = pos[j];
+if (_modules[row][col] != null) {
+continue;
+}
+for (var r = -2; r <= 2; r += 1) {
+for (var c = -2; c <= 2; c += 1) {
+if (r == -2 || r == 2 || c == -2 || c == 2
+|| (r == 0 && c == 0) ) {
+_modules[row + r][col + c] = true;
+} else {
+_modules[row + r][col + c] = false;
+}
+}
+}
+}
+}
+};
+var setupTypeNumber = function(test) {
+var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+for (var i = 0; i < 18; i += 1) {
+var mod = (!test && ( (bits >> i) & 1) == 1);
+_modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+}
+for (var i = 0; i < 18; i += 1) {
+var mod = (!test && ( (bits >> i) & 1) == 1);
+_modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+}
+};
+var setupTypeInfo = function(test, maskPattern) {
+var data = (_errorCorrectionLevel << 3) | maskPattern;
+var bits = QRUtil.getBCHTypeInfo(data);
+for (var i = 0; i < 15; i += 1) {
+var mod = (!test && ( (bits >> i) & 1) == 1);
+if (i < 6) {
+_modules[i][8] = mod;
+} else if (i < 8) {
+_modules[i + 1][8] = mod;
+} else {
+_modules[_moduleCount - 15 + i][8] = mod;
+}
+}
+for (var i = 0; i < 15; i += 1) {
+var mod = (!test && ( (bits >> i) & 1) == 1);
+if (i < 8) {
+_modules[8][_moduleCount - i - 1] = mod;
+} else if (i < 9) {
+_modules[8][15 - i - 1 + 1] = mod;
+} else {
+_modules[8][15 - i - 1] = mod;
+}
+}
+_modules[_moduleCount - 8][8] = (!test);
+};
+var mapData = function(data, maskPattern) {
+var inc = -1;
+var row = _moduleCount - 1;
+var bitIndex = 7;
+var byteIndex = 0;
+var maskFunc = QRUtil.getMaskFunction(maskPattern);
+for (var col = _moduleCount - 1; col > 0; col -= 2) {
+if (col == 6) col -= 1;
+while (true) {
+for (var c = 0; c < 2; c += 1) {
+if (_modules[row][col - c] == null) {
+var dark = false;
+if (byteIndex < data.length) {
+dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+}
+var mask = maskFunc(row, col - c);
+if (mask) {
+dark = !dark;
+}
+_modules[row][col - c] = dark;
+bitIndex -= 1;
+if (bitIndex == -1) {
+byteIndex += 1;
+bitIndex = 7;
+}
+}
+}
+row += inc;
+if (row < 0 || _moduleCount <= row) {
+row -= inc;
+inc = -inc;
+break;
+}
+}
+}
+};
+var createBytes = function(buffer, rsBlocks) {
+var offset = 0;
+var maxDcCount = 0;
+var maxEcCount = 0;
+var dcdata = new Array(rsBlocks.length);
+var ecdata = new Array(rsBlocks.length);
+for (var r = 0; r < rsBlocks.length; r += 1) {
+var dcCount = rsBlocks[r].dataCount;
+var ecCount = rsBlocks[r].totalCount - dcCount;
+maxDcCount = Math.max(maxDcCount, dcCount);
+maxEcCount = Math.max(maxEcCount, ecCount);
+dcdata[r] = new Array(dcCount);
+for (var i = 0; i < dcdata[r].length; i += 1) {
+dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+}
+offset += dcCount;
+var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+var modPoly = rawPoly.mod(rsPoly);
+ecdata[r] = new Array(rsPoly.getLength() - 1);
+for (var i = 0; i < ecdata[r].length; i += 1) {
+var modIndex = i + modPoly.getLength() - ecdata[r].length;
+ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+}
+}
+var totalCodeCount = 0;
+for (var i = 0; i < rsBlocks.length; i += 1) {
+totalCodeCount += rsBlocks[i].totalCount;
+}
+var data = new Array(totalCodeCount);
+var index = 0;
+for (var i = 0; i < maxDcCount; i += 1) {
+for (var r = 0; r < rsBlocks.length; r += 1) {
+if (i < dcdata[r].length) {
+data[index] = dcdata[r][i];
+index += 1;
+}
+}
+}
+for (var i = 0; i < maxEcCount; i += 1) {
+for (var r = 0; r < rsBlocks.length; r += 1) {
+if (i < ecdata[r].length) {
+data[index] = ecdata[r][i];
+index += 1;
+}
+}
+}
+return data;
+};
+var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+var buffer = qrBitBuffer();
+for (var i = 0; i < dataList.length; i += 1) {
+var data = dataList[i];
+buffer.put(data.getMode(), 4);
+buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+data.write(buffer);
+}
+var totalDataCount = 0;
+for (var i = 0; i < rsBlocks.length; i += 1) {
+totalDataCount += rsBlocks[i].dataCount;
+}
+if (buffer.getLengthInBits() > totalDataCount * 8) {
+throw 'code length overflow. ('
++ buffer.getLengthInBits()
++ '>'
++ totalDataCount * 8
++ ')';
+}
+if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+buffer.put(0, 4);
+}
+while (buffer.getLengthInBits() % 8 != 0) {
+buffer.putBit(false);
+}
+while (true) {
+if (buffer.getLengthInBits() >= totalDataCount * 8) {
+break;
+}
+buffer.put(PAD0, 8);
+if (buffer.getLengthInBits() >= totalDataCount * 8) {
+break;
+}
+buffer.put(PAD1, 8);
+}
+return createBytes(buffer, rsBlocks);
+};
+_this.addData = function(data, mode) {
+mode = mode || 'Byte';
+var newData = null;
+switch(mode) {
+case 'Numeric' :
+newData = qrNumber(data);
+break;
+case 'Alphanumeric' :
+newData = qrAlphaNum(data);
+break;
+case 'Byte' :
+newData = qr8BitByte(data);
+break;
+case 'Kanji' :
+newData = qrKanji(data);
+break;
+default :
+throw 'mode:' + mode;
+}
+_dataList.push(newData);
+_dataCache = null;
+};
+_this.isDark = function(row, col) {
+if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+throw row + ',' + col;
+}
+return _modules[row][col];
+};
+_this.getModuleCount = function() {
+return _moduleCount;
+};
+_this.make = function() {
+if (_typeNumber < 1) {
+var typeNumber = 1;
+for (; typeNumber < 40; typeNumber++) {
+var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+var buffer = qrBitBuffer();
+for (var i = 0; i < _dataList.length; i++) {
+var data = _dataList[i];
+buffer.put(data.getMode(), 4);
+buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+data.write(buffer);
+}
+var totalDataCount = 0;
+for (var i = 0; i < rsBlocks.length; i++) {
+totalDataCount += rsBlocks[i].dataCount;
+}
+if (buffer.getLengthInBits() <= totalDataCount * 8) {
+break;
+}
+}
+_typeNumber = typeNumber;
+}
+makeImpl(false, getBestMaskPattern() );
+};
+_this.createTableTag = function(cellSize, margin) {
+cellSize = cellSize || 2;
+margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+var qrHtml = '';
+qrHtml += '<table style="';
+qrHtml += ' border-width: 0px; border-style: none;';
+qrHtml += ' border-collapse: collapse;';
+qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+qrHtml += '">';
+qrHtml += '<tbody>';
+for (var r = 0; r < _this.getModuleCount(); r += 1) {
+qrHtml += '<tr>';
+for (var c = 0; c < _this.getModuleCount(); c += 1) {
+qrHtml += '<td style="';
+qrHtml += ' border-width: 0px; border-style: none;';
+qrHtml += ' border-collapse: collapse;';
+qrHtml += ' padding: 0px; margin: 0px;';
+qrHtml += ' width: ' + cellSize + 'px;';
+qrHtml += ' height: ' + cellSize + 'px;';
+qrHtml += ' background-color: ';
+qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+qrHtml += ';';
+qrHtml += '"/>';
+}
+qrHtml += '</tr>';
+}
+qrHtml += '</tbody>';
+qrHtml += '</table>';
+return qrHtml;
+};
+_this.createSvgTag = function(cellSize, margin, alt, title) {
+var opts = {};
+if (typeof arguments[0] == 'object') {
+opts = arguments[0];
+cellSize = opts.cellSize;
+margin = opts.margin;
+alt = opts.alt;
+title = opts.title;
+}
+cellSize = cellSize || 2;
+margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+alt.text = alt.text || null;
+alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+title = (typeof title === 'string') ? {text: title} : title || {};
+title.text = title.text || null;
+title.id = (title.text) ? title.id || 'qrcode-title' : null;
+var size = _this.getModuleCount() * cellSize + margin * 2;
+var c, mc, r, mr, qrSvg='', rect;
+rect = 'l' + cellSize + ',0 0,' + cellSize +
+' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+qrSvg += '>';
+qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+escapeXml(title.text) + '</title>' : '';
+qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+escapeXml(alt.text) + '</description>' : '';
+qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+qrSvg += '<path d="';
+for (r = 0; r < _this.getModuleCount(); r += 1) {
+mr = r * cellSize + margin;
+for (c = 0; c < _this.getModuleCount(); c += 1) {
+if (_this.isDark(r, c) ) {
+mc = c*cellSize+margin;
+qrSvg += 'M' + mc + ',' + mr + rect;
+}
+}
+}
+qrSvg += '" stroke="transparent" fill="black"/>';
+qrSvg += '</svg>';
+return qrSvg;
+};
+_this.createDataURL = function(cellSize, margin) {
+cellSize = cellSize || 2;
+margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+var size = _this.getModuleCount() * cellSize + margin * 2;
+var min = margin;
+var max = size - margin;
+return createDataURL(size, size, function(x, y) {
+if (min <= x && x < max && min <= y && y < max) {
+var c = Math.floor( (x - min) / cellSize);
+var r = Math.floor( (y - min) / cellSize);
+return _this.isDark(r, c)? 0 : 1;
+} else {
+return 1;
+}
+} );
+};
+_this.createImgTag = function(cellSize, margin, alt) {
+cellSize = cellSize || 2;
+margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+var size = _this.getModuleCount() * cellSize + margin * 2;
+var img = '';
+img += '<img';
+img += '\u0020src="';
+img += _this.createDataURL(cellSize, margin);
+img += '"';
+img += '\u0020width="';
+img += size;
+img += '"';
+img += '\u0020height="';
+img += size;
+img += '"';
+if (alt) {
+img += '\u0020alt="';
+img += escapeXml(alt);
+img += '"';
+}
+img += '/>';
+return img;
+};
+var escapeXml = function(s) {
+var escaped = '';
+for (var i = 0; i < s.length; i += 1) {
+var c = s.charAt(i);
+switch(c) {
+case '<': escaped += '&lt;'; break;
+case '>': escaped += '&gt;'; break;
+case '&': escaped += '&amp;'; break;
+case '"': escaped += '&quot;'; break;
+default : escaped += c; break;
+}
+}
+return escaped;
+};
+var _createHalfASCII = function(margin) {
+var cellSize = 1;
+margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+var size = _this.getModuleCount() * cellSize + margin * 2;
+var min = margin;
+var max = size - margin;
+var y, x, r1, r2, p;
+var blocks = {
+'██': '█',
+'█ ': '▀',
+' █': '▄',
+'  ': ' '
+};
+var blocksLastLineNoMargin = {
+'██': '▀',
+'█ ': '▀',
+' █': ' ',
+'  ': ' '
+};
+var ascii = '';
+for (y = 0; y < size; y += 2) {
+r1 = Math.floor((y - min) / cellSize);
+r2 = Math.floor((y + 1 - min) / cellSize);
+for (x = 0; x < size; x += 1) {
+p = '█';
+if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+p = ' ';
+}
+if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+p += ' ';
+}
+else {
+p += '█';
+}
+ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+}
+ascii += '\n';
+}
+if (size % 2 && margin > 0) {
+return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+}
+return ascii.substring(0, ascii.length-1);
+};
+_this.createASCII = function(cellSize, margin) {
+cellSize = cellSize || 1;
+if (cellSize < 2) {
+return _createHalfASCII(margin);
+}
+cellSize -= 1;
+margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+var size = _this.getModuleCount() * cellSize + margin * 2;
+var min = margin;
+var max = size - margin;
+var y, x, r, p;
+var white = Array(cellSize+1).join('██');
+var black = Array(cellSize+1).join('  ');
+var ascii = '';
+var line = '';
+for (y = 0; y < size; y += 1) {
+r = Math.floor( (y - min) / cellSize);
+line = '';
+for (x = 0; x < size; x += 1) {
+p = 1;
+if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+p = 0;
+}
+line += p ? white : black;
+}
+for (r = 0; r < cellSize; r += 1) {
+ascii += line + '\n';
+}
+}
+return ascii.substring(0, ascii.length-1);
+};
+_this.renderTo2dContext = function(context, cellSize) {
+cellSize = cellSize || 2;
+var length = _this.getModuleCount();
+for (var row = 0; row < length; row++) {
+for (var col = 0; col < length; col++) {
+context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+}
+}
+}
+return _this;
+};
+qrcode.stringToBytesFuncs = {
+'default' : function(s) {
+var bytes = [];
+for (var i = 0; i < s.length; i += 1) {
+var c = s.charCodeAt(i);
+bytes.push(c & 0xff);
+}
+return bytes;
+}
+};
+qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+qrcode.createStringToBytes = function(unicodeData, numChars) {
+var unicodeMap = function() {
+var bin = base64DecodeInputStream(unicodeData);
+var read = function() {
+var b = bin.read();
+if (b == -1) throw 'eof';
+return b;
+};
+var count = 0;
+var unicodeMap = {};
+while (true) {
+var b0 = bin.read();
+if (b0 == -1) break;
+var b1 = read();
+var b2 = read();
+var b3 = read();
+var k = String.fromCharCode( (b0 << 8) | b1);
+var v = (b2 << 8) | b3;
+unicodeMap[k] = v;
+count += 1;
+}
+if (count != numChars) {
+throw count + ' != ' + numChars;
+}
+return unicodeMap;
+}();
+var unknownChar = '?'.charCodeAt(0);
+return function(s) {
+var bytes = [];
+for (var i = 0; i < s.length; i += 1) {
+var c = s.charCodeAt(i);
+if (c < 128) {
+bytes.push(c);
+} else {
+var b = unicodeMap[s.charAt(i)];
+if (typeof b == 'number') {
+if ( (b & 0xff) == b) {
+bytes.push(b);
+} else {
+bytes.push(b >>> 8);
+bytes.push(b & 0xff);
+}
+} else {
+bytes.push(unknownChar);
+}
+}
+}
+return bytes;
+};
+};
+var QRMode = {
+MODE_NUMBER :    1 << 0,
+MODE_ALPHA_NUM : 1 << 1,
+MODE_8BIT_BYTE : 1 << 2,
+MODE_KANJI :     1 << 3
+};
+var QRErrorCorrectionLevel = {
+L : 1,
+M : 0,
+Q : 3,
+H : 2
+};
+var QRMaskPattern = {
+PATTERN000 : 0,
+PATTERN001 : 1,
+PATTERN010 : 2,
+PATTERN011 : 3,
+PATTERN100 : 4,
+PATTERN101 : 5,
+PATTERN110 : 6,
+PATTERN111 : 7
+};
+var QRUtil = function() {
+var PATTERN_POSITION_TABLE = [
+[],
+[6, 18],
+[6, 22],
+[6, 26],
+[6, 30],
+[6, 34],
+[6, 22, 38],
+[6, 24, 42],
+[6, 26, 46],
+[6, 28, 50],
+[6, 30, 54],
+[6, 32, 58],
+[6, 34, 62],
+[6, 26, 46, 66],
+[6, 26, 48, 70],
+[6, 26, 50, 74],
+[6, 30, 54, 78],
+[6, 30, 56, 82],
+[6, 30, 58, 86],
+[6, 34, 62, 90],
+[6, 28, 50, 72, 94],
+[6, 26, 50, 74, 98],
+[6, 30, 54, 78, 102],
+[6, 28, 54, 80, 106],
+[6, 32, 58, 84, 110],
+[6, 30, 58, 86, 114],
+[6, 34, 62, 90, 118],
+[6, 26, 50, 74, 98, 122],
+[6, 30, 54, 78, 102, 126],
+[6, 26, 52, 78, 104, 130],
+[6, 30, 56, 82, 108, 134],
+[6, 34, 60, 86, 112, 138],
+[6, 30, 58, 86, 114, 142],
+[6, 34, 62, 90, 118, 146],
+[6, 30, 54, 78, 102, 126, 150],
+[6, 24, 50, 76, 102, 128, 154],
+[6, 28, 54, 80, 106, 132, 158],
+[6, 32, 58, 84, 110, 136, 162],
+[6, 26, 54, 82, 110, 138, 166],
+[6, 30, 58, 86, 114, 142, 170]
+];
+var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+var _this = {};
+var getBCHDigit = function(data) {
+var digit = 0;
+while (data != 0) {
+digit += 1;
+data >>>= 1;
+}
+return digit;
+};
+_this.getBCHTypeInfo = function(data) {
+var d = data << 10;
+while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+}
+return ( (data << 10) | d) ^ G15_MASK;
+};
+_this.getBCHTypeNumber = function(data) {
+var d = data << 12;
+while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+}
+return (data << 12) | d;
+};
+_this.getPatternPosition = function(typeNumber) {
+return PATTERN_POSITION_TABLE[typeNumber - 1];
+};
+_this.getMaskFunction = function(maskPattern) {
+switch (maskPattern) {
+case QRMaskPattern.PATTERN000 :
+return function(i, j) { return (i + j) % 2 == 0; };
+case QRMaskPattern.PATTERN001 :
+return function(i, j) { return i % 2 == 0; };
+case QRMaskPattern.PATTERN010 :
+return function(i, j) { return j % 3 == 0; };
+case QRMaskPattern.PATTERN011 :
+return function(i, j) { return (i + j) % 3 == 0; };
+case QRMaskPattern.PATTERN100 :
+return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+case QRMaskPattern.PATTERN101 :
+return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+case QRMaskPattern.PATTERN110 :
+return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+case QRMaskPattern.PATTERN111 :
+return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+default :
+throw 'bad maskPattern:' + maskPattern;
+}
+};
+_this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+var a = qrPolynomial([1], 0);
+for (var i = 0; i < errorCorrectLength; i += 1) {
+a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+}
+return a;
+};
+_this.getLengthInBits = function(mode, type) {
+if (1 <= type && type < 10) {
+switch(mode) {
+case QRMode.MODE_NUMBER    : return 10;
+case QRMode.MODE_ALPHA_NUM : return 9;
+case QRMode.MODE_8BIT_BYTE : return 8;
+case QRMode.MODE_KANJI     : return 8;
+default :
+throw 'mode:' + mode;
+}
+} else if (type < 27) {
+switch(mode) {
+case QRMode.MODE_NUMBER    : return 12;
+case QRMode.MODE_ALPHA_NUM : return 11;
+case QRMode.MODE_8BIT_BYTE : return 16;
+case QRMode.MODE_KANJI     : return 10;
+default :
+throw 'mode:' + mode;
+}
+} else if (type < 41) {
+switch(mode) {
+case QRMode.MODE_NUMBER    : return 14;
+case QRMode.MODE_ALPHA_NUM : return 13;
+case QRMode.MODE_8BIT_BYTE : return 16;
+case QRMode.MODE_KANJI     : return 12;
+default :
+throw 'mode:' + mode;
+}
+} else {
+throw 'type:' + type;
+}
+};
+_this.getLostPoint = function(qrcode) {
+var moduleCount = qrcode.getModuleCount();
+var lostPoint = 0;
+for (var row = 0; row < moduleCount; row += 1) {
+for (var col = 0; col < moduleCount; col += 1) {
+var sameCount = 0;
+var dark = qrcode.isDark(row, col);
+for (var r = -1; r <= 1; r += 1) {
+if (row + r < 0 || moduleCount <= row + r) {
+continue;
+}
+for (var c = -1; c <= 1; c += 1) {
+if (col + c < 0 || moduleCount <= col + c) {
+continue;
+}
+if (r == 0 && c == 0) {
+continue;
+}
+if (dark == qrcode.isDark(row + r, col + c) ) {
+sameCount += 1;
+}
+}
+}
+if (sameCount > 5) {
+lostPoint += (3 + sameCount - 5);
+}
+}
+};
+for (var row = 0; row < moduleCount - 1; row += 1) {
+for (var col = 0; col < moduleCount - 1; col += 1) {
+var count = 0;
+if (qrcode.isDark(row, col) ) count += 1;
+if (qrcode.isDark(row + 1, col) ) count += 1;
+if (qrcode.isDark(row, col + 1) ) count += 1;
+if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+if (count == 0 || count == 4) {
+lostPoint += 3;
+}
+}
+}
+for (var row = 0; row < moduleCount; row += 1) {
+for (var col = 0; col < moduleCount - 6; col += 1) {
+if (qrcode.isDark(row, col)
+&& !qrcode.isDark(row, col + 1)
+&&  qrcode.isDark(row, col + 2)
+&&  qrcode.isDark(row, col + 3)
+&&  qrcode.isDark(row, col + 4)
+&& !qrcode.isDark(row, col + 5)
+&&  qrcode.isDark(row, col + 6) ) {
+lostPoint += 40;
+}
+}
+}
+for (var col = 0; col < moduleCount; col += 1) {
+for (var row = 0; row < moduleCount - 6; row += 1) {
+if (qrcode.isDark(row, col)
+&& !qrcode.isDark(row + 1, col)
+&&  qrcode.isDark(row + 2, col)
+&&  qrcode.isDark(row + 3, col)
+&&  qrcode.isDark(row + 4, col)
+&& !qrcode.isDark(row + 5, col)
+&&  qrcode.isDark(row + 6, col) ) {
+lostPoint += 40;
+}
+}
+}
+var darkCount = 0;
+for (var col = 0; col < moduleCount; col += 1) {
+for (var row = 0; row < moduleCount; row += 1) {
+if (qrcode.isDark(row, col) ) {
+darkCount += 1;
+}
+}
+}
+var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+lostPoint += ratio * 10;
+return lostPoint;
+};
+return _this;
+}();
+var QRMath = function() {
+var EXP_TABLE = new Array(256);
+var LOG_TABLE = new Array(256);
+for (var i = 0; i < 8; i += 1) {
+EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i += 1) {
+EXP_TABLE[i] = EXP_TABLE[i - 4]
+^ EXP_TABLE[i - 5]
+^ EXP_TABLE[i - 6]
+^ EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i += 1) {
+LOG_TABLE[EXP_TABLE[i] ] = i;
+}
+var _this = {};
+_this.glog = function(n) {
+if (n < 1) {
+throw 'glog(' + n + ')';
+}
+return LOG_TABLE[n];
+};
+_this.gexp = function(n) {
+while (n < 0) {
+n += 255;
+}
+while (n >= 256) {
+n -= 255;
+}
+return EXP_TABLE[n];
+};
+return _this;
+}();
+function qrPolynomial(num, shift) {
+if (typeof num.length == 'undefined') {
+throw num.length + '/' + shift;
+}
+var _num = function() {
+var offset = 0;
+while (offset < num.length && num[offset] == 0) {
+offset += 1;
+}
+var _num = new Array(num.length - offset + shift);
+for (var i = 0; i < num.length - offset; i += 1) {
+_num[i] = num[i + offset];
+}
+return _num;
+}();
+var _this = {};
+_this.getAt = function(index) {
+return _num[index];
+};
+_this.getLength = function() {
+return _num.length;
+};
+_this.multiply = function(e) {
+var num = new Array(_this.getLength() + e.getLength() - 1);
+for (var i = 0; i < _this.getLength(); i += 1) {
+for (var j = 0; j < e.getLength(); j += 1) {
+num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+}
+}
+return qrPolynomial(num, 0);
+};
+_this.mod = function(e) {
+if (_this.getLength() - e.getLength() < 0) {
+return _this;
+}
+var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+var num = new Array(_this.getLength() );
+for (var i = 0; i < _this.getLength(); i += 1) {
+num[i] = _this.getAt(i);
+}
+for (var i = 0; i < e.getLength(); i += 1) {
+num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+}
+return qrPolynomial(num, 0).mod(e);
+};
+return _this;
+};
+var QRRSBlock = function() {
+var RS_BLOCK_TABLE = [
+[1, 26, 19],
+[1, 26, 16],
+[1, 26, 13],
+[1, 26, 9],
+[1, 44, 34],
+[1, 44, 28],
+[1, 44, 22],
+[1, 44, 16],
+[1, 70, 55],
+[1, 70, 44],
+[2, 35, 17],
+[2, 35, 13],
+[1, 100, 80],
+[2, 50, 32],
+[2, 50, 24],
+[4, 25, 9],
+[1, 134, 108],
+[2, 67, 43],
+[2, 33, 15, 2, 34, 16],
+[2, 33, 11, 2, 34, 12],
+[2, 86, 68],
+[4, 43, 27],
+[4, 43, 19],
+[4, 43, 15],
+[2, 98, 78],
+[4, 49, 31],
+[2, 32, 14, 4, 33, 15],
+[4, 39, 13, 1, 40, 14],
+[2, 121, 97],
+[2, 60, 38, 2, 61, 39],
+[4, 40, 18, 2, 41, 19],
+[4, 40, 14, 2, 41, 15],
+[2, 146, 116],
+[3, 58, 36, 2, 59, 37],
+[4, 36, 16, 4, 37, 17],
+[4, 36, 12, 4, 37, 13],
+[2, 86, 68, 2, 87, 69],
+[4, 69, 43, 1, 70, 44],
+[6, 43, 19, 2, 44, 20],
+[6, 43, 15, 2, 44, 16],
+[4, 101, 81],
+[1, 80, 50, 4, 81, 51],
+[4, 50, 22, 4, 51, 23],
+[3, 36, 12, 8, 37, 13],
+[2, 116, 92, 2, 117, 93],
+[6, 58, 36, 2, 59, 37],
+[4, 46, 20, 6, 47, 21],
+[7, 42, 14, 4, 43, 15],
+[4, 133, 107],
+[8, 59, 37, 1, 60, 38],
+[8, 44, 20, 4, 45, 21],
+[12, 33, 11, 4, 34, 12],
+[3, 145, 115, 1, 146, 116],
+[4, 64, 40, 5, 65, 41],
+[11, 36, 16, 5, 37, 17],
+[11, 36, 12, 5, 37, 13],
+[5, 109, 87, 1, 110, 88],
+[5, 65, 41, 5, 66, 42],
+[5, 54, 24, 7, 55, 25],
+[11, 36, 12, 7, 37, 13],
+[5, 122, 98, 1, 123, 99],
+[7, 73, 45, 3, 74, 46],
+[15, 43, 19, 2, 44, 20],
+[3, 45, 15, 13, 46, 16],
+[1, 135, 107, 5, 136, 108],
+[10, 74, 46, 1, 75, 47],
+[1, 50, 22, 15, 51, 23],
+[2, 42, 14, 17, 43, 15],
+[5, 150, 120, 1, 151, 121],
+[9, 69, 43, 4, 70, 44],
+[17, 50, 22, 1, 51, 23],
+[2, 42, 14, 19, 43, 15],
+[3, 141, 113, 4, 142, 114],
+[3, 70, 44, 11, 71, 45],
+[17, 47, 21, 4, 48, 22],
+[9, 39, 13, 16, 40, 14],
+[3, 135, 107, 5, 136, 108],
+[3, 67, 41, 13, 68, 42],
+[15, 54, 24, 5, 55, 25],
+[15, 43, 15, 10, 44, 16],
+[4, 144, 116, 4, 145, 117],
+[17, 68, 42],
+[17, 50, 22, 6, 51, 23],
+[19, 46, 16, 6, 47, 17],
+[2, 139, 111, 7, 140, 112],
+[17, 74, 46],
+[7, 54, 24, 16, 55, 25],
+[34, 37, 13],
+[4, 151, 121, 5, 152, 122],
+[4, 75, 47, 14, 76, 48],
+[11, 54, 24, 14, 55, 25],
+[16, 45, 15, 14, 46, 16],
+[6, 147, 117, 4, 148, 118],
+[6, 73, 45, 14, 74, 46],
+[11, 54, 24, 16, 55, 25],
+[30, 46, 16, 2, 47, 17],
+[8, 132, 106, 4, 133, 107],
+[8, 75, 47, 13, 76, 48],
+[7, 54, 24, 22, 55, 25],
+[22, 45, 15, 13, 46, 16],
+[10, 142, 114, 2, 143, 115],
+[19, 74, 46, 4, 75, 47],
+[28, 50, 22, 6, 51, 23],
+[33, 46, 16, 4, 47, 17],
+[8, 152, 122, 4, 153, 123],
+[22, 73, 45, 3, 74, 46],
+[8, 53, 23, 26, 54, 24],
+[12, 45, 15, 28, 46, 16],
+[3, 147, 117, 10, 148, 118],
+[3, 73, 45, 23, 74, 46],
+[4, 54, 24, 31, 55, 25],
+[11, 45, 15, 31, 46, 16],
+[7, 146, 116, 7, 147, 117],
+[21, 73, 45, 7, 74, 46],
+[1, 53, 23, 37, 54, 24],
+[19, 45, 15, 26, 46, 16],
+[5, 145, 115, 10, 146, 116],
+[19, 75, 47, 10, 76, 48],
+[15, 54, 24, 25, 55, 25],
+[23, 45, 15, 25, 46, 16],
+[13, 145, 115, 3, 146, 116],
+[2, 74, 46, 29, 75, 47],
+[42, 54, 24, 1, 55, 25],
+[23, 45, 15, 28, 46, 16],
+[17, 145, 115],
+[10, 74, 46, 23, 75, 47],
+[10, 54, 24, 35, 55, 25],
+[19, 45, 15, 35, 46, 16],
+[17, 145, 115, 1, 146, 116],
+[14, 74, 46, 21, 75, 47],
+[29, 54, 24, 19, 55, 25],
+[11, 45, 15, 46, 46, 16],
+[13, 145, 115, 6, 146, 116],
+[14, 74, 46, 23, 75, 47],
+[44, 54, 24, 7, 55, 25],
+[59, 46, 16, 1, 47, 17],
+[12, 151, 121, 7, 152, 122],
+[12, 75, 47, 26, 76, 48],
+[39, 54, 24, 14, 55, 25],
+[22, 45, 15, 41, 46, 16],
+[6, 151, 121, 14, 152, 122],
+[6, 75, 47, 34, 76, 48],
+[46, 54, 24, 10, 55, 25],
+[2, 45, 15, 64, 46, 16],
+[17, 152, 122, 4, 153, 123],
+[29, 74, 46, 14, 75, 47],
+[49, 54, 24, 10, 55, 25],
+[24, 45, 15, 46, 46, 16],
+[4, 152, 122, 18, 153, 123],
+[13, 74, 46, 32, 75, 47],
+[48, 54, 24, 14, 55, 25],
+[42, 45, 15, 32, 46, 16],
+[20, 147, 117, 4, 148, 118],
+[40, 75, 47, 7, 76, 48],
+[43, 54, 24, 22, 55, 25],
+[10, 45, 15, 67, 46, 16],
+[19, 148, 118, 6, 149, 119],
+[18, 75, 47, 31, 76, 48],
+[34, 54, 24, 34, 55, 25],
+[20, 45, 15, 61, 46, 16]
+];
+var qrRSBlock = function(totalCount, dataCount) {
+var _this = {};
+_this.totalCount = totalCount;
+_this.dataCount = dataCount;
+return _this;
+};
+var _this = {};
+var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+switch(errorCorrectionLevel) {
+case QRErrorCorrectionLevel.L :
+return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+case QRErrorCorrectionLevel.M :
+return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+case QRErrorCorrectionLevel.Q :
+return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+case QRErrorCorrectionLevel.H :
+return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+default :
+return undefined;
+}
+};
+_this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+if (typeof rsBlock == 'undefined') {
+throw 'bad rs block @ typeNumber:' + typeNumber +
+'/errorCorrectionLevel:' + errorCorrectionLevel;
+}
+var length = rsBlock.length / 3;
+var list = [];
+for (var i = 0; i < length; i += 1) {
+var count = rsBlock[i * 3 + 0];
+var totalCount = rsBlock[i * 3 + 1];
+var dataCount = rsBlock[i * 3 + 2];
+for (var j = 0; j < count; j += 1) {
+list.push(qrRSBlock(totalCount, dataCount) );
+}
+}
+return list;
+};
+return _this;
+}();
+var qrBitBuffer = function() {
+var _buffer = [];
+var _length = 0;
+var _this = {};
+_this.getBuffer = function() {
+return _buffer;
+};
+_this.getAt = function(index) {
+var bufIndex = Math.floor(index / 8);
+return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+};
+_this.put = function(num, length) {
+for (var i = 0; i < length; i += 1) {
+_this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+}
+};
+_this.getLengthInBits = function() {
+return _length;
+};
+_this.putBit = function(bit) {
+var bufIndex = Math.floor(_length / 8);
+if (_buffer.length <= bufIndex) {
+_buffer.push(0);
+}
+if (bit) {
+_buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+}
+_length += 1;
+};
+return _this;
+};
+var qrNumber = function(data) {
+var _mode = QRMode.MODE_NUMBER;
+var _data = data;
+var _this = {};
+_this.getMode = function() {
+return _mode;
+};
+_this.getLength = function(buffer) {
+return _data.length;
+};
+_this.write = function(buffer) {
+var data = _data;
+var i = 0;
+while (i + 2 < data.length) {
+buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+i += 3;
+}
+if (i < data.length) {
+if (data.length - i == 1) {
+buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+} else if (data.length - i == 2) {
+buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+}
+}
+};
+var strToNum = function(s) {
+var num = 0;
+for (var i = 0; i < s.length; i += 1) {
+num = num * 10 + chatToNum(s.charAt(i) );
+}
+return num;
+};
+var chatToNum = function(c) {
+if ('0' <= c && c <= '9') {
+return c.charCodeAt(0) - '0'.charCodeAt(0);
+}
+throw 'illegal char :' + c;
+};
+return _this;
+};
+var qrAlphaNum = function(data) {
+var _mode = QRMode.MODE_ALPHA_NUM;
+var _data = data;
+var _this = {};
+_this.getMode = function() {
+return _mode;
+};
+_this.getLength = function(buffer) {
+return _data.length;
+};
+_this.write = function(buffer) {
+var s = _data;
+var i = 0;
+while (i + 1 < s.length) {
+buffer.put(
+getCode(s.charAt(i) ) * 45 +
+getCode(s.charAt(i + 1) ), 11);
+i += 2;
+}
+if (i < s.length) {
+buffer.put(getCode(s.charAt(i) ), 6);
+}
+};
+var getCode = function(c) {
+if ('0' <= c && c <= '9') {
+return c.charCodeAt(0) - '0'.charCodeAt(0);
+} else if ('A' <= c && c <= 'Z') {
+return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+} else {
+switch (c) {
+case ' ' : return 36;
+case '$' : return 37;
+case '%' : return 38;
+case '*' : return 39;
+case '+' : return 40;
+case '-' : return 41;
+case '.' : return 42;
+case '/' : return 43;
+case ':' : return 44;
+default :
+throw 'illegal char :' + c;
+}
+}
+};
+return _this;
+};
+var qr8BitByte = function(data) {
+var _mode = QRMode.MODE_8BIT_BYTE;
+var _data = data;
+var _bytes = qrcode.stringToBytes(data);
+var _this = {};
+_this.getMode = function() {
+return _mode;
+};
+_this.getLength = function(buffer) {
+return _bytes.length;
+};
+_this.write = function(buffer) {
+for (var i = 0; i < _bytes.length; i += 1) {
+buffer.put(_bytes[i], 8);
+}
+};
+return _this;
+};
+var qrKanji = function(data) {
+var _mode = QRMode.MODE_KANJI;
+var _data = data;
+var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+if (!stringToBytes) {
+throw 'sjis not supported.';
+}
+!function(c, code) {
+var test = stringToBytes(c);
+if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+throw 'sjis not supported.';
+}
+}('\u53cb', 0x9746);
+var _bytes = stringToBytes(data);
+var _this = {};
+_this.getMode = function() {
+return _mode;
+};
+_this.getLength = function(buffer) {
+return ~~(_bytes.length / 2);
+};
+_this.write = function(buffer) {
+var data = _bytes;
+var i = 0;
+while (i + 1 < data.length) {
+var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+if (0x8140 <= c && c <= 0x9FFC) {
+c -= 0x8140;
+} else if (0xE040 <= c && c <= 0xEBBF) {
+c -= 0xC140;
+} else {
+throw 'illegal char at ' + (i + 1) + '/' + c;
+}
+c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+buffer.put(c, 13);
+i += 2;
+}
+if (i < data.length) {
+throw 'illegal char at ' + (i + 1);
+}
+};
+return _this;
+};
+var byteArrayOutputStream = function() {
+var _bytes = [];
+var _this = {};
+_this.writeByte = function(b) {
+_bytes.push(b & 0xff);
+};
+_this.writeShort = function(i) {
+_this.writeByte(i);
+_this.writeByte(i >>> 8);
+};
+_this.writeBytes = function(b, off, len) {
+off = off || 0;
+len = len || b.length;
+for (var i = 0; i < len; i += 1) {
+_this.writeByte(b[i + off]);
+}
+};
+_this.writeString = function(s) {
+for (var i = 0; i < s.length; i += 1) {
+_this.writeByte(s.charCodeAt(i) );
+}
+};
+_this.toByteArray = function() {
+return _bytes;
+};
+_this.toString = function() {
+var s = '';
+s += '[';
+for (var i = 0; i < _bytes.length; i += 1) {
+if (i > 0) {
+s += ',';
+}
+s += _bytes[i];
+}
+s += ']';
+return s;
+};
+return _this;
+};
+var base64EncodeOutputStream = function() {
+var _buffer = 0;
+var _buflen = 0;
+var _length = 0;
+var _base64 = '';
+var _this = {};
+var writeEncoded = function(b) {
+_base64 += String.fromCharCode(encode(b & 0x3f) );
+};
+var encode = function(n) {
+if (n < 0) {
+} else if (n < 26) {
+return 0x41 + n;
+} else if (n < 52) {
+return 0x61 + (n - 26);
+} else if (n < 62) {
+return 0x30 + (n - 52);
+} else if (n == 62) {
+return 0x2b;
+} else if (n == 63) {
+return 0x2f;
+}
+throw 'n:' + n;
+};
+_this.writeByte = function(n) {
+_buffer = (_buffer << 8) | (n & 0xff);
+_buflen += 8;
+_length += 1;
+while (_buflen >= 6) {
+writeEncoded(_buffer >>> (_buflen - 6) );
+_buflen -= 6;
+}
+};
+_this.flush = function() {
+if (_buflen > 0) {
+writeEncoded(_buffer << (6 - _buflen) );
+_buffer = 0;
+_buflen = 0;
+}
+if (_length % 3 != 0) {
+var padlen = 3 - _length % 3;
+for (var i = 0; i < padlen; i += 1) {
+_base64 += '=';
+}
+}
+};
+_this.toString = function() {
+return _base64;
+};
+return _this;
+};
+var base64DecodeInputStream = function(str) {
+var _str = str;
+var _pos = 0;
+var _buffer = 0;
+var _buflen = 0;
+var _this = {};
+_this.read = function() {
+while (_buflen < 8) {
+if (_pos >= _str.length) {
+if (_buflen == 0) {
+return -1;
+}
+throw 'unexpected end of file./' + _buflen;
+}
+var c = _str.charAt(_pos);
+_pos += 1;
+if (c == '=') {
+_buflen = 0;
+return -1;
+} else if (c.match(/^\s$/) ) {
+continue;
+}
+_buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+_buflen += 6;
+}
+var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+_buflen -= 8;
+return n;
+};
+var decode = function(c) {
+if (0x41 <= c && c <= 0x5a) {
+return c - 0x41;
+} else if (0x61 <= c && c <= 0x7a) {
+return c - 0x61 + 26;
+} else if (0x30 <= c && c <= 0x39) {
+return c - 0x30 + 52;
+} else if (c == 0x2b) {
+return 62;
+} else if (c == 0x2f) {
+return 63;
+} else {
+throw 'c:' + c;
+}
+};
+return _this;
+};
+var gifImage = function(width, height) {
+var _width = width;
+var _height = height;
+var _data = new Array(width * height);
+var _this = {};
+_this.setPixel = function(x, y, pixel) {
+_data[y * _width + x] = pixel;
+};
+_this.write = function(out) {
+out.writeString('GIF87a');
+out.writeShort(_width);
+out.writeShort(_height);
+out.writeByte(0x80); // 2bit
+out.writeByte(0);
+out.writeByte(0);
+out.writeByte(0x00);
+out.writeByte(0x00);
+out.writeByte(0x00);
+out.writeByte(0xff);
+out.writeByte(0xff);
+out.writeByte(0xff);
+out.writeString(',');
+out.writeShort(0);
+out.writeShort(0);
+out.writeShort(_width);
+out.writeShort(_height);
+out.writeByte(0);
+var lzwMinCodeSize = 2;
+var raster = getLZWRaster(lzwMinCodeSize);
+out.writeByte(lzwMinCodeSize);
+var offset = 0;
+while (raster.length - offset > 255) {
+out.writeByte(255);
+out.writeBytes(raster, offset, 255);
+offset += 255;
+}
+out.writeByte(raster.length - offset);
+out.writeBytes(raster, offset, raster.length - offset);
+out.writeByte(0x00);
+out.writeString(';');
+};
+var bitOutputStream = function(out) {
+var _out = out;
+var _bitLength = 0;
+var _bitBuffer = 0;
+var _this = {};
+_this.write = function(data, length) {
+if ( (data >>> length) != 0) {
+throw 'length over';
+}
+while (_bitLength + length >= 8) {
+_out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+length -= (8 - _bitLength);
+data >>>= (8 - _bitLength);
+_bitBuffer = 0;
+_bitLength = 0;
+}
+_bitBuffer = (data << _bitLength) | _bitBuffer;
+_bitLength = _bitLength + length;
+};
+_this.flush = function() {
+if (_bitLength > 0) {
+_out.writeByte(_bitBuffer);
+}
+};
+return _this;
+};
+var getLZWRaster = function(lzwMinCodeSize) {
+var clearCode = 1 << lzwMinCodeSize;
+var endCode = (1 << lzwMinCodeSize) + 1;
+var bitLength = lzwMinCodeSize + 1;
+var table = lzwTable();
+for (var i = 0; i < clearCode; i += 1) {
+table.add(String.fromCharCode(i) );
+}
+table.add(String.fromCharCode(clearCode) );
+table.add(String.fromCharCode(endCode) );
+var byteOut = byteArrayOutputStream();
+var bitOut = bitOutputStream(byteOut);
+bitOut.write(clearCode, bitLength);
+var dataIndex = 0;
+var s = String.fromCharCode(_data[dataIndex]);
+dataIndex += 1;
+while (dataIndex < _data.length) {
+var c = String.fromCharCode(_data[dataIndex]);
+dataIndex += 1;
+if (table.contains(s + c) ) {
+s = s + c;
+} else {
+bitOut.write(table.indexOf(s), bitLength);
+if (table.size() < 0xfff) {
+if (table.size() == (1 << bitLength) ) {
+bitLength += 1;
+}
+table.add(s + c);
+}
+s = c;
+}
+}
+bitOut.write(table.indexOf(s), bitLength);
+bitOut.write(endCode, bitLength);
+bitOut.flush();
+return byteOut.toByteArray();
+};
+var lzwTable = function() {
+var _map = {};
+var _size = 0;
+var _this = {};
+_this.add = function(key) {
+if (_this.contains(key) ) {
+throw 'dup key:' + key;
+}
+_map[key] = _size;
+_size += 1;
+};
+_this.size = function() {
+return _size;
+};
+_this.indexOf = function(key) {
+return _map[key];
+};
+_this.contains = function(key) {
+return typeof _map[key] != 'undefined';
+};
+return _this;
+};
+return _this;
+};
+var createDataURL = function(width, height, getPixel) {
+var gif = gifImage(width, height);
+for (var y = 0; y < height; y += 1) {
+for (var x = 0; x < width; x += 1) {
+gif.setPixel(x, y, getPixel(x, y) );
+}
+}
+var b = byteArrayOutputStream();
+gif.write(b);
+var base64 = base64EncodeOutputStream();
+var bytes = b.toByteArray();
+for (var i = 0; i < bytes.length; i += 1) {
+base64.writeByte(bytes[i]);
+}
+base64.flush();
+return 'data:image/gif;base64,' + base64;
+};
+return qrcode;
+}();
+!function() {
+qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+function toUTF8Array(str) {
+var utf8 = [];
+for (var i=0; i < str.length; i++) {
+var charcode = str.charCodeAt(i);
+if (charcode < 0x80) utf8.push(charcode);
+else if (charcode < 0x800) {
+utf8.push(0xc0 | (charcode >> 6),
+0x80 | (charcode & 0x3f));
+}
+else if (charcode < 0xd800 || charcode >= 0xe000) {
+utf8.push(0xe0 | (charcode >> 12),
+0x80 | ((charcode>>6) & 0x3f),
+0x80 | (charcode & 0x3f));
+}
+else {
+i++;
+charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+| (str.charCodeAt(i) & 0x3ff));
+utf8.push(0xf0 | (charcode >>18),
+0x80 | ((charcode>>12) & 0x3f),
+0x80 | ((charcode>>6) & 0x3f),
+0x80 | (charcode & 0x3f));
+}
+}
+return utf8;
+}
+return toUTF8Array(s);
+};
+}();
+</script>
 <script>
 (() => {
 "use strict";
@@ -419,7 +2102,7 @@ let toastTimer = null;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
 
 /* ---------- settings + themes ---------- */
-const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true }, store.get("pace:settings", {}));
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 500, coach: true, name: "" }, store.get("pace:settings", {}));
 if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
 const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000" };
@@ -505,6 +2188,7 @@ let playedMs = 0, playStart = 0, sessionWords = 0;
 let hasPaused = false, noRewind = false, skipCount = 0, stepIdx = 0, flushT = 0, wordsSince = 0;
 const RAMP = 30;
 let timerOn = false, timerLeft = 0, holdActive = false;
+let sessBacks = 0, coachMark = 0, coachNext = 0;
 
 const L = $("#L"), P = $("#P"), R = $("#R"), prog = $("#prog"), ctxEl = $("#ctx");
 const playBtn = $("#playBtn"), chapSel = $("#chapters"), statusEl = $("#status");
@@ -820,6 +2504,92 @@ function showContext() {
   ctxEl.replaceChildren(frag);
 }
 
+/* goals, streaks, badges */
+const dayW = k => (stats.days[k] || {}).w || 0;
+const goalTarget = () => settings.goal > 0 ? settings.goal : 20;
+function weekStart(d) { const x = new Date(d); x.setDate(x.getDate() - x.getDay()); return todayKey(x); }
+function streakInfo() {
+  const t = goalTarget(), keys = Object.keys(stats.days).sort(), today = new Date(); today.setHours(0, 0, 0, 0);
+  const tk = todayKey(today); let run = 0, longest = 0, rest = new Set(), lastRest = false;
+  if (keys.length) {
+    const d = keyToDate(keys[0]);
+    for (; d <= today; d.setDate(d.getDate() + 1)) {
+      const k = todayKey(d), met = dayW(k) >= t;
+      if (met) { run++; lastRest = false; longest = Math.max(longest, run); }
+      else if (k === tk) { /* today is still open */ }
+      else if (run > 0 && !lastRest && !rest.has(weekStart(d))) { rest.add(weekStart(d)); lastRest = true; }
+      else { run = 0; rest.clear(); lastRest = false; }
+    }
+  }
+  return { cur: run, longest, t, restUsed: run > 0 && rest.has(weekStart(today)) };
+}
+function metrics() {
+  const all = Object.values(stats.days);
+  return { w: all.reduce((a, v) => a + v.w, 0), ms: all.reduce((a, v) => a + v.ms, 0), books: stats.finished || 0,
+    best: all.reduce((a, v) => Math.max(a, v.w), 0), d500: all.filter(v => v.w >= 500).length, streak: streakInfo().longest };
+}
+const HOUR = 3600000;
+/* speed limit: 300 wpm until unlocked by reading milestones or the teacher password */
+const PW_HASH = "9fcdd9761290de5ec6a69c80b25bc8bb1b0314f5c47e0d6df8dcb66b75172d34";
+const SPEED_BASE = 300, SPEED_TIERS = [[250000, 400], [500000, 500], [1000000, 600]];
+const speedCap = () => Math.max(SPEED_BASE, store.get("pace:unlock", 0) || 0, store.get("pace:pw", false) ? 600 : 0);
+function earnedCap() { const w = metrics().w; return SPEED_TIERS.reduce((c, t) => w >= t[0] ? t[1] : c, SPEED_BASE); }
+function syncSpeedInfo() {
+  const cap = speedCap(), pw = store.get("pace:pw", false), w = metrics().w, nxt = SPEED_TIERS.find(t => t[1] > cap);
+  let t = `Limit on this device: ${cap} wpm.`;
+  if (pw) t += " Teacher unlock is on."; else if (nxt) t += ` Read ${fmt(nxt[0])} words in total to unlock ${nxt[1]} wpm (you're at ${fmt(Math.min(w, nxt[0]))}).`;
+  $("#speedInfo").textContent = t; $("#pwBox").hidden = pw || cap >= 600; $("#pwRelock").hidden = !pw;
+}
+function applyCap() { $("#wpm").max = speedCap(); if (wpm > speedCap()) setWpm(wpm); syncSpeedInfo(); }
+function checkSpeed(silent) {
+  const e = earnedCap(), had = store.get("pace:unlock", 0) || 0;
+  if (e > had) { store.set("pace:unlock", e); if (e > SPEED_BASE && !silent) toastLater(`Speed unlocked: up to ${e} wpm`); }
+  applyCap();
+}
+async function sha256(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join(""); }
+const BADGES = [
+  { id: "first", name: "First steps", desc: "Read 100 words", val: m => m.w, goal: 100 },
+  { id: "hour1", name: "One hour", desc: "Read for 1 hour total", val: m => m.ms / HOUR, goal: 1, unit: "h" },
+  { id: "hour10", name: "Ten hours", desc: "Read for 10 hours total", val: m => m.ms / HOUR, goal: 10, unit: "h" },
+  { id: "hour50", name: "Fifty hours", desc: "Read for 50 hours total", val: m => m.ms / HOUR, goal: 50, unit: "h" },
+  { id: "w10k", name: "10,000 words", desc: "Read 10,000 words", val: m => m.w, goal: 1e4 },
+  { id: "w100k", name: "100,000 words", desc: "Read 100,000 words", val: m => m.w, goal: 1e5 },
+  { id: "w1m", name: "A million words", desc: "Read 1,000,000 words", val: m => m.w, goal: 1e6 },
+  { id: "book1", name: "First finish", desc: "Finish a book", val: m => m.books, goal: 1 },
+  { id: "book5", name: "Bookworm", desc: "Finish 5 books", val: m => m.books, goal: 5 },
+  { id: "book10", name: "Ten books", desc: "Finish 10 books", val: m => m.books, goal: 10 },
+  { id: "book25", name: "Twenty-five books", desc: "Finish 25 books", val: m => m.books, goal: 25 },
+  { id: "book50", name: "Fifty books", desc: "Finish 50 books", val: m => m.books, goal: 50 },
+  { id: "book100", name: "A hundred books", desc: "Finish 100 books", val: m => m.books, goal: 100 },
+  { id: "str3", name: "Three in a row", desc: "3-day streak", val: m => m.streak, goal: 3, unit: "days" },
+  { id: "str7", name: "Full week", desc: "7-day streak", val: m => m.streak, goal: 7, unit: "days" },
+  { id: "str14", name: "Fortnight", desc: "14-day streak", val: m => m.streak, goal: 14, unit: "days" },
+  { id: "str30", name: "Habit formed", desc: "30-day streak", val: m => m.streak, goal: 30, unit: "days" },
+  { id: "str42", name: "Six weeks strong", desc: "6-week streak (42 days)", val: m => m.streak, goal: 42, unit: "days" },
+  { id: "str90", name: "Three months", desc: "3-month streak (90 days)", val: m => m.streak, goal: 90, unit: "days" },
+  { id: "str100", name: "Hundred days", desc: "100-day streak", val: m => m.streak, goal: 100, unit: "days" },
+  { id: "str180", name: "Half a year", desc: "180-day streak", val: m => m.streak, goal: 180, unit: "days" },
+  { id: "str365", name: "A full year", desc: "365-day streak", val: m => m.streak, goal: 365, unit: "days" },
+  { id: "steady", name: "Steady reader", desc: "7 days of 500+ words", val: m => m.d500, goal: 7, unit: "days" },
+  { id: "day5k", name: "Marathon", desc: "5,000 words in one day", val: m => m.best, goal: 5000 }
+];
+const tq = []; let tqBusy = false;
+function toastLater(m) { tq.push(m); if (!tqBusy) nextToast(); }
+function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m); setTimeout(nextToast, 2600); }
+function checkBadges() {
+  const first = store.get("pace:badges", null) === null;
+  const have = store.get("pace:badges", {}), m = metrics(); let changed = false;
+  for (const b of BADGES) if (!have[b.id] && b.val(m) >= b.goal) { have[b.id] = todayKey(); changed = true; if (!first) toastLater("Badge earned: " + b.name); }
+  if (changed || first) store.set("pace:badges", have);
+}
+function afterStats() {
+  const k = todayKey();
+  if (settings.goal > 0 && dayW(k) >= settings.goal && stats.goalDay !== k) {
+    stats.goalDay = k; store.set("pace:stats", stats); toastLater(`Daily goal reached: ${fmt(settings.goal)} words`);
+  }
+  checkBadges(); checkSpeed(false);
+}
+
 /* stats bookkeeping */
 function commitStats(ms, w) {
   if (!w && !ms) return;
@@ -828,6 +2598,7 @@ function commitStats(ms, w) {
   d.w += w; d.ms += ms;
   if (bookId && w) { const b = stats.books[bookId] || (stats.books[bookId] = {}); b[k] = (b[k] || 0) + w; }
   store.set("pace:stats", stats);
+  afterStats();
 }
 function flush() {
   const now = performance.now();
@@ -839,7 +2610,7 @@ function flush() {
 function curMeta() { return lib.find(x => x.id === bookId); }
 function finishBook() {
   const m = curMeta();
-  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); }
+  if (m && !m.done) { m.done = Date.now(); saveLib(); stats.finished = (stats.finished || 0) + 1; store.set("pace:stats", stats); checkBadges(); }
 }
 
 function step() {
@@ -871,6 +2642,7 @@ async function play() {
   else skipCount = 0;
   noRewind = false;
   playing = true; playStart = performance.now(); flushT = playStart; stepIdx = 0;
+  $("#coach").hidden = true;
   document.body.classList.add("playing");
   playBtn.innerHTML = ICON_PAUSE; playBtn.setAttribute("aria-label", "Pause");
   step();
@@ -887,9 +2659,22 @@ function pause() {
   try { if (wakeLock) wakeLock.release(); } catch (e) {} wakeLock = null;
   hasPaused = true; noRewind = false;
   save(); render(); showContext();
+  coachCheck();
 }
 
 function toggle() { playing ? pause() : play(); }
+
+function coachCheck() {
+  if (!settings.coach || document.body.classList.contains("focus")) return;
+  const words = sessionWords - coachMark; if (words < 200) return;
+  const backs = sessBacks, per100 = backs / (words / 100);
+  coachMark = sessionWords; sessBacks = 0;
+  let next = 0, msg = "";
+  if (per100 <= 0.6 && wpm < speedCap()) { next = wpm + 25; msg = `Smooth read: ${fmt(words)} words, ${backs ? backs + " rewind" + (backs > 1 ? "s" : "") : "no rewinds"}. Try ${next} wpm?`; }
+  else if (per100 >= 3 && wpm > 50) { next = wpm - 25; msg = `You went back ${backs} times in ${fmt(words)} words. Try ${next} wpm?`; }
+  if (!next) return;
+  coachNext = next; $("#coachTxt").textContent = msg; $("#coachYes").textContent = `Try ${next} wpm`; $("#coach").hidden = false;
+}
 
 const ABBR = /^(mr|mrs|ms|dr|st|vs|etc|prof|sr|jr|no|inc|e\.g|i\.e)\.$/i;
 function sentEnd(t) { return !!t && (t.end || (/[.!?…]["'”’)\]]*$/.test(t.w) && !ABBR.test(t.w))); }
@@ -900,6 +2685,7 @@ function replaySentence() {
   const floor = Math.max(0, cur - 80);
   while (i > floor && !sentEnd(tokens[i - 1])) i--;
   const wasPlaying = playing;
+  sessBacks++;
   seek(i);
   if (!wasPlaying) play();
 }
@@ -918,7 +2704,8 @@ function seek(i) {
 function save() { if (docKey) store.set(docKey, cur); }
 
 function setWpm(v) {
-  wpm = Math.max(50, Math.min(1000, Math.round(v / 25) * 25));
+  wpm = Math.max(50, Math.min(speedCap(), Math.round(v / 25) * 25));
+  coachMark = sessionWords; sessBacks = 0;
   $("#wpm").value = wpm; $("#wpmVal").textContent = `${wpm} wpm`;
   store.set("pace:wpm", wpm); if (tokens.length) updateStats();
 }
@@ -940,10 +2727,14 @@ async function openBook(id) {
   cur = Math.max(0, Math.min(store.get(docKey, 0), tokens.length - 1));
   bms = store.get("pace:bm:" + id, []);
   sessionWords = 0; playedMs = 0; skipCount = 0; noRewind = false; hasPaused = cur > 0; wordsSince = 0;
+  sessBacks = 0; coachMark = 0; $("#coach").hidden = true;
   prog.max = Math.max(0, tokens.length - 1);
   $("#title").textContent = rec.title;
   document.title = rec.title + " · Wordsmith";
-  chapSel.replaceChildren(...chapters.map((c, i) => new Option("  ".repeat(c.depth || 0) + c.title, i)));
+  chapSel.replaceChildren(...chapters.map((c, i) => {
+    const end = i + 1 < chapters.length ? chapters[i + 1].start : tokens.length, mins = Math.round((end - c.start) / wpm);
+    return new Option("  ".repeat(c.depth || 0) + c.title + (mins >= 1 ? " · " + fmtMin(mins) : ""), i);
+  }));
   $("#chapterBox").hidden = chapters.length < 2;
   const m = curMeta(); if (m) { m.opened = Date.now(); saveLib(); }
   ctxEl.textContent = "";
@@ -1025,6 +2816,8 @@ function syncSettingsUI() {
   $("#lsRange").value = settings.ls; $("#lsVal").textContent = settings.ls ? (settings.ls / 100).toFixed(2) + " em" : "Off";
   $("#wsRange").value = settings.ws; $("#wsVal").textContent = settings.ws ? (settings.ws / 50).toFixed(2) + " em" : "Off";
   $("#pivotChk").checked = settings.pivot !== false;
+  syncSpeedInfo();
+  $("#goalSel").value = String(settings.goal); $("#nameInput").value = settings.name || ""; $("#coachChk").checked = settings.coach !== false;
   $("#rewindSel").value = String(settings.rewind);
   $("#rampChk").checked = !!settings.ramp;
   $("#holdChk").checked = !!settings.hold;
@@ -1056,7 +2849,18 @@ function bookItem(m, featured) {
   li.append(main, del);
   return li;
 }
+function updateDayCard() {
+  const card = $("#dayCard"), si = streakInfo(), w = dayW(todayKey());
+  const show = lib.length > 0 && (settings.goal > 0 || si.cur > 0);
+  card.hidden = !show; if (!show) return;
+  if (settings.goal > 0) {
+    $("#dayTxt").textContent = w >= settings.goal ? `Goal reached: ${fmt(w)} words today` : `Today: ${fmt(w)} of ${fmt(settings.goal)} words`;
+    $("#dayFill").style.width = Math.min(100, w / settings.goal * 100) + "%";
+  } else { $("#dayTxt").textContent = `Today: ${fmt(w)} words`; $("#dayFill").style.width = "0%"; }
+  $("#dayStreak").textContent = si.cur ? `${si.cur}-day streak` : "No streak yet";
+}
 function renderLibrary() {
+  updateDayCard();
   updateNudge();
   const sorted = lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
   const cont = $("#continue"), list = $("#books");
@@ -1096,9 +2900,7 @@ function renderStats() {
   });
   const week = rows.reduce((s, r) => s + r.w, 0), weekMs = rows.reduce((s, r) => s + r.ms, 0);
   const today = rows[rows.length - 1];
-  let streak = 0; const d = new Date();
-  if (((stats.days[todayKey(d)] || {}).w || 0) < 20) d.setDate(d.getDate() - 1);
-  while (((stats.days[todayKey(d)] || {}).w || 0) >= 20) { streak++; d.setDate(d.getDate() - 1); }
+  const si = streakInfo(), streak = si.cur;
   const avg = wpmOf(week, weekMs);
 
   const tiles = $("#tiles"); tiles.replaceChildren();
@@ -1141,8 +2943,78 @@ function renderStats() {
   const life = $("#life"); life.replaceChildren();
   [["Total words read", fmt(totW)], ["Time spent reading", fmtDur(totMs)], ["Books finished", String(stats.finished || 0)],
    ...(stats.test ? [["Normal reading speed", stats.test.wpm + " wpm"]] : []),
+   ...(stats.timed && stats.timed.length ? [["Timed reads", `${stats.timed[stats.timed.length - 1].wpm} wpm last · ${Math.max(...stats.timed.map(x => x.wpm))} best`]] : []),
    ["Best day", bestDay && bestDay[1].w ? `${fmt(bestDay[1].w)} words · ${keyToDate(bestDay[0]).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : "–"]]
     .forEach(([a, b]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", b)); life.append(r); });
+  renderGoalCard(si); lapseBuild(); renderBadges();
+}
+function renderGoalCard(si) {
+  const c = $("#goalCard"); c.replaceChildren();
+  c.append(el("h2", "", "Daily goal"));
+  const w = dayW(todayKey());
+  if (settings.goal > 0) {
+    const row = el("div", "dayrow"); row.append(el("b", "", `${fmt(w)} / ${fmt(settings.goal)} words today`), el("span", "", w >= settings.goal ? "Done" : `${fmt(settings.goal - w)} to go`));
+    const bar = el("span", "bar goalbar"), fill = document.createElement("i"); fill.style.width = Math.min(100, w / settings.goal * 100) + "%"; bar.append(fill);
+    c.append(row, bar);
+  } else c.append(el("p", "fine", "No daily goal. Turn one on in Settings, General."));
+  c.append(el("p", "fine", `Current streak: ${si.cur} day${si.cur === 1 ? "" : "s"} · Longest: ${si.longest} day${si.longest === 1 ? "" : "s"}`));
+  c.append(el("p", "fine", si.restUsed ? "Rest day used this week. Your streak is safe." : "One rest day a week is free. Miss a day and your streak survives."));
+}
+function renderBadges() {
+  const have = store.get("pace:badges", {}), m = metrics(), box = $("#badges"); box.replaceChildren();
+  let n = 0;
+  BADGES.forEach(b => {
+    const got = have[b.id], v = b.val(m); if (got) n++;
+    const d = el("div", "badge" + (got ? " earned" : ""));
+    d.append(el("b", "", b.name), el("span", "", b.desc));
+    const cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
+    d.append(el("small", "", got ? "Earned " + keyToDate(got).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : `${cnt(Math.min(v, b.goal))} / ${fmt(b.goal)}${b.unit ? " " + b.unit : ""}`));
+    box.append(d);
+  });
+  $("#badgeCap").textContent = `${n} of ${BADGES.length} earned`;
+}
+let lapseRaf = 0, lapseDraw = null;
+function daysThisYear() { const now = new Date(); return Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - new Date(now.getFullYear(), 0, 1)) / 864e5) + 1; }
+function lapseBuild() {
+  cancelAnimationFrame(lapseRaf); lapseDraw = null;
+  const box = $("#lapse"); box.replaceChildren();
+  const y = new Date().getFullYear(), n = daysThisYear();
+  const cum = [], months = new Array(12).fill(0); let c = 0, cw = 0, dr = 0;
+  for (let i = 0; i < n; i++) { const d = new Date(y, 0, 1 + i), v = stats.days[todayKey(d)] || { w: 0, ms: 0 }; c += v.ms; cw += v.w; if (v.w > 0) dr++; months[d.getMonth()] += v.ms; cum.push(c); }
+  const nums = $("#lapseNums"); nums.replaceChildren();
+  const busy = months.indexOf(Math.max(...months));
+  [["Time read in " + y, fmtDur(c)], ["Words", fmt(cw)], ["Days you read", `${dr} of ${n}`], ["Busiest month", c ? new Date(y, busy, 1).toLocaleDateString(undefined, { month: "long" }) : "–"]]
+    .forEach(([a, b]) => { const r = el("div"); r.append(el("span", "", a), el("b", "", b)); nums.append(r); });
+  $("#lapseBtn").hidden = c < 60000;
+  if (c < 60000) { $("#lapseVal").textContent = ""; $("#lapseDate").textContent = ""; $("#lapseCap").textContent = "Read for a bit and your year builds here."; return; }
+  $("#lapseCap").textContent = `Total reading time so far in ${y}.`;
+  const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const inHours = c >= HOUR, top = niceMax(inHours ? c / HOUR : c / 60000), unit = inHours ? "h" : "min", div = inHours ? HOUR : 60000;
+  const X0 = 6, X1 = 334, YT = 24, YB = 126, xs = i => X0 + (n > 1 ? i / (n - 1) : 1) * (X1 - X0), ys = v => YB - v / div / top * (YB - YT);
+  const svg = mk("svg", { viewBox: "0 0 340 150", role: "img", "aria-label": `Reading time this year, cumulative: ${fmtDur(c)}` });
+  const css = "var(--line)", muted = "var(--muted)";
+  svg.append(mk("line", { x1: X0, x2: X1, y1: YT, y2: YT, stroke: css, "stroke-width": 1 }), mk("line", { x1: X0, x2: X1, y1: YB, y2: YB, stroke: css, "stroke-width": 1 }));
+  const tk = mk("text", { x: X0, y: YT - 6, fill: muted, "font-size": 11 }); tk.textContent = `${fmt(top)} ${unit}`; svg.append(tk);
+  for (let m = 0; m < 12; m++) { const i = Math.floor((new Date(y, m, 1) - new Date(y, 0, 1)) / 864e5); if (i >= n) break;
+    const t = mk("text", { x: xs(i), y: 142, fill: muted, "font-size": 10 }); t.textContent = new Date(y, m, 1).toLocaleDateString(undefined, { month: "narrow" }); svg.append(t); }
+  const area = mk("path", { fill: "var(--accent)", "fill-opacity": .1 }), line = mk("path", { fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" });
+  const dot = mk("circle", { r: 4, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 });
+  svg.append(area, line, dot); box.append(svg);
+  lapseDraw = idx => {
+    let d = ""; for (let i = 0; i <= idx; i++) d += (i ? "L" : "M") + xs(i).toFixed(1) + " " + ys(cum[i]).toFixed(1);
+    line.setAttribute("d", d); area.setAttribute("d", d + `L${xs(idx).toFixed(1)} ${YB}L${X0} ${YB}Z`);
+    dot.setAttribute("cx", xs(idx)); dot.setAttribute("cy", ys(cum[idx]));
+    $("#lapseVal").textContent = fmtDur(cum[idx]);
+    $("#lapseDate").textContent = new Date(y, 0, 1 + idx).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+  lapseRun(n);
+}
+function lapseRun(n) {
+  cancelAnimationFrame(lapseRaf); if (!lapseDraw) return;
+  if (n < 2 || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) { lapseDraw(n - 1); return; }
+  const t0 = performance.now(), dur = 3500;
+  const tick = t => { const f = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - f, 3); lapseDraw(Math.round(e * (n - 1))); if (f < 1) lapseRaf = requestAnimationFrame(tick); };
+  lapseRaf = requestAnimationFrame(tick);
 }
 
 /* ---------- import ---------- */
@@ -1173,25 +3045,32 @@ async function importFiles(files) {
 
 /* ---------- wiring ---------- */
 playBtn.innerHTML = ICON_PLAY;
-setWpm(wpm); setFs(fs);
+checkSpeed(true); setWpm(wpm); setFs(fs);
+checkBadges();
 renderLibrary();
 
 $("#file").onchange = e => { const fs2 = Array.from(e.target.files); e.target.value = ""; if (fs2.length) importFiles(fs2); };
 $("#sample").onclick = async () => { const r = await saveBook("How RSVP works", bookFromText(SAMPLE)); openBook(r.id); };
 $("#pasteBtn").onclick = () => { $("#pasteDlg").showModal(); $("#paste").focus(); };
+function pasteTitle(text) { const first = text.trim().split(/\s+/).slice(0, 6).join(" "); return $("#pasteTitle").value.trim() || (first.length > 40 ? first.slice(0, 40) + "…" : first); }
+function updatePasteEst() {
+  const t = $("#paste").value.trim(), n = t ? t.split(/\s+/).length : 0;
+  $("#pasteEst").textContent = n ? `${fmt(n)} words · about ${fmtMin(Math.max(1, Math.round(n / wpm)))} at ${wpm} wpm` : "";
+}
+$("#paste").addEventListener("input", updatePasteEst);
 $("#pasteGo").onclick = async () => {
   const text = $("#paste").value;
   if (!text.trim()) { toast("Paste some text first."); return; }
-  const first = text.trim().split(/\s+/).slice(0, 6).join(" ");
-  const title = $("#pasteTitle").value.trim() || (first.length > 40 ? first.slice(0, 40) + "…" : first);
+  const title = pasteTitle(text);
   const r = await saveBook(title, bookFromText(text));
-  $("#paste").value = ""; $("#pasteTitle").value = ""; $("#pasteDlg").close();
+  $("#paste").value = ""; $("#pasteTitle").value = ""; $("#pasteEst").textContent = ""; $("#pasteDlg").close();
   if (!r.ok) toast("Couldn't save for later. This text will vanish when you close the app.");
   openBook(r.id);
 };
 
-$("#statsBtn").onclick = () => { renderStats(); renderHeat(); show("stats"); };
-$("#statsBack").onclick = () => show("library");
+$("#statsBtn").onclick = () => { calY = new Date().getFullYear(); calM = new Date().getMonth(); renderStats(); renderHeat(); show("stats"); };
+$("#statsBack").onclick = () => { cancelAnimationFrame(lapseRaf); show("library"); };
+$("#lapseBtn").onclick = () => lapseRun(daysThisYear());
 $("#settingsBtn").onclick = openSettings;
 $("#openSettings").onclick = () => { $("#menuDlg").close(); openSettings(); };
 $("#menuBtn").onclick = openMenu;
@@ -1203,6 +3082,17 @@ $("#goalClear").onclick = () => { const m = curMeta(); if (!m) return; m.goal = 
 $$("#themeSeg button").forEach(b => b.onclick = () => { settings.theme = b.dataset.theme; saveSettings(); applyTheme(); syncSettingsUI(); });
 $("#rewindSel").onchange = e => { settings.rewind = +e.target.value; saveSettings(); };
 $("#rampChk").onchange = e => { settings.ramp = e.target.checked; saveSettings(); };
+$("#pwBtn").onclick = async () => {
+  const v = $("#pwInput").value; if (!v) return;
+  try { if (await sha256("wordsmith:" + v) === PW_HASH) { store.set("pace:pw", true); $("#pwInput").value = ""; applyCap(); toast("Unlocked: up to 600 wpm"); } else toast("That password isn't right."); }
+  catch (e) { toast("Couldn't check the password here."); }
+};
+$("#pwInput").addEventListener("keydown", e => { if (e.key === "Enter") $("#pwBtn").click(); });
+$("#pwRelock").onclick = () => { store.del("pace:pw"); applyCap(); toast("Speed limit is back on"); };
+$("#nameInput").oninput = e => { settings.name = e.target.value.slice(0, 30); saveSettings(); };
+$("#nameInput").onchange = () => prepareBackup();
+$("#coachChk").onchange = e => { settings.coach = e.target.checked; saveSettings(); if (!settings.coach) $("#coach").hidden = true; };
+$("#goalSel").onchange = e => { settings.goal = +e.target.value; saveSettings(); renderLibrary(); };
 $("#resetStats").onclick = () => { if (!confirm("Reset all reading stats? Your books and bookmarks stay.")) return; stats = { days: {}, books: {}, finished: 0 }; store.set("pace:stats", stats); toast("Stats reset"); };
 
 $$("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
@@ -1218,7 +3108,9 @@ const endHold = () => { if (holdActive) { holdActive = false; pause(); } };
 stage.addEventListener("pointerup", endHold); stage.addEventListener("pointercancel", endHold);
 stage.addEventListener("contextmenu", e => { if (settings.hold) e.preventDefault(); });
 playBtn.onclick = toggle;
-$("#rew").onclick = () => seek(cur - 10);
+$("#rew").onclick = () => { sessBacks++; seek(cur - 10); };
+$("#coachYes").onclick = () => { if (coachNext) setWpm(coachNext); $("#coach").hidden = true; toast(`Speed set to ${wpm} wpm`); };
+$("#coachNo").onclick = () => { $("#coach").hidden = true; };
 $("#replay").onclick = replaySentence;
 $("#fReplay").onclick = replaySentence;
 $("#fExit").onclick = () => setFocus(false);
@@ -1226,7 +3118,7 @@ $("#focusBtn").onclick = () => { $("#menuDlg").close(); setFocus(true); };
 $("#fwd").onclick = () => seek(cur + 10);
 prog.oninput = () => { if (playing) pause(); seek(+prog.value); };
 chapSel.onchange = () => { const c = chapters[+chapSel.value]; if (c) seek(c.start); };
-ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) seek(+i); };
+ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) { if (+i < cur) sessBacks++; seek(+i); } };
 $("#wpm").oninput = e => setWpm(+e.target.value);
 $("#fs").oninput = e => setFs(+e.target.value);
 
@@ -1308,44 +3200,64 @@ const TEST_TEXT = `The lighthouse at Cape Marrow was built in 1874, after three 
 The first keeper, a former sailor named Odell Pryce, lived in the tower with his wife and two daughters. Each evening he climbed ninety-two steps to light the great lamp, and each morning he climbed them again to put it out. In between, he polished the lens, trimmed the wick, and wrote down the weather in a leather notebook. Those notebooks, now kept in the county museum, are full of small surprises. One entry records a whale that circled the rocks for an entire afternoon. Another describes a night so still that he could hear his daughters breathing from the stairwell.
 
 In 1956 the lamp was replaced by an automatic light, and the last keeper packed up and left. The tower stood empty for decades. Then a group of local volunteers raised enough money to repair the roof and reopen the lower rooms. Today visitors can climb the same ninety-two steps, though most of them stop halfway to catch their breath and admire the view.`;
-let testStart = 0;
-function openTest() { $("#testIntro").hidden = false; $("#testRead").hidden = true; $("#testResult").hidden = true; $("#testDlg").showModal(); }
-$("#testBtn").onclick = openTest;
+let testStart = 0, testText = TEST_TEXT, testMode = "speed";
+function openTest(text, mode) {
+  testText = typeof text === "string" ? text : TEST_TEXT; testMode = mode || "speed";
+  $("#testTitle").textContent = testMode === "timed" ? "Timed read" : "Reading speed test";
+  $("#testIntroP").textContent = testMode === "timed" ? "Read these lines at your normal pace. Tap Done when you finish. Wordsmith times you." : "Read the passage at your normal pace. Tap Done when you finish. Wordsmith times you.";
+  $("#testIntro").hidden = false; $("#testRead").hidden = true; $("#testResult").hidden = true; $("#testDlg").showModal();
+}
+$("#testBtn").onclick = () => openTest();
+$("#timedBtn").onclick = () => {
+  $("#menuDlg").close();
+  let e = Math.min(tokens.length, cur + 180); while (e < Math.min(tokens.length, cur + 240) && !sentEnd(tokens[e - 1])) e++;
+  if (e - cur < 60) { toast("Not enough text left for a timed read."); return; }
+  openTest(tokens.slice(cur, e).map(t => t.w).join(" "), "timed");
+};
 $("#testAgain").onclick = () => { $("#testIntro").hidden = false; $("#testRead").hidden = true; $("#testResult").hidden = true; };
-$("#testStart").onclick = () => { $("#testPassage").textContent = TEST_TEXT; $("#testIntro").hidden = true; $("#testRead").hidden = false; testStart = performance.now(); };
+$("#testStart").onclick = () => { $("#testPassage").textContent = testText; $("#testIntro").hidden = true; $("#testRead").hidden = false; testStart = performance.now(); };
 $("#testDone").onclick = () => {
-  const words = TEST_TEXT.trim().split(/\s+/).length, mins = (performance.now() - testStart) / 60000, w = Math.round(words / mins);
+  const words = testText.trim().split(/\s+/).length, mins = (performance.now() - testStart) / 60000, w = Math.round(words / mins);
   $("#testRead").hidden = true; $("#testResult").hidden = false;
   if (w > 1000) { $("#testMsg").textContent = "That was too fast to be a real read. Try again and read every word."; $("#testUse").hidden = true; return; }
-  stats.test = { wpm: w, date: todayKey() }; store.set("pace:stats", stats);
-  const sug = Math.max(200, Math.min(600, Math.round(w * 1.3 / 25) * 25));
-  $("#testMsg").textContent = `You read about ${w} words per minute. Try Wordsmith at ${sug} wpm.`;
+  let prevNote = "";
+  if (testMode === "timed") {
+    stats.timed = (stats.timed || []).slice(-29); const last = stats.timed[stats.timed.length - 1];
+    if (last) prevNote = ` Last timed read: ${last.wpm} wpm.`;
+    stats.timed.push({ d: todayKey(), wpm: w, w: words, book: curMeta() ? curMeta().title : "" });
+  } else stats.test = { wpm: w, date: todayKey() };
+  store.set("pace:stats", stats);
+  const sug = Math.max(200, Math.min(speedCap(), Math.round(w * 1.3 / 25) * 25));
+  $("#testMsg").textContent = `You read about ${w} words per minute. Try Wordsmith at ${sug} wpm.` + prevNote;
   const use = $("#testUse"); use.hidden = false; use.textContent = `Use ${sug} wpm`;
   use.onclick = () => { setWpm(sug); $("#testDlg").close(); toast(`Speed set to ${sug} wpm`); };
 };
 
 /* ---------- reading calendar ---------- */
+let calY = new Date().getFullYear(), calM = new Date().getMonth();
 function renderHeat() {
   const wrap = $("#heat"); wrap.replaceChildren();
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const start = new Date(today); start.setDate(start.getDate() - today.getDay() - 12 * 7);
-  const vals = [];
-  for (let i = 0; i < 13 * 7; i++) {
-    const d = new Date(start); d.setDate(start.getDate() + i);
-    vals.push({ d, w: d > today ? -1 : ((stats.days[todayKey(d)] || {}).w || 0) });
-  }
-  const max = Math.max(0, ...vals.map(v => v.w));
-  vals.forEach(v => {
-    const b = el("button", "hc"); b.type = "button";
-    b.classList.add("l" + (v.w <= 0 ? 0 : Math.min(4, Math.ceil(4 * v.w / max))));
-    if (v.w < 0) b.style.visibility = "hidden";
-    const label = `${v.d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}: ${fmt(Math.max(0, v.w))} words`;
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const first = new Date(calY, calM, 1), n = new Date(calY, calM + 1, 0).getDate();
+  $("#calTitle").textContent = first.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  $("#calNext").disabled = calY === now.getFullYear() && calM === now.getMonth();
+  const goal = settings.goal > 0 ? settings.goal : 0; let mx = 0, tot = 0, dr = 0;
+  for (let d = 1; d <= n; d++) { const w = dayW(todayKey(new Date(calY, calM, d))); mx = Math.max(mx, w); tot += w; if (w > 0) dr++; }
+  const lvl = w => { if (w <= 0) return 0; if (goal) { const f = w / goal; return f >= 2 ? 4 : f >= 1 ? 3 : f >= .5 ? 2 : 1; } return Math.min(4, Math.ceil(4 * w / mx)); };
+  for (let i = 0; i < first.getDay(); i++) wrap.append(el("span"));
+  for (let d = 1; d <= n; d++) {
+    const dt = new Date(calY, calM, d), k = todayKey(dt), w = dayW(k), future = dt > now;
+    const b = el("button", "hc l" + (future ? 0 : lvl(w)) + (dt.getTime() === now.getTime() ? " today" : "") + (future ? " future" : ""), String(d)); b.type = "button";
+    const wp = wpmOf(w, (stats.days[k] || {}).ms || 0);
+    const label = `${dt.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}: ${fmt(w)} words` + (wp ? `, ${wp} wpm` : "");
     b.setAttribute("aria-label", label);
-    b.onclick = () => { $("#heatCap").textContent = label; };
+    if (future) b.disabled = true; else b.onclick = () => { $("#heatCap").textContent = label; };
     wrap.append(b);
-  });
-  $("#heatCap").textContent = "Tap a square for details.";
+  }
+  $("#heatCap").textContent = `${first.toLocaleDateString(undefined, { month: "long" })}: ${fmt(tot)} words · ${dr} day${dr === 1 ? "" : "s"} read. Tap a day for details.`;
 }
+$("#calPrev").onclick = () => { calM--; if (calM < 0) { calM = 11; calY--; } renderHeat(); };
+$("#calNext").onclick = () => { calM++; if (calM > 11) { calM = 0; calY++; } renderHeat(); };
 
 /* ---------- backup and restore ---------- */
 let backupFile = null;
@@ -1357,6 +3269,10 @@ async function syncStorageInfo() {
       if (e.usage) el2.textContent += ` Using about ${e.usage > 1e6 ? (e.usage / 1e6).toFixed(1) + " MB" : Math.max(1, Math.round(e.usage / 1e3)) + " KB"}.`;
     }
   } catch (x) {}
+}
+function backupName() {
+  const n = String(settings.name || "").replace(/[^\p{L}\p{N} _-]/gu, "").trim().replace(/\s+/g, "-").slice(0, 30);
+  return (n || "Backup") + ".Wordsmith";
 }
 function syncBackupInfo() {
   syncStorageInfo();
@@ -1376,11 +3292,11 @@ async function makeBackup() {
     const p = store.get("pace:pos:" + m.id, null); if (p !== null) pos[m.id] = p;
     const b = store.get("pace:bm:" + m.id, null); if (b && b.length) bm[m.id] = b;
   }
-  return { format: "pace-backup", version: 1, saved: new Date().toISOString(), lib, books, pos, bm, stats, settings, wpm, fs };
+  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, stats, settings, wpm, fs, badges: store.get("pace:badges", {}) };
 }
 async function prepareBackup() {
   const btn = $("#backupBtn"); backupFile = null; btn.disabled = true; btn.textContent = "Preparing…";
-  try { backupFile = new File([JSON.stringify(await makeBackup())], `wordsmith-backup-${todayKey()}.json`, { type: "application/json" }); } catch (e) {}
+  try { backupFile = new File([JSON.stringify(await makeBackup())], backupName(), { type: "application/json" }); } catch (e) {}
   btn.disabled = !backupFile; btn.textContent = "Save backup";
 }
 async function saveBackup() {
@@ -1410,7 +3326,9 @@ async function restoreBackup(file) {
     Object.entries(s2.days || {}).forEach(([k, v]) => { const d = stats.days[k] || (stats.days[k] = { w: 0, ms: 0 }); d.w = Math.max(d.w, v.w || 0); d.ms = Math.max(d.ms, v.ms || 0); });
     Object.entries(s2.books || {}).forEach(([id, days]) => { const b = stats.books[id] || (stats.books[id] = {}); Object.entries(days).forEach(([k, w]) => { b[k] = Math.max(b[k] || 0, w); }); });
     stats.finished = Math.max(stats.finished || 0, s2.finished || 0); if (s2.test) stats.test = s2.test;
-    store.set("pace:stats", stats);
+    if (Array.isArray(s2.timed)) { const seen = new Set((stats.timed || []).map(x => x.d + "|" + x.wpm)); stats.timed = (stats.timed || []).concat(s2.timed.filter(x => !seen.has(x.d + "|" + x.wpm))).sort((a, b) => a.d < b.d ? -1 : 1).slice(-30); }
+    store.set("pace:stats", stats); checkSpeed(true);
+    { const hb = store.get("pace:badges", {}); Object.entries(data.badges || {}).forEach(([id, dte]) => { if (!hb[id] || dte < hb[id]) hb[id] = dte; }); store.set("pace:badges", hb); }
     if (data.settings) { Object.assign(settings, data.settings); saveSettings(); applyTheme(); applyFont(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
@@ -1423,7 +3341,7 @@ $("#nudgeBtn").onclick = () => openSettings("storage");
 $$("#setTabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 $("#resetSettings").onclick = () => {
   if (!confirm("Reset display and reading settings to the defaults?")) return;
-  Object.assign(settings, { theme: "auto", rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true });
+  Object.assign(settings, { theme: "auto", rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 500, coach: true });
   saveSettings(); applyTheme(); applyFont(); syncHint(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } toast("Settings reset");
 };
 
@@ -1443,16 +3361,47 @@ $("#clipBtn").onclick = async () => {
     importText("", t);
   } catch (e) { toast("Couldn't read the clipboard. Try Paste text."); }
 };
-function checkHash() {
-  if (!location.hash.includes("text=")) return;
-  const q = new URLSearchParams(location.hash.slice(1)), text = q.get("text"), title = q.get("title");
+const b64u = u8 => { let s2 = ""; for (let i = 0; i < u8.length; i += 0x8000) s2 += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s2).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const unb64u = s2 => { s2 = s2.replace(/-/g, "+").replace(/_/g, "/"); while (s2.length % 4) s2 += "="; const bin = atob(s2), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+async function pipe(u8, stream) { const w = stream.writable.getWriter(); w.write(u8); w.close(); return new Uint8Array(await new Response(stream.readable).arrayBuffer()); }
+const LINK_MAX = 12000, QR_MAX = 1400;
+async function makeLink(title, text) {
+  const clean = text.replace(/\r/g, "").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+  const base = location.href.split("#")[0], u8 = new TextEncoder().encode(clean);
+  let frag; try { frag = "z=" + b64u(await pipe(u8, new CompressionStream("deflate-raw"))); } catch (e) { frag = "text=" + encodeURIComponent(clean); }
+  return base + "#" + frag + (title ? "&title=" + encodeURIComponent(title) : "");
+}
+async function checkHash() {
+  if (!/[#&](z|text)=/.test(location.hash)) return;
+  const q = new URLSearchParams(location.hash.slice(1)), z = q.get("z"), title = q.get("title"); let text = q.get("text");
   history.replaceState(null, "", location.pathname + location.search);
+  try { if (z) text = new TextDecoder().decode(await pipe(unb64u(z), new DecompressionStream("deflate-raw"))); }
+  catch (e) { toast("That link looks damaged."); return; }
   if (text) importText(title, text);
 }
+$("#pasteLink").onclick = async () => {
+  const text = $("#paste").value; if (!text.trim()) { toast("Paste some text first."); return; }
+  const link = await makeLink(pasteTitle(text), text);
+  if (link.length > LINK_MAX) { toast("Too long for a link. Try under about 3,000 words."); return; }
+  try { await navigator.clipboard.writeText(link); toast("Link copied"); } catch (e) { prompt("Copy this link:", link); }
+};
+$("#pastePrint").onclick = async () => {
+  const text = $("#paste").value; if (!text.trim()) { toast("Paste some text first."); return; }
+  const title = pasteTitle(text), link = await makeLink(title, text), fits = link.length <= QR_MAX, url = fits ? link : location.href.split("#")[0];
+  const box = $("#printArea"); box.replaceChildren(el("h1", "", title));
+  text.replace(/\r/g, "").trim().split(/\n\s*\n|\n/).forEach(pp => { if (pp.trim()) box.append(el("p", "", pp.trim())); });
+  try {
+    const q = qrcode(0, "M"); q.addData(url); q.make();
+    const qb = el("div", "qrbox"); qb.insertAdjacentHTML("beforeend", q.createSvgTag({ cellSize: 3, margin: 2, scalable: true }));
+    qb.append(el("span", "", fits ? "Scan to read this passage in Wordsmith." : "Scan to open Wordsmith. Then paste this passage in to read it."));
+    box.append(qb);
+  } catch (e) {}
+  $("#pasteDlg").close(); setTimeout(() => window.print(), 100);
+};
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
-window.__pace = { get cur() { return cur; }, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; } };
+window.__pace = { get cur() { return cur; }, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
