@@ -347,6 +347,7 @@ body.playing .controls{opacity:.22}
 .mini{min-height:30px;padding:3px 12px;font-size:13px;margin-left:8px;box-shadow:none}
 #defBody ol{margin:6px 0 0;padding-left:1.3em;display:grid;gap:8px;font:17px/1.45 Georgia,serif}
 #defBody i{color:var(--muted);font:italic 13px system-ui,sans-serif;margin-right:4px}
+.madeby{text-align:center;margin-top:auto;padding:18px 0 4px;letter-spacing:.04em}
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 </style>
 </head>
@@ -366,6 +367,7 @@ body.playing .controls{opacity:.22}
   </div>
   <div class="row">
     <button id="sample">Try a sample</button>
+    <button id="webBtn">Web article</button>
     <button id="testBtn">Test my speed</button>
   </div>
   <p class="status" id="status" role="status"></p>
@@ -376,6 +378,7 @@ body.playing .controls{opacity:.22}
   <ul id="books" class="books"></ul>
   <p class="empty" id="empty">No books yet. Add an EPUB or paste some text.</p>
   <p class="fine">Everything stays on this device. No internet needed. Books, bookmarks and stats are saved here.</p>
+  <p class="fine madeby">Made by Mr. Lovrien 2026</p>
 </section>
 
 <!-- STATS -->
@@ -467,6 +470,14 @@ body.playing .controls{opacity:.22}
 </section>
 
 <!-- SHEETS -->
+<dialog id="webDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Web article</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <input type="text" id="webUrl" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Paste a web address" autocomplete="off">
+  <p class="status" id="webMsg" role="status"></p>
+  <div class="row"><button id="webPaste">Paste text instead</button><button class="primary" id="webGo">Get article</button></div>
+  <p class="fine">Needs internet. Wikipedia works directly. Other sites go through the free reader service r.jina.ai, which sees the address you enter. Some sites block this. Then use Paste text.</p>
+</div></dialog>
+
 <dialog id="defDlg"><div class="sheet">
   <div class="sheet-head"><h2 id="defWord">Definition</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div id="defBody"></div>
@@ -519,6 +530,8 @@ body.playing .controls{opacity:.22}
   <p class="fine">Your streak counts days you reach the goal. The smallest goal is 1,000 words.</p>
   <p class="fine">Words only count the first time you read them, going forward at your speed. Skipping ahead or re-reading does not add to your total.</p>
   <label class="setrow">School days only <input type="checkbox" id="schoolChk"></label>
+  <label class="setrow">Web article button <input type="checkbox" id="grabChk"></label>
+  <p class="fine">Turn this off to stop Wordsmith from ever contacting another website.</p>
   <p class="fine">Weekends don't count for or against your streak.</p>
   <h2>Pause for breaks</h2>
   <p class="fine">Days in a pause don't count for or against your streak. Adding or removing one needs the teacher password.</p>
@@ -2251,7 +2264,7 @@ let toastTimer = null;
 function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 2200); }
 
 /* ---------- settings + themes ---------- */
-const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, pauses: [], focusStart: false }, store.get("pace:settings", {}));
+const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, grab: true, pauses: [], focusStart: false }, store.get("pace:settings", {}));
 settings.goal = Math.max(1000, +settings.goal || 1000);
 if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
@@ -3147,6 +3160,7 @@ function syncSettingsUI() {
   setTimeout(fillAll, 0);
   renderPreview(); renderPresets(); renderPauses();
   $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
+  $("#grabChk").checked = settings.grab !== false; $("#webBtn").hidden = settings.grab === false;
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
   $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
@@ -3608,6 +3622,7 @@ $("#motionChk").onchange = e => { settings.motion = e.target.checked; saveSettin
 $("#contrastChk").onchange = e => { settings.contrast = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
 $("#bigChk").onchange = e => { settings.big = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
 $("#focusStartChk").onchange = e => { settings.focusStart = e.target.checked; saveSettings(); renderPresets(); };
+$("#grabChk").onchange = e => { settings.grab = e.target.checked; saveSettings(); $("#webBtn").hidden = !settings.grab; };
 $("#schoolChk").onchange = e => { settings.schoolDays = e.target.checked; saveSettings(); refreshStreaks(); };
 $("#pauseAdd").onclick = async () => {
   const from = $("#pauseFrom").value, to = $("#pauseTo").value;
@@ -3658,6 +3673,65 @@ ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !
 $("#wpm").oninput = e => setWpm(+e.target.value);
 $("#fs").oninput = e => setFs(+e.target.value);
 
+
+
+/* ---------- web article ---------- */
+function mdToText(t) {
+  const out = [];
+  for (let line of t.replace(/\r/g, "").split("\n")) {
+    if (/^(Title|URL Source|Published Time|Markdown Content|Warning|Description):/i.test(line) && out.length < 6) continue;
+    const head = /^#{1,6}\s+/.test(line);
+    line = line.replace(/!\[[^\]]*\]\([^)]*\)/g, "").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/https?:\/\/\S+/g, "")
+      .replace(/^\s*#{1,6}\s+/, "").replace(/^\s*>\s?/, "").replace(/^\s*[-*+]\s+/, "").replace(/(\*\*|__|`)/g, "").replace(/(^|\s)[*_]+|[*_]+(?=\s|$)/g, "$1").replace(/[ \t]+/g, " ").trim();
+    if (!line || /^[-=_*|\s]+$/.test(line)) { if (out.length && out[out.length - 1] !== "") out.push(""); continue; }
+    const words = line.split(/\s+/).length;
+    if (!head && words < 4 && !/[.!?"”:]$/.test(line)) continue;
+    out.push(line);
+  }
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+async function fetchT(url, opts, ms = 15000) {
+  const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms);
+  try { return await fetch(url, { ...opts, signal: ac.signal }); } finally { clearTimeout(t); }
+}
+async function grabArticle(input) {
+  let u; try { u = new URL(/^https?:\/\//i.test(input.trim()) ? input.trim() : "https://" + input.trim()); if (!u.hostname.includes(".")) throw 0; } catch (e) { throw new Error("That doesn't look like a web address."); }
+  let title = "", text = "";
+  if (/\.wikipedia\.org$/.test(u.hostname) && u.pathname.startsWith("/wiki/")) {
+    const r = await fetchT(`https://${u.hostname}/api/rest_v1/page/html/${encodeURIComponent(decodeURIComponent(u.pathname.slice(6)))}`);
+    if (!r.ok) throw new Error("Wikipedia didn't have that page.");
+    const doc = new DOMParser().parseFromString(await r.text(), "text/html");
+    doc.querySelectorAll("style,script,sup,table,figure,link,.mw-editsection,.reference,.noprint,.navbox,.hatnote,.thumb,.infobox").forEach(n => n.remove());
+    title = (doc.title || "").replace(/ - Wikipedia$/, "");
+    const stop = /^(references|external links|see also|notes|further reading|sources|bibliography)$/i, parts = [];
+    for (const n of doc.body.querySelectorAll("h2,h3,p,li")) {
+      const t = n.textContent.replace(/\s+/g, " ").trim();
+      if (/^H[23]$/.test(n.tagName)) { if (stop.test(t)) break; if (t) parts.push(t); } else if (t) parts.push(t);
+    }
+    text = parts.join("\n\n");
+  } else {
+    let r;
+    try { r = await fetchT("https://r.jina.ai/" + u.href); } catch (e) { throw new Error("Couldn't reach the reader service. Check your internet or school filter."); }
+    if (!r.ok) throw new Error("That page wouldn't open (" + r.status + ").");
+    const raw = await r.text(), m = raw.match(/^Title:\s*(.+)$/m);
+    title = m ? m[1].trim() : ""; text = mdToText(raw);
+  }
+  if (text.split(/\s+/).length < 50) throw new Error("Couldn't find an article on that page.");
+  return { title: title || u.hostname.replace(/^www\./, ""), text };
+}
+$("#webBtn").onclick = () => { $("#webMsg").textContent = ""; $("#webDlg").showModal(); $("#webUrl").focus(); };
+$("#webPaste").onclick = () => { $("#webDlg").close(); $("#pasteDlg").showModal(); $("#paste").focus(); };
+$("#webGo").onclick = async () => {
+  const url = $("#webUrl").value.trim(); if (!url) { $("#webMsg").textContent = "Paste a web address first."; return; }
+  const go = $("#webGo"); go.disabled = true; $("#webMsg").textContent = "Getting the article…";
+  try {
+    const a = await grabArticle(url), r = await saveBook(a.title, bookFromText(a.text));
+    $("#webDlg").close(); $("#webUrl").value = ""; renderLibrary(); openBook(r.id);
+    if (!r.ok) toast("Couldn't save for later. This article will vanish when you close the app.");
+  } catch (e) { $("#webMsg").textContent = e.name === "AbortError" ? "That took too long. Try again or use Paste text." : e.message; }
+  go.disabled = false;
+};
+$("#webUrl").addEventListener("keydown", e => { if (e.key === "Enter") $("#webGo").click(); });
 
 /* ---------- dictionary ---------- */
 let DICT = null, dictLoading = null;
