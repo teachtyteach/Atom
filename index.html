@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Wordsmith</title>
+<title>Atom</title>
 <meta name="theme-color" content="#f6f4ef">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Wordsmith">
+<meta name="apple-mobile-web-app-title" content="Atom">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -461,7 +461,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
 <!-- LIBRARY -->
 <section id="library" class="screen">
   <header>
-    <h1 class="brand">Wordsmith<span>.</span></h1>
+    <h1 class="brand">Atom<span>.</span></h1>
     <button class="icon" id="statsBtn" aria-label="Stats"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 20V11M12 20V5M18 20v-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <button class="icon" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h9M19 7h1M4 17h1M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </header>
@@ -586,7 +586,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
     <div class="wslide" data-i="0">
       <img class="mascot wmascot" src="mascot.png" alt="">
       <h2>Hi, I'm Atom!</h2>
-      <p>Welcome to Wordsmith. Who is reading?</p>
+      <p>Welcome to Atom. Who is reading?</p>
       <div class="pickrow" id="modePick">
         <button type="button" class="pick" data-mode="student" aria-pressed="false">Student<small>Cheers and badges</small></button>
         <button type="button" class="pick" data-mode="adult" aria-pressed="false">Adult<small>Teacher password</small></button>
@@ -669,7 +669,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
   <p class="fine" id="bmEmpty">No bookmarks yet.</p>
   <h2>Reading goal</h2>
   <div class="goalrow"><input type="date" id="goalDate" aria-label="Finish by"><button id="goalClear">Clear</button></div>
-  <p class="fine" id="goalInfo">Pick a finish date and Wordsmith works out how much to read each day.</p>
+  <p class="fine" id="goalInfo">Pick a finish date and Atom works out how much to read each day.</p>
   <h2>Session timer</h2>
   <label class="setrow">Stop after <select id="timerSel"><option value="0">Off</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></label>
   <button id="focusBtn">Focus mode</button>
@@ -686,7 +686,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
   <div class="pane" data-pane="general" hidden>
   <h2>Your name</h2>
   <input type="text" id="nameInput" maxlength="30" placeholder="Name" autocomplete="off">
-  <p class="fine">Used to name your backup file, like Dan.Wordsmith.</p>
+  <p class="fine">Used to name your backup file, like Dan.Atom.</p>
   <h2>Daily goal</h2>
   <label class="setrow">Words per day <select id="goalSel"><option value="1000">1,000</option><option value="1500">1,500</option><option value="2000">2,000</option><option value="3000">3,000</option><option value="5000">5,000</option></select></label>
   <p class="fine">Your streak counts days you reach the goal. The smallest goal is 1,000 words.</p>
@@ -695,7 +695,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
   <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Adult</option></select></label>
   <p class="fine">Adult mode turns off the mascot. It needs the teacher password.</p>
   <label class="setrow">Web article button <input type="checkbox" id="grabChk"></label>
-  <p class="fine">Turn this off to stop Wordsmith from ever contacting another website.</p>
+  <p class="fine">Turn this off to stop Atom from ever contacting another website.</p>
   <div class="row"><button id="welcomeAgain">Show the welcome again</button></div>
   <p class="fine">Weekends don't count for or against your streak.</p>
   <h2>Pause for breaks</h2>
@@ -712,7 +712,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
   <button class="danger" id="resetStats">Reset stats</button>
   <p class="fine">Resetting settings keeps your books, bookmarks and stats.</p>
   <h2>About</h2>
-  <p class="fine">Wordsmith. Everything stays on this device. Works offline. Fonts: Lexend and OpenDyslexic (SIL Open Font License).</p>
+  <p class="fine">Atom. Everything stays on this device. Works offline. Fonts: Lexend and OpenDyslexic (SIL Open Font License).</p>
   </div>
   <div class="pane" data-pane="presets" hidden>
   <h2>Presets</h2>
@@ -810,7 +810,7 @@ body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
 
 <dialog id="testDlg"><div class="sheet">
   <div class="sheet-head"><h2 id="testTitle">Reading speed test</h2><button class="icon" data-close aria-label="Close">✕</button></div>
-  <div id="testIntro"><p id="testIntroP">Read the passage at your normal pace. Tap Done when you finish. Wordsmith times you.</p><button class="primary" id="testStart">Start</button></div>
+  <div id="testIntro"><p id="testIntroP">Read the passage at your normal pace. Tap Done when you finish. Atom times you.</p><button class="primary" id="testStart">Start</button></div>
   <div id="testRead" hidden><p id="testPassage" class="passage"></p><button class="primary" id="testDone">Done</button></div>
   <div id="testResult" hidden><p id="testMsg"></p><div class="row"><button class="primary" id="testUse">Use</button><button id="testAgain">Try again</button></div></div>
 </div></dialog>
@@ -3047,7 +3047,7 @@ function buildReport(range) {
   const box = $("#printArea"); box.replaceChildren();
   const fd = (d, y) => d.toLocaleDateString(undefined, { month: "short", day: "numeric", ...(y ? { year: "numeric" } : {}) });
   box.append(el("h1", "", "Reading report" + (settings.name ? " · " + settings.name : "")));
-  box.append(el("p", "sub", `${fd(from, true)} to ${fd(today, true)} · Made with Wordsmith`));
+  box.append(el("p", "sub", `${fd(from, true)} to ${fd(today, true)} · Made with Atom`));
   const tbl = (head, data) => {
     const t = el("table"), h = el("tr"); head.forEach(x => h.append(el("th", "", x))); t.append(h);
     data.forEach(r => { const tr = el("tr"); r.forEach(c => tr.append(el("td", "", c))); t.append(tr); }); return t;
@@ -3309,7 +3309,7 @@ async function openBook(id) {
   sessBacks = 0; coachMark = 0; $("#coach").hidden = true;
   prog.max = Math.max(0, tokens.length - 1); fillR(prog);
   $("#title").textContent = rec.title;
-  document.title = rec.title + " · Wordsmith";
+  document.title = rec.title + " · Atom";
   chapSel.replaceChildren(...chapters.map((c, i) => {
     const end = i + 1 < chapters.length ? chapters[i + 1].start : tokens.length, mins = Math.round((end - c.start) / wpm);
     return new Option("  ".repeat(c.depth || 0) + c.title + (mins >= 1 ? " · " + fmtMin(mins) : ""), i);
@@ -3371,7 +3371,7 @@ function renderGoal() {
   $("#goalDate").min = todayKey();
   $("#goalDate").value = (m && m.goal) || "";
   const g = goalInfo(m, cur);
-  $("#goalInfo").textContent = g ? g.long : "Pick a finish date and Wordsmith works out how much to read each day.";
+  $("#goalInfo").textContent = g ? g.long : "Pick a finish date and Atom works out how much to read each day.";
 }
 function openMenu() { pause(); renderBookmarks(); renderGoal(); $("#menuDlg").showModal(); }
 
@@ -3945,12 +3945,12 @@ $("#coachChk").onchange = e => { settings.coach = e.target.checked; saveSettings
 $("#goalSel").onchange = e => { settings.goal = +e.target.value; saveSettings(); renderLibrary(); };
 $("#resetStats").onclick = () => { if (!confirm("Reset all reading stats? Your books and bookmarks stay.")) return; stats = { days: {}, books: {}, finished: 0 }; store.set("pace:stats", stats); toast("Stats reset"); };
 
-$$("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
+$$("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d && d.id !== "welcomeDlg") d.close(); }));
 $$("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
 $("#settingsBtn").addEventListener("click", () => {});
 $("#menuDlg").addEventListener("close", () => { renderLibrary(); });
 
-$("#back").onclick = () => { setFocus(false); pause(); flush(); save(); renderLibrary(); document.title = "Wordsmith"; show("library"); };
+$("#back").onclick = () => { setFocus(false); pause(); flush(); save(); renderLibrary(); document.title = "Atom"; show("library"); };
 const stage = $("#stage");
 stage.onclick = () => { if (!settings.hold) toggle(); };
 stage.addEventListener("pointerdown", e => { if (!settings.hold) return; e.preventDefault(); try { stage.setPointerCapture(e.pointerId); } catch (x) {} holdActive = true; play(); });
@@ -4054,6 +4054,7 @@ async function unlockAdult(pw) {
   };
   $("#welcomePw").addEventListener("keydown", e => { if (e.key === "Enter") nx.click(); });
   $("#welcomeSkip").onclick = () => go(3);
+  dlg.addEventListener("cancel", e => { if (!settings.mode || modeOnly) e.preventDefault(); });
   dlg.addEventListener("close", () => store.set("pace:welcomed", true));
   window.showWelcome = (only) => { modeOnly = only === true; $("#welcomeName").value = settings.name || ""; $("#welcomePw").value = ""; $("#welcomePw").hidden = true; mode = ""; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", "false")); go(0); dlg.showModal(); };
   $("#welcomeAgain").onclick = () => { $("#setDlg").close(); showWelcome(false); };
@@ -4257,7 +4258,7 @@ let testStart = 0, testText = TEST_TEXT, testMode = "speed";
 function openTest(text, mode) {
   testText = typeof text === "string" ? text : TEST_TEXT; testMode = mode || "speed";
   $("#testTitle").textContent = testMode === "timed" ? "Timed read" : "Reading speed test";
-  $("#testIntroP").textContent = testMode === "timed" ? "Read these lines at your normal pace. Tap Done when you finish. Wordsmith times you." : "Read the passage at your normal pace. Tap Done when you finish. Wordsmith times you.";
+  $("#testIntroP").textContent = testMode === "timed" ? "Read these lines at your normal pace. Tap Done when you finish. Atom times you." : "Read the passage at your normal pace. Tap Done when you finish. Atom times you.";
   $("#testIntro").hidden = false; $("#testRead").hidden = true; $("#testResult").hidden = true; $("#testDlg").showModal();
 }
 $("#testBtn").onclick = () => openTest();
@@ -4281,7 +4282,7 @@ $("#testDone").onclick = () => {
   } else stats.test = { wpm: w, date: todayKey() };
   store.set("pace:stats", stats);
   const sug = Math.max(200, Math.min(speedCap(), Math.round(w * 1.3 / 25) * 25));
-  $("#testMsg").textContent = `You read about ${w} words per minute. Try Wordsmith at ${sug} wpm.` + prevNote;
+  $("#testMsg").textContent = `You read about ${w} words per minute. Try Atom at ${sug} wpm.` + prevNote;
   const use = $("#testUse"); use.hidden = false; use.textContent = `Use ${sug} wpm`;
   use.onclick = () => { setWpm(sug); $("#testDlg").close(); toast(`Speed set to ${sug} wpm`); };
 };
@@ -4343,7 +4344,7 @@ async function syncStorageInfo() {
 }
 function backupName() {
   const n = String(settings.name || "").replace(/[^\p{L}\p{N} _-]/gu, "").trim().replace(/\s+/g, "-").slice(0, 30);
-  return (n || "Backup") + ".Wordsmith";
+  return (n || "Backup") + ".Atom";
 }
 function syncBackupInfo() {
   syncStorageInfo();
@@ -4375,7 +4376,7 @@ async function saveBackup() {
   if (!backupFile) return;
   const file = backupFile; let done = false;
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: "Wordsmith backup" }); done = true; } catch (e) { if (e && e.name === "AbortError") return; }
+    try { await navigator.share({ files: [file], title: "Atom backup" }); done = true; } catch (e) { if (e && e.name === "AbortError") return; }
   }
   if (!done) {
     const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = file.name;
@@ -4386,7 +4387,7 @@ async function saveBackup() {
 async function restoreBackup(file) {
   try {
     const data = JSON.parse(await file.text());
-    if (!data || data.format !== "pace-backup" || !Array.isArray(data.books)) throw new Error("that isn't a Wordsmith backup file");
+    if (!data || data.format !== "pace-backup" || !Array.isArray(data.books)) throw new Error("that isn't a Atom backup file");
     const n = data.books.length;
     if (!confirm(`Restore ${n} book${n === 1 ? "" : "s"} from ${data.saved ? new Date(data.saved).toLocaleDateString() : "this backup"}? Books already here are updated.`)) return;
     for (const rec of data.books) await dbPut(rec);
@@ -4467,7 +4468,7 @@ $("#pastePrint").onclick = async () => {
   try {
     const q = qrcode(0, "M"); q.addData(url); q.make();
     const qb = el("div", "qrbox"); qb.insertAdjacentHTML("beforeend", q.createSvgTag({ cellSize: 3, margin: 2, scalable: true }));
-    qb.append(el("span", "", fits ? "Scan to read this passage in Wordsmith." : "Scan to open Wordsmith. Then paste this passage in to read it."));
+    qb.append(el("span", "", fits ? "Scan to read this passage in Atom." : "Scan to open Atom. Then paste this passage in to read it."));
     box.append(qb);
   } catch (e) {}
   $("#pasteDlg").close(); setTimeout(() => window.print(), 100);

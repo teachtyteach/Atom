@@ -1,12 +1,12 @@
 {
-  "name": "Wordsmith",
-  "short_name": "Wordsmith",
+  "name": "Atom",
+  "short_name": "Atom",
   "description": "Offline speed reader, one word at a time",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#141311",
-  "theme_color": "#141311",
+  "background_color": "#1d1b18",
+  "theme_color": "#1d1b18",
   "icons": [
     {
       "src": "icon-192.png",
