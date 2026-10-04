@@ -238,6 +238,7 @@ body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
 :root[data-font=book]{--rf:"Palatino Linotype",Palatino,"Book Antiqua","Iowan Old Style",Georgia,serif}
 :root[data-font=rounded]{--rf:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Varela Round",system-ui,sans-serif}
 :root[data-font=slab]{--rf:Rockwell,"Roboto Slab","Courier Prime","Rockwell Nova",Georgia,serif}
+body::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:40;pointer-events:none}
 .nextcard{display:grid;gap:4px;border-left:4px solid var(--accent)}
 .nextcard b{font-family:Georgia,serif;font-size:17px}
 .xtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
