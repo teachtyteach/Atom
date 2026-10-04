@@ -201,6 +201,16 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 dialog{border:none;padding:0;background:var(--surface);color:var(--ink);width:min(560px,100vw);max-width:100vw;
   margin:auto auto 0;border-radius:18px 18px 0 0;max-height:88vh}
 dialog::backdrop{background:rgba(0,0,0,.5)}
+.speedhint{margin:-6px 0 0;text-align:right}
+.whatslist{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.whatslist li{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.whatslist b{display:block}
+.classlist{display:grid;gap:10px}
+.classrow{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.classrow .cover{width:44px;height:66px}
+.classrow .ci{flex:1;min-width:0}.classrow b{display:block;font-family:Georgia,serif;line-height:1.25}
+.classrow small{display:block;color:var(--muted);margin-top:2px}
+.classrow button{flex:none;min-height:40px;padding:0 14px}
 .sheet{padding:16px 16px max(20px,env(safe-area-inset-bottom));display:grid;grid-template-columns:minmax(0,1fr);gap:12px;overflow:auto;max-height:88vh}
 .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
@@ -586,6 +596,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
       <button role="menuitem" id="pasteBtn" type="button">Paste text<small>Type or paste anything</small></button>
       <button role="menuitem" id="clipBtn" type="button">Read from clipboard<small>Read what you copied</small></button>
       <button role="menuitem" id="webBtn" type="button">Web article<small>Get an article from a link</small></button>
+      <button role="menuitem" id="classBtn" type="button">Class Library<small>Free classic books, built in</small></button>
       <button role="menuitem" id="sample" type="button">Try a sample<small>See how it works</small></button>
       <button role="menuitem" id="testBtn" type="button">Test my speed<small>Find your normal reading speed</small></button>
     </div>
@@ -600,7 +611,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div id="continue"></div>
   <h2 class="sect" id="libHead">Library</h2>
   <ul id="books" class="books"></ul>
-  <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Add an EPUB or paste some text.</p></div>
+  <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Add an EPUB or paste some text.</p><button type="button" class="primary" id="classBtn2" style="margin-top:12px">Browse the Class Library</button></div>
   <p class="fine">Everything stays on this device. No internet needed. Books, bookmarks and stats are saved here.</p>
   <p class="fine madeby">Made FOR STEM Launch</p>
 </section>
@@ -701,6 +712,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
       <button class="icon" id="nextSent" aria-label="Next sentence" title="Next sentence (N)"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M19.5 12a7.5 7.5 0 1 1-2.4-5.5M19.5 4v4.2h-4.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <label class="setting">Speed <input type="range" id="wpm" min="50" max="300" step="25"><b id="wpmVal"></b></label>
+    <p class="fine speedhint" id="speedHint" hidden></p>
     <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
     <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed · D define</span></div>
   </div>
@@ -780,6 +792,18 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="row"><button id="pdfNo">Cancel</button><button class="primary" id="pdfYes">Continue</button></div>
 </div></dialog>
 
+<dialog id="whatsDlg"><div class="sheet">
+  <div class="sheet-head"><h2>What's new in Atom</h2></div>
+  <ul class="whatslist" id="whatsList"></ul>
+  <button class="primary" id="whatsOk" type="button">Okay</button>
+</div></dialog>
+
+<dialog id="classDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Class Library</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p class="fine">Free classics. Tap Add to save one to your library. You need internet the first time only.</p>
+  <div id="classList" class="classlist"></div>
+</div></dialog>
+
 <dialog id="pasteDlg"><div class="sheet">
   <div class="sheet-head"><h2>Paste text</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <input type="text" id="pasteTitle" placeholder="Title (optional)" autocomplete="off">
@@ -818,6 +842,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <label class="setrow">Name <input type="text" id="nameInput" maxlength="30" placeholder="Name" autocomplete="off"></label>
     <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Adult</option></select></label>
     <label class="setrow">Atom drops by <input type="checkbox" id="peekChk"></label>
+    <label class="setrow">Tiny buzz on rewards <input type="checkbox" id="hapChk"></label>
     <p class="fine">Name is used for your backup file, like Dan.Atom. Adult mode turns off the mascot and needs the teacher password. Atom drops by pops up on the home screen now and then.</p>
   </div>
   <p class="gt">Home screen icon</p>
@@ -3178,6 +3203,8 @@ function syncSpeedInfo() {
   const cap = speedCap(), pw = store.get("pace:pw", false), w = metrics().w, nxt = SPEED_TIERS.find(t => t[1] > cap);
   let t = `Limit on this device: ${cap} wpm.`;
   if (pw) t += " Teacher unlock is on."; else if (nxt) t += ` Read ${fmt(nxt[0])} words in total to unlock ${nxt[1]} wpm (you're at ${fmt(Math.min(w, nxt[0]))}).`;
+  const sh = $("#speedHint");
+  if (nxt && !pw) { const rk = RANKS.filter(r => r[0] <= nxt[0]).pop(); sh.hidden = false; sh.textContent = `Top speed for now: ${cap} wpm. Read ${fmt(Math.max(0, nxt[0] - w))} more words (${rk ? rk[1] : "more"} rank) to unlock ${nxt[1]}.`; } else sh.hidden = true;
   $("#speedInfo").textContent = t; $("#pwBox").hidden = pw || cap >= 600; $("#pwRelock").hidden = !pw;
 }
 function applyCap() { $("#wpm").max = speedCap(); if (wpm > speedCap()) setWpm(wpm); syncSpeedInfo(); }
@@ -3214,7 +3241,16 @@ const BADGES = [
   { id: "day5k", name: "Marathon", desc: "5,000 words in one day", val: m => m.best, goal: 5000 }
 ];
 const tq = []; let tqBusy = false;
-function toastLater(m) { if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
+let hapEl = null;
+function buzz() {
+  try {
+    if (settings.haptic === false) return;
+    if (navigator.vibrate) { navigator.vibrate(18); return; }
+    if (!hapEl) { hapEl = document.createElement("label"); hapEl.setAttribute("aria-hidden", "true"); hapEl.style.cssText = "position:fixed;left:-200px;top:0;opacity:0;pointer-events:none"; const i = document.createElement("input"); i.type = "checkbox"; i.setAttribute("switch", ""); hapEl.append(i); document.body.append(hapEl); }
+    hapEl.click();
+  } catch (e) {}
+}
+function toastLater(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) buzz(); if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
 function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m, !isAdult() && /^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
@@ -3956,7 +3992,7 @@ function syncSettingsUI() {
   $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
   $("#grabChk").checked = settings.grab !== false; $("#webBtn").hidden = settings.grab === false;
   $("#modeSel").value = isAdult() ? "adult" : "student";
-  $("#dimChk").checked = settings.dim !== false; $("#peekChk").checked = settings.peek !== false;
+  $("#dimChk").checked = settings.dim !== false; $("#peekChk").checked = settings.peek !== false; $("#hapChk").checked = settings.haptic !== false;
   $("#eyesSel").value = String(settings.eyes ?? (isAdult() ? 0 : 20));
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
@@ -4421,6 +4457,68 @@ checkBadges();
 renderLibrary();
 
 $("#file").onchange = e => { const fs2 = Array.from(e.target.files); e.target.value = ""; if (fs2.length) importFiles(fs2); };
+
+/* ---------- class library ---------- */
+const CL_COL = ["#7a4e8c", "#3f6d8e", "#8e5a3f", "#3f8e6a", "#8e3f55", "#5b6b2f"];
+let clData = null;
+function clCover(b, k) {
+  const W = 96, H = 144, cv = document.createElement("canvas"); cv.width = W; cv.height = H; const c = cv.getContext("2d");
+  c.fillStyle = CL_COL[k % CL_COL.length]; c.fillRect(0, 0, W, H);
+  c.strokeStyle = "rgba(255,255,255,.55)"; c.lineWidth = 1.5; c.strokeRect(6, 6, W - 12, H - 12);
+  c.fillStyle = "#fff"; c.font = "700 13px Georgia,serif"; c.textAlign = "center";
+  const words = b.title.split(" "), lines = []; let ln = "";
+  words.forEach(w => { if ((ln + " " + w).trim().length > 12) { lines.push(ln); ln = w; } else ln = (ln + " " + w).trim(); }); lines.push(ln);
+  lines.slice(0, 5).forEach((t, i) => c.fillText(t, W / 2, 40 + i * 17));
+  c.font = "10px Georgia,serif"; c.fillStyle = "rgba(255,255,255,.8)"; c.fillText(b.author.split(" ").slice(-1)[0], W / 2, H - 16);
+  return cv.toDataURL("image/jpeg", 0.8);
+}
+async function classLoad() {
+  if (clData) return clData;
+  const r = await fetch("classlib.json"); if (!r.ok) throw new Error("fetch");
+  return (clData = await r.json());
+}
+async function classAdd(b, k) {
+  const out = [], chs = [];
+  b.chapters.forEach(ch => { chs.push({ title: ch.title, start: out.length, depth: 0 }); addText(ch.text, out); });
+  const r = await saveBook(b.title, { tokens: out, chapters: chs, cover: clCover(b, k) });
+  const got = store.get("pace:cl", {}); got[b.id] = r.id; store.set("pace:cl", got);
+  return r.id;
+}
+async function openClass() {
+  const dlg = $("#classDlg"), box = $("#classList"); box.replaceChildren(); box.append(el("p", "fine", "Loading…")); if (!dlg.open) dlg.showModal();
+  let d; try { d = await classLoad(); } catch (e) { box.replaceChildren(el("p", "fine", "Couldn't load the Class Library. Connect to the internet and try again.")); return; }
+  box.replaceChildren();
+  d.books.forEach((b, k) => {
+    const row = el("div", "classrow"), cv = el("div", "cover"), img = new Image(); img.alt = ""; img.src = clCover(b, k); cv.append(img);
+    const ci = el("div", "ci"); ci.append(el("b", "", b.title), el("small", "", b.author), el("small", "", `${fmt(b.words)} words · about ${fmtMin(Math.max(1, Math.round(b.words / wpm)))} at ${wpm} wpm`), el("small", "", b.blurb));
+    const have = store.get("pace:cl", {})[b.id], btn = el("button", have && lib.find(x => x.id === have) ? "" : "primary", have && lib.find(x => x.id === have) ? "Open" : "Add"); btn.type = "button";
+    btn.onclick = async () => {
+      const cur2 = store.get("pace:cl", {})[b.id]; let id = cur2 && lib.find(x => x.id === cur2) ? cur2 : null;
+      if (!id) { btn.disabled = true; btn.textContent = "Adding…"; id = await classAdd(b, k); }
+      dlg.close(); openBook(id);
+    };
+    row.append(cv, ci, btn); box.append(row);
+  });
+}
+$("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
+
+const WHATS_VER = "2026-10-04", WHATS = [
+  ["Class Library", "Six free classic books are built in. Open it from the menu on the home screen."],
+  ["Secret badges", "Six hidden badges are waiting. Look in your Stats."],
+  ["Streak flames", "Keep a streak going and your flame changes color."],
+  ["New app icons", "Pick a new Home Screen icon in Settings. Some unlock as you rank up."],
+  ["Special themes", "Overgrown and Frontier now have art in the background."],
+  ["Speed hint", "The reader tells you how to unlock more speed."]
+];
+function showWhatsNew() {
+  const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
+  WHATS.forEach(w => { const li = el("li"); li.append(el("b", "", w[0]), document.createTextNode(" " + w[1])); ul.append(li); });
+  dlg.showModal();
+}
+$("#whatsOk").onclick = () => { store.set("pace:ver", WHATS_VER); $("#whatsDlg").close(); };
+$("#whatsDlg").addEventListener("cancel", e => e.preventDefault());
+if (!store.get("pace:ver", null) && !store.get("pace:welcomed", false) && !lib.length) store.set("pace:ver", WHATS_VER);
+else if (store.get("pace:ver", null) !== WHATS_VER) setTimeout(() => { if (!$("#welcomeDlg").open) showWhatsNew(); }, 700);
 $("#sample").onclick = async () => { const r = await saveBook("How RSVP works", bookFromText(SAMPLE)); openBook(r.id); };
 $("#pasteBtn").onclick = () => { $("#pasteDlg").showModal(); $("#paste").focus(); };
 function pasteTitle(text) { const first = text.trim().split(/\s+/).slice(0, 6).join(" "); return $("#pasteTitle").value.trim() || (first.length > 40 ? first.slice(0, 40) + "…" : first); }
@@ -4473,6 +4571,7 @@ $("#modeGo").onclick = async () => {
   if (await unlockAdult(pw)) { $("#modeDlg").close(); toast("Adult mode on"); } else $("#modeMsg").textContent = "That password isn't right.";
 };
 $("#modePw").addEventListener("keydown", e => { if (e.key === "Enter") $("#modeGo").click(); });
+$("#hapChk").onchange = e => { settings.haptic = e.target.checked; saveSettings(); if (e.target.checked) buzz(); };
 $("#peekChk").onchange = e => { settings.peek = e.target.checked; saveSettings(); if (!e.target.checked) hidePeek(); };
 $("#dimChk").onchange = e => { settings.dim = e.target.checked; saveSettings(); applyAccess(); };
 $("#focusStartChk").onchange = e => { settings.focusStart = e.target.checked; saveSettings(); renderPresets(); };
@@ -4493,7 +4592,7 @@ $("#coachChk").onchange = e => { settings.coach = e.target.checked; saveSettings
 $("#goalSel").onchange = e => { settings.goal = +e.target.value; saveSettings(); renderLibrary(); };
 $("#resetStats").onclick = () => { if (!confirm("Reset all reading stats? Your books and bookmarks stay.")) return; stats = { days: {}, books: {}, finished: 0 }; store.set("pace:stats", stats); toast("Stats reset"); };
 
-$$("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d && d.id !== "welcomeDlg") d.close(); }));
+$$("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d && d.id !== "welcomeDlg" && d.id !== "whatsDlg") d.close(); }));
 $$("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
 $("#settingsBtn").addEventListener("click", () => {});
 $("#menuDlg").addEventListener("close", () => { renderLibrary(); });
