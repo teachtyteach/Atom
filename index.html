@@ -201,6 +201,39 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 dialog{border:none;padding:0;background:var(--surface);color:var(--ink);width:min(560px,100vw);max-width:100vw;
   margin:auto auto 0;border-radius:18px 18px 0 0;max-height:88vh}
 dialog::backdrop{background:rgba(0,0,0,.5)}
+:root{--mt:grayscale(0)}
+body:not(.adult) .mascot{filter:var(--mt) drop-shadow(0 0 6px var(--rk,transparent)) drop-shadow(0 0 2px var(--rk,transparent))}
+@keyframes mrb{from{filter:sepia(1) saturate(3) hue-rotate(0deg) drop-shadow(0 0 6px var(--rk,transparent))}to{filter:sepia(1) saturate(3) hue-rotate(360deg) drop-shadow(0 0 6px var(--rk,transparent))}}
+body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
+#bd{position:fixed;left:0;right:0;bottom:70px;height:min(55vh,420px);z-index:-1;pointer-events:none;opacity:.4;background-repeat:no-repeat;background-position:center bottom;background-size:contain}
+#bd.wide{top:0;height:auto;background-size:cover;background-position:center}
+#bd:empty{display:block}
+:root[data-marks=dots] .stage::before,:root[data-marks=dots] .stage::after{width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.9;transform:translateX(-4.5px)}
+:root[data-marks=bar] .stage::before,:root[data-marks=bar] .stage::after{width:4px;height:18px;border-radius:2px;background:var(--accent);opacity:.9;transform:translateX(-2px)}
+:root[data-marks=glow] .stage::before,:root[data-marks=glow] .stage::after{background:var(--accent);box-shadow:0 0 10px 3px var(--accent);opacity:.85}
+:root[data-marks=diamond] .stage::before,:root[data-marks=diamond] .stage::after{width:10px;height:10px;background:var(--accent);opacity:.9;transform:translateX(-5px) rotate(45deg)}
+:root[data-marks=arrows] .stage::before,:root[data-marks=arrows] .stage::after{width:0;height:0;background:none;opacity:.9;transform:translateX(-7px);border-left:7px solid transparent;border-right:7px solid transparent}
+:root[data-marks=arrows] .stage::before{border-top:10px solid var(--accent)}
+:root[data-marks=arrows] .stage::after{border-bottom:10px solid var(--accent)}
+:root[data-wfx=glow] .word{text-shadow:0 0 .3em color-mix(in srgb,var(--accent) 60%,transparent)}
+:root[data-wfx=neon] .word{text-shadow:0 0 .1em currentColor,0 0 .35em var(--accent),0 0 .8em var(--accent)}
+:root[data-wfx=deep] .word{text-shadow:.04em .05em 0 color-mix(in srgb,var(--accent) 50%,transparent),.08em .1em 0 color-mix(in srgb,var(--accent) 25%,transparent)}
+@keyframes wfade{from{opacity:.3}to{opacity:1}}
+.word.fade{animation:wfade .12s ease-out}
+:root[data-bar=stripes] .bar i{background:repeating-linear-gradient(135deg,var(--accent) 0 7px,color-mix(in srgb,var(--accent) 65%,#fff) 7px 14px);background-size:20px 20px;animation:grow .8s cubic-bezier(.2,.8,.2,1) both,bstripe 1s linear infinite}
+@keyframes bstripe{to{background-position:20px 0}}
+:root[data-bar=soft] .bar i{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 55%,#fff),var(--accent))}
+:root[data-bar=segments] .bar i{-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 9px,transparent 9px 12px);mask-image:repeating-linear-gradient(90deg,#000 0 9px,transparent 9px 12px)}
+:root[data-bar=shimmer] .bar i{background:linear-gradient(100deg,var(--accent) 30%,color-mix(in srgb,var(--accent) 35%,#fff) 50%,var(--accent) 70%);background-size:220% 100%;animation:grow .8s cubic-bezier(.2,.8,.2,1) both,bshim 2.2s linear infinite}
+@keyframes bshim{to{background-position:-220% 0}}
+:root[data-font=typewriter]{--rf:"Courier New",Courier,"Nimbus Mono PS",monospace}
+:root[data-font=book]{--rf:"Palatino Linotype",Palatino,"Book Antiqua","Iowan Old Style",Georgia,serif}
+:root[data-font=rounded]{--rf:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Varela Round",system-ui,sans-serif}
+:root[data-font=slab]{--rf:Rockwell,"Roboto Slab","Courier Prime","Rockwell Nova",Georgia,serif}
+.xlab{margin:12px 0 4px;font-weight:600}
+.xseg button{min-height:40px}
+#titleLine{margin:-2px 0 0;color:var(--muted);font-size:14px;letter-spacing:.02em}
+#titleLine:empty{display:none}
 .speedhint{margin:-6px 0 0;text-align:right}
 .whatslist{margin:0;padding:0;list-style:none;display:grid;gap:10px}
 .whatslist li{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -459,6 +492,8 @@ body.adult .mascot{display:none!important}
 .emptybox .mascot{width:120px}
 .doneimg{width:110px;margin:0 auto}
 .wmascot{width:130px;margin:0 auto 4px}
+body.reader .tonly,body.reader .madeby,body.reader #pausePw,body.reader [data-theme="stem"]{display:none!important}
+.pickwide{grid-column:1/-1}
 .pickrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:6px}
 .pick{min-height:64px;font:600 17px system-ui,sans-serif;border-radius:18px;flex-direction:column;gap:2px}
 .pick small{font:400 12px system-ui,sans-serif;color:var(--muted)}
@@ -517,7 +552,6 @@ body.adult .remblem,body.adult #rewardsCard{display:none}
 .rgrid button{display:grid;justify-items:center;gap:4px;padding:8px 2px;min-height:0;box-shadow:none;font-size:11px;color:var(--muted)}
 .rgrid button.lock .remblem{filter:grayscale(1);opacity:.35}
 .rgrid button[aria-pressed=true]{border-color:var(--accent)}
-body:not(.adult) .mascot{filter:drop-shadow(0 0 6px var(--rk,transparent)) drop-shadow(0 0 2px var(--rk,transparent))}
 dialog[open]{animation:sheetUp .28s cubic-bezier(.2,.9,.3,1)}
 dialog[open]::backdrop{animation:fadeIn .25s ease-out}
 @keyframes sheetUp{from{transform:translateY(36px);opacity:0}to{transform:none;opacity:1}}
@@ -579,6 +613,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 </style>
 </head>
 <body data-screen="library">
+<div id="bd" aria-hidden="true"></div>
 
 <!-- LIBRARY -->
 <section id="library" class="screen">
@@ -589,6 +624,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </header>
   <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><span class="rkl"><i id="rankEmb" class="remblem" aria-hidden="true"></i><i id="rankPin" class="remblem" aria-hidden="true"></i><b id="rankName"></b></span><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
   <p class="greet" id="greet"></p>
+  <p id="titleLine"></p>
   <div class="actmenu">
     <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList"><span>What do you want to do?</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="actlist card" id="actList" role="menu" hidden>
@@ -728,7 +764,8 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
       <p>Welcome to Atom. Who is reading?</p>
       <div class="pickrow" id="modePick">
         <button type="button" class="pick" data-mode="student" aria-pressed="false">Student<small>Cheers and badges</small></button>
-        <button type="button" class="pick" data-mode="adult" aria-pressed="false">Adult<small>Teacher password</small></button>
+        <button type="button" class="pick" data-mode="adult" aria-pressed="false">Teacher<small>Teacher password</small></button>
+        <button type="button" class="pick pickwide" data-mode="reader" aria-pressed="false">Adult<small>Not a student or teacher. Password needed</small></button>
       </div>
       <input type="password" id="welcomePw" placeholder="Teacher password" autocomplete="off" autocapitalize="off" hidden>
       <p id="welcomeMsg" role="status"></p>
@@ -755,8 +792,8 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 </div></dialog>
 
 <dialog id="modeDlg"><div class="sheet">
-  <div class="sheet-head"><h2>Adult mode</h2><button class="icon" data-close aria-label="Close">✕</button></div>
-  <p class="fine">Adult mode turns off the mascot. Enter the teacher password.</p>
+  <div class="sheet-head"><h2 id="modeTitle">Teacher mode</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p class="fine" id="modeInfo">Teacher mode turns off the mascot and unlocks everything. Enter the teacher password.</p>
   <input type="password" id="modePw" placeholder="Teacher password" autocomplete="off" autocapitalize="off">
   <p class="status" id="modeMsg" role="status"></p>
   <div class="row"><button class="primary" id="modeGo">Unlock</button></div>
@@ -840,10 +877,10 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <p class="gt">You</p>
   <div class="grp">
     <label class="setrow">Name <input type="text" id="nameInput" maxlength="30" placeholder="Name" autocomplete="off"></label>
-    <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Adult</option></select></label>
+    <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Teacher</option><option value="reader">Adult</option></select></label>
     <label class="setrow">Atom drops by <input type="checkbox" id="peekChk"></label>
     <label class="setrow">Tiny buzz on rewards <input type="checkbox" id="hapChk"></label>
-    <p class="fine">Name is used for your backup file, like Dan.Atom. Adult mode turns off the mascot and needs the teacher password. Atom drops by pops up on the home screen now and then.</p>
+    <p class="fine">Name is used for your backup file, like Dan.Atom. Teacher mode turns off the mascot and needs the teacher password. Adult mode keeps the unlocks and hides school things. Atom drops by pops up on the home screen now and then.</p>
   </div>
   <p class="gt">Home screen icon</p>
   <div class="grp">
@@ -877,7 +914,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <p class="fine">Your streak counts days you reach the goal. Words only count the first time you read them, going forward. Weekends don't count for or against your streak.</p>
   </div>
   <details class="grp fold"><summary>Pause for breaks</summary>
-    <p class="fine">Days in a pause don't count for or against your streak. Adding or removing one needs the teacher password.</p>
+    <p class="fine">Days in a pause don't count for or against your streak. <span class="tonly">Adding or removing one needs the teacher password.</span></p>
     <ul class="list" id="pauseList"></ul>
     <div class="goalrow"><input type="date" id="pauseFrom" aria-label="Pause starts"><input type="date" id="pauseTo" aria-label="Pause ends"></div>
     <div class="goalrow"><input type="password" id="pausePw" placeholder="Teacher password" autocomplete="off"><button id="pauseAdd">Add pause</button></div>
@@ -957,7 +994,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </div>
   <p class="gt">Reading font</p>
   <div class="seg" id="fontSeg">
-    <button data-font="serif">Serif</button><button data-font="sans">Sans</button><button data-font="mono">Mono</button><button data-font="lexend">Lexend</button><button data-font="dyslexic">OpenDyslexic</button>
+    <button data-font="serif">Serif</button><button data-font="sans">Sans</button><button data-font="mono">Mono</button><button data-font="typewriter">Typewriter</button><button data-font="book">Book</button><button data-font="rounded">Rounded</button><button data-font="slab">Slab</button><button data-font="lexend">Lexend</button><button data-font="dyslexic">OpenDyslexic</button>
   </div>
   <div class="grp">
     <label class="setting wide">Letter gap <input type="range" id="lsRange" min="0" max="20" step="1"><b id="lsVal"></b></label>
@@ -977,6 +1014,8 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <p class="fine" id="unlockNote"></p>
     <label class="setrow">Bold word beginnings <input type="checkbox" id="bionicChk"></label>
   </div>
+  <p class="gt">Extras</p>
+  <div class="grp"><p class="fine" id="extrasNote"></p><div id="extrasBox"></div></div>
   </div>
   <div class="pane" data-pane="reading" hidden>
   <p class="gt">Reading</p>
@@ -2728,10 +2767,11 @@ settings.goal = Math.max(1000, +settings.goal || 1000);
 if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal", "frontier", "overgrown", "noir", "synthwave", "autumn", "winter", "spring", "summer", "season", "frontier", "overgrown", "noir", "synthwave", "matcha", "bubblegum", "pumpkin", "spooky", "harvest", "snowfall", "fireworks", "valentine", "blossom", "earthday", "beach", "stem", "aurora", "neon", "goldleaf"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => store.set("pace:settings", settings);
 const isAdult = () => settings.mode === "adult";
+const isReader = () => settings.mode === "reader";
 const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000", autumn: "#f6e3cf", winter: "#e3eef7", spring: "#eaf5df", summer: "#dcf4f1", frontier: "#241812", overgrown: "#1c231c", noir: "#0d0d0d", synthwave: "#1a0b2e", matcha: "#e4ead2", bubblegum: "#ffd6f0", pumpkin: "#ffe3c2", spooky: "#120a1e", harvest: "#2a1a10", snowfall: "#0e2036", fireworks: "#0b0f24", valentine: "#ffd9e2", blossom: "#ffece6", earthday: "#d8ecd0", beach: "#c9edf5", stem: "#1b2a4a", aurora: "#06161c", neon: "#0b0614", goldleaf: "#1a1405" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
-  const root = document.documentElement;
+  const root = document.documentElement; setTimeout(() => { if (window.__xr) applyBackdrop(); }, 30);
   let th = settings.theme;
   if (th === "season") { const mo = new Date().getMonth(); th = mo >= 2 && mo <= 4 ? "spring" : mo >= 5 && mo <= 7 ? "summer" : mo >= 8 && mo <= 10 ? "autumn" : "winter"; }
   if (th === "auto") delete root.dataset.theme; else root.dataset.theme = th;
@@ -2749,8 +2789,11 @@ function applyAccess() {
   document.body.classList.toggle("nomotion", !!settings.motion);
   document.body.classList.toggle("dim", settings.dim !== false);
   document.body.classList.toggle("adult", isAdult());
+  document.body.classList.toggle("reader", isReader());
+  if (isReader() && settings.theme === "stem") { settings.theme = "auto"; saveSettings(); applyTheme(); }
+  { const sl = document.querySelector("#schoolChk"); if (sl && sl.parentElement) sl.parentElement.firstChild.textContent = isReader() ? "Weekdays only " : "School days only "; }
 }
-const FONTS = ["serif", "sans", "mono", "lexend", "dyslexic"];
+const FONTS = ["serif", "sans", "mono", "lexend", "dyslexic", "typewriter", "book", "rounded", "slab"];
 const PIVOTCOL = { blue: "#3b82f6", green: "#22a55b", orange: "#f08a1c", purple: "#9b5de5", pink: "#f0508c", gold: "#e0ac00" };
 function applyFont() {
   if (!FONTS.includes(settings.font)) settings.font = "serif";
@@ -2822,7 +2865,7 @@ let playedMs = 0, playStart = 0, sessionWords = 0;
 let hasPaused = false, noRewind = false, skipCount = 0, stepIdx = 0, flushT = 0, wordsSince = 0;
 const RAMP = 30;
 let timerOn = false, timerLeft = 0, holdActive = false, eyeMs = 0, eyeLast = 0;
-const eyeLimit = () => (settings.eyes ?? (isAdult() ? 0 : 20)) * 60000;
+const eyeLimit = () => (settings.eyes ?? (isAdult() || isReader() ? 0 : 20)) * 60000;
 let sessBacks = 0, coachMark = 0, coachNext = 0;
 let readRanges = [], shownWords = 0;
 function newWordsIn(a, b) {
@@ -3149,6 +3192,7 @@ function render() {
   P.style.color = settings.pivotColor === "rainbow" ? `hsl(${(cur * 47) % 360} 85% 52%)` : "";
   paintPart(L, text, 0, p, mask); paintPart(P, text, p, p + 1, mask); paintPart(R, text, p + 1, text.length, mask);
   fitWord(text, p, mask);
+  if (document.documentElement.dataset.wfx === "fade" && !settings.motion) { const wb = $("#wordbox"); wb.classList.remove("fade"); void wb.offsetWidth; wb.classList.add("fade"); }
   prog.value = cur; fillR(prog);
   updateStats(); syncChapter(); updateBmIcon();
 }
@@ -3196,8 +3240,9 @@ function metrics() {
 const HOUR = 3600000;
 /* speed limit: 300 wpm until unlocked by reading milestones or the teacher password */
 const PW_HASH = "2a0e2789c7e50a2fd0141e007182e4e4b3ba4d67912cbffe197c2343a88ae2a5";
+const RD_HASH = "1351f90e4c6296803a017678fd8e8960f12cf3205097f8617fc49d46c8d5a476";
 const SPEED_BASE = 300, SPEED_TIERS = [[250000, 400], [500000, 500], [1000000, 600]];
-const speedCap = () => Math.max(SPEED_BASE, store.get("pace:unlock", 0) || 0, store.get("pace:pw", false) ? 600 : 0);
+const speedCap = () => isReader() ? 600 : Math.max(SPEED_BASE, store.get("pace:unlock", 0) || 0, store.get("pace:pw", false) ? 600 : 0);
 function earnedCap() { const w = metrics().w; return SPEED_TIERS.reduce((c, t) => w >= t[0] ? t[1] : c, SPEED_BASE); }
 function syncSpeedInfo() {
   const cap = speedCap(), pw = store.get("pace:pw", false), w = metrics().w, nxt = SPEED_TIERS.find(t => t[1] > cap);
@@ -3250,7 +3295,7 @@ function buzz() {
     hapEl.click();
   } catch (e) {}
 }
-function toastLater(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) buzz(); if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
+function toastLater(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) { buzz(); chime(); } if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
 function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m, !isAdult() && /^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
@@ -3616,6 +3661,7 @@ function lockMsg(kind, id) {
   }
   if (kind === "theme" && THEME_SPECIAL[id]) return THEME_SPECIAL[id].test() ? "" : `${THEME_SPECIAL[id].desc} to unlock this theme.`;
   if (kind === "icon" && ICON_SPECIAL[id]) return ICON_SPECIAL[id].test() ? "" : `${ICON_SPECIAL[id].desc} to unlock this icon.`;
+  if (EXTRA_SPECIAL[kind] && EXTRA_SPECIAL[kind][id]) return EXTRA_SPECIAL[kind][id].test() ? "" : `${EXTRA_SPECIAL[kind][id].desc} to unlock this.`;
   const f = needFam(kind, id);
   return f > lvlNow() ? `Reach ${LEVELS[f][1]} rank to unlock this. Keep reading!` : "";
 }
@@ -3628,6 +3674,7 @@ function unlockList(f) {
   at(UNLOCK.font).forEach(k => out.push(cap1(k) + " font"));
   at(UNLOCK.pivot).forEach(k => out.push(cap1(k) + " focus letter"));
   at(UNLOCK.icon).forEach(k => out.push(cap1(k.replace("a-", "")) + " A app icon"));
+  if (typeof XCATS !== "undefined") XCATS.forEach(c => at(UNLOCK[c.k] || {}).forEach(k => out.push(XNAME(c.k, k) + " " + c.label.toLowerCase())));
   return out;
 }
 function applyLockUI() {
@@ -3689,6 +3736,123 @@ document.addEventListener("click", e => {
   const t = Date.now(); tapN = t - tapT < 900 ? tapN + 1 : 1; tapT = t;
   if (tapN >= 7) { tapN = 0; secEarn("hello"); }
 });
+
+/* ---------- extras: titles, backdrops, colors, effects ---------- */
+const BD_SVG = {"fern": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 170 260\" fill=\"none\" stroke=\"COL\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M60 254 Q20 143.0 112 31.2 q 12 -6 14 -20 q 2 -12 -9 -14\"/><path d=\"M50.6 218.8 Q68.9 218.7 84.7 203.8 M50.6 218.8 Q33.3 224.8 13.5 216.0 M48.8 205.7 Q66.2 207.0 82.1 193.7 M48.8 205.7 Q32.1 210.4 13.9 200.7 M48.0 192.7 Q64.3 195.1 80.1 183.5 M48.0 192.7 Q31.9 196.2 15.3 185.6 M48.0 179.6 Q63.2 183.2 78.8 173.1 M48.0 179.6 Q32.6 182.0 17.8 170.8 M49.0 166.6 Q62.9 171.1 78.2 162.5 M49.0 166.6 Q34.4 168.0 21.2 156.4 M50.8 153.5 Q63.5 158.8 78.4 151.6 M50.8 153.5 Q37.1 154.1 25.6 142.2 M53.6 140.4 Q64.9 146.3 79.2 140.3 M53.6 140.4 Q40.8 140.4 30.9 128.4 M57.2 127.3 Q67.3 133.7 80.8 128.8 M57.2 127.3 Q45.4 126.8 37.1 115.0 M61.8 114.3 Q70.5 120.8 83.3 116.9 M61.8 114.3 Q51.0 113.3 44.1 101.9 M67.3 101.2 Q74.7 107.8 86.5 104.7 M67.3 101.2 Q57.4 100.0 52.0 89.0 M73.7 88.1 Q79.8 94.7 90.7 92.2 M73.7 88.1 Q64.8 86.8 60.7 76.5 M81.0 75.0 Q85.9 81.4 95.7 79.4 M81.0 75.0 Q73.1 73.8 70.1 64.2 M89.2 61.9 Q92.9 67.9 101.6 66.2 M89.2 61.9 Q82.3 60.9 80.4 52.2 M98.3 48.8 Q100.8 54.3 108.3 52.8 M98.3 48.8 Q92.4 48.1 91.4 40.5 M108.4 35.7 Q109.6 40.5 115.9 39.1 M108.4 35.7 Q103.4 35.5 103.4 29.1 \"/></svg>", "fern2": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 170 260\" fill=\"none\" stroke=\"COL\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M60 254 Q20 143.0 112 31.2 q 12 -6 14 -20 q 2 -12 -9 -14\"/><path d=\"M50.6 218.8 Q68.9 218.7 84.7 203.8 M50.6 218.8 Q33.3 224.8 13.5 216.0 M48.8 205.7 Q66.2 207.0 82.1 193.7 M48.8 205.7 Q32.1 210.4 13.9 200.7 M48.0 192.7 Q64.3 195.1 80.1 183.5 M48.0 192.7 Q31.9 196.2 15.3 185.6 M48.0 179.6 Q63.2 183.2 78.8 173.1 M48.0 179.6 Q32.6 182.0 17.8 170.8 M49.0 166.6 Q62.9 171.1 78.2 162.5 M49.0 166.6 Q34.4 168.0 21.2 156.4 M50.8 153.5 Q63.5 158.8 78.4 151.6 M50.8 153.5 Q37.1 154.1 25.6 142.2 M53.6 140.4 Q64.9 146.3 79.2 140.3 M53.6 140.4 Q40.8 140.4 30.9 128.4 M57.2 127.3 Q67.3 133.7 80.8 128.8 M57.2 127.3 Q45.4 126.8 37.1 115.0 M61.8 114.3 Q70.5 120.8 83.3 116.9 M61.8 114.3 Q51.0 113.3 44.1 101.9 M67.3 101.2 Q74.7 107.8 86.5 104.7 M67.3 101.2 Q57.4 100.0 52.0 89.0 M73.7 88.1 Q79.8 94.7 90.7 92.2 M73.7 88.1 Q64.8 86.8 60.7 76.5 M81.0 75.0 Q85.9 81.4 95.7 79.4 M81.0 75.0 Q73.1 73.8 70.1 64.2 M89.2 61.9 Q92.9 67.9 101.6 66.2 M89.2 61.9 Q82.3 60.9 80.4 52.2 M98.3 48.8 Q100.8 54.3 108.3 52.8 M98.3 48.8 Q92.4 48.1 91.4 40.5 M108.4 35.7 Q109.6 40.5 115.9 39.1 M108.4 35.7 Q103.4 35.5 103.4 29.1 \"/></svg>", "moth": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 80 70\" fill=\"none\" stroke=\"COL\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M40 20V54\"/><path d=\"M40 24C30 8 12 8 6 18C4 30 20 36 38 34M40 24C50 8 68 8 74 18C76 30 60 36 42 34\"/><path d=\"M38 36C26 40 14 52 18 60C28 62 38 50 40 44M42 36C54 40 66 52 62 60C52 62 42 50 40 44\"/><path d=\"M38 20C34 12 30 8 26 6M42 20C46 12 50 8 54 6\"/></svg>", "hat": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 140 90\" fill=\"none\" stroke=\"COL\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 58C20 72 52 74 70 66C88 74 120 72 136 58C118 62 96 56 70 58C44 56 22 62 4 58Z\"/><path d=\"M34 58C30 34 36 16 52 12C58 11 64 16 70 22C76 16 82 11 88 12C104 16 110 34 106 58\"/><path d=\"M33 47C52 55 88 55 107 47\"/><path d=\"M70 22V34\"/></svg>", "stag": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 140 150\" fill=\"none\" stroke=\"COL\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M56 78C46 62 40 44 30 30M44 54C34 52 26 46 20 38M38 42C34 32 34 22 38 12M30 30C22 28 14 22 10 14M84 78C94 62 100 44 110 30M96 54C106 52 114 46 120 38M102 42C106 32 106 22 102 12M110 30C118 28 126 22 130 14\"/><path d=\"M56 78C50 76 40 78 34 84C42 88 52 88 58 86M84 78C90 76 100 78 106 84C98 88 88 88 82 86\"/><path d=\"M58 86C60 104 64 122 70 140C76 122 80 104 82 86C76 80 64 80 58 86Z\"/><path d=\"M64 134C68 138 72 138 76 134\"/></svg>"};
+Object.assign(UNLOCK, {
+  font: Object.assign(UNLOCK.font, { typewriter: 13, book: 20, rounded: 28, slab: 32 }),
+  title: { pager: 2, bookworm: 3, bronze: 5, silver: 10, gold: 15, platinum: 20, emerald: 25, diamond: 30, champ: 35 },
+  bd: { stars: 4, leaves: 7, fern: 9, snow: 13, hat: 16, waves: 19, moth: 21, circuit: 23, stag: 27, constel: 31 },
+  atomc: { rose: 5, ice: 11, gold: 14, mint: 17, violet: 22, shadow: 26, rainbow: 33 },
+  wfx: { glow: 8, fade: 12, neon: 18, deep: 25 },
+  marks: { dots: 3, bar: 10, glow: 18, diamond: 24, arrows: 30 },
+  chime: { bell: 7, blip: 16, harp: 26 },
+  bar: { stripes: 6, soft: 11, segments: 20, shimmer: 28 },
+  conf: { stars: 5, leaves: 9, hearts: 18, sparks: 23, atoms: 30 },
+  greet: { pirate: 4, western: 9, space: 14, spooky: 19, chill: 24, fancy: 29 }
+});
+const secGot = id => !!store.get("pace:sec", {})[id];
+const EXTRA_SPECIAL = { title: {
+  owl: { desc: "Find the Night Owl secret", test: () => secGot("owl") },
+  bird: { desc: "Find the Early Bird secret", test: () => secGot("bird") },
+  sunday: { desc: "Find the Sunday Scholar secret", test: () => secGot("sun") },
+  keeper: { desc: "Reach a 7-day streak", test: () => metrics().streak >= 7 },
+  warden: { desc: "Reach a 30-day streak", test: () => metrics().streak >= 30 },
+  hundred: { desc: "Reach a 100-day streak", test: () => metrics().streak >= 100 },
+  marathon: { desc: "Read 5,000 words in one day", test: () => metrics().best >= 5000 },
+  finisher: { desc: "Finish your first book", test: () => (stats.finished || 0) >= 1 },
+  shelf: { desc: "Finish 5 books", test: () => (stats.finished || 0) >= 5 },
+  hunter: { desc: "Earn the Spooky Season event badge", test: () => evHas("spooky") },
+  agent: { desc: "Find all six secrets", test: () => Object.keys(store.get("pace:sec", {})).length >= 6 },
+  explorer: { desc: "Add a Class Library book", test: () => Object.keys(store.get("pace:cl", {})).length > 0 }
+} };
+const XCATS = [
+  { k: "title", label: "Title", opts: [["pager", "Page Turner"], ["bookworm", "Bookworm"], ["finisher", "Finisher"], ["explorer", "Explorer"], ["bronze", "Bronze Reader"], ["owl", "Night Owl"], ["bird", "Early Bird"], ["sunday", "Sunday Scholar"], ["keeper", "Streak Keeper"], ["silver", "Silver Reader"], ["shelf", "Shelf Builder"], ["hunter", "Ghost Hunter"], ["gold", "Gold Reader"], ["marathon", "Marathoner"], ["agent", "Secret Agent"], ["platinum", "Platinum Reader"], ["warden", "Flame Warden"], ["emerald", "Emerald Reader"], ["diamond", "Diamond Reader"], ["hundred", "Centurion"], ["champ", "Champion"]] },
+  { k: "bd", label: "Backdrop", opts: [["stars", "Stars"], ["leaves", "Leaves"], ["fern", "Ferns"], ["snow", "Snow"], ["hat", "Hat"], ["waves", "Waves"], ["moth", "Moth"], ["circuit", "Circuit"], ["stag", "Stag"], ["constel", "Constellation"]] },
+  { k: "atomc", label: "Atom color", opts: [["rose", "Rose"], ["ice", "Ice"], ["gold", "Gold"], ["mint", "Mint"], ["violet", "Violet"], ["shadow", "Shadow"], ["rainbow", "Rainbow"]] },
+  { k: "wfx", label: "Word effect", opts: [["glow", "Glow"], ["fade", "Fade in"], ["neon", "Neon"], ["deep", "Deep shadow"]] },
+  { k: "marks", label: "Focus marks", opts: [["dots", "Dots"], ["bar", "Bars"], ["glow", "Glow"], ["diamond", "Diamonds"], ["arrows", "Arrows"]] },
+  { k: "bar", label: "Progress bars", opts: [["stripes", "Stripes"], ["soft", "Soft"], ["segments", "Segments"], ["shimmer", "Shimmer"]] },
+  { k: "conf", label: "Confetti", opts: [["stars", "Stars"], ["leaves", "Leaves"], ["hearts", "Hearts"], ["sparks", "Sparks"], ["atoms", "Atoms"]] },
+  { k: "greet", label: "Greeting", opts: [["pirate", "Pirate"], ["western", "Western"], ["space", "Space"], ["spooky", "Spooky"], ["chill", "Chill"], ["fancy", "Fancy"]] },
+  { k: "chime", label: "Reward sound", opts: [["bell", "Bell"], ["blip", "Blip"], ["harp", "Harp"]] }
+];
+const XNAME = (k, id) => { const c = XCATS.find(x => x.k === k), o = c && c.opts.find(x => x[0] === id); return o ? o[1] : id; };
+const xOk = (k, id) => !!id && !isLocked(k, id);
+const xGet = k => xOk(k, settings[k]) ? settings[k] : "";
+const TINTS = { rose: "sepia(1) saturate(2.6) hue-rotate(290deg) brightness(1.05)", ice: "sepia(1) saturate(2.4) hue-rotate(155deg) brightness(1.1)", gold: "sepia(1) saturate(2.6) hue-rotate(-8deg) brightness(1.1)", mint: "sepia(1) saturate(2.4) hue-rotate(75deg) brightness(1.05)", violet: "sepia(1) saturate(2.6) hue-rotate(225deg) brightness(1.05)", shadow: "grayscale(1) brightness(.5) contrast(1.3)", rainbow: "sepia(1) saturate(3)" };
+function bdMarkup(id, col) {
+  const wrap = (vb, inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  const R = (n, f) => { let o = ""; for (let i = 0; i < n; i++) o += f(i); return o; };
+  const r = i => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+  const core = t => t.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
+  if (id === "fern") return wrap("0 0 400 260", `<g transform="translate(-6 8) scale(.95)">${core(BD_SVG.fern)}</g><g transform="translate(250 8) scale(.95)">${core(BD_SVG.fern2)}</g>`).replace(/COL/g, col);
+  if (id === "moth") return BD_SVG.moth.replace(/COL/g, col);
+  if (id === "hat") return BD_SVG.hat.replace(/COL/g, col);
+  if (id === "stag") return BD_SVG.stag.replace(/COL/g, col);
+  if (id === "stars") return wrap("0 0 400 700", R(26, i => { const x = r(i) * 380 + 10, y = r(i + 40) * 640 + 10, z = 3 + r(i + 80) * 6; return `<path d="M${x} ${y - z}L${x + z * .3} ${y - z * .3}L${x + z} ${y}L${x + z * .3} ${y + z * .3}L${x} ${y + z}L${x - z * .3} ${y + z * .3}L${x - z} ${y}L${x - z * .3} ${y - z * .3}Z"/>`; }));
+  if (id === "snow") return wrap("0 0 400 700", R(40, i => `<circle cx="${r(i) * 390 + 5}" cy="${r(i + 50) * 690 + 5}" r="${1.5 + r(i + 90) * 3.5}" fill="${col}" stroke="none"/>`));
+  if (id === "leaves") return wrap("0 0 400 700", R(9, i => { const x = r(i) * 340 + 30, y = r(i + 30) * 620 + 30, a = r(i + 70) * 360, z = 16 + r(i + 90) * 14; return `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 ${-z}C${z * .8} ${-z * .4} ${z * .8} ${z * .5} 0 ${z}C${-z * .8} ${z * .5} ${-z * .8} ${-z * .4} 0 ${-z}ZM0 ${-z}V${z}"/></g>`; }));
+  if (id === "waves") return wrap("0 0 400 200", R(5, i => `<path d="M0 ${60 + i * 28}Q50 ${40 + i * 28} 100 ${60 + i * 28}T200 ${60 + i * 28}T300 ${60 + i * 28}T400 ${60 + i * 28}"/>`));
+  if (id === "circuit") return wrap("0 0 400 260", `<path d="M0 220H90V160H170V100H260V40H400M0 180H50V120H120V60H200M60 260V210H140V170M300 260V200H360V140H400"/>` + R(7, i => `<circle cx="${[90, 170, 260, 50, 120, 140, 360][i]}" cy="${[220, 160, 100, 180, 120, 210, 200][i]}" r="4"/>`));
+  if (id === "constel") { const P = [[60, 90], [140, 50], [230, 110], [320, 60], [350, 170], [260, 230], [150, 200], [70, 260]]; return wrap("0 0 400 700", `<path d="${P.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join("")}" opacity=".6"/>` + P.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${col}"/>`).join("")); }
+  return "";
+}
+function applyBackdrop() {
+  const d = $("#bd"); if (!d) return; const id = xGet("bd");
+  if (!id) { d.style.backgroundImage = ""; return; }
+  const col = (getComputedStyle(document.documentElement).getPropertyValue("--muted") || "#888").trim() || "#888";
+  d.classList.toggle("wide", ["stars", "snow", "leaves", "constel"].includes(id));
+  d.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, col))}")`;
+  d.style.backgroundSize = { moth: "170px auto", hat: "250px auto", stag: "200px auto" }[id] || ""; d.style.opacity = ["moth", "hat", "stag"].includes(id) ? ".32" : "";
+}
+const GREET = {
+  pirate: [["Ahoy, night owl", "Ahoy", "Ahoy there", "Ahoy, matey"], ""],
+  western: [["Still up", "Howdy", "Howdy", "Evenin'"], ""],
+  space: [["Night shift", "Greetings", "Greetings", "Greetings"], "Commander "],
+  spooky: [["Boo", "Rise and haunt", "Spooky afternoon", "Spooky evening"], ""],
+  chill: [["Late one", "Morning", "Hey", "Evening"], ""],
+  fancy: [["Good heavens", "Salutations", "Good day", "Good evening"], ""]
+};
+function applyExtras() {
+  const root = document.documentElement;
+  ["marks", "wfx", "bar"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
+  const at = xGet("atomc"); root.style.setProperty("--mt", at ? TINTS[at] : "grayscale(0)"); document.body.classList.toggle("mrb", at === "rainbow");
+  applyBackdrop();
+  const t = xGet("title"), tl = $("#titleLine"); if (tl) tl.textContent = t ? XNAME("title", t) : "";
+  updateGreet();
+}
+/* reward sounds, made in code */
+let actx = null;
+function audioInit() { try { if (!actx) { const A = window.AudioContext || window.webkitAudioContext; if (A) actx = new A(); } if (actx && actx.state === "suspended") actx.resume(); } catch (e) {} }
+document.addEventListener("pointerdown", audioInit, { passive: true });
+function tone(f, t, d, type, g) { const o = actx.createOscillator(), v = actx.createGain(); o.type = type; o.frequency.value = f; o.connect(v); v.connect(actx.destination); v.gain.setValueAtTime(0.0001, t); v.gain.linearRampToValueAtTime(g, t + .01); v.gain.exponentialRampToValueAtTime(.0001, t + d); o.start(t); o.stop(t + d + .05); }
+function chime(kind) {
+  try {
+    kind = kind || xGet("chime"); if (!kind || !actx) return; audioInit(); const t = actx.currentTime + .02;
+    if (kind === "bell") { tone(880, t, 1.1, "sine", .18); tone(1320, t, .8, "sine", .1); tone(1760, t, .5, "sine", .05); }
+    else if (kind === "blip") [523, 659, 784, 1047].forEach((f, i) => tone(f, t + i * .07, .12, "square", .06));
+    else if (kind === "harp") [392, 494, 587, 784, 988].forEach((f, i) => tone(f, t + i * .09, .7, "triangle", .14));
+  } catch (e) {}
+}
+function renderExtras() {
+  const box = $("#extrasBox"); if (!box) return; box.replaceChildren();
+  $("#extrasNote").textContent = isAdult() ? "Everything is unlocked in Teacher mode." : "Earn these by reading. Tap a locked one to see how.";
+  XCATS.forEach(c => {
+    box.append(el("p", "xlab", c.label));
+    const seg = el("div", "seg xseg");
+    const none = el("button", "", c.k === "chime" ? "Off" : "None"); none.type = "button"; none.setAttribute("aria-pressed", String(!settings[c.k] || !xOk(c.k, settings[c.k]))); none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); renderExtras(); }; seg.append(none);
+    c.opts.forEach(([id, name]) => {
+      const b = el("button", "lockable", name); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
+      const m = lockMsg(c.k, id); b.classList.toggle("locked", !!m); if (m) b.title = m;
+      b.setAttribute("aria-pressed", String(settings[c.k] === id && !m));
+      b.onclick = () => { if (lockedTap(c.k, id)) return; settings[c.k] = id; saveSettings(); applyExtras(); renderExtras(); if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "title" || c.k === "greet") toast("Saved."); };
+      seg.append(b);
+    });
+    box.append(seg);
+  });
+}
+window.__xr = true;
 const ICONS = { classic: ["apple-touch-icon.png"], cream: ["ico-cream.png"], coral: ["ico-coral.png"], robot: ["ico-robot.png"], gold: ["ico-gold.png"], diamond: ["ico-diamond.png"], "a-blue": ["ico-a-blue.png"], "a-green": ["ico-a-green.png"], "a-orange": ["ico-a-orange.png"], "a-purple": ["ico-a-purple.png"], "a-pink": ["ico-a-pink.png"], "a-teal": ["ico-a-teal.png"], fern: ["ico-fern.png"], hat: ["ico-hat.png"], moth: ["ico-moth.png"], stag: ["ico-stag.png"], flame: ["ico-flame.png"], owl: ["ico-owl.png"], ghost: ["ico-ghost.png"] };
 function applyIcon() {
   const f = (ICONS[settings.icon] || ICONS.classic)[0];
@@ -3980,6 +4144,7 @@ function renderPauses() {
   if (!(settings.pauses || []).length) ul.append(el("li", "fine", "No pauses set."));
 }
 async function pwOk(v) {
+  if (isReader()) return true;
   if (!v) { toast("Enter the teacher password first."); return false; }
   try { if (await sha256("wordsmith:" + v) === PW_HASH) return true; toast("That password isn't right."); }
   catch (e) { toast("Couldn't check the password here."); }
@@ -3991,15 +4156,15 @@ function syncSettingsUI() {
   renderPreview(); renderPresets(); renderPauses();
   $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
   $("#grabChk").checked = settings.grab !== false; $("#webBtn").hidden = settings.grab === false;
-  $("#modeSel").value = isAdult() ? "adult" : "student";
+  $("#modeSel").value = isAdult() ? "adult" : isReader() ? "reader" : "student";
   $("#dimChk").checked = settings.dim !== false; $("#peekChk").checked = settings.peek !== false; $("#hapChk").checked = settings.haptic !== false;
-  $("#eyesSel").value = String(settings.eyes ?? (isAdult() ? 0 : 20));
+  $("#eyesSel").value = String(settings.eyes ?? (isAdult() || isReader() ? 0 : 20));
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
   $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
   $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
   $$("#pivotSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pc === (settings.pivotColor || "accent"))));
   $$("#iconPick button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ic === (settings.icon || "classic"))));
-  applyLockUI();
+  applyLockUI(); if (window.__xr) { renderExtras(); applyExtras(); }
   $$("#chunkSeg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.chunk === settings.chunk)));
   $$("#fontSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.font === settings.font)));
   $("#lsRange").value = settings.ls; $("#lsVal").textContent = settings.ls ? (settings.ls / 100).toFixed(2) + " em" : "Off";
@@ -4068,6 +4233,15 @@ function badgeIcon(id, weekly) {
   return d;
 }
 /* confetti */
+function drawPiece(c, q, st) {
+  const z = q.w * .9;
+  if (st === "stars") { c.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? z * .45 : z, a = -Math.PI / 2 + i * Math.PI / 5; c.lineTo(rr * Math.cos(a), rr * Math.sin(a)); } c.closePath(); c.fill(); }
+  else if (st === "leaves") { c.beginPath(); c.moveTo(0, -z); c.quadraticCurveTo(z * .9, -z * .2, 0, z); c.quadraticCurveTo(-z * .9, -z * .2, 0, -z); c.fill(); }
+  else if (st === "hearts") { c.beginPath(); c.moveTo(0, z * .8); c.bezierCurveTo(-z * 1.3, -z * .1, -z * .5, -z, 0, -z * .35); c.bezierCurveTo(z * .5, -z, z * 1.3, -z * .1, 0, z * .8); c.fill(); }
+  else if (st === "sparks") { c.beginPath(); c.arc(0, 0, z * .35, 0, 7); c.fill(); }
+  else if (st === "atoms") { c.lineWidth = Math.max(1, z * .12); c.beginPath(); c.ellipse(0, 0, z, z * .4, 0, 0, 7); c.stroke(); c.beginPath(); c.ellipse(0, 0, z, z * .4, Math.PI / 2, 0, 7); c.stroke(); c.beginPath(); c.arc(0, 0, z * .18, 0, 7); c.fill(); }
+  else c.fillRect(-q.w / 2, -q.h / 2, q.w, q.h);
+}
 function confetti() {
   if (settings.motion || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
   let cv = $("#confetti");
@@ -4076,10 +4250,12 @@ function confetti() {
   const cols = [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#f2b84b", "#3fa7d6", "#59c17a", "#b07cf0"];
   const ps = Array.from({ length: 90 }, () => ({ x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35, vx: (Math.random() - .5) * 14 * dpr, vy: (-Math.random() * 13 - 4) * dpr,
     w: (5 + Math.random() * 6) * dpr, h: (3 + Math.random() * 5) * dpr, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[(Math.random() * cols.length) | 0] }));
+  const cs = (window.__xr && xGet("conf")) || "";
+  if (cs) { const P = { stars: ["#ffd23f", "#ffb703", "#fff3b0", "#ff9f1c"], leaves: ["#5fa05a", "#8bbf6a", "#e08a3c", "#c9a227"], hearts: ["#ff5d8f", "#ff8fab", "#d6144f", "#ffc2d1"], sparks: ["#ffd23f", "#fff", "#ffb703", "#ffe8a3"], atoms: [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#3fa7d6", "#b07cf0"] }[cs]; ps.forEach(q => { q.c = P[(Math.random() * P.length) | 0]; }); }
   const t0 = performance.now();
   (function tick(t) {
     const e = t - t0; c.clearRect(0, 0, W, H);
-    ps.forEach(q => { q.vy += .42 * dpr; q.x += q.vx; q.y += q.vy; q.vx *= .99; q.r += q.vr; c.save(); c.globalAlpha = Math.max(0, 1 - e / 2200); c.translate(q.x, q.y); c.rotate(q.r); c.fillStyle = q.c; c.fillRect(-q.w / 2, -q.h / 2, q.w, q.h); c.restore(); });
+    ps.forEach(q => { q.vy += .42 * dpr; q.x += q.vx; q.y += q.vy; q.vx *= .99; q.r += q.vr; c.save(); c.globalAlpha = Math.max(0, 1 - e / 2200); c.translate(q.x, q.y); c.rotate(q.r); c.fillStyle = q.c; c.strokeStyle = q.c; drawPiece(c, q, cs); c.restore(); });
     if (e < 2200) requestAnimationFrame(tick); else c.clearRect(0, 0, W, H);
   })(t0);
 }
@@ -4502,13 +4678,13 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-04", WHATS = [
+const WHATS_VER = "2026-10-04c", WHATS = [
+  ["Adult mode", "A new third choice for people who aren't students or teachers. It needs a password. Change it in Settings, Profile."],
+  ["Extras", "Titles, backdrops, Atom colors, word effects, focus marks, progress bars, confetti, greetings and reward sounds. Open Settings, Display, Extras."],
+  ["More fonts", "Typewriter, Book, Rounded and Slab unlock as you rank up."],
   ["Class Library", "Six free classic books are built in. Open it from the menu on the home screen."],
   ["Secret badges", "Six hidden badges are waiting. Look in your Stats."],
-  ["Streak flames", "Keep a streak going and your flame changes color."],
-  ["New app icons", "Pick a new Home Screen icon in Settings. Some unlock as you rank up."],
-  ["Special themes", "Overgrown and Frontier now have art in the background."],
-  ["Speed hint", "The reader tells you how to unlock more speed."]
+  ["New app icons and flames", "Pick a new Home Screen icon in Settings. Keep a streak and your flame changes color."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
@@ -4562,13 +4738,20 @@ $("#cvdChk").onchange = e => { settings.cvd = e.target.checked; saveSettings(); 
 $("#motionChk").onchange = e => { settings.motion = e.target.checked; saveSettings(); applyAccess(); };
 $("#contrastChk").onchange = e => { settings.contrast = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
 $("#bigChk").onchange = e => { settings.big = e.target.checked; saveSettings(); applyAccess(); renderPresets(); };
+let modeTarget = "adult";
 $("#modeSel").onchange = e => {
-  if (e.target.value === "adult") { e.target.value = "student"; $("#modePw").value = ""; $("#modeMsg").textContent = ""; $("#modeDlg").showModal(); $("#modePw").focus(); }
-  else { settings.mode = "student"; saveSettings(); applyAccess(); toast("Student mode on"); }
+  const v = e.target.value;
+  if (v === "adult" || v === "reader") {
+    modeTarget = v; e.target.value = isAdult() ? "adult" : isReader() ? "reader" : "student";
+    $("#modeTitle").textContent = v === "adult" ? "Teacher mode" : "Adult mode";
+    $("#modeInfo").textContent = v === "adult" ? "Teacher mode turns off the mascot and unlocks everything. Enter the teacher password." : "Adult mode is for people who aren't students or teachers. Enter the password.";
+    $("#modePw").placeholder = v === "adult" ? "Teacher password" : "Password";
+    $("#modePw").value = ""; $("#modeMsg").textContent = ""; $("#modeDlg").showModal(); $("#modePw").focus();
+  } else { settings.mode = "student"; saveSettings(); lvlCache = null; applyAccess(); syncSettingsUI(); toast("Student mode on"); }
 };
 $("#modeGo").onclick = async () => {
   const pw = $("#modePw").value; if (!pw) return;
-  if (await unlockAdult(pw)) { $("#modeDlg").close(); toast("Adult mode on"); } else $("#modeMsg").textContent = "That password isn't right.";
+  if (await (modeTarget === "reader" ? unlockReader(pw) : unlockAdult(pw))) { $("#modeDlg").close(); toast(modeTarget === "reader" ? "Adult mode on" : "Teacher mode on"); } else $("#modeMsg").textContent = "That password isn't right.";
 };
 $("#modePw").addEventListener("keydown", e => { if (e.key === "Enter") $("#modeGo").click(); });
 $("#hapChk").onchange = e => { settings.haptic = e.target.checked; saveSettings(); if (e.target.checked) buzz(); };
@@ -4670,9 +4853,16 @@ $("#doneAgain").onclick = () => { $("#doneDlg").close(); seek(0); };
 function updateGreet() {
   const h = new Date().getHours(), g = h < 5 ? "Up late" : h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
   const n = String(settings.name || "").trim().split(/\s+/)[0];
-  $("#greet").textContent = n ? `${g}, ${n}` : g;
+  const gs = window.__xr && xGet("greet"), gx = gs && GREET[gs], gi = h < 5 ? 0 : h < 12 ? 1 : h < 17 ? 2 : 3;
+  const gg = gx ? gx[0][gi] : g;
+  $("#greet").textContent = n ? `${gg}, ${gx ? gx[1] : ""}${n}` : gg;
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderLibrary(); };
+async function unlockReader(pw) {
+  try { if (await sha256("wordsmith:" + pw) !== RD_HASH) return false; } catch (e) { return false; }
+  settings.mode = "reader"; saveSettings(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI();
+  return true;
+}
 async function unlockAdult(pw) {
   try { if (await sha256("wordsmith:" + pw) !== PW_HASH) return false; } catch (e) { return false; }
   settings.mode = "adult"; saveSettings(); store.set("pace:pw", true); applyCap(); applyAccess(); syncSettingsUI();
@@ -4684,17 +4874,17 @@ async function unlockAdult(pw) {
   const go = n => { i = n; slides.forEach((x, k) => x.hidden = k !== i); dots.forEach((d, k) => d.classList.toggle("on", k === i)); nx.textContent = i === 3 ? "Get started" : "Next"; $("#welcomeSkip").hidden = i !== 1 && i !== 2; msg.textContent = ""; };
   dlg.querySelectorAll(".pick").forEach(b => b.onclick = () => {
     mode = b.dataset.mode; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
-    $("#welcomePw").hidden = mode !== "adult"; msg.textContent = ""; if (mode === "adult") $("#welcomePw").focus();
+    $("#welcomePw").hidden = mode !== "adult" && mode !== "reader"; $("#welcomePw").placeholder = mode === "reader" ? "Password" : "Teacher password"; msg.textContent = ""; if (mode === "adult" || mode === "reader") $("#welcomePw").focus();
   });
   const done = () => { const v = $("#welcomeName").value.trim(); if (v) { settings.name = v.slice(0, 30); saveSettings(); $("#nameInput").value = settings.name; updateGreet(); } store.set("pace:welcomed", true); if (dlg.open) dlg.close(); };
   nx.onclick = async () => {
     if (i === 0) {
-      if (!mode) { msg.textContent = "Pick student or adult."; return; }
-      if (mode === "adult") {
-        const pw = $("#welcomePw").value; if (!pw) { msg.textContent = "Enter the teacher password."; return; }
-        nx.disabled = true; const ok = await unlockAdult(pw); nx.disabled = false;
+      if (!mode) { msg.textContent = "Pick one to continue."; return; }
+      if (mode === "adult" || mode === "reader") {
+        const pw = $("#welcomePw").value; if (!pw) { msg.textContent = mode === "reader" ? "Enter the password." : "Enter the teacher password."; return; }
+        nx.disabled = true; const ok = await (mode === "reader" ? unlockReader(pw) : unlockAdult(pw)); nx.disabled = false;
         if (!ok) { msg.textContent = "That password isn't right."; return; }
-      } else { settings.mode = "student"; saveSettings(); applyAccess(); syncSettingsUI(); }
+      } else { settings.mode = "student"; saveSettings(); lvlCache = null; applyAccess(); syncSettingsUI(); }
       if (modeOnly) { done(); return; }
       go(1);
     } else if (i < 3) go(i + 1); else done();
@@ -4856,7 +5046,7 @@ $$("#fontSeg button").forEach(b => b.onclick = () => { if (lockedTap("font", b.d
 $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
-applyIcon();
+applyIcon(); applyExtras(); renderExtras();
 $$("#iconPick button").forEach(b => b.onclick = () => { if (lockedTap("icon", b.dataset.ic)) return; settings.icon = b.dataset.ic; saveSettings(); applyIcon(); syncSettingsUI(); toast("Icon set. Now add Atom to your Home Screen from Safari."); });
 $("#pivotChk").onchange = e => { settings.pivot = e.target.checked; saveSettings(); applyFont(); };
 applyFont(); applyAccess();
@@ -5192,7 +5382,7 @@ $("#repBtn").onclick = () => { buildReport(+$("#repRange").value); setTimeout(()
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
-window.__pace = { lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+window.__pace = { confetti, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
