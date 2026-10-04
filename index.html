@@ -245,6 +245,25 @@ body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
 .xcard .xth{height:46px;border-radius:8px;background:color-mix(in srgb,var(--line) 60%,transparent) center/cover no-repeat;display:grid;place-items:center;overflow:hidden}
 .xcard .xth img{height:40px}
 .xcard .xtag{font-size:11px;color:var(--muted)}
+.pvcard{display:grid;gap:8px;justify-items:stretch}
+.pvlab{letter-spacing:.12em;font-weight:700;margin:0}
+.pvcard .greet{margin:0}
+.pvcard #pvTitle{margin:0;min-height:20px}
+.pvstage{height:84px;min-height:0;cursor:default}
+.pvstage .word{font-size:34px}
+.pvrow{display:flex;align-items:center;gap:14px;justify-content:space-around}
+body.adult .pvrow .mascot{display:block!important}
+.pvrow .mascot{width:64px;height:auto;margin:0}
+.pvrow .cover{width:54px;height:72px;flex:none}
+.pvstat{background-color:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px;font-size:14px}
+body.xg #nextCard,body.xg #xTiles,body.xg #rewardsCard,body.xg #evBadgesCard{display:none}
+#xgDlg .sheet{max-height:46vh}
+#xgDlg{overflow:hidden;position:fixed;left:0;right:0;bottom:0;top:auto;margin:0 auto;max-height:46vh;z-index:70;box-shadow:0 -8px 30px rgba(0,0,0,.28)}
+:root[data-stat=blueprint] .pvstat{--bg:#0e2a5c;--surface:#12357a;--ink:#e6f0ff;--muted:#9fc0f5;--line:#3b66b8;--accent:#7fd3ff;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:24px 24px}
+:root[data-stat=chalk] .pvstat{--bg:#1f3a2c;--surface:#274636;--ink:#f4f1e4;--muted:#b7c9b8;--line:#4a6a58;--accent:#ffe27a;font-family:"Bradley Hand","Comic Sans MS","Segoe Print",cursive}
+:root[data-stat=paper] .pvstat{--bg:#f7f1de;--surface:#fffbea;--ink:#2b2a26;--muted:#6f6a5a;--line:#e2d8b8;--accent:#c2402a;background-image:repeating-linear-gradient(transparent 0 27px,#cfe0f0 27px 28px)}
+:root[data-stat=terminal] .pvstat{--bg:#000;--surface:#06140a;--ink:#7dff9a;--muted:#3fae5b;--line:#145a2a;--accent:#7dff9a;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+:root[data-stat=gold] .pvstat{--bg:#1a1405;--surface:#241b07;--ink:#fff3c9;--muted:#c9ad5a;--line:#6e5514;--accent:#ffd23f}
 .xlab{margin:12px 0 4px;font-weight:600}
 .xseg button{min-height:40px}
 #titleLine{margin:-2px 0 0;color:var(--muted);font-size:14px;letter-spacing:.02em}
@@ -758,6 +777,15 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <button class="icon" id="rwBack" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <h1>Rewards</h1>
   </header>
+  <div class="card pvcard" id="pvCard">
+    <p class="fine pvlab">LIVE PREVIEW</p>
+    <p class="greet" id="pvGreet"></p>
+    <p id="pvTitle"></p>
+    <div class="stage pvstage"><div class="word"><span class="l">rea</span><span class="p">d</span><span class="r">ing</span></div></div>
+    <span class="bar"><i style="width:62%"></i></span>
+    <div class="pvrow"><img class="mascot" src="mascot.png" alt=""><span id="pvCover"></span><svg id="pvBm" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=""/></svg><button type="button" id="pvFx">Play effects</button></div>
+    <div class="pvstat"><b>Your stats</b><span>1,240 words · 6 day streak</span><span class="bar"><i style="width:48%"></i></span></div>
+  </div>
   <div class="card nextcard" id="nextCard"></div>
   <div class="xtiles" id="xTiles"></div>
 </section>
@@ -3497,6 +3525,7 @@ function afterStats() {
   new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ["data-screen"] }); sync();
   tabs.forEach(t => t.onclick = () => {
     const g = t.dataset.go, sc = document.body.dataset.screen;
+    { const x = $("#xgDlg"); if (x && x.open && g !== "rewards") x.close(); }
     if (g === "settings") $("#settingsBtn").click();
     else if (g === "rewards") { if (sc !== "rewards") openRewards(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
     else if (g === "stats") { if (sc !== "stats") $("#statsBtn").click(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
@@ -3897,6 +3926,13 @@ const GREET = {
   chill: [["Late one", "Morning", "Hey", "Evening"], ""],
   fancy: [["Good heavens", "Salutations", "Good day", "Good evening"], ""]
 };
+function pvUpdate() {
+  if (!$("#pvCard")) return;
+  const g = $("#greet"); if (g) $("#pvGreet").textContent = g.textContent;
+  const tl = $("#titleLine"); if (tl) $("#pvTitle").innerHTML = tl.innerHTML;
+  const b = $("#pvBm path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def);
+  try { $("#pvCover").replaceChildren(coverEl({ id: "pv", title: "Atom Tales", done: true }, true)); } catch (e) {}
+}
 function applyExtras() {
   const root = document.documentElement;
   ["marks", "wfx", "bar"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
@@ -3905,7 +3941,7 @@ function applyExtras() {
   { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
   applyBackdrop();
   { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = stampHtml(st); if (t) tl.append(document.createTextNode(XNAME("title", t))); } }
-  updateGreet();
+  updateGreet(); pvUpdate();
 }
 /* reward sounds, made in code */
 let actx = null;
@@ -3944,7 +3980,7 @@ function xThumb(kind, id) {
 }
 function xTotals(c) { let n = 0, tot = 0; c.opts.forEach(([id]) => { tot++; if (!lockMsg(c.k, id)) n++; }); return [n, tot]; }
 function renderGroup(g) {
-  const box = $("#xgBody"); box.replaceChildren();
+  const box = $("#xgBody"), sh = $("#xgDlg .sheet"), keep = sh ? sh.scrollTop : 0; box.replaceChildren();
   $("#xgTitle").textContent = g.name;
   $("#xgNote").textContent = isAdult() ? "Everything is unlocked in Teacher mode." : "Tap a locked one to try it for 10 seconds.";
   g.keys.forEach(k => {
@@ -3963,7 +3999,7 @@ function renderGroup(g) {
       if (m) b.append(el("span", "xtag", "Locked: " + xTag(c.k, id)));
       b.setAttribute("aria-pressed", String(settings[c.k] === id && !m));
       b.onclick = () => {
-        if (lockedTap(c.k, id)) { if (pv) { xgKeep = true; $("#xgDlg").close(); } return; }
+        if (lockedTap(c.k, id)) return;
         settings[c.k] = id; saveSettings(); applyExtras(); renderGroup(g);
         if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "plate" || c.k === "cov") renderLibrary(); if (c.k === "title" || c.k === "greet") toast("Saved.");
       };
@@ -3972,6 +4008,7 @@ function renderGroup(g) {
     box.append(grid);
     if (c.k === "amb") { const rg = document.createElement("input"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.value = settings.ambVol ?? 35; rg.setAttribute("aria-label", "Ambience volume"); rg.oninput = () => { settings.ambVol = +rg.value; saveSettings(); }; box.append(el("p", "fine", "Ambience volume. It plays while you read. Use headphones in class."), rg); fillR(rg); }
   });
+  if (sh) sh.scrollTop = keep;
 }
 function nextUnlock() {
   if (isAdult()) return { all: true, teacher: true };
@@ -3992,7 +4029,7 @@ function renderRewardsTab() {
     let n = 0, tot = 0; g.keys.forEach(k => { const c = XCATS.find(x => x.k === k); if (c) { const t = xTotals(c); n += t[0]; tot += t[1]; } });
     const b = el("button", "xtile"); b.type = "button";
     b.append(el("b", "", g.name), el("span", "fine", g.sub), el("span", "xcount", `${n} of ${tot} unlocked`));
-    b.onclick = () => { xgCur = g; renderGroup(g); $("#xgDlg").showModal(); };
+    b.onclick = () => { xgCur = g; renderGroup(g); document.body.classList.add("xg"); window.scrollTo(0, 0); pvUpdate(); $("#xgDlg").show(); };
     box.append(b);
   });
   const se = seasonNow(), sw = seasonWords(se), sr = seasonRank(sw), st = el("button", "xtile"); st.type = "button";
@@ -4344,7 +4381,7 @@ function setFs(v) {
   store.set("pace:fs", fs);
 }
 
-function show(name) { document.body.dataset.screen = name; window.scrollTo(0, 0); }
+function show(name) { if (name !== "rewards") { const x = document.getElementById("xgDlg"); if (x && x.open) x.close(); } document.body.dataset.screen = name; window.scrollTo(0, 0); }
 
 async function openBook(id) {
   pause();
@@ -5198,7 +5235,7 @@ function updateGreet() {
   const n = String(settings.name || "").trim().split(/\s+/)[0];
   const gs = window.__xr && xGet("greet"), gx = gs && GREET[gs], gi = h < 5 ? 0 : h < 12 ? 1 : h < 17 ? 2 : 3;
   const gg = gx ? gx[0][gi] : g;
-  $("#greet").textContent = n ? `${gg}, ${gx ? gx[1] : ""}${n}` : gg;
+  $("#greet").textContent = n ? `${gg}, ${gx ? gx[1] : ""}${n}` : gg; if ($("#pvGreet")) $("#pvGreet").textContent = $("#greet").textContent;
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderLibrary(); };
 async function unlockReader(pw) {
@@ -5391,9 +5428,10 @@ $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); ap
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
 applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200);
 $("#rewards").append($("#rewardsCard"), $("#evBadgesCard"));
-$("#rwBack").onclick = () => show("library");
+$("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
 $("#goRewards").onclick = () => { $("#setDlg").close(); openRewards(); };
-$("#xgDlg").addEventListener("close", () => { xgCur = null; if (!xgKeep) endPreview(); xgKeep = false; });
+$("#xgDlg").addEventListener("close", () => { xgCur = null; document.body.classList.remove("xg"); endPreview(); ambStop(); });
+$("#pvFx").onclick = () => { confetti(); chime(); };
 $$("#iconPick button").forEach(b => b.onclick = () => { if (lockedTap("icon", b.dataset.ic)) return; settings.icon = b.dataset.ic; saveSettings(); applyIcon(); syncSettingsUI(); toast("Icon set. Now add Atom to your Home Screen from Safari."); });
 $("#pivotChk").onchange = e => { settings.pivot = e.target.checked; saveSettings(); applyFont(); };
 applyFont(); applyAccess();
