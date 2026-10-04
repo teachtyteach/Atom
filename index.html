@@ -3563,7 +3563,7 @@ const ROMAN = ["I", "II", "III", "IV", "V"];
 const LEVELS = [];
 RANKS.forEach((r, k) => {
   const nx = RANKS[k + 1];
-  if (!nx) { LEVELS.push([r[0], r[1]]); return; }
+  if (!nx) { for (let n = 0; n < 100; n++) LEVELS.push([Math.round(r[0] + 2000000 * n / 99), `Champion ${100 - n}`]); return; }
   for (let t = 0; t < 5; t++) LEVELS.push([Math.round(r[0] + (nx[0] - r[0]) * t / 5), `${r[1]} ${ROMAN[4 - t]}`]);
 });
 
@@ -5054,17 +5054,15 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-05a", WHATS = [
-  ["Seasons", "A new season starts every three months. Season ranks (Opening, Setup, Rising and up) reset. Career ranks (Copper and up) never do. Your career rank never does. Earn season rewards."],
-  ["Try before you unlock", "Tap a locked extra to try it for 10 seconds."],
-  ["Rank-up celebration", "A big moment when you reach a new rank family."],
-  ["Bookplates, stamps and more", "Bookplates on finished books, profile stamps, stats card themes, library covers, bookmark styles and reading ambience. Open Settings, Display, Extras."],
-  ["Adult mode", "A new third choice for people who aren't students or teachers. It needs a password. Change it in Settings, Profile."],
-  ["Extras", "Titles, backdrops, Atom colors, word effects, focus marks, progress bars, confetti, greetings and reward sounds. Open Settings, Display, Extras."],
-  ["More fonts", "Typewriter, Book, Rounded and Slab unlock as you rank up."],
-  ["Class Library", "Six free classic books are built in. Open it from the menu on the home screen."],
-  ["Secret badges", "Six hidden badges are waiting. Look in your Stats."],
-  ["New app icons and flames", "Pick a new Home Screen icon in Settings. Keep a streak and your flame changes color."]
+const WHATS_VER = "2026-10-05b", WHATS = [
+  ["Rewards tab", "A new Rewards tab holds every unlock. Tap any option to see a live preview before you pick it."],
+  ["Photo backdrops", "Four new photo backdrops unlock as you rank up."],
+  ["Champion levels", "Champion now has 100 levels, from Champion 100 down to Champion 1."],
+  ["Seasons", "A new season starts every three months. Your season rank resets. Your career rank never does. Earn season rewards."],
+  ["Try before you unlock", "Tap a locked reward to try it for 10 seconds."],
+  ["Rank-up celebration", "A big moment when you reach a new rank."],
+  ["Bookplates, stamps and more", "Bookplates, stamps, stats looks, covers, bookmarks and reading ambience are all in Rewards."],
+  ["Class Library", "Six free classic books are built in. Open it from the menu on the home screen."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
