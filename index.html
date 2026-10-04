@@ -234,6 +234,30 @@ body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
 .xseg button{min-height:40px}
 #titleLine{margin:-2px 0 0;color:var(--muted);font-size:14px;letter-spacing:.02em}
 #titleLine:empty{display:none}
+.cover{position:relative}
+.plate{position:absolute;right:2px;bottom:2px;width:22px;height:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.45));pointer-events:none}
+:root[data-cov=round] .cover{border-radius:18px}
+:root[data-cov=tilt] .cover{transform:rotate(-4deg)}
+:root[data-cov=spine] .cover{border-radius:3px 8px 8px 3px;box-shadow:inset 7px 0 0 rgba(0,0,0,.28),0 3px 8px -2px rgba(0,0,0,.4)}
+:root[data-cov=glow] .cover{box-shadow:0 0 14px 2px var(--accent)}
+:root[data-cov=polaroid] .cover{background:#fff!important;color:#333;padding:4px 4px 14px;box-sizing:border-box}
+:root[data-stat=blueprint] body[data-screen=stats]{--bg:#0e2a5c;--surface:#12357a;--ink:#e6f0ff;--muted:#9fc0f5;--line:#3b66b8;--accent:#7fd3ff;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:24px 24px}
+:root[data-stat=chalk] body[data-screen=stats]{--bg:#1f3a2c;--surface:#274636;--ink:#f4f1e4;--muted:#b7c9b8;--line:#4a6a58;--accent:#ffe27a;font-family:"Bradley Hand","Comic Sans MS","Segoe Print",cursive}
+:root[data-stat=paper] body[data-screen=stats]{--bg:#f7f1de;--surface:#fffbea;--ink:#2b2a26;--muted:#6f6a5a;--line:#e2d8b8;--accent:#c2402a;background-image:repeating-linear-gradient(transparent 0 27px,#cfe0f0 27px 28px)}
+:root[data-stat=terminal] body[data-screen=stats]{--bg:#000;--surface:#06140a;--ink:#7dff9a;--muted:#3fae5b;--line:#145a2a;--accent:#7dff9a;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+:root[data-stat=gold] body[data-screen=stats]{--bg:#1a1405;--surface:#241b07;--ink:#fff3c9;--muted:#c9ad5a;--line:#6e5514;--accent:#ffd23f}
+#titleLine{display:flex;align-items:center;gap:6px}
+#titleLine svg{flex:none}
+.cerdlg .sheet{text-align:center;justify-items:center}
+.cerdlg .cemb{width:120px;height:120px;display:grid;place-items:center}
+.cerdlg h2{font:700 32px/1.1 Georgia,serif;margin:0}
+.cerdlg ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;color:var(--muted)}
+.seasoncard{display:flex;gap:12px;align-items:center;text-align:left;border-left:4px solid var(--sc,var(--accent))}
+.seasoncard .sct{flex:1;min-width:0;display:grid;gap:2px}
+.seasoncard b{font-family:Georgia,serif}
+.srow{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.srow.got{border-color:var(--accent)}
+.srow span{flex:1}
 .speedhint{margin:-6px 0 0;text-align:right}
 .whatslist{margin:0;padding:0;list-style:none;display:grid;gap:10px}
 .whatslist li{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -642,6 +666,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="impbar ind" id="impBar" hidden><i></i></div>
   <div class="card" id="nudge" hidden><span id="nudgeTxt" class="grow"></span><button id="nudgeBtn">Back up</button><button class="x" id="nudgeX" aria-label="Hide for 3 days" title="Hide for 3 days">✕</button></div>
   <button class="card evcard" id="evCard" type="button" hidden><i class="evic" id="evIc" aria-hidden="true"></i><span class="evtx"><b id="evName"></b><span id="evSub"></span><span class="bar"><i id="evFill"></i></span></span></button>
+  <button type="button" class="card seasoncard" id="seasonCard" hidden><i id="seasonIc" aria-hidden="true"></i><span class="sct"><b id="seasonName"></b><span id="seasonSub" class="fine"></span><span class="bar"><i id="seasonFill"></i></span></span></button>
   <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
   <input type="search" class="libsearch" id="libSearch" placeholder="Search your books" aria-label="Search your books" autocomplete="off" hidden>
   <div id="continue"></div>
@@ -833,6 +858,27 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="sheet-head"><h2>What's new in Atom</h2></div>
   <ul class="whatslist" id="whatsList"></ul>
   <button class="primary" id="whatsOk" type="button">Okay</button>
+</div></dialog>
+
+<dialog id="seasonDlg"><div class="sheet">
+  <div class="sheet-head"><h2 id="seasonTitle"></h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p class="fine" id="seasonInfo"></p>
+  <div id="seasonRewards" class="classlist"></div>
+  <p class="fine">Your career rank never resets. Only your season rank starts over, and the rewards you earn are yours forever.</p>
+</div></dialog>
+
+<dialog id="seasonEndDlg"><div class="sheet" style="text-align:center">
+  <div class="sheet-head"><h2 id="seTitle"></h2></div>
+  <div id="seBody" style="display:grid;gap:8px"></div>
+  <button class="primary" id="seOk" type="button">Continue</button>
+</div></dialog>
+
+<dialog id="cerDlg" class="cerdlg"><div class="sheet">
+  <div class="cemb" id="cerEmb"></div>
+  <p class="fine">New rank</p>
+  <h2 id="cerName"></h2>
+  <ul id="cerList"></ul>
+  <button class="primary" id="cerOk" type="button">Continue</button>
 </div></dialog>
 
 <dialog id="classDlg"><div class="sheet">
@@ -2765,7 +2811,7 @@ let toastHide = null;
 const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, grab: true, dim: true, pauses: [], focusStart: false }, store.get("pace:settings", {}));
 settings.goal = Math.max(1000, +settings.goal || 1000);
 if (!["auto", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal", "frontier", "overgrown", "noir", "synthwave", "autumn", "winter", "spring", "summer", "season", "frontier", "overgrown", "noir", "synthwave", "matcha", "bubblegum", "pumpkin", "spooky", "harvest", "snowfall", "fireworks", "valentine", "blossom", "earthday", "beach", "stem", "aurora", "neon", "goldleaf"].includes(settings.theme)) settings.theme = "auto";
-const saveSettings = () => store.set("pace:settings", settings);
+const saveSettings = () => { if (pv && pv.key) { const c = settings[pv.key]; settings[pv.key] = pv.old; store.set("pace:settings", settings); settings[pv.key] = c; } else store.set("pace:settings", settings); };
 const isAdult = () => settings.mode === "adult";
 const isReader = () => settings.mode === "reader";
 const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000", autumn: "#f6e3cf", winter: "#e3eef7", spring: "#eaf5df", summer: "#dcf4f1", frontier: "#241812", overgrown: "#1c231c", noir: "#0d0d0d", synthwave: "#1a0b2e", matcha: "#e4ead2", bubblegum: "#ffd6f0", pumpkin: "#ffe3c2", spooky: "#120a1e", harvest: "#2a1a10", snowfall: "#0e2036", fireworks: "#0b0f24", valentine: "#ffd9e2", blossom: "#ffece6", earthday: "#d8ecd0", beach: "#c9edf5", stem: "#1b2a4a", aurora: "#06161c", neon: "#0b0614", goldleaf: "#1a1405" };
@@ -3690,7 +3736,8 @@ function applyLockUI() {
 }
 function lockedTap(kind, id) {
   const m = lockMsg(kind, id); if (!m) return false;
-  toast(m); return true;
+  if (window.__xr && startPreview(kind, id)) toast("Preview for 10 seconds. " + m); else toast(m);
+  return true;
 }
 let spOpen = false;
 function checkSpecials(announce) {
@@ -3779,7 +3826,7 @@ const XCATS = [
 ];
 const XNAME = (k, id) => { const c = XCATS.find(x => x.k === k), o = c && c.opts.find(x => x[0] === id); return o ? o[1] : id; };
 const xOk = (k, id) => !!id && !isLocked(k, id);
-const xGet = k => xOk(k, settings[k]) ? settings[k] : "";
+const xGet = k => (pv && pv.key === k && settings[k] === pv.id) ? settings[k] : xOk(k, settings[k]) ? settings[k] : "";
 const TINTS = { rose: "sepia(1) saturate(2.6) hue-rotate(290deg) brightness(1.05)", ice: "sepia(1) saturate(2.4) hue-rotate(155deg) brightness(1.1)", gold: "sepia(1) saturate(2.6) hue-rotate(-8deg) brightness(1.1)", mint: "sepia(1) saturate(2.4) hue-rotate(75deg) brightness(1.05)", violet: "sepia(1) saturate(2.6) hue-rotate(225deg) brightness(1.05)", shadow: "grayscale(1) brightness(.5) contrast(1.3)", rainbow: "sepia(1) saturate(3)" };
 function bdMarkup(id, col) {
   const wrap = (vb, inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
@@ -3796,6 +3843,10 @@ function bdMarkup(id, col) {
   if (id === "waves") return wrap("0 0 400 200", R(5, i => `<path d="M0 ${60 + i * 28}Q50 ${40 + i * 28} 100 ${60 + i * 28}T200 ${60 + i * 28}T300 ${60 + i * 28}T400 ${60 + i * 28}"/>`));
   if (id === "circuit") return wrap("0 0 400 260", `<path d="M0 220H90V160H170V100H260V40H400M0 180H50V120H120V60H200M60 260V210H140V170M300 260V200H360V140H400"/>` + R(7, i => `<circle cx="${[90, 170, 260, 50, 120, 140, 360][i]}" cy="${[220, 160, 100, 180, 120, 210, 200][i]}" r="4"/>`));
   if (id === "constel") { const P = [[60, 90], [140, 50], [230, 110], [320, 60], [350, 170], [260, 230], [150, 200], [70, 260]]; return wrap("0 0 400 700", `<path d="${P.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join("")}" opacity=".6"/>` + P.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${col}"/>`).join("")); }
+  if (id === "sprout") return wrap("0 0 400 260", R(7, i => { const x = 30 + i * 55 + r(i) * 20, h = 50 + r(i + 9) * 60; return `<path d="M${x} 260V${260 - h}"/><path d="M${x} ${260 - h}C${x - 28} ${260 - h - 6} ${x - 30} ${260 - h - 34} ${x - 4} ${260 - h - 30}M${x} ${260 - h + 14}C${x + 26} ${260 - h + 8} ${x + 30} ${260 - h - 18} ${x + 4} ${260 - h - 16}"/>`; }));
+  if (id === "pines") return wrap("0 0 400 260", R(6, i => { const x = 30 + i * 66 + r(i) * 14, h = 90 + r(i + 5) * 80, w = 22 + r(i + 7) * 14; return `<path d="M${x} 260V${260 - h * .15}M${x} ${260 - h}L${x - w} ${260 - h * .55}H${x - w * .5}L${x - w * 1.3} ${260 - h * .2}H${x + w * 1.3}L${x + w * .5} ${260 - h * .55}H${x + w}Z"/>`; }));
+  if (id === "grid") return wrap("0 0 400 200", R(9, i => `<path d="M0 ${200 - i * i * 2.6}H400" opacity="${.9 - i * .07}"/>`) + R(13, i => `<path d="M${200 + (i - 6) * 8} 120L${200 + (i - 6) * 70} 200"/>`));
+  if (id === "rays") return wrap("0 0 400 260", `<circle cx="200" cy="260" r="42"/>` + R(11, i => { const a = Math.PI + (i + .5) * Math.PI / 11; return `<path d="M${200 + Math.cos(a) * 62} ${260 + Math.sin(a) * 62}L${200 + Math.cos(a) * 240} ${260 + Math.sin(a) * 240}"/>`; }));
   return "";
 }
 function applyBackdrop() {
@@ -3818,8 +3869,10 @@ function applyExtras() {
   const root = document.documentElement;
   ["marks", "wfx", "bar"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
   const at = xGet("atomc"); root.style.setProperty("--mt", at ? TINTS[at] : "grayscale(0)"); document.body.classList.toggle("mrb", at === "rainbow");
+  ["stat", "cov"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
+  { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
   applyBackdrop();
-  const t = xGet("title"), tl = $("#titleLine"); if (tl) tl.textContent = t ? XNAME("title", t) : "";
+  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = stampHtml(st); if (t) tl.append(document.createTextNode(XNAME("title", t))); } }
   updateGreet();
 }
 /* reward sounds, made in code */
@@ -3846,12 +3899,186 @@ function renderExtras() {
       const b = el("button", "lockable", name); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
       const m = lockMsg(c.k, id); b.classList.toggle("locked", !!m); if (m) b.title = m;
       b.setAttribute("aria-pressed", String(settings[c.k] === id && !m));
-      b.onclick = () => { if (lockedTap(c.k, id)) return; settings[c.k] = id; saveSettings(); applyExtras(); renderExtras(); if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "title" || c.k === "greet") toast("Saved."); };
+      b.onclick = () => { if (lockedTap(c.k, id)) return; settings[c.k] = id; saveSettings(); applyExtras(); renderExtras(); if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "plate" || c.k === "cov") renderLibrary(); if (c.k === "title" || c.k === "greet") toast("Saved."); };
       seg.append(b);
     });
     box.append(seg);
+    if (c.k === "amb") { const rg = document.createElement("input"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.value = settings.ambVol ?? 35; rg.setAttribute("aria-label", "Ambience volume"); rg.oninput = () => { settings.ambVol = +rg.value; saveSettings(); }; box.append(el("p", "fine", "Ambience volume. It plays while you read. Use headphones in class."), rg); }
   });
 }
+
+/* ---------- seasons ---------- */
+const SEASON_NAMES = ["First Steps", "Rising Action", "Plot Twist", "Final Chapter"], SEASON_COL = ["#2f8a4c", "#c8281f", "#e02fc0", "#e8a50c"], SEASON_ICON = ["leaf", "star", "book", "sun"];
+let seasonOv = null;
+function seasonN(n) { const first = new Date(2026, 8 + (n - 1) * 3, 1), last = new Date(2026, 8 + n * 3, 0); return { n, idx: (n - 1) % 4, name: SEASON_NAMES[(n - 1) % 4], a: todayKey(first), b: todayKey(last), last }; }
+function seasonAt(d) { const mo = (d.getFullYear() - 2026) * 12 + (d.getMonth() - 8); return seasonN(Math.max(1, Math.floor(mo / 3) + 1)); }
+const seasonNow = () => seasonAt(seasonOv || new Date());
+function seasonWords(se) { let t = 0; for (const k in stats.days) if (k >= se.a && k <= se.b) t += stats.days[k].w || 0; return t; }
+const SLEVELS = LEVELS.map(l => [Math.round(l[0] * 0.2), l[1]]);
+function seasonRank(w) {
+  let i = 0; SLEVELS.forEach((r, k) => { if (w >= r[0]) i = k; });
+  const nx = SLEVELS[i + 1];
+  return { i, name: SLEVELS[i][1], next: nx ? nx[1] : "", need: nx ? nx[0] - w : 0, pct: nx ? (w - SLEVELS[i][0]) / (nx[0] - SLEVELS[i][0]) * 100 : 100 };
+}
+const srStore = () => store.get("pace:sr", {});
+function seasonBest(idx) { const o = srStore(); let b = 0; Object.keys(o).forEach(n => { if ((n - 1) % 4 === idx) b = Math.max(b, o[n]); }); return b; }
+const S_ITEMS = [ // [category, level, ids per season]
+  ["stamp", 5, ["s1", "s2", "s3", "s4"]], ["title", 10, ["t1", "t2", "t3", "t4"]], ["bd", 15, ["sprout", "pines", "grid", "rays"]], ["conf", 20, ["seeds", "embers", "pixels", "bubbles"]]
+];
+const S_NAMES = { s1: "First Steps stamp", s2: "Rising Action stamp", s3: "Plot Twist stamp", s4: "Final Chapter stamp", t1: "First Stepper", t2: "Rising Star", t3: "Twist Master", t4: "Chapter Closer", sprout: "Sprouts", pines: "Pines", grid: "Neon grid", rays: "Sun rays", seeds: "Seeds", embers: "Embers", pixels: "Pixels", bubbles: "Bubbles" };
+function seasonSync(silent) {
+  const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), o = srStore(), had = o[se.n] || 0;
+  if (r.i > had) {
+    o[se.n] = r.i; store.set("pace:sr", o);
+    if (!silent && !isAdult()) S_ITEMS.forEach(([cat, lvl, ids]) => { if (had < lvl && r.i >= lvl) toastLater("Season reward: " + S_NAMES[ids[se.idx]]); });
+  }
+  updateSeasonCard(se, w, r);
+}
+function updateSeasonCard(se, w, r) {
+  const card = $("#seasonCard"); if (!card) return;
+  if (isAdult()) { card.hidden = true; return; }
+  se = se || seasonNow(); w = w ?? seasonWords(se); r = r || seasonRank(w);
+  const left = Math.max(0, Math.round((se.last - keyToDate(seasonOv ? todayKey(seasonOv) : todayKey())) / 864e5));
+  card.hidden = false; card.style.setProperty("--sc", SEASON_COL[se.idx]);
+  $("#seasonIc").innerHTML = evIcon(SEASON_ICON[se.idx], SEASON_COL[se.idx], 34);
+  $("#seasonName").textContent = `Season ${se.n}: ${se.name}`;
+  $("#seasonSub").textContent = `${r.name} · ${fmt(w)} words · ${left === 0 ? "last day" : left + " days left"}`;
+  $("#seasonFill").style.width = Math.max(2, r.pct) + "%";
+}
+function openSeason() {
+  const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), box = $("#seasonRewards"); box.replaceChildren();
+  $("#seasonTitle").textContent = `Season ${se.n}: ${se.name}`;
+  $("#seasonInfo").textContent = `You're ${r.name} this season with ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
+  const peak = srStore()[se.n] || 0;
+  S_ITEMS.forEach(([cat, lvl, ids]) => {
+    const got = peak >= lvl, row = el("div", "srow" + (got ? " got" : ""));
+    row.append(el("span", "", `${S_NAMES[ids[se.idx]]} (${cat === "bd" ? "backdrop" : cat === "conf" ? "confetti" : cat})`), el("small", "fine", got ? "Earned" : "At " + SLEVELS[lvl][1]));
+    box.append(row);
+  });
+  $("#seasonDlg").showModal();
+}
+$("#seasonCard").onclick = openSeason;
+function seasonEndCheck() {
+  if (isAdult()) return;
+  const cur = seasonNow().n, seen = store.get("pace:sseen", null);
+  if (seen === null) { store.set("pace:sseen", cur); return; }
+  if (seen >= cur) return;
+  const done = seasonN(cur - 1), peak = srStore()[done.n] || 0;
+  store.set("pace:sseen", cur);
+  if (!peak) return;
+  const body = $("#seBody"); body.replaceChildren();
+  $("#seTitle").textContent = `Season ${done.n}: ${done.name} is over`;
+  body.append(el("p", "", `You finished at ${SLEVELS[peak][1]}.`));
+  const got = S_ITEMS.filter(x => peak >= x[1]).map(x => S_NAMES[x[2][done.idx]]);
+  body.append(el("p", "fine", got.length ? "Earned and yours forever: " + got.join(", ") + "." : "Keep going next season!"));
+  const nx = seasonN(cur); body.append(el("p", "", `Season ${nx.n} begins: ${nx.name}. Your season rank starts fresh. Your career rank stays.`));
+  $("#seasonEndDlg").showModal(); confetti();
+}
+$("#seOk").onclick = () => $("#seasonEndDlg").close();
+$("#seasonEndDlg").addEventListener("cancel", e => e.preventDefault());
+
+/* ---------- more extras ---------- */
+Object.assign(UNLOCK, {
+  bm: { star: 7, flag: 13, ribbon: 19, leaf: 25, heart: 31 },
+  cov: { round: 6, tilt: 12, spine: 18, glow: 22, polaroid: 28 },
+  stat: { blueprint: 8, chalk: 14, paper: 19, terminal: 24, gold: 29 },
+  amb: { rain: 9, fire: 15, crickets: 21, wind: 27 },
+  plate: { seal: 3, ribbon: 11, wreath: 17, star: 23, crown: 30 },
+  stamp: { flame: 8, book: 12, star: 22 }
+});
+const evName = id => (EVENTS.find(e => e.id === id) || {}).name || id;
+EXTRA_SPECIAL.stamp = {}; EXTRA_SPECIAL.conf = {}; EXTRA_SPECIAL.bd = {}; EXTRA_SPECIAL.title = Object.assign(EXTRA_SPECIAL.title || {}, {});
+EVENTS.forEach(e => { EXTRA_SPECIAL.stamp["e_" + e.id] = { desc: `Earn the ${e.name} badge`, test: () => evHas(e.id) }; });
+[["pumpkin", "patch"], ["boo", "spooky"], ["flakes", "snow"], ["petals", "bloom"], ["fireworks", "fresh"], ["suns", "summer"]].forEach(([id, ev]) => { EXTRA_SPECIAL.conf[id] = { desc: `Earn the ${evName(ev)} badge (event only)`, test: () => evHas(ev) }; });
+S_ITEMS.forEach(([cat, lvl, ids]) => ids.forEach((id, idx) => { EXTRA_SPECIAL[cat][id] = { desc: `Reach ${SLEVELS[lvl][1]} in a "${SEASON_NAMES[idx]}" season`, test: () => seasonBest(idx) >= lvl }; }));
+XCATS.find(c => c.k === "title").opts.push(...[0, 1, 2, 3].map(i => ["t" + (i + 1), S_NAMES["t" + (i + 1)]]));
+XCATS.find(c => c.k === "bd").opts.push(["sprout", "Sprouts"], ["pines", "Pines"], ["grid", "Neon grid"], ["rays", "Sun rays"]);
+XCATS.find(c => c.k === "conf").opts.push(["pumpkin", "Pumpkins"], ["boo", "Boos"], ["flakes", "Snowflakes"], ["petals", "Petals"], ["fireworks", "Fireworks"], ["suns", "Suns"], ["seeds", "Seeds"], ["embers", "Embers"], ["pixels", "Pixels"], ["bubbles", "Bubbles"]);
+XCATS.push(
+  { k: "stamp", label: "Stamp", opts: [["flame", "Flame"], ["book", "Book"], ["star", "Star"], ...EVENTS.map(e => ["e_" + e.id, e.name]), ...[1, 2, 3, 4].map(i => ["s" + i, S_NAMES["s" + i]])] },
+  { k: "plate", label: "Bookplate", opts: [["seal", "Seal"], ["ribbon", "Ribbon"], ["wreath", "Wreath"], ["star", "Star"], ["crown", "Crown"]] },
+  { k: "cov", label: "Book covers", opts: [["round", "Round"], ["tilt", "Tilted"], ["spine", "Book spine"], ["glow", "Glow"], ["polaroid", "Polaroid"]] },
+  { k: "bm", label: "Bookmark", opts: [["star", "Star"], ["flag", "Flag"], ["ribbon", "Ribbon"], ["leaf", "Leaf"], ["heart", "Heart"]] },
+  { k: "stat", label: "Stats look", opts: [["blueprint", "Blueprint"], ["chalk", "Chalkboard"], ["paper", "Notebook"], ["terminal", "Terminal"], ["gold", "Gold"]] },
+  { k: "amb", label: "Reading ambience", opts: [["rain", "Rain"], ["fire", "Campfire"], ["crickets", "Crickets"], ["wind", "Wind"]] }
+);
+
+function plateSvg(st, sz) {
+  const g = {
+    def: `<circle cx="12" cy="12" r="10" fill="#2f9e5b"/><path d="M7 12.5l3.2 3.2L17 8.8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    seal: `<path d="M12 1.5l2.2 2 3-.5 1 2.8 2.8 1-.5 3 2 2.2-2 2.2.5 3-2.8 1-1 2.8-3-.5-2.2 2-2.2-2-3 .5-1-2.8-2.8-1 .5-3-2-2.2 2-2.2-.5-3 2.8-1 1-2.8 3 .5z" fill="#d6a017"/><path d="M8 12.5l3 3 5-6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    ribbon: `<path d="M4 3h16v18l-8-5-8 5z" fill="#c8281f"/><path d="M8.5 9.5l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    wreath: `<path d="M12 21C5 19 3 12 4.5 6M12 21c7-2 9-9 7.5-15" stroke="#3f9e5b" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="12" cy="11" r="4.4" fill="#d6a017"/><path d="M10.2 11l1.4 1.4 2.4-2.8" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+    star: `<path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z" fill="#f2b824" stroke="#b07a00" stroke-width="1"/>`,
+    crown: `<path d="M3 18l1.5-10 5 4.5L12 5l2.5 7.5 5-4.5L21 18z" fill="#f2b824" stroke="#b07a00" stroke-width="1.2" stroke-linejoin="round"/><circle cx="12" cy="14" r="1.5" fill="#c8281f"/>`
+  }[st] || "";
+  return `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" aria-hidden="true">${g}</svg>`;
+}
+function stampHtml(id) {
+  if (!id) return "";
+  if (/^s[1-4]$/.test(id)) { const i = +id[1] - 1; return evIcon(SEASON_ICON[i], SEASON_COL[i], 16); }
+  if (id.startsWith("e_")) { const e = EVENTS.find(x => "e_" + x.id === id); return e ? evIcon(e.icon, e.col, 16) : ""; }
+  if (id === "flame") return FLAME(16);
+  if (id === "book") return evIcon("book", "#8a6a3a", 16);
+  if (id === "star") return evIcon("star", "#d6a017", 16);
+  return "";
+}
+const BM_PATHS = { def: "M7 4h10v16l-5-3.6L7 20z", star: "M12 3l2.6 5.6 6.1.7-4.5 4.1 1.2 6L12 16.4 6.6 19.4l1.2-6L3.3 9.3l6.1-.7z", flag: "M6 3v18M6 4.5h12l-3 4 3 4H6", ribbon: "M7 3h10v18l-5-4-5 4zM7 8h10", leaf: "M5 20C5 10 11 4 20 4c0 9-5 15-12 15zM5 20l9-9", heart: "M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.5 4.2 4.2 0 0 1 19.5 10C19.5 15.4 12 20 12 20z" };
+/* try before you unlock */
+var pv = null, pvTimer = 0;
+const PV_KEYS = { theme: "theme", accent: "accent", font: "font", pivot: "pivotColor" };
+function pvRefresh(kind) {
+  if (kind === "theme" || kind === "accent") applyTheme();
+  else if (kind === "font" || kind === "pivot") { applyFont(); if (tokens.length) render(); }
+  else applyExtras();
+}
+function endPreview() { if (!pv) return; const p = pv; pv = null; clearTimeout(pvTimer); settings[p.key] = p.old; pvRefresh(p.kind); if (p.kind === "chime") ambStop(); }
+function startPreview(kind, id) {
+  const key = PV_KEYS[kind] || (XCATS.some(c => c.k === kind) ? kind : null); if (!key) return false;
+  if (pv) endPreview();
+  pv = { key, old: settings[key], kind, id }; settings[key] = id; pvRefresh(kind);
+  if (kind === "chime") chime(id); if (kind === "conf") confetti(); if (kind === "amb") { ambStart(id); }
+  pvTimer = setTimeout(endPreview, 10000); return true;
+}
+/* ambience, made in code */
+let ambNodes = null;
+function noiseBuf(brown) { const sr = actx.sampleRate, len = sr * 2, b = actx.createBuffer(1, len, sr), d = b.getChannelData(0); let last = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; if (brown) { last = (last + .02 * w) / 1.02; d[i] = last * 3.5; } else d[i] = w; } return b; }
+function ambStart(force) {
+  try {
+    const id = force || xGet("amb"); if (!id) return; audioInit(); if (!actx) return; ambStop(true);
+    const vol = ((settings.ambVol ?? 35) / 100) * .5, master = actx.createGain(); master.gain.value = 0; master.connect(actx.destination); master.gain.linearRampToValueAtTime(vol, actx.currentTime + .8);
+    const nodes = [master], timers = [];
+    const noise = brown => { const s = actx.createBufferSource(); s.buffer = noiseBuf(brown); s.loop = true; s.start(); nodes.push(s); return s; };
+    const filt = (type, f, q) => { const n = actx.createBiquadFilter(); n.type = type; n.frequency.value = f; if (q) n.Q.value = q; nodes.push(n); return n; };
+    if (id === "rain") { const s = noise(false), hp = filt("highpass", 900), lp = filt("lowpass", 7000); s.connect(hp); hp.connect(lp); lp.connect(master); }
+    else if (id === "fire") {
+      const s = noise(true), lp = filt("lowpass", 500); s.connect(lp); lp.connect(master);
+      timers.push(setInterval(() => { try { const b = actx.createBuffer(1, 1500, actx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length); const src = actx.createBufferSource(), g = actx.createGain(); src.buffer = b; g.gain.value = .3 + Math.random() * .5; src.connect(g); g.connect(master); src.start(); } catch (e) {} }, 220));
+    }
+    else if (id === "wind") { const s = noise(false), bp = filt("bandpass", 500, .8), lfo = actx.createOscillator(), lg = actx.createGain(); lfo.frequency.value = .12; lg.gain.value = 260; lfo.connect(lg); lg.connect(bp.frequency); lfo.start(); nodes.push(lfo, lg); s.connect(bp); bp.connect(master); }
+    else if (id === "crickets") {
+      const o = actx.createOscillator(), g = actx.createGain(), l1 = actx.createOscillator(), l1g = actx.createGain(), l2 = actx.createOscillator(), l2g = actx.createGain();
+      o.frequency.value = 4300; g.gain.value = .25; l1.frequency.value = 13; l1g.gain.value = .25; l2.frequency.value = .4; l2g.gain.value = .2;
+      l1.connect(l1g); l1g.connect(g.gain); l2.connect(l2g); l2g.connect(g.gain); o.connect(g); g.connect(master); o.start(); l1.start(); l2.start(); nodes.push(o, g, l1, l1g, l2, l2g);
+    }
+    ambNodes = { master, nodes, timers };
+  } catch (e) {}
+}
+function ambStop(now) {
+  if (!ambNodes) return; const a = ambNodes; ambNodes = null;
+  try { a.timers.forEach(clearInterval); a.master.gain.cancelScheduledValues(0); a.master.gain.setValueAtTime(a.master.gain.value, actx.currentTime); a.master.gain.linearRampToValueAtTime(0, actx.currentTime + (now ? .02 : .6)); setTimeout(() => a.nodes.forEach(n => { try { if (n.stop) n.stop(); n.disconnect(); } catch (e) {} }), now ? 60 : 800); } catch (e) {}
+}
+/* rank-up ceremony */
+function showCeremony(r) {
+  const dlg = $("#cerDlg"); if (dlg.open || isAdult()) return;
+  $("#cerEmb").innerHTML = emblem(r.i, 110); $("#cerName").textContent = RANKS[rankFam(r.i)][1];
+  const ul = []; for (let l = Math.max(0, r.i - 4); l <= r.i; l++) ul.push(...unlockList(l));
+  $("#cerList").replaceChildren(...ul.slice(0, 8).map(t => el("li", "", t)));
+  dlg.showModal(); confetti(); buzz(); chime();
+}
+$("#cerOk").onclick = () => $("#cerDlg").close();
+$("#cerDlg").addEventListener("cancel", e => e.preventDefault());
+
 window.__xr = true;
 const ICONS = { classic: ["apple-touch-icon.png"], cream: ["ico-cream.png"], coral: ["ico-coral.png"], robot: ["ico-robot.png"], gold: ["ico-gold.png"], diamond: ["ico-diamond.png"], "a-blue": ["ico-a-blue.png"], "a-green": ["ico-a-green.png"], "a-orange": ["ico-a-orange.png"], "a-purple": ["ico-a-purple.png"], "a-pink": ["ico-a-pink.png"], "a-teal": ["ico-a-teal.png"], fern: ["ico-fern.png"], hat: ["ico-hat.png"], moth: ["ico-moth.png"], stag: ["ico-stag.png"], flame: ["ico-flame.png"], owl: ["ico-owl.png"], ghost: ["ico-ghost.png"] };
 function applyIcon() {
@@ -3876,6 +4103,8 @@ function updateRank(silent) {
   lvlCache = r.i; applyLockUI();
   if (had !== null && r.i > had && !silent) { const ul = []; for (let l = had + 1; l <= r.i; l++) ul.push(...unlockList(l)); if (ul.length) toastLater("New unlocks: " + ul.join(", ")); }
   if (had === null || r.i > had) { store.set("pace:rank", r.i); if (had !== null && !silent && r.i > 0) toastLater("Rank up: " + r.name); }
+  if (had !== null && !silent && r.i > had && rankFam(r.i) > rankFam(had) && window.__xr) setTimeout(() => { if (playing) pause(); showCeremony(r); }, 600);
+  if (window.__xr) seasonSync(silent);
 }
 $("#rankBtn").onclick = () => $("#statsBtn").click();
 
@@ -3937,7 +4166,7 @@ async function play() {
   playing = true; playStart = performance.now(); flushT = playStart; stepIdx = 0;
   $("#coach").hidden = true;
   { const r = $("#stage").getBoundingClientRect(); $("#dimmer").style.setProperty("--sy", (r.top + r.height / 2) + "px"); }
-  document.body.classList.add("playing");
+  document.body.classList.add("playing"); if (window.__xr) ambStart();
   playBtn.innerHTML = ICON_PAUSE; playBtn.setAttribute("aria-label", "Pause");
   step();
   try { if (navigator.wakeLock) wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
@@ -3948,7 +4177,7 @@ function pause() {
   flush();
   playing = false; clearTimeout(timer);
   playedMs += performance.now() - playStart;
-  document.body.classList.remove("playing");
+  document.body.classList.remove("playing"); if (window.__xr) ambStop();
   playBtn.innerHTML = ICON_PLAY; playBtn.setAttribute("aria-label", "Play");
   try { if (wakeLock) wakeLock.release(); } catch (e) {} wakeLock = null;
   hasPaused = true; noRewind = false;
@@ -4194,6 +4423,7 @@ function coverEl(m, still) {
     d.style.background = `hsl(${parseInt(hash(m.title || "x"), 36) % 360} 30% 38%)`;
     d.textContent = (String(m.title || "?").match(/[\p{L}\p{N}]+/gu) || ["?"]).slice(0, 2).map(w => w[0]).join("").toUpperCase();
   }
+  if (m.done) { const pl = el("span", "plate"); pl.innerHTML = plateSvg(window.__xr ? (xGet("plate") || "def") : "def", 22); d.append(pl); }
   if (still) { d.setAttribute("aria-hidden", "true"); return d; }
   d.removeAttribute("aria-hidden"); d.setAttribute("role", "button"); d.tabIndex = 0; d.setAttribute("aria-label", "Change cover for " + (m.title || "book"));
   d.style.cursor = "pointer"; d.onclick = () => pickCover(m);
@@ -4240,6 +4470,16 @@ function drawPiece(c, q, st) {
   else if (st === "hearts") { c.beginPath(); c.moveTo(0, z * .8); c.bezierCurveTo(-z * 1.3, -z * .1, -z * .5, -z, 0, -z * .35); c.bezierCurveTo(z * .5, -z, z * 1.3, -z * .1, 0, z * .8); c.fill(); }
   else if (st === "sparks") { c.beginPath(); c.arc(0, 0, z * .35, 0, 7); c.fill(); }
   else if (st === "atoms") { c.lineWidth = Math.max(1, z * .12); c.beginPath(); c.ellipse(0, 0, z, z * .4, 0, 0, 7); c.stroke(); c.beginPath(); c.ellipse(0, 0, z, z * .4, Math.PI / 2, 0, 7); c.stroke(); c.beginPath(); c.arc(0, 0, z * .18, 0, 7); c.fill(); }
+  else if (st === "pumpkin") { c.beginPath(); c.ellipse(0, 0, z * .9, z * .75, 0, 0, 7); c.fill(); c.fillStyle = "#3b7a2a"; c.fillRect(-z * .1, -z * 1.05, z * .22, z * .4); }
+  else if (st === "boo") { c.beginPath(); c.arc(0, -z * .15, z * .7, Math.PI, 0); c.lineTo(z * .7, z * .8); c.lineTo(z * .35, z * .55); c.lineTo(0, z * .8); c.lineTo(-z * .35, z * .55); c.lineTo(-z * .7, z * .8); c.closePath(); c.fill(); c.fillStyle = "#222"; c.fillRect(-z * .3, -z * .3, z * .16, z * .24); c.fillRect(z * .14, -z * .3, z * .16, z * .24); }
+  else if (st === "flakes") { c.lineWidth = Math.max(1, z * .13); c.beginPath(); for (let i = 0; i < 3; i++) { const a = i * Math.PI / 3; c.moveTo(-z * Math.cos(a), -z * Math.sin(a)); c.lineTo(z * Math.cos(a), z * Math.sin(a)); } c.stroke(); }
+  else if (st === "petals") { c.beginPath(); c.ellipse(0, 0, z * .35, z * .8, 0, 0, 7); c.fill(); }
+  else if (st === "fireworks") { c.lineWidth = Math.max(1, z * .12); c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.moveTo(Math.cos(a) * z * .3, Math.sin(a) * z * .3); c.lineTo(Math.cos(a) * z, Math.sin(a) * z); } c.stroke(); }
+  else if (st === "suns") { c.beginPath(); c.arc(0, 0, z * .42, 0, 7); c.fill(); c.lineWidth = Math.max(1, z * .12); c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.moveTo(Math.cos(a) * z * .6, Math.sin(a) * z * .6); c.lineTo(Math.cos(a) * z, Math.sin(a) * z); } c.stroke(); }
+  else if (st === "seeds") { c.beginPath(); c.ellipse(0, 0, z * .3, z * .6, 0, 0, 7); c.fill(); }
+  else if (st === "embers") { c.beginPath(); c.moveTo(0, -z); c.lineTo(z * .5, 0); c.lineTo(0, z * .6); c.lineTo(-z * .5, 0); c.closePath(); c.fill(); }
+  else if (st === "pixels") { c.fillRect(-z * .4, -z * .4, z * .8, z * .8); }
+  else if (st === "bubbles") { c.lineWidth = Math.max(1, z * .14); c.beginPath(); c.arc(0, 0, z * .6, 0, 7); c.stroke(); }
   else c.fillRect(-q.w / 2, -q.h / 2, q.w, q.h);
 }
 function confetti() {
@@ -4251,7 +4491,7 @@ function confetti() {
   const ps = Array.from({ length: 90 }, () => ({ x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35, vx: (Math.random() - .5) * 14 * dpr, vy: (-Math.random() * 13 - 4) * dpr,
     w: (5 + Math.random() * 6) * dpr, h: (3 + Math.random() * 5) * dpr, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[(Math.random() * cols.length) | 0] }));
   const cs = (window.__xr && xGet("conf")) || "";
-  if (cs) { const P = { stars: ["#ffd23f", "#ffb703", "#fff3b0", "#ff9f1c"], leaves: ["#5fa05a", "#8bbf6a", "#e08a3c", "#c9a227"], hearts: ["#ff5d8f", "#ff8fab", "#d6144f", "#ffc2d1"], sparks: ["#ffd23f", "#fff", "#ffb703", "#ffe8a3"], atoms: [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#3fa7d6", "#b07cf0"] }[cs]; ps.forEach(q => { q.c = P[(Math.random() * P.length) | 0]; }); }
+  if (cs) { const P = { stars: ["#ffd23f", "#ffb703", "#fff3b0", "#ff9f1c"], leaves: ["#5fa05a", "#8bbf6a", "#e08a3c", "#c9a227"], hearts: ["#ff5d8f", "#ff8fab", "#d6144f", "#ffc2d1"], sparks: ["#ffd23f", "#fff", "#ffb703", "#ffe8a3"], atoms: [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#3fa7d6", "#b07cf0"], pumpkin: ["#ff8c1a", "#ffa94d", "#e8590c", "#f59f00"], boo: ["#f4f4f8", "#cfd2e8", "#b9a7ff", "#ffffff"], flakes: ["#ffffff", "#cfe8ff", "#9ed0ff", "#e8f4ff"], petals: ["#ffb7d5", "#ff8fb8", "#ffd6e7", "#fff0f6"], fireworks: ["#ff4d6d", "#ffd23f", "#4dd0ff", "#7cff6b", "#c77dff"], suns: ["#ffcf33", "#ffb703", "#ff9f1c", "#fff1a8"], seeds: ["#8a6a3b", "#c9a227", "#6b8f3a", "#a47c48"], embers: ["#ff6b1a", "#ffb703", "#ff3d00", "#ffd166"], pixels: ["#39ff88", "#00e5ff", "#ff3df2", "#ffee33"], bubbles: ["#8fd3ff", "#b8e6ff", "#7bc4f0", "#d9f1ff"] }[cs]; ps.forEach(q => { q.c = P[(Math.random() * P.length) | 0]; }); }
   const t0 = performance.now();
   (function tick(t) {
     const e = t - t0; c.clearRect(0, 0, W, H);
@@ -4678,7 +4918,11 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-04c", WHATS = [
+const WHATS_VER = "2026-10-05a", WHATS = [
+  ["Seasons", "A new season starts every three months. Your season rank resets. Your career rank never does. Earn season rewards."],
+  ["Try before you unlock", "Tap a locked extra to try it for 10 seconds."],
+  ["Rank-up celebration", "A big moment when you reach a new rank family."],
+  ["Bookplates, stamps and more", "Bookplates on finished books, profile stamps, stats card themes, library covers, bookmark styles and reading ambience. Open Settings, Display, Extras."],
   ["Adult mode", "A new third choice for people who aren't students or teachers. It needs a password. Change it in Settings, Profile."],
   ["Extras", "Titles, backdrops, Atom colors, word effects, focus marks, progress bars, confetti, greetings and reward sounds. Open Settings, Display, Extras."],
   ["More fonts", "Typewriter, Book, Rounded and Slab unlock as you rank up."],
@@ -5046,7 +5290,7 @@ $$("#fontSeg button").forEach(b => b.onclick = () => { if (lockedTap("font", b.d
 $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
-applyIcon(); applyExtras(); renderExtras();
+applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200);
 $$("#iconPick button").forEach(b => b.onclick = () => { if (lockedTap("icon", b.dataset.ic)) return; settings.icon = b.dataset.ic; saveSettings(); applyIcon(); syncSettingsUI(); toast("Icon set. Now add Atom to your Home Screen from Safari."); });
 $("#pivotChk").onchange = e => { settings.pivot = e.target.checked; saveSettings(); applyFont(); };
 applyFont(); applyAccess();
@@ -5382,7 +5626,7 @@ $("#repBtn").onclick = () => { buildReport(+$("#repRange").value); setTimeout(()
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
-window.__pace = { confetti, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+window.__pace = { confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambNodes; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
