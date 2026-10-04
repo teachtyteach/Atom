@@ -87,7 +87,7 @@ html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 .screen{display:none;min-height:100vh;max-width:760px;margin:0 auto;
   padding:max(16px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));gap:14px}
-body[data-screen="library"] #library,body[data-screen="reader"] #reader,body[data-screen="stats"] #stats{display:flex;flex-direction:column}
+body[data-screen="library"] #library,body[data-screen="reader"] #reader,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{display:flex;flex-direction:column}
 header{display:flex;align-items:center;gap:8px;min-height:44px}
 h1{font:600 22px/1.2 Georgia,"Iowan Old Style",serif;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 h2{margin:0;font:600 16px/1.3 system-ui,-apple-system,sans-serif}
@@ -230,6 +230,21 @@ body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
 :root[data-font=book]{--rf:"Palatino Linotype",Palatino,"Book Antiqua","Iowan Old Style",Georgia,serif}
 :root[data-font=rounded]{--rf:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Varela Round",system-ui,sans-serif}
 :root[data-font=slab]{--rf:Rockwell,"Roboto Slab","Courier Prime","Rockwell Nova",Georgia,serif}
+.nextcard{display:grid;gap:4px;border-left:4px solid var(--accent)}
+.nextcard b{font-family:Georgia,serif;font-size:17px}
+.xtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.xtile{display:grid;justify-items:start;gap:4px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;min-height:92px;align-content:start}
+.xtile b{font-family:Georgia,serif;font-size:17px}
+.xtile .fine{font-size:12px}
+.xtile:last-child:nth-child(odd){grid-column:1/-1}
+.xtile .xcount{font-size:12px;color:var(--accent);font-weight:700}
+.xgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.xcard{display:grid;gap:4px;align-content:start;text-align:center;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;min-height:64px;position:relative}
+.xcard[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.xcard.locked{opacity:.55}
+.xcard .xth{height:46px;border-radius:8px;background:color-mix(in srgb,var(--line) 60%,transparent) center/cover no-repeat;display:grid;place-items:center;overflow:hidden}
+.xcard .xth img{height:40px}
+.xcard .xtag{font-size:11px;color:var(--muted)}
 .xlab{margin:12px 0 4px;font-weight:600}
 .xseg button{min-height:40px}
 #titleLine{margin:-2px 0 0;color:var(--muted);font-size:14px;letter-spacing:.02em}
@@ -408,7 +423,7 @@ body.hc button,body.hc .card{box-shadow:none}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-body[data-screen="library"] #library>*,body[data-screen="stats"] #stats>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+body[data-screen="library"] #library>*,body[data-screen="stats"] #stats>*,body[data-screen="rewards"] #rewards>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
 body[data-screen="reader"] #reader{animation:fade .3s ease both}
 body[data-screen] .screen>*:nth-child(2){animation-delay:.04s!important}
 body[data-screen] .screen>*:nth-child(3){animation-delay:.08s!important}
@@ -480,10 +495,10 @@ body.playing .controls{opacity:.22}
 .welcome .row .primary{margin-left:auto}
 /* nav + gradient + dim */
 #library header .icon{display:none}
-body[data-screen="library"] #library,body[data-screen="stats"] #stats{padding-bottom:calc(92px + env(safe-area-inset-bottom));position:relative;z-index:1}
-body[data-screen="library"]::before,body[data-screen="stats"]::before{content:"";position:fixed;top:0;left:0;right:0;height:220px;background:linear-gradient(to bottom,color-mix(in srgb,var(--accent) 16%,transparent),transparent);pointer-events:none;z-index:0}
+body[data-screen="library"] #library,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{padding-bottom:calc(92px + env(safe-area-inset-bottom));position:relative;z-index:1}
+body[data-screen="library"]::before,body[data-screen="stats"]::before,body[data-screen="rewards"]::before{content:"";position:fixed;top:0;left:0;right:0;height:220px;background:linear-gradient(to bottom,color-mix(in srgb,var(--accent) 16%,transparent),transparent);pointer-events:none;z-index:0}
 #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;justify-content:center;gap:6px;padding:6px 10px max(8px,env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
-body[data-screen="library"] #tabbar,body[data-screen="stats"] #tabbar{display:flex}
+body[data-screen="library"] #tabbar,body[data-screen="stats"] #tabbar,body[data-screen="rewards"] #tabbar{display:flex}
 #tabbar button{flex:1;max-width:190px;flex-direction:column;gap:2px;border:0;background:transparent;box-shadow:none;color:var(--muted);font:600 11px system-ui,sans-serif;padding:6px 4px;min-height:52px;border-radius:14px}
 #tabbar button.on{color:var(--accent)}
 #tabbar button.on svg{transform:translateY(-1px) scale(1.08)}
@@ -509,7 +524,7 @@ body.playing.dim .dimmer{opacity:1}
 .rings .trk{stroke:var(--line)}.rings .val{stroke:var(--accent);stroke-linecap:round;animation:ringin .9s cubic-bezier(.2,.8,.2,1) both}
 .rings figure:nth-child(2) .val{stroke:#f08a24}.rings figure:nth-child(3) .val{stroke:#3fa7d6}
 #toast .tm{width:34px;height:auto;margin:-6px 8px -6px -4px;vertical-align:middle}
-body[data-screen="library"] #toast,body[data-screen="stats"] #toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+body[data-screen="library"] #toast,body[data-screen="stats"] #toast,body[data-screen="rewards"] #toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 body.adult .mascot{display:none!important}
 .mascot{display:block;height:auto}
 .emptybox{display:grid;justify-items:center;gap:6px}
@@ -738,6 +753,19 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </div>
   <div class="card life" id="life"></div>
 </section>
+<section id="rewards" class="screen">
+  <header>
+    <button class="icon" id="rwBack" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1>Rewards</h1>
+  </header>
+  <div class="card nextcard" id="nextCard"></div>
+  <div class="xtiles" id="xTiles"></div>
+</section>
+<dialog id="xgDlg"><div class="sheet">
+  <div class="sheet-head"><h2 id="xgTitle"></h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p class="fine" id="xgNote"></p>
+  <div id="xgBody"></div>
+</div></dialog>
 
 <!-- READER -->
 <section id="reader" class="screen">
@@ -1061,7 +1089,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <label class="setrow">Bold word beginnings <input type="checkbox" id="bionicChk"></label>
   </div>
   <p class="gt">Extras</p>
-  <div class="grp"><p class="fine" id="extrasNote"></p><div id="extrasBox"></div></div>
+  <div class="grp"><p class="fine">Backdrops, titles, sounds and more now live in the Rewards tab.</p><button type="button" id="goRewards">Open Rewards</button></div>
   </div>
   <div class="pane" data-pane="reading" hidden>
   <p class="gt">Reading</p>
@@ -1172,6 +1200,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 <nav id="tabbar" aria-label="Main">
   <button type="button" data-go="library" class="on"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h5a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z"/></svg><span>Library</span></button>
   <button type="button" data-go="stats"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 20V11M12 20V5M18 20v-7"/></svg><span>Stats</span></button>
+  <button type="button" data-go="rewards"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9H4zM3 7.5h18V11H3zM12 7.5V20M12 7.5C10 3.5 6.5 4 7 6.2c.3 1.3 2.5 1.3 5 1.3 2.5 0 4.7 0 5-1.3.5-2.2-3-2.7-5 1.3z"/></svg><span>Rewards</span></button>
   <button type="button" data-go="settings"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg><span>Settings</span></button>
 </nav>
 <div id="toast" role="status" aria-live="polite" popover="manual"></div>
@@ -3469,8 +3498,9 @@ function afterStats() {
   tabs.forEach(t => t.onclick = () => {
     const g = t.dataset.go, sc = document.body.dataset.screen;
     if (g === "settings") $("#settingsBtn").click();
+    else if (g === "rewards") { if (sc !== "rewards") openRewards(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
     else if (g === "stats") { if (sc !== "stats") $("#statsBtn").click(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
-    else { if (sc === "stats") $("#statsBack").click(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+    else { if (sc === "stats") $("#statsBack").click(); else if (sc === "rewards") show("library"); else window.scrollTo({ top: 0, behavior: "smooth" }); }
   });
   const fab = $("#fab");
   try {
@@ -3789,7 +3819,7 @@ const BD_SVG = {"fern": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0
 Object.assign(UNLOCK, {
   font: Object.assign(UNLOCK.font, { typewriter: 13, book: 20, rounded: 28, slab: 32 }),
   title: { pager: 2, bookworm: 3, bronze: 5, silver: 10, gold: 15, platinum: 20, emerald: 25, diamond: 30, champ: 35 },
-  bd: { p_autumn: 11, p_falls: 18, p_starfall: 25, p_rider: 33, stars: 4, leaves: 7, fern: 9, snow: 13, hat: 16, waves: 19, moth: 21, circuit: 23, stag: 27, constel: 31 },
+  bd: { p_autumn: 7, p_falls: 11, p_starfall: 16, p_rider: 20, stars: 4, leaves: 7, fern: 9, snow: 13, hat: 16, waves: 19, moth: 21, circuit: 23, stag: 27, constel: 31 },
   atomc: { rose: 5, ice: 11, gold: 14, mint: 17, violet: 22, shadow: 26, rainbow: 33 },
   wfx: { glow: 8, fade: 12, neon: 18, deep: 25 },
   marks: { dots: 3, bar: 10, glow: 18, diamond: 24, arrows: 30 },
@@ -3890,24 +3920,87 @@ function chime(kind) {
     else if (kind === "harp") [392, 494, 587, 784, 988].forEach((f, i) => tone(f, t + i * .09, .7, "triangle", .14));
   } catch (e) {}
 }
-function renderExtras() {
-  const box = $("#extrasBox"); if (!box) return; box.replaceChildren();
-  $("#extrasNote").textContent = isAdult() ? "Everything is unlocked in Teacher mode." : "Earn these by reading. Tap a locked one to see how.";
-  XCATS.forEach(c => {
+const XGROUPS = [
+  { id: "look", name: "Look", sub: "Backdrops, colors, covers", keys: ["bd", "atomc", "cov", "stat", "bar"] },
+  { id: "read", name: "Reading", sub: "Effects, marks, bookmarks, sounds", keys: ["wfx", "marks", "bm", "amb"] },
+  { id: "fun", name: "Fun", sub: "Confetti, sounds, greetings", keys: ["conf", "chime", "greet"] },
+  { id: "me", name: "Identity", sub: "Titles, stamps, bookplates", keys: ["title", "stamp", "plate"] }
+];
+let xgCur = null, xgKeep = false;
+const PH_IMG = { p_autumn: "bg-autumn.jpg", p_falls: "bg-falls.jpg", p_starfall: "bg-starfall.jpg", p_rider: "bg-rider.jpg" };
+function xTag(kind, id) {
+  if (EXTRA_SPECIAL[kind] && EXTRA_SPECIAL[kind][id]) return "Special";
+  const f = needFam(kind, id); return f ? LEVELS[f][1] : "";
+}
+function xThumb(kind, id) {
+  const t = el("span", "xth"); t.setAttribute("aria-hidden", "true");
+  try {
+    if (kind === "bd") { if (PH_IMG[id]) t.style.backgroundImage = `url("${PH_IMG[id]}")`; else { t.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, "#888"))}")`; t.style.backgroundSize = "contain"; } }
+    else if (kind === "atomc") { const im = document.createElement("img"); im.src = "mascot.png"; im.alt = ""; im.style.filter = TINTS[id] || ""; t.append(im); }
+    else if (kind === "plate") t.innerHTML = plateSvg(id, 34);
+    else return null;
+  } catch (e) { return null; }
+  return t;
+}
+function xTotals(c) { let n = 0, tot = 0; c.opts.forEach(([id]) => { tot++; if (!lockMsg(c.k, id)) n++; }); return [n, tot]; }
+function renderGroup(g) {
+  const box = $("#xgBody"); box.replaceChildren();
+  $("#xgTitle").textContent = g.name;
+  $("#xgNote").textContent = isAdult() ? "Everything is unlocked in Teacher mode." : "Tap a locked one to try it for 10 seconds.";
+  g.keys.forEach(k => {
+    const c = XCATS.find(x => x.k === k); if (!c) return;
     box.append(el("p", "xlab", c.label));
-    const seg = el("div", "seg xseg");
-    const none = el("button", "", c.k === "chime" ? "Off" : "None"); none.type = "button"; none.setAttribute("aria-pressed", String(!settings[c.k] || !xOk(c.k, settings[c.k]))); none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); renderExtras(); }; seg.append(none);
+    const grid = el("div", "xgrid");
+    const none = el("button", "xcard", c.k === "chime" ? "Off" : "None"); none.type = "button";
+    none.setAttribute("aria-pressed", String(!settings[c.k] || !xOk(c.k, settings[c.k])));
+    none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); renderGroup(g); };
+    grid.append(none);
     c.opts.forEach(([id, name]) => {
-      const b = el("button", "lockable", name); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
-      const m = lockMsg(c.k, id); b.classList.toggle("locked", !!m); if (m) b.title = m;
+      const m = lockMsg(c.k, id), b = el("button", "xcard" + (m ? " locked" : "")); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
+      if (m) b.title = m;
+      const th = xThumb(c.k, id); if (th) b.append(th);
+      b.append(el("span", "", name));
+      if (m) b.append(el("span", "xtag", "Locked: " + xTag(c.k, id)));
       b.setAttribute("aria-pressed", String(settings[c.k] === id && !m));
-      b.onclick = () => { if (lockedTap(c.k, id)) return; settings[c.k] = id; saveSettings(); applyExtras(); renderExtras(); if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "plate" || c.k === "cov") renderLibrary(); if (c.k === "title" || c.k === "greet") toast("Saved."); };
-      seg.append(b);
+      b.onclick = () => {
+        if (lockedTap(c.k, id)) { if (pv) { xgKeep = true; $("#xgDlg").close(); } return; }
+        settings[c.k] = id; saveSettings(); applyExtras(); renderGroup(g);
+        if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "plate" || c.k === "cov") renderLibrary(); if (c.k === "title" || c.k === "greet") toast("Saved.");
+      };
+      grid.append(b);
     });
-    box.append(seg);
-    if (c.k === "amb") { const rg = document.createElement("input"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.value = settings.ambVol ?? 35; rg.setAttribute("aria-label", "Ambience volume"); rg.oninput = () => { settings.ambVol = +rg.value; saveSettings(); }; box.append(el("p", "fine", "Ambience volume. It plays while you read. Use headphones in class."), rg); }
+    box.append(grid);
+    if (c.k === "amb") { const rg = document.createElement("input"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.value = settings.ambVol ?? 35; rg.setAttribute("aria-label", "Ambience volume"); rg.oninput = () => { settings.ambVol = +rg.value; saveSettings(); }; box.append(el("p", "fine", "Ambience volume. It plays while you read. Use headphones in class."), rg); fillR(rg); }
   });
 }
+function nextUnlock() {
+  if (isAdult()) return { all: true, teacher: true };
+  const kinds = ["theme", "accent", "font", "pivot", "icon"].concat(XCATS.map(c => c.k)), now = lvlNow(); let best = null;
+  kinds.forEach(k => { const o = UNLOCK[k] || {}; Object.keys(o).forEach(id => { const f = o[id]; if (f > now && (best === null || f < best)) best = f; }); });
+  if (best === null) return { all: true };
+  return { f: best, items: unlockList(best), words: Math.max(0, LEVELS[best][0] - metrics().w) };
+}
+function renderRewardsTab() {
+  const nc = $("#nextCard"), nu = nextUnlock(); if (!nc) return; nc.replaceChildren();
+  if (nu.all) { nc.append(el("b", "", nu.teacher ? "Teacher mode" : "All rank rewards unlocked"), el("span", "fine", nu.teacher ? "Everything is unlocked." : "Season rewards and event badges are still out there.")); }
+  else {
+    nc.append(el("span", "fine", "NEXT UNLOCK"), el("b", "", `${LEVELS[nu.f][1]} · ${fmt(nu.words)} words away`));
+    if (nu.items.length) nc.append(el("span", "fine", nu.items.slice(0, 4).join(", ") + (nu.items.length > 4 ? ` and ${nu.items.length - 4} more` : "")));
+  }
+  const box = $("#xTiles"); box.replaceChildren();
+  XGROUPS.forEach(g => {
+    let n = 0, tot = 0; g.keys.forEach(k => { const c = XCATS.find(x => x.k === k); if (c) { const t = xTotals(c); n += t[0]; tot += t[1]; } });
+    const b = el("button", "xtile"); b.type = "button";
+    b.append(el("b", "", g.name), el("span", "fine", g.sub), el("span", "xcount", `${n} of ${tot} unlocked`));
+    b.onclick = () => { xgCur = g; renderGroup(g); $("#xgDlg").showModal(); };
+    box.append(b);
+  });
+  const se = seasonNow(), sw = seasonWords(se), sr = seasonRank(sw), st = el("button", "xtile"); st.type = "button";
+  st.append(el("b", "", "Season " + se.n), el("span", "fine", se.name), el("span", "xcount", sr.name));
+  st.onclick = openSeason; box.append(st);
+}
+function openRewards() { renderRewardsTab(); show("rewards"); }
+function renderExtras() { renderRewardsTab(); if (xgCur && $("#xgDlg").open) renderGroup(xgCur); }
 
 /* ---------- seasons ---------- */
 const SEASON_NAMES = ["First Steps", "Rising Action", "Plot Twist", "Final Chapter"], SEASON_COL = ["#2f8a4c", "#c8281f", "#e02fc0", "#e8a50c"], SEASON_ICON = ["leaf", "star", "book", "sun"];
@@ -3917,7 +4010,7 @@ function seasonAt(d) { const mo = (d.getFullYear() - 2026) * 12 + (d.getMonth() 
 const seasonNow = () => seasonAt(seasonOv || new Date());
 function seasonWords(se) { let t = 0; for (const k in stats.days) if (k >= se.a && k <= se.b) t += stats.days[k].w || 0; return t; }
 const S_FAM = ["Opening", "Setup", "Rising", "Conflict", "Climax", "Twist", "Finale", "Epilogue"];
-const SLEVELS = [[0, "Opening"], [10000, "Setup"], [35000, "Rising"], [75000, "Conflict"], [130000, "Climax"], [200000, "Twist"], [270000, "Finale"], [340000, "Epilogue"]];
+const SLEVELS = [[0, "Opening"], [9000, "Setup"], [30000, "Rising"], [65000, "Conflict"], [115000, "Climax"], [175000, "Twist"], [235000, "Finale"], [300000, "Epilogue"]];
 function ribbon(i, col, size) {
   const mark = `<text x="12" y="14" text-anchor="middle" font-size="9" font-weight="700" font-family="Georgia,serif" fill="#fff">${i + 1}</text>`;
   return `<svg viewBox="0 0 24 28" width="${size}" height="${Math.round(size * 28 / 24)}" aria-hidden="true"><path d="M4 1.5h16v25l-8-5.5-8 5.5z" fill="${col}" stroke="rgba(0,0,0,.35)" stroke-width="1.2" stroke-linejoin="round"/>${mark}</svg>`;
@@ -3930,7 +4023,7 @@ function seasonRank(w) {
 const srStore = () => store.get("pace:sr", {});
 function seasonBest(idx) { const o = srStore(); let b = 0; Object.keys(o).forEach(n => { if ((n - 1) % 4 === idx) b = Math.max(b, o[n]); }); return b; }
 const S_ITEMS = [ // [category, level, ids per season]
-  ["stamp", 2, ["s1", "s2", "s3", "s4"]], ["title", 4, ["t1", "t2", "t3", "t4"]], ["bd", 6, ["sprout", "pines", "grid", "rays"]], ["conf", 7, ["seeds", "embers", "pixels", "bubbles"]]
+  ["stamp", 2, ["s1", "s2", "s3", "s4"]], ["title", 4, ["t1", "t2", "t3", "t4"]], ["bd", 5, ["sprout", "pines", "grid", "rays"]], ["conf", 7, ["seeds", "embers", "pixels", "bubbles"]]
 ];
 const S_NAMES = { s1: "First Steps stamp", s2: "Rising Action stamp", s3: "Plot Twist stamp", s4: "Final Chapter stamp", t1: "First Stepper", t2: "Rising Star", t3: "Twist Master", t4: "Chapter Closer", sprout: "Sprouts", pines: "Pines", grid: "Neon grid", rays: "Sun rays", seeds: "Seeds", embers: "Embers", pixels: "Pixels", bubbles: "Bubbles" };
 function seasonSync(silent) {
@@ -5297,6 +5390,10 @@ $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); ap
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
 applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200);
+$("#rewards").append($("#rewardsCard"), $("#evBadgesCard"));
+$("#rwBack").onclick = () => show("library");
+$("#goRewards").onclick = () => { $("#setDlg").close(); openRewards(); };
+$("#xgDlg").addEventListener("close", () => { xgCur = null; if (!xgKeep) endPreview(); xgKeep = false; });
 $$("#iconPick button").forEach(b => b.onclick = () => { if (lockedTap("icon", b.dataset.ic)) return; settings.icon = b.dataset.ic; saveSettings(); applyIcon(); syncSettingsUI(); toast("Icon set. Now add Atom to your Home Screen from Safari."); });
 $("#pivotChk").onchange = e => { settings.pivot = e.target.checked; saveSettings(); applyFont(); };
 applyFont(); applyAccess();
