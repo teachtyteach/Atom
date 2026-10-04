@@ -3997,12 +3997,12 @@ function renderGroup(g) {
   $("#xgTitle").textContent = g.name;
   $("#xgNote").textContent = isAdult() ? "Everything is unlocked in Teacher mode." : "Tap a locked one to try it for 10 seconds.";
   g.keys.forEach(k => {
-    const c = XCATS.find(x => x.k === k); if (!c) return;
+    const c = XCATS.find(x => x.k === k); if (!c || !c.opts.length) return;
     box.append(el("p", "xlab", c.label));
     const grid = el("div", "xgrid");
     const none = el("button", "xcard", c.k === "chime" ? "Off" : "None"); none.type = "button";
     none.setAttribute("aria-pressed", String(!settings[c.k] || !xOk(c.k, settings[c.k])));
-    none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); renderGroup(g); };
+    none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); if (c.k === "amb") ambStop(); renderGroup(g); };
     grid.append(none);
     c.opts.forEach(([id, name]) => {
       const m = lockMsg(c.k, id), b = el("button", "xcard" + (m ? " locked" : "")); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
@@ -4014,12 +4014,12 @@ function renderGroup(g) {
       b.onclick = () => {
         if (lockedTap(c.k, id)) return;
         settings[c.k] = id; saveSettings(); applyExtras(); renderGroup(g);
-        if (c.k === "chime") chime(id); if (c.k === "conf") confetti(); if (c.k === "plate" || c.k === "cov") renderLibrary(); if (c.k === "title" || c.k === "greet") toast("Saved.");
+        if (c.k === "chime") chime(id); if (c.k === "amb") ambStart(id); if (c.k === "conf") confetti(); if (c.k === "plate" || c.k === "cov") renderLibrary(); if (c.k === "title" || c.k === "greet") toast("Saved.");
       };
       grid.append(b);
     });
     box.append(grid);
-    if (c.k === "amb") { const rg = document.createElement("input"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.value = settings.ambVol ?? 35; rg.setAttribute("aria-label", "Ambience volume"); rg.oninput = () => { settings.ambVol = +rg.value; saveSettings(); }; box.append(el("p", "fine", "Ambience volume. It plays while you read. Use headphones in class."), rg); fillR(rg); }
+    if (c.k === "amb") { const rg = document.createElement("input"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.value = settings.ambVol ?? 35; rg.setAttribute("aria-label", "Ambience volume"); rg.oninput = () => { settings.ambVol = +rg.value; saveSettings(); }; box.append(el("p", "fine", "Ambience volume. It plays while you read."), rg); fillR(rg); }
   });
   if (sh) sh.scrollTop = keep;
 }
@@ -4131,7 +4131,7 @@ Object.assign(UNLOCK, {
   bm: { star: 7, flag: 13, ribbon: 19, leaf: 25, heart: 31 },
   cov: { round: 6, tilt: 12, spine: 18, glow: 22, polaroid: 28 },
   stat: { blueprint: 8, chalk: 14, paper: 19, terminal: 24, gold: 29 },
-  amb: { rain: 9, fire: 15, crickets: 21, wind: 27 },
+  amb: {},
   plate: { seal: 3, ribbon: 11, wreath: 17, star: 23, crown: 30 },
   stamp: { flame: 8, book: 12, star: 22 }
 });
@@ -4149,7 +4149,7 @@ XCATS.push(
   { k: "cov", label: "Book covers", opts: [["round", "Round"], ["tilt", "Tilted"], ["spine", "Book spine"], ["glow", "Glow"], ["polaroid", "Polaroid"]] },
   { k: "bm", label: "Bookmark", opts: [["star", "Star"], ["flag", "Flag"], ["ribbon", "Ribbon"], ["leaf", "Leaf"], ["heart", "Heart"]] },
   { k: "stat", label: "Stats look", opts: [["blueprint", "Blueprint"], ["chalk", "Chalkboard"], ["paper", "Notebook"], ["terminal", "Terminal"], ["gold", "Gold"]] },
-  { k: "amb", label: "Reading ambience", opts: [["rain", "Rain"], ["fire", "Campfire"], ["crickets", "Crickets"], ["wind", "Wind"]] }
+  { k: "amb", label: "Reading ambience", opts: [] }
 );
 
 function plateSvg(st, sz) {
@@ -4181,7 +4181,7 @@ function pvRefresh(kind) {
   else if (kind === "font" || kind === "pivot") { applyFont(); if (tokens.length) render(); }
   else applyExtras();
 }
-function endPreview() { if (!pv) return; const p = pv; pv = null; clearTimeout(pvTimer); settings[p.key] = p.old; pvRefresh(p.kind); if (p.kind === "chime") ambStop(); }
+function endPreview() { if (!pv) return; const p = pv; pv = null; clearTimeout(pvTimer); settings[p.key] = p.old; pvRefresh(p.kind); if (p.kind === "amb") ambStop(); }
 function startPreview(kind, id) {
   const key = PV_KEYS[kind] || (XCATS.some(c => c.k === kind) ? kind : null); if (!key) return false;
   if (pv) endPreview();
@@ -4189,33 +4189,31 @@ function startPreview(kind, id) {
   if (kind === "chime") chime(id); if (kind === "conf") confetti(); if (kind === "amb") { ambStart(id); }
   pvTimer = setTimeout(endPreview, 10000); return true;
 }
-/* ambience, made in code */
-let ambNodes = null;
-function noiseBuf(brown) { const sr = actx.sampleRate, len = sr * 2, b = actx.createBuffer(1, len, sr), d = b.getChannelData(0); let last = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; if (brown) { last = (last + .02 * w) / 1.02; d[i] = last * 3.5; } else d[i] = w; } return b; }
-function ambStart(force) {
+/* ambience: your own sound files, listed in amb.json */
+let ambAudio = null, ambBlobs = {}, ambTracks = [];
+async function ambUrl(id) {
+  const t = ambTracks.find(x => x.id === id); if (!t) return null;
+  if (ambBlobs[id]) return ambBlobs[id];
+  const r = await fetch(t.file); if (!r.ok) return null;
+  return (ambBlobs[id] = URL.createObjectURL(await r.blob()));
+}
+async function ambStart(force) {
   try {
-    const id = force || xGet("amb"); if (!id) return; audioInit(); if (!actx) return; ambStop(true);
-    const vol = ((settings.ambVol ?? 35) / 100) * .5, master = actx.createGain(); master.gain.value = 0; master.connect(actx.destination); master.gain.linearRampToValueAtTime(vol, actx.currentTime + .8);
-    const nodes = [master], timers = [];
-    const noise = brown => { const s = actx.createBufferSource(); s.buffer = noiseBuf(brown); s.loop = true; s.start(); nodes.push(s); return s; };
-    const filt = (type, f, q) => { const n = actx.createBiquadFilter(); n.type = type; n.frequency.value = f; if (q) n.Q.value = q; nodes.push(n); return n; };
-    if (id === "rain") { const s = noise(false), hp = filt("highpass", 900), lp = filt("lowpass", 7000); s.connect(hp); hp.connect(lp); lp.connect(master); }
-    else if (id === "fire") {
-      const s = noise(true), lp = filt("lowpass", 500); s.connect(lp); lp.connect(master);
-      timers.push(setInterval(() => { try { const b = actx.createBuffer(1, 1500, actx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length); const src = actx.createBufferSource(), g = actx.createGain(); src.buffer = b; g.gain.value = .3 + Math.random() * .5; src.connect(g); g.connect(master); src.start(); } catch (e) {} }, 220));
-    }
-    else if (id === "wind") { const s = noise(false), bp = filt("bandpass", 500, .8), lfo = actx.createOscillator(), lg = actx.createGain(); lfo.frequency.value = .12; lg.gain.value = 260; lfo.connect(lg); lg.connect(bp.frequency); lfo.start(); nodes.push(lfo, lg); s.connect(bp); bp.connect(master); }
-    else if (id === "crickets") {
-      const o = actx.createOscillator(), g = actx.createGain(), l1 = actx.createOscillator(), l1g = actx.createGain(), l2 = actx.createOscillator(), l2g = actx.createGain();
-      o.frequency.value = 4300; g.gain.value = .25; l1.frequency.value = 13; l1g.gain.value = .25; l2.frequency.value = .4; l2g.gain.value = .2;
-      l1.connect(l1g); l1g.connect(g.gain); l2.connect(l2g); l2g.connect(g.gain); o.connect(g); g.connect(master); o.start(); l1.start(); l2.start(); nodes.push(o, g, l1, l1g, l2, l2g);
-    }
-    ambNodes = { master, nodes, timers };
+    const id = force || xGet("amb"); if (!id) return; ambStop(true);
+    const url = await ambUrl(id); if (!url) return;
+    const a = new Audio(url); a.loop = true; a.volume = Math.min(1, (settings.ambVol ?? 35) / 100);
+    ambAudio = a; await a.play();
   } catch (e) {}
 }
-function ambStop(now) {
-  if (!ambNodes) return; const a = ambNodes; ambNodes = null;
-  try { a.timers.forEach(clearInterval); a.master.gain.cancelScheduledValues(0); a.master.gain.setValueAtTime(a.master.gain.value, actx.currentTime); a.master.gain.linearRampToValueAtTime(0, actx.currentTime + (now ? .02 : .6)); setTimeout(() => a.nodes.forEach(n => { try { if (n.stop) n.stop(); n.disconnect(); } catch (e) {} }), now ? 60 : 800); } catch (e) {}
+function ambStop() { if (!ambAudio) return; const a = ambAudio; ambAudio = null; try { a.pause(); } catch (e) {} }
+async function ambLoad() {
+  try {
+    const r = await fetch("amb.json", { cache: "no-cache" }); if (!r.ok) return;
+    const j = await r.json(); ambTracks = (j.tracks || []).filter(t => t && t.id && t.file && t.name);
+    const c = XCATS.find(x => x.k === "amb"); c.opts = ambTracks.map(t => [t.id, t.name]);
+    UNLOCK.amb = {}; ambTracks.forEach(t => { UNLOCK.amb[t.id] = +t.level || 0; });
+    if (typeof renderExtras === "function") renderExtras();
+  } catch (e) {}
 }
 /* rank-up ceremony */
 function showCeremony(r) {
@@ -5074,7 +5072,7 @@ const WHATS_VER = "2026-10-05c", WHATS = [
   ["Seasons", "A new season starts every three months. Your season rank resets. Your career rank never does. Earn season rewards."],
   ["Try before you unlock", "Tap a locked reward to try it for 10 seconds."],
   ["Rank-up celebration", "A big moment when you reach a new rank."],
-  ["Bookplates, stamps and more", "Bookplates, stamps, stats looks, covers, bookmarks and reading ambience are all in Rewards."],
+  ["Bookplates, stamps and more", "Bookplates, stamps, stats looks, covers and bookmarks are all in Rewards."],
   ["Class Library", "Six free classic books are built in. Open it from the menu on the home screen."]
 ];
 function showWhatsNew() {
@@ -5437,7 +5435,7 @@ $$("#fontSeg button").forEach(b => b.onclick = () => { if (lockedTap("font", b.d
 $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
-applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200);
+applyIcon(); applyExtras(); renderExtras(); ambLoad(); seasonSync(true); setTimeout(seasonEndCheck, 1200);
 $("#rewards").append($("#rewardsCard"), $("#evBadgesCard"));
 $("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
 $("#goRewards").onclick = () => { $("#setDlg").close(); openRewards(); };
@@ -5778,7 +5776,7 @@ $("#repBtn").onclick = () => { buildReport(+$("#repRange").value); setTimeout(()
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
-window.__pace = { confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambNodes; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+window.__pace = { confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>

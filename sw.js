@@ -1,4 +1,4 @@
-const CACHE = "atom-v52", STATIC = "atom-static-1";
+const CACHE = "atom-v54", STATIC = "atom-static-1";
 const PAGES = ["./", "index.html", "manifest.json"];
 const ASSETS = ["icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2", "pdf.min.js", "pdf.worker.min.js", "dictionary.json", "mascot.png", "bg-autumn.jpg", "bg-falls.jpg", "bg-starfall.jpg", "bg-rider.jpg",
   "ico-cream.png", "ico-coral.png", "ico-robot.png", "ico-gold.png", "ico-diamond.png", "ico-a-blue.png", "ico-a-green.png", "ico-a-orange.png", "ico-a-purple.png", "ico-a-pink.png", "ico-a-teal.png", "ico-fern.png", "ico-hat.png", "ico-moth.png", "ico-stag.png", "ico-flame.png", "ico-owl.png", "ico-ghost.png"];
@@ -19,7 +19,7 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET") return;
   if (new URL(req.url).origin !== self.location.origin) return;
   const path = new URL(req.url).pathname;
-  const page = req.mode === "navigate" || path.endsWith("/") || /\.(html)$/.test(path) || /manifest\.json$/.test(path);
+  const page = req.mode === "navigate" || path.endsWith("/") || /\.(html)$/.test(path) || /(manifest|amb)\.json$/.test(path);
   if (page) {
     // online: always get the newest copy. offline: use the saved one.
     e.respondWith(
