@@ -326,6 +326,28 @@ body.xg #nextCard,body.xg #xTiles,body.xg #rewardsCard,body.xg #evBadgesCard{dis
 .seasoncard{display:flex;gap:12px;align-items:center;text-align:left;border-left:4px solid var(--sc,var(--accent))}
 .seasoncard .sct{flex:1;min-width:0;display:grid;gap:2px}
 .seasoncard b{font-family:Georgia,serif}
+.pips{display:flex;gap:3px;margin-top:4px}
+.pips i{flex:1;height:8px;border-radius:3px;background:var(--line);overflow:hidden}
+.pips i.on{background:var(--sc,var(--accent))}
+.pips i.cur{background:linear-gradient(90deg,var(--sc,var(--accent)) var(--p),var(--line) var(--p))}
+.bp{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 12px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.bpt{flex:0 0 52px;scroll-snap-align:center;display:grid;gap:6px;justify-items:center;text-align:center;align-content:start}
+.bpl{position:relative;width:calc(100% + 6px);margin:0 -3px;height:26px;display:grid;place-items:center}
+.bpl::before{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:var(--line)}
+.bpl::after{content:"";position:absolute;left:0;top:50%;height:6px;margin-top:-3px;width:var(--f,0%);background:var(--sc)}
+.bpl svg{position:relative;z-index:1}
+.bpc{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:14px;background:var(--surface);padding:8px 6px;display:grid;gap:4px;justify-items:center;min-height:118px;align-content:start}
+.bpt.got .bpc{border-color:var(--sc);box-shadow:0 0 0 1px var(--sc) inset}
+.bpt.now .bpc{border-color:var(--sc);border-style:dashed}
+.bpt.lock .bpc{opacity:.6}
+.bpt.big{flex-basis:108px}.bpsm{font-size:11px;color:var(--sc);min-height:14px}
+.bpk{font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:99px;background:var(--sc);color:#fff}
+.bpc b{font-size:13px;line-height:1.15}
+.bpc .xth{width:44px;height:44px;border-radius:10px}
+.bpst{font-size:11px;font-weight:700}
+.bpt.got .bpst{color:var(--sc)}
+.bpsum{display:grid;gap:6px}
+.bpsum .bar{height:10px}
 .srow{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .srow.got{border-color:var(--accent)}
 .srow span{flex:1}
@@ -737,7 +759,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="impbar ind" id="impBar" hidden><i></i></div>
   <div class="card" id="nudge" hidden><span id="nudgeTxt" class="grow"></span><button id="nudgeBtn">Back up</button><button class="x" id="nudgeX" aria-label="Hide for 3 days" title="Hide for 3 days">✕</button></div>
   <button class="card evcard" id="evCard" type="button" hidden><i class="evic" id="evIc" aria-hidden="true"></i><span class="evtx"><b id="evName"></b><span id="evSub"></span><span class="bar"><i id="evFill"></i></span></span></button>
-  <button type="button" class="card seasoncard" id="seasonCard" hidden><i id="seasonIc" aria-hidden="true"></i><span class="sct"><b id="seasonName"></b><span id="seasonSub" class="fine"></span><span class="bar"><i id="seasonFill"></i></span></span></button>
+  <button type="button" class="card seasoncard" id="seasonCard" hidden><i id="seasonIc" aria-hidden="true"></i><span class="sct"><b id="seasonName"></b><span id="seasonSub" class="fine"></span><span class="pips" id="seasonPips"></span></span></button>
   <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
   <input type="search" class="libsearch" id="libSearch" placeholder="Search your books" aria-label="Search your books" autocomplete="off" hidden>
   <div id="continue"></div>
@@ -1126,7 +1148,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <button type="button" data-theme="falls"><span class="sw" style="background:#111a16 url(bg-falls.jpg) center/cover;color:#e9f1ec"><b style="color:#7fd1a0">Aa</b><i style="background:#7fd1a0"></i></span><span class="nm">Waterfall</span></button>
     <button type="button" data-theme="starfall"><span class="sw" style="background:#070b17 url(bg-starfall.jpg) center/cover;color:#e8eeff"><b style="color:#7db4ff">Aa</b><i style="background:#7db4ff"></i></span><span class="nm">Starfall</span></button>
     <button type="button" data-theme="rider"><span class="sw" style="background:#121821 url(bg-rider.jpg) center/cover;color:#edf2f8"><b style="color:#8cc0ee">Aa</b><i style="background:#8cc0ee"></i></span><span class="nm">Winter Rider</span></button>
-      <p class="tgroup">Season (earn by reaching Finale in a season)</p>
+      <p class="tgroup">Season (earn at season level 78)</p>
     <button type="button" data-theme="fsteps"><span class="sw" style="background:#eaf4e4;color:#17301d"><b style="color:#2f8a4c">Aa</b><i style="background:#2f8a4c"></i></span><span class="nm">First Steps</span></button>
     <button type="button" data-theme="rising"><span class="sw" style="background:#1d0f0d;color:#fbe8e2"><b style="color:#ff5a3c">Aa</b><i style="background:#ff5a3c"></i></span><span class="nm">Rising Action</span></button>
     <button type="button" data-theme="twist"><span class="sw" style="background:#170b1f;color:#f7e8ff"><b style="color:#e02fc0">Aa</b><i style="background:#e02fc0"></i></span><span class="nm">Plot Twist</span></button>
@@ -4092,27 +4114,26 @@ function seasonN(n) { const first = new Date(2026, 8 + (n - 1) * 3, 1), last = n
 function seasonAt(d) { const mo = (d.getFullYear() - 2026) * 12 + (d.getMonth() - 8); return seasonN(Math.max(1, Math.floor(mo / 3) + 1)); }
 const seasonNow = () => seasonAt(seasonOv || new Date());
 function seasonWords(se) { let t = 0; for (const k in stats.days) if (k >= se.a && k <= se.b) t += stats.days[k].w || 0; return t; }
-const S_FAM = ["Opening", "Setup", "Rising", "Conflict", "Climax", "Twist", "Finale", "Epilogue"];
-const SLEVELS = [[0, "Opening"], [9000, "Setup"], [30000, "Rising"], [65000, "Conflict"], [115000, "Climax"], [175000, "Twist"], [235000, "Finale"], [300000, "Epilogue"]];
+const S_MAX = 100, S_STEP = 3000, sWords = L => (L - 1) * S_STEP;
 function ribbon(i, col, size) {
-  const mark = `<text x="12" y="14" text-anchor="middle" font-size="9" font-weight="700" font-family="Georgia,serif" fill="#fff">${i + 1}</text>`;
+  const n = String(i), fs = n.length > 2 ? 7 : 9;
+  const mark = `<text x="12" y="14" text-anchor="middle" font-size="${fs}" font-weight="700" font-family="Georgia,serif" fill="#fff">${n}</text>`;
   return `<svg viewBox="0 0 24 28" width="${size}" height="${Math.round(size * 28 / 24)}" aria-hidden="true"><path d="M4 1.5h16v25l-8-5.5-8 5.5z" fill="${col}" stroke="rgba(0,0,0,.35)" stroke-width="1.2" stroke-linejoin="round"/>${mark}</svg>`;
 }
 function seasonRank(w) {
-  let i = 0; SLEVELS.forEach((r, k) => { if (w >= r[0]) i = k; });
-  const nx = SLEVELS[i + 1];
-  return { i, name: SLEVELS[i][1], next: nx ? nx[1] : "", need: nx ? nx[0] - w : 0, pct: nx ? (w - SLEVELS[i][0]) / (nx[0] - SLEVELS[i][0]) * 100 : 100 };
+  const i = Math.min(S_MAX, 1 + Math.floor(w / S_STEP)), top = i >= S_MAX;
+  return { i, name: "Level " + i, next: top ? "" : "Level " + (i + 1), need: top ? 0 : sWords(i + 1) - w, pct: top ? 100 : (w - sWords(i)) / S_STEP * 100 };
 }
-const srStore = () => store.get("pace:sr", {});
+const srStore = () => store.get("pace:sr2", {});
 function seasonBest(idx) { const o = srStore(); let b = 0; Object.keys(o).forEach(n => { if ((n - 1) % 4 === idx) b = Math.max(b, o[n]); }); return b; }
 const S_ITEMS = [ // [category, level, ids per season]
-  ["stamp", 2, ["s1", "s2", "s3", "s4"]], ["title", 4, ["t1", "t2", "t3", "t4"]], ["bd", 5, ["sprout", "pines", "grid", "rays"]], ["conf", 7, ["seeds", "embers", "pixels", "bubbles"]], ["theme", 6, ["fsteps", "rising", "twist", "final"]]
+  ["stamp", 10, ["s1", "s2", "s3", "s4"]], ["title", 38, ["t1", "t2", "t3", "t4"]], ["bd", 58, ["sprout", "pines", "grid", "rays"]], ["conf", 100, ["seeds", "embers", "pixels", "bubbles"]], ["theme", 78, ["fsteps", "rising", "twist", "final"]]
 ];
 const S_NAMES = { fsteps: "First Steps theme", rising: "Rising Action theme", twist: "Plot Twist theme", final: "Final Chapter theme", s1: "First Steps stamp", s2: "Rising Action stamp", s3: "Plot Twist stamp", s4: "Final Chapter stamp", t1: "First Stepper", t2: "Rising Star", t3: "Twist Master", t4: "Chapter Closer", sprout: "Sprouts", pines: "Pines", grid: "Neon grid", rays: "Sun rays", seeds: "Seeds", embers: "Embers", pixels: "Pixels", bubbles: "Bubbles" };
 function seasonSync(silent) {
   const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), o = srStore(), had = o[se.n] || 0;
   if (r.i > had) {
-    o[se.n] = r.i; store.set("pace:sr", o);
+    o[se.n] = r.i; store.set("pace:sr2", o);
     if (!silent && !isAdult()) S_ITEMS.forEach(([cat, lvl, ids]) => { if (had < lvl && r.i >= lvl) toastLater("Season reward: " + S_NAMES[ids[se.idx]]); });
   }
   updateSeasonCard(se, w, r);
@@ -4124,20 +4145,33 @@ function updateSeasonCard(se, w, r) {
   card.hidden = false; card.style.setProperty("--sc", SEASON_COL[se.idx]);
   $("#seasonIc").innerHTML = ribbon(r.i, SEASON_COL[se.idx], 30);
   $("#seasonName").textContent = `SEASON ${se.n} · ${se.name}`;
-  $("#seasonSub").textContent = `Season rank: ${r.name} · ${fmt(w)} words · ${left === 0 ? "last day" : left + " days left"}`;
-  $("#seasonFill").style.width = Math.max(2, r.pct) + "%";
+  $("#seasonSub").textContent = `Level ${r.i} of 100 · ${fmt(w)} words · ${left === 0 ? "last day" : left + " days left"}`;
+  const pp = $("#seasonPips"); pp.replaceChildren(); const pi = el("i", "cur"); pi.style.setProperty("--p", Math.max(3, Math.min(100, w / sWords(S_MAX) * 100)) + "%"); pp.append(pi);
 }
 function openSeason() {
-  const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), box = $("#seasonRewards"); box.replaceChildren();
-  $("#seasonTitle").style.cssText = "display:flex;align-items:center;gap:8px"; $("#seasonTitle").innerHTML = ribbon(r.i, SEASON_COL[se.idx], 22) + " Season " + se.n + ": " + se.name;
-  $("#seasonInfo").textContent = `Season rank: ${r.name}. You read ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
-  const peak = srStore()[se.n] || 0;
-  S_ITEMS.forEach(([cat, lvl, ids]) => {
-    const got = peak >= lvl, row = el("div", "srow" + (got ? " got" : ""));
-    row.append(el("span", "", `${S_NAMES[ids[se.idx]]} (${cat === "bd" ? "backdrop" : cat === "conf" ? "confetti" : cat})`), el("small", "fine", got ? "Earned" : "At " + SLEVELS[lvl][1]));
-    box.append(row);
-  });
+  const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), box = $("#seasonRewards"), col = SEASON_COL[se.idx]; box.replaceChildren();
+  $("#seasonTitle").style.cssText = "display:flex;align-items:center;gap:8px"; $("#seasonTitle").innerHTML = ribbon(r.i, col, 22) + " Season " + se.n + ": " + se.name;
+  $("#seasonInfo").textContent = `Season level ${r.i}. You read ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
+  { const nr = S_ITEMS.filter(x => x[1] > r.i).sort((p, q) => p[1] - q[1])[0]; if (nr) $("#seasonInfo").textContent += ` Next reward: ${S_NAMES[nr[2][se.idx]]} at level ${nr[1]}.`; }
+  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme" };
+  box.className = "bp"; box.style.setProperty("--sc", col);
+  let cur = null;
+  for (let k = 1; k <= S_MAX; k++) {
+    const its = S_ITEMS.filter(x => x[1] === k), got = peak >= k, now = k === r.i && !!r.next, big = its.length > 0;
+    const t = el("div", "bpt" + (got ? " got" : " lock") + (now ? " now" : "") + (big ? " big" : " small"));
+    const l = el("div", "bpl"); l.innerHTML = ribbon(k, got ? col : "#8a8a8a", big ? 24 : 18);
+    l.style.setProperty("--f", k < r.i ? "100%" : k === r.i ? (r.next ? "50%" : "100%") : "0%");
+    t.append(l);
+    if (big) {
+      const c = el("div", "bpc");
+      its.forEach(([cat, , ids]) => { const id = ids[se.idx], th = xThumb(cat, id); if (th) c.append(th); c.append(el("b", "", S_NAMES[id]), el("span", "fine", kn[cat] || cat)); });
+      c.append(el("span", "bpst", got ? "✓ Earned" : "Level " + k));
+      t.append(c);
+    } else t.append(el("span", "bpsm", got ? "✓" : ""));
+    box.append(t); if (now || (!r.next && k === S_MAX)) cur = t;
+  }
   $("#seasonDlg").showModal();
+  if (cur) requestAnimationFrame(() => { box.scrollLeft = Math.max(0, cur.offsetLeft - box.clientWidth / 2 + cur.clientWidth / 2); });
 }
 $("#seasonCard").onclick = openSeason;
 function seasonEndCheck() {
@@ -4150,7 +4184,7 @@ function seasonEndCheck() {
   if (!peak) return;
   const body = $("#seBody"); body.replaceChildren();
   $("#seTitle").textContent = `Season ${done.n}: ${done.name} is over`;
-  body.append(el("p", "", `You finished at ${SLEVELS[peak][1]}.`));
+  body.append(el("p", "", `You finished at Level ${peak}.`));
   const got = S_ITEMS.filter(x => peak >= x[1]).map(x => S_NAMES[x[2][done.idx]]);
   body.append(el("p", "fine", got.length ? "Earned and yours forever: " + got.join(", ") + "." : "Keep going next season!"));
   const nx = seasonN(cur); body.append(el("p", "", `Season ${nx.n} begins: ${nx.name}. Your season rank starts fresh. Your career rank stays.`));
@@ -4174,7 +4208,7 @@ const evName = id => (EVENTS.find(e => e.id === id) || {}).name || id;
 EXTRA_SPECIAL.stamp = {}; EXTRA_SPECIAL.conf = {}; EXTRA_SPECIAL.bd = {}; EXTRA_SPECIAL.title = Object.assign(EXTRA_SPECIAL.title || {}, {});
 EVENTS.forEach(e => { EXTRA_SPECIAL.stamp["e_" + e.id] = { desc: `Earn the ${e.name} badge`, test: () => evHas(e.id) }; });
 [["pumpkin", "patch"], ["boo", "spooky"], ["flakes", "snow"], ["petals", "bloom"], ["fireworks", "fresh"], ["suns", "summer"]].forEach(([id, ev]) => { EXTRA_SPECIAL.conf[id] = { desc: `Earn the ${evName(ev)} badge (event only)`, test: () => evHas(ev) }; });
-S_ITEMS.forEach(([cat, lvl, ids]) => ids.forEach((id, idx) => { EXTRA_SPECIAL[cat] = EXTRA_SPECIAL[cat] || {}; EXTRA_SPECIAL[cat][id] = { desc: `Reach ${SLEVELS[lvl][1]} in a "${SEASON_NAMES[idx]}" season`, test: () => seasonBest(idx) >= lvl }; }));
+S_ITEMS.forEach(([cat, lvl, ids]) => ids.forEach((id, idx) => { EXTRA_SPECIAL[cat] = EXTRA_SPECIAL[cat] || {}; EXTRA_SPECIAL[cat][id] = { desc: `Reach season level ${lvl} in a "${SEASON_NAMES[idx]}" season`, test: () => seasonBest(idx) >= lvl }; }));
 XCATS.find(c => c.k === "title").opts.push(...[0, 1, 2, 3].map(i => ["t" + (i + 1), S_NAMES["t" + (i + 1)]]));
 XCATS.find(c => c.k === "bd").opts.push(["sprout", "Sprouts"], ["pines", "Pines"], ["grid", "Neon grid"], ["rays", "Sun rays"]);
 XCATS.find(c => c.k === "conf").opts.push(["pumpkin", "Pumpkins"], ["boo", "Boos"], ["flakes", "Snowflakes"], ["petals", "Petals"], ["fireworks", "Fireworks"], ["suns", "Suns"], ["seeds", "Seeds"], ["embers", "Embers"], ["pixels", "Pixels"], ["bubbles", "Bubbles"]);
@@ -5107,10 +5141,11 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-06a", WHATS = [
+const WHATS_VER = "2026-10-06b", WHATS = [
+  ["Season battle pass", "Seasons now have 100 levels. Scroll the track to see every reward. Tap the Season card."],
   ["Short stories", "13 free short stories you can finish in one sitting. Open the Class Library from the home screen."],
   ["Name flair and profile frames", "Make your name shine and put a frame around your title. Open the Rewards tab, then Identity."],
-  ["Season themes", "Reach Finale in a season to earn that season's theme. Find them in Settings, Display."],
+  ["Season themes", "Reach season level 78 to earn that season's theme. Find them in Settings, Display."],
   ["Rewards tab", "Every unlock lives in the Rewards tab, with a live preview before you pick."],
   ["Photo themes", "Four photo themes unlock as you rank up."],
   ["Champion levels", "Champion now has 100 levels, from Champion 100 down to Champion 1."],
