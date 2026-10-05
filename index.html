@@ -239,6 +239,34 @@ body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
 :root[data-font=rounded]{--rf:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Varela Round",system-ui,sans-serif}
 :root[data-font=slab]{--rf:Rockwell,"Roboto Slab","Courier Prime","Rockwell Nova",Georgia,serif}
 body::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);z-index:40;pointer-events:none}
+.nflair{display:inline}
+:root[data-nflair] .nflair{-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root[data-nflair=gold] .nflair{background-image:linear-gradient(90deg,#b8860b,#ffd84d,#b8860b)}
+:root[data-nflair=rose] .nflair{background-image:linear-gradient(90deg,#ff5d8f,#ffa0c4)}
+:root[data-nflair=ocean] .nflair{background-image:linear-gradient(90deg,#2f6db5,#38d0e0)}
+:root[data-nflair=fire] .nflair{background-image:linear-gradient(90deg,#ff3d00,#ffb703)}
+:root[data-nflair=rainbow] .nflair{background-image:linear-gradient(90deg,#e63946,#f4a261,#e9c46a,#2a9d8f,#3b82f6,#9b5de5)}
+:root[data-nflair=neon] .nflair{-webkit-text-fill-color:currentColor;color:var(--ink);background:none;text-shadow:0 0 .15em var(--accent),0 0 .5em var(--accent)}
+:root[data-nflair=sparkle] .nflair{background-image:linear-gradient(100deg,#b8860b 20%,#fff3b0 45%,#ffd84d 55%,#b8860b 80%);background-size:220% 100%;animation:nshim 3.2s linear infinite}
+@keyframes nshim{from{background-position:120% 0}to{background-position:-120% 0}}
+@media (prefers-reduced-motion:reduce){:root[data-nflair=sparkle] .nflair{animation:none}}
+:root[data-pframe] :is(#titleLine,#pvTitle):not(:empty){width:fit-content;max-width:100%;padding:4px 12px;color:var(--ink);display:flex;align-items:center;gap:6px}
+:root[data-pframe=line] :is(#titleLine,#pvTitle):not(:empty){border:1.5px solid var(--accent);border-radius:999px}
+:root[data-pframe=double] :is(#titleLine,#pvTitle):not(:empty){border:4px double var(--accent);border-radius:10px}
+:root[data-pframe=dotted] :is(#titleLine,#pvTitle):not(:empty){border:2px dotted var(--accent);border-radius:12px}
+:root[data-pframe=gold] :is(#titleLine,#pvTitle):not(:empty){border:2px solid transparent;border-radius:12px;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,#b8860b,#ffe27a,#b8860b) border-box}
+:root[data-pframe=ribbon] :is(#titleLine,#pvTitle):not(:empty){border-left:5px solid var(--accent);border-radius:4px 10px 10px 4px;background:color-mix(in srgb,var(--accent) 14%,transparent)}
+:root[data-pframe=corners] :is(#titleLine,#pvTitle):not(:empty){border-radius:2px;background:linear-gradient(var(--accent),var(--accent)) top left/10px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) top left/2px 10px no-repeat,linear-gradient(var(--accent),var(--accent)) bottom right/10px 2px no-repeat,linear-gradient(var(--accent),var(--accent)) bottom right/2px 10px no-repeat}
+:root[data-pframe=neon] :is(#titleLine,#pvTitle):not(:empty){border:1.5px solid var(--accent);border-radius:999px;box-shadow:0 0 8px var(--accent),inset 0 0 6px color-mix(in srgb,var(--accent) 50%,transparent)}
+:root[data-pframe=banner] :is(#titleLine,#pvTitle):not(:empty){background:var(--accent);color:var(--btn-ink,#fff);border-radius:4px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%,9px 50%);padding:4px 18px}
+:root[data-theme="fsteps"]{--bg:#eaf4e4;--surface:#f7fbf3;--ink:#17301d;--muted:#567a5e;--line:#cfe3c6;--accent:#2f8a4c;--btn:#17301d;--btn-ink:#f7fbf3;color-scheme:light}
+:root[data-theme="fsteps"]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 12% 12%,rgba(47,138,76,.2) 0 110px,transparent 112px),radial-gradient(circle at 92% 64%,rgba(47,138,76,.14) 0 150px,transparent 152px),radial-gradient(circle at 30% 92%,rgba(120,190,110,.2) 0 90px,transparent 92px),radial-gradient(rgba(47,138,76,.14) 1.5px,transparent 2px) 0 0/22px 22px}
+:root[data-theme="rising"]{--bg:#1d0f0d;--surface:#2b1613;--ink:#fbe8e2;--muted:#c99a90;--line:#4a2a25;--accent:#ff5a3c;--btn:#fbe8e2;--btn-ink:#1d0f0d;color-scheme:dark}
+:root[data-theme="rising"]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(0deg,rgba(255,90,60,.28),transparent 45%),repeating-linear-gradient(65deg,rgba(255,90,60,.1) 0 16px,transparent 16px 46px)}
+:root[data-theme="twist"]{--bg:#170b1f;--surface:#231230;--ink:#f7e8ff;--muted:#c39ad6;--line:#43255a;--accent:#e02fc0;--btn:#f7e8ff;--btn-ink:#170b1f;color-scheme:dark}
+:root[data-theme="twist"]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:conic-gradient(from 200deg at 82% 18%,rgba(224,47,192,.34),transparent 30%,rgba(124,58,237,.3) 58%,transparent 82%),conic-gradient(from 20deg at 15% 85%,rgba(124,58,237,.22),transparent 40%,rgba(224,47,192,.2) 75%,transparent)}
+:root[data-theme="final"]{--bg:#14110a;--surface:#1f1a0e;--ink:#fdf3d4;--muted:#c9b27a;--line:#4a3c17;--accent:#e8a50c;--btn:#fdf3d4;--btn-ink:#14110a;color-scheme:dark}
+:root[data-theme="final"]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 88% 6%,rgba(232,165,12,.3),transparent 55%),repeating-linear-gradient(0deg,rgba(232,165,12,.08) 0 1px,transparent 1px 34px)}
 .nextcard{display:grid;gap:4px;border-left:4px solid var(--accent)}
 .nextcard b{font-family:Georgia,serif;font-size:17px}
 .xtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1098,6 +1126,11 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <button type="button" data-theme="falls"><span class="sw" style="background:#111a16 url(bg-falls.jpg) center/cover;color:#e9f1ec"><b style="color:#7fd1a0">Aa</b><i style="background:#7fd1a0"></i></span><span class="nm">Waterfall</span></button>
     <button type="button" data-theme="starfall"><span class="sw" style="background:#070b17 url(bg-starfall.jpg) center/cover;color:#e8eeff"><b style="color:#7db4ff">Aa</b><i style="background:#7db4ff"></i></span><span class="nm">Starfall</span></button>
     <button type="button" data-theme="rider"><span class="sw" style="background:#121821 url(bg-rider.jpg) center/cover;color:#edf2f8"><b style="color:#8cc0ee">Aa</b><i style="background:#8cc0ee"></i></span><span class="nm">Winter Rider</span></button>
+      <p class="tgroup">Season (earn by reaching Finale in a season)</p>
+    <button type="button" data-theme="fsteps"><span class="sw" style="background:#eaf4e4;color:#17301d"><b style="color:#2f8a4c">Aa</b><i style="background:#2f8a4c"></i></span><span class="nm">First Steps</span></button>
+    <button type="button" data-theme="rising"><span class="sw" style="background:#1d0f0d;color:#fbe8e2"><b style="color:#ff5a3c">Aa</b><i style="background:#ff5a3c"></i></span><span class="nm">Rising Action</span></button>
+    <button type="button" data-theme="twist"><span class="sw" style="background:#170b1f;color:#f7e8ff"><b style="color:#e02fc0">Aa</b><i style="background:#e02fc0"></i></span><span class="nm">Plot Twist</span></button>
+    <button type="button" data-theme="final"><span class="sw" style="background:#14110a;color:#fdf3d4"><b style="color:#e8a50c">Aa</b><i style="background:#e8a50c"></i></span><span class="nm">Final Chapter</span></button>
   </div>
   <p class="gt">Accent color</p>
   <div class="seg" id="accentSeg">
@@ -2881,11 +2914,11 @@ let toastHide = null;
 /* ---------- settings + themes ---------- */
 const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind: 5, ramp: true, chunk: 1, hold: false, bionic: false, accent: "default", font: "serif", ls: 0, ws: 0, pivot: true, goal: 1000, coach: true, name: "", cvd: false, motion: false, contrast: false, big: false, schoolDays: false, grab: true, dim: true, pauses: [], focusStart: false }, store.get("pace:settings", {}));
 settings.goal = Math.max(1000, +settings.goal || 1000);
-if (!["auto", "mist", "falls", "starfall", "rider", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal", "frontier", "overgrown", "noir", "synthwave", "autumn", "winter", "spring", "summer", "season", "frontier", "overgrown", "noir", "synthwave", "matcha", "bubblegum", "pumpkin", "spooky", "harvest", "snowfall", "fireworks", "valentine", "blossom", "earthday", "beach", "stem", "aurora", "neon", "goldleaf"].includes(settings.theme)) settings.theme = "auto";
+if (!["auto", "fsteps", "rising", "twist", "final", "mist", "falls", "starfall", "rider", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal", "frontier", "overgrown", "noir", "synthwave", "autumn", "winter", "spring", "summer", "season", "frontier", "overgrown", "noir", "synthwave", "matcha", "bubblegum", "pumpkin", "spooky", "harvest", "snowfall", "fireworks", "valentine", "blossom", "earthday", "beach", "stem", "aurora", "neon", "goldleaf"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => { if (pv && pv.key) { const c = settings[pv.key]; settings[pv.key] = pv.old; store.set("pace:settings", settings); settings[pv.key] = c; } else store.set("pace:settings", settings); };
 const isAdult = () => settings.mode === "adult";
 const isReader = () => settings.mode === "reader";
-const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000", autumn: "#f6e3cf", winter: "#e3eef7", spring: "#eaf5df", summer: "#dcf4f1", frontier: "#241812", overgrown: "#1c231c", mist: "#1d1511", falls: "#111a16", starfall: "#070b17", rider: "#121821", noir: "#0d0d0d", synthwave: "#1a0b2e", matcha: "#e4ead2", bubblegum: "#ffd6f0", pumpkin: "#ffe3c2", spooky: "#120a1e", harvest: "#2a1a10", snowfall: "#0e2036", fireworks: "#0b0f24", valentine: "#ffd9e2", blossom: "#ffece6", earthday: "#d8ecd0", beach: "#c9edf5", stem: "#1b2a4a", aurora: "#06161c", neon: "#0b0614", goldleaf: "#1a1405" };
+const THEME_BG = { light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000", autumn: "#f6e3cf", winter: "#e3eef7", spring: "#eaf5df", summer: "#dcf4f1", frontier: "#241812", overgrown: "#1c231c", mist: "#1d1511", fsteps: "#eaf4e4", rising: "#1d0f0d", twist: "#170b1f", final: "#14110a", falls: "#111a16", starfall: "#070b17", rider: "#121821", noir: "#0d0d0d", synthwave: "#1a0b2e", matcha: "#e4ead2", bubblegum: "#ffd6f0", pumpkin: "#ffe3c2", spooky: "#120a1e", harvest: "#2a1a10", snowfall: "#0e2036", fireworks: "#0b0f24", valentine: "#ffd9e2", blossom: "#ffece6", earthday: "#d8ecd0", beach: "#c9edf5", stem: "#1b2a4a", aurora: "#06161c", neon: "#0b0614", goldleaf: "#1a1405" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
 function applyTheme() {
   const root = document.documentElement; setTimeout(() => { if (window.__xr) applyBackdrop(); }, 30);
@@ -2896,7 +2929,7 @@ function applyTheme() {
   if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
   const a = ACCENTS[settings.accent];
-  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || ["midnight", "forest", "slate", "coffee", "ocean", "grape", "terminal", "spooky", "harvest", "snowfall", "fireworks", "stem", "aurora", "neon", "goldleaf", "mist", "falls", "starfall", "rider"].includes(key)) ? 1 : 0]); else root.style.removeProperty("--accent");
+  if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || ["midnight", "forest", "slate", "coffee", "ocean", "grape", "terminal", "spooky", "harvest", "snowfall", "fireworks", "stem", "aurora", "neon", "goldleaf", "rising", "twist", "final", "mist", "falls", "starfall", "rider"].includes(key)) ? 1 : 0]); else root.style.removeProperty("--accent");
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
@@ -3941,14 +3974,14 @@ const GREET = {
 };
 function pvUpdate() {
   if (!$("#pvCard")) return;
-  const g = $("#greet"); if (g) $("#pvGreet").textContent = g.textContent;
+  const g = $("#greet"); if (g) $("#pvGreet").innerHTML = g.innerHTML;
   const tl = $("#titleLine"); if (tl) $("#pvTitle").innerHTML = tl.innerHTML;
   const b = $("#pvBm path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def);
   try { $("#pvCover").replaceChildren(coverEl({ id: "pv", title: "Atom Tales", done: true }, true)); } catch (e) {}
 }
 function applyExtras() {
   const root = document.documentElement;
-  ["marks", "wfx", "bar"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
+  ["marks", "wfx", "bar", "nflair", "pframe"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
   const at = xGet("atomc"); root.style.setProperty("--mt", at ? TINTS[at] : "grayscale(0)"); document.body.classList.toggle("mrb", at === "rainbow");
   ["stat", "cov"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
   { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
@@ -3973,7 +4006,7 @@ const XGROUPS = [
   { id: "look", name: "Look", sub: "Backdrops, colors, covers", keys: ["bd", "atomc", "cov", "stat", "bar"] },
   { id: "read", name: "Reading", sub: "Effects, marks, bookmarks, sounds", keys: ["wfx", "marks", "bm", "amb"] },
   { id: "fun", name: "Fun", sub: "Confetti, sounds, greetings", keys: ["conf", "chime", "greet"] },
-  { id: "me", name: "Identity", sub: "Titles, stamps, bookplates", keys: ["title", "stamp", "plate"] }
+  { id: "me", name: "Identity", sub: "Titles, name flair, frames", keys: ["title", "nflair", "pframe", "stamp", "plate"] }
 ];
 let xgCur = null, xgKeep = false;
 const PH_IMG = { p_autumn: "bg-autumn.jpg", p_falls: "bg-falls.jpg", p_starfall: "bg-starfall.jpg", p_rider: "bg-rider.jpg" };
@@ -4073,9 +4106,9 @@ function seasonRank(w) {
 const srStore = () => store.get("pace:sr", {});
 function seasonBest(idx) { const o = srStore(); let b = 0; Object.keys(o).forEach(n => { if ((n - 1) % 4 === idx) b = Math.max(b, o[n]); }); return b; }
 const S_ITEMS = [ // [category, level, ids per season]
-  ["stamp", 2, ["s1", "s2", "s3", "s4"]], ["title", 4, ["t1", "t2", "t3", "t4"]], ["bd", 5, ["sprout", "pines", "grid", "rays"]], ["conf", 7, ["seeds", "embers", "pixels", "bubbles"]]
+  ["stamp", 2, ["s1", "s2", "s3", "s4"]], ["title", 4, ["t1", "t2", "t3", "t4"]], ["bd", 5, ["sprout", "pines", "grid", "rays"]], ["conf", 7, ["seeds", "embers", "pixels", "bubbles"]], ["theme", 6, ["fsteps", "rising", "twist", "final"]]
 ];
-const S_NAMES = { s1: "First Steps stamp", s2: "Rising Action stamp", s3: "Plot Twist stamp", s4: "Final Chapter stamp", t1: "First Stepper", t2: "Rising Star", t3: "Twist Master", t4: "Chapter Closer", sprout: "Sprouts", pines: "Pines", grid: "Neon grid", rays: "Sun rays", seeds: "Seeds", embers: "Embers", pixels: "Pixels", bubbles: "Bubbles" };
+const S_NAMES = { fsteps: "First Steps theme", rising: "Rising Action theme", twist: "Plot Twist theme", final: "Final Chapter theme", s1: "First Steps stamp", s2: "Rising Action stamp", s3: "Plot Twist stamp", s4: "Final Chapter stamp", t1: "First Stepper", t2: "Rising Star", t3: "Twist Master", t4: "Chapter Closer", sprout: "Sprouts", pines: "Pines", grid: "Neon grid", rays: "Sun rays", seeds: "Seeds", embers: "Embers", pixels: "Pixels", bubbles: "Bubbles" };
 function seasonSync(silent) {
   const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), o = srStore(), had = o[se.n] || 0;
   if (r.i > had) {
@@ -4133,17 +4166,21 @@ Object.assign(UNLOCK, {
   stat: { blueprint: 8, chalk: 14, paper: 19, terminal: 24, gold: 29 },
   amb: {},
   plate: { seal: 3, ribbon: 11, wreath: 17, star: 23, crown: 30 },
-  stamp: { flame: 8, book: 12, star: 22 }
+  stamp: { flame: 8, book: 12, star: 22 },
+  nflair: { gold: 6, rose: 10, ocean: 14, fire: 18, rainbow: 22, neon: 26, sparkle: 30 },
+  pframe: { line: 4, double: 9, dotted: 13, gold: 17, ribbon: 21, corners: 25, neon: 29, banner: 33 }
 });
 const evName = id => (EVENTS.find(e => e.id === id) || {}).name || id;
 EXTRA_SPECIAL.stamp = {}; EXTRA_SPECIAL.conf = {}; EXTRA_SPECIAL.bd = {}; EXTRA_SPECIAL.title = Object.assign(EXTRA_SPECIAL.title || {}, {});
 EVENTS.forEach(e => { EXTRA_SPECIAL.stamp["e_" + e.id] = { desc: `Earn the ${e.name} badge`, test: () => evHas(e.id) }; });
 [["pumpkin", "patch"], ["boo", "spooky"], ["flakes", "snow"], ["petals", "bloom"], ["fireworks", "fresh"], ["suns", "summer"]].forEach(([id, ev]) => { EXTRA_SPECIAL.conf[id] = { desc: `Earn the ${evName(ev)} badge (event only)`, test: () => evHas(ev) }; });
-S_ITEMS.forEach(([cat, lvl, ids]) => ids.forEach((id, idx) => { EXTRA_SPECIAL[cat][id] = { desc: `Reach ${SLEVELS[lvl][1]} in a "${SEASON_NAMES[idx]}" season`, test: () => seasonBest(idx) >= lvl }; }));
+S_ITEMS.forEach(([cat, lvl, ids]) => ids.forEach((id, idx) => { EXTRA_SPECIAL[cat] = EXTRA_SPECIAL[cat] || {}; EXTRA_SPECIAL[cat][id] = { desc: `Reach ${SLEVELS[lvl][1]} in a "${SEASON_NAMES[idx]}" season`, test: () => seasonBest(idx) >= lvl }; }));
 XCATS.find(c => c.k === "title").opts.push(...[0, 1, 2, 3].map(i => ["t" + (i + 1), S_NAMES["t" + (i + 1)]]));
 XCATS.find(c => c.k === "bd").opts.push(["sprout", "Sprouts"], ["pines", "Pines"], ["grid", "Neon grid"], ["rays", "Sun rays"]);
 XCATS.find(c => c.k === "conf").opts.push(["pumpkin", "Pumpkins"], ["boo", "Boos"], ["flakes", "Snowflakes"], ["petals", "Petals"], ["fireworks", "Fireworks"], ["suns", "Suns"], ["seeds", "Seeds"], ["embers", "Embers"], ["pixels", "Pixels"], ["bubbles", "Bubbles"]);
 XCATS.push(
+  { k: "nflair", label: "Name flair", opts: [["gold", "Gold"], ["rose", "Rose"], ["ocean", "Ocean"], ["fire", "Fire"], ["rainbow", "Rainbow"], ["neon", "Neon"], ["sparkle", "Sparkle"]] },
+  { k: "pframe", label: "Profile frame", opts: [["line", "Line"], ["double", "Double"], ["dotted", "Dotted"], ["gold", "Gold"], ["ribbon", "Ribbon"], ["corners", "Corners"], ["neon", "Neon"], ["banner", "Banner"]] },
   { k: "stamp", label: "Stamp", opts: [["flame", "Flame"], ["book", "Book"], ["star", "Star"], ...EVENTS.map(e => ["e_" + e.id, e.name]), ...[1, 2, 3, 4].map(i => ["s" + i, S_NAMES["s" + i]])] },
   { k: "plate", label: "Bookplate", opts: [["seal", "Seal"], ["ribbon", "Ribbon"], ["wreath", "Wreath"], ["star", "Star"], ["crown", "Crown"]] },
   { k: "cov", label: "Book covers", opts: [["round", "Round"], ["tilt", "Tilted"], ["spine", "Book spine"], ["glow", "Glow"], ["polaroid", "Polaroid"]] },
@@ -5038,7 +5075,9 @@ function clCover(b, k) {
 async function classLoad() {
   if (clData) return clData;
   const r = await fetch("classlib.json"); if (!r.ok) throw new Error("fetch");
-  return (clData = await r.json());
+  const d = await r.json();
+  try { const s2 = await fetch("storylib.json"); if (s2.ok) { const j = await s2.json(); d.books = j.books.concat(d.books); } } catch (e) {}
+  return (clData = d);
 }
 async function classAdd(b, k) {
   const out = [], chs = [];
@@ -5051,9 +5090,12 @@ async function openClass() {
   const dlg = $("#classDlg"), box = $("#classList"); box.replaceChildren(); box.append(el("p", "fine", "Loading…")); if (!dlg.open) dlg.showModal();
   let d; try { d = await classLoad(); } catch (e) { box.replaceChildren(el("p", "fine", "Couldn't load the Class Library. Connect to the internet and try again.")); return; }
   box.replaceChildren();
+  let lastShelf = null;
   d.books.forEach((b, k) => {
+    const shelf = b.shelf === "stories" ? "stories" : "books";
+    if (shelf !== lastShelf) { lastShelf = shelf; box.append(el("p", "xlab", shelf === "stories" ? "Short stories · about 5 to 15 minutes" : "Classic books")); }
     const row = el("div", "classrow"), cv = el("div", "cover"), img = new Image(); img.alt = ""; img.src = clCover(b, k); cv.append(img);
-    const ci = el("div", "ci"); ci.append(el("b", "", b.title), el("small", "", b.author), el("small", "", `${fmt(b.words)} words · about ${fmtMin(Math.max(1, Math.round(b.words / wpm)))} at ${wpm} wpm`), el("small", "", b.blurb));
+    const ci = el("div", "ci"); ci.append(el("b", "", b.title), el("small", "", b.author), el("small", "", `${fmt(b.words)} words · about ${fmtMin(Math.max(1, Math.round(b.words / wpm)))} at ${wpm} wpm` + (b.grade ? ` · Grade ${b.grade} level` : "")), el("small", "", b.blurb));
     const have = store.get("pace:cl", {})[b.id], btn = el("button", have && lib.find(x => x.id === have) ? "" : "primary", have && lib.find(x => x.id === have) ? "Open" : "Add"); btn.type = "button";
     btn.onclick = async () => {
       const cur2 = store.get("pace:cl", {})[b.id]; let id = cur2 && lib.find(x => x.id === cur2) ? cur2 : null;
@@ -5065,15 +5107,14 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-05c", WHATS = [
-  ["Rewards tab", "A new Rewards tab holds every unlock. Tap any option to see a live preview before you pick it."],
-  ["Photo themes", "Four new photo themes unlock as you rank up: Autumn Mist, Waterfall, Starfall and Winter Rider. Pick one in Settings, Display."],
+const WHATS_VER = "2026-10-06a", WHATS = [
+  ["Short stories", "13 free short stories you can finish in one sitting. Open the Class Library from the home screen."],
+  ["Name flair and profile frames", "Make your name shine and put a frame around your title. Open the Rewards tab, then Identity."],
+  ["Season themes", "Reach Finale in a season to earn that season's theme. Find them in Settings, Display."],
+  ["Rewards tab", "Every unlock lives in the Rewards tab, with a live preview before you pick."],
+  ["Photo themes", "Four photo themes unlock as you rank up."],
   ["Champion levels", "Champion now has 100 levels, from Champion 100 down to Champion 1."],
-  ["Seasons", "A new season starts every three months. Your season rank resets. Your career rank never does. Earn season rewards."],
-  ["Try before you unlock", "Tap a locked reward to try it for 10 seconds."],
-  ["Rank-up celebration", "A big moment when you reach a new rank."],
-  ["Bookplates, stamps and more", "Bookplates, stamps, stats looks, covers and bookmarks are all in Rewards."],
-  ["Class Library", "Six free classic books are built in. Open it from the menu on the home screen."]
+  ["Seasons", "A new season starts every three months. Your season rank resets. Your career rank never does."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
@@ -5244,7 +5285,7 @@ function updateGreet() {
   const n = String(settings.name || "").trim().split(/\s+/)[0];
   const gs = window.__xr && xGet("greet"), gx = gs && GREET[gs], gi = h < 5 ? 0 : h < 12 ? 1 : h < 17 ? 2 : 3;
   const gg = gx ? gx[0][gi] : g;
-  $("#greet").textContent = n ? `${gg}, ${gx ? gx[1] : ""}${n}` : gg; if ($("#pvGreet")) $("#pvGreet").textContent = $("#greet").textContent;
+  { const gEl = $("#greet"); gEl.replaceChildren(); if (n) { gEl.append(document.createTextNode(`${gg}, ${gx ? gx[1] : ""}`)); const nm = el("span", "nflair"); nm.textContent = n; gEl.append(nm); } else gEl.textContent = gg; if ($("#pvGreet")) $("#pvGreet").innerHTML = gEl.innerHTML; }
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderLibrary(); };
 async function unlockReader(pw) {

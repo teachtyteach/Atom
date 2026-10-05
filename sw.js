@@ -1,4 +1,4 @@
-const CACHE = "atom-v54", STATIC = "atom-static-1";
+const CACHE = "atom-v55", STATIC = "atom-static-1";
 const PAGES = ["./", "index.html", "manifest.json"];
 const ASSETS = ["icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2", "pdf.min.js", "pdf.worker.min.js", "dictionary.json", "mascot.png", "bg-autumn.jpg", "bg-falls.jpg", "bg-starfall.jpg", "bg-rider.jpg",
   "ico-cream.png", "ico-coral.png", "ico-robot.png", "ico-gold.png", "ico-diamond.png", "ico-a-blue.png", "ico-a-green.png", "ico-a-orange.png", "ico-a-purple.png", "ico-a-pink.png", "ico-a-teal.png", "ico-fern.png", "ico-hat.png", "ico-moth.png", "ico-stag.png", "ico-flame.png", "ico-owl.png", "ico-ghost.png"];
