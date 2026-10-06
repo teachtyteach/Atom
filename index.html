@@ -340,7 +340,7 @@ body.xg #nextCard,body.xg #xTiles,body.xg #rewardsCard,body.xg #evBadgesCard{dis
 .bpt.got .bpc{border-color:var(--sc);box-shadow:0 0 0 1px var(--sc) inset}
 .bpt.now .bpc{border-color:var(--sc);border-style:dashed}
 .bpt.lock .bpc{opacity:.6}
-.bpt.big{flex-basis:108px}.bpsm{font-size:11px;color:var(--sc);min-height:14px}
+.bpt.big{flex-basis:108px}.bpt.big2{flex-basis:128px}.bpsm{font-size:11px;color:var(--sc);min-height:14px}
 .bpk{font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:99px;background:var(--sc);color:#fff}
 .bpc b{font-size:13px;line-height:1.15}
 .bpc .xth{width:44px;height:44px;border-radius:10px}
@@ -4029,6 +4029,7 @@ function chime(kind) {
     kind = kind || xGet("chime"); if (!kind || !actx) return; audioInit(); const t = actx.currentTime + .02;
     if (kind === "bell") { tone(880, t, 1.1, "sine", .18); tone(1320, t, .8, "sine", .1); tone(1760, t, .5, "sine", .05); }
     else if (kind === "blip") [523, 659, 784, 1047].forEach((f, i) => tone(f, t + i * .07, .12, "square", .06));
+    else if (SPCH[kind]) SPCH[kind](t);
     else if (kind === "harp") [392, 494, 587, 784, 988].forEach((f, i) => tone(f, t + i * .09, .7, "triangle", .14));
   } catch (e) {}
 }
@@ -4050,6 +4051,8 @@ function xThumb(kind, id) {
     if (kind === "bd") { if (PH_IMG[id]) t.style.backgroundImage = `url("${PH_IMG[id]}")`; else { t.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, "#888"))}")`; t.style.backgroundSize = "contain"; } }
     else if (kind === "atomc") { const im = document.createElement("img"); im.src = "mascot.png"; im.alt = ""; im.style.filter = TINTS[id] || ""; t.append(im); }
     else if (kind === "plate") t.innerHTML = plateSvg(id, 34);
+    else if (kind === "bm" && BM_PATHS[id]) t.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30"><path d="${BM_PATHS[id]}" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+    else if (kind === "nflair" && SP_GRAD[id]) { t.textContent = "Aa"; t.style.cssText = `font:700 18px Georgia,serif;display:grid;place-items:center;background-image:${SP_GRAD[id]};-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent`; }
     else return null;
   } catch (e) { return null; }
   return t;
@@ -4161,12 +4164,12 @@ function openSeason() {
   $("#seasonTitle").style.cssText = "display:flex;align-items:center;gap:8px"; $("#seasonTitle").innerHTML = ribbon(r.i, col, 22) + " Season " + se.n + ": " + se.name;
   $("#seasonInfo").textContent = `Season level ${r.i}. You read ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
   { const nr = S_ITEMS.filter(x => x[1] > r.i).sort((p, q) => p[1] - q[1])[0]; if (nr) $("#seasonInfo").textContent += ` Next reward: ${S_NAMES[nr[2][se.idx]]} at level ${nr[1]}.`; }
-  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme" };
+  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme", bm: "Bookmark", nflair: "Name flair", pframe: "Frame", stat: "Stats look", atomc: "Atom color", greet: "Greeting", cov: "Covers", chime: "Sound", plate: "Bookplate" };
   box.className = "bp"; box.style.setProperty("--sc", col);
   let cur = null;
   for (let k = 1; k <= S_MAX; k++) {
     const its = S_ITEMS.filter(x => x[1] === k), got = peak >= k, now = k === r.i && !!r.next, big = its.length > 0;
-    const t = el("div", "bpt" + (got ? " got" : " lock") + (now ? " now" : "") + (big ? " big" : " small"));
+    const t = el("div", "bpt" + (got ? " got" : " lock") + (now ? " now" : "") + (big ? " big" : " small") + (its.length > 1 ? " big2" : ""));
     const l = el("div", "bpl"); l.innerHTML = ribbon(k, got ? col : "#8a8a8a", big ? 24 : 18);
     l.style.setProperty("--f", k < r.i ? "100%" : k === r.i ? (r.next ? "50%" : "100%") : "0%");
     t.append(l);
@@ -4232,6 +4235,7 @@ XCATS.push(
 );
 
 function plateSvg(st, sz) {
+  { const m = /^slA(\d)$/.exec(st || ""); if (m) { const i = +m[1]; return `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="${SEASON_COL[i]}" stroke="rgba(0,0,0,.3)" stroke-width="1"/><circle cx="12" cy="12" r="8" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1"/>${SP_GLYPH[i]}</svg>`; } }
   const g = {
     def: `<circle cx="12" cy="12" r="10" fill="#2f9e5b"/><path d="M7 12.5l3.2 3.2L17 8.8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
     seal: `<path d="M12 1.5l2.2 2 3-.5 1 2.8 2.8 1-.5 3 2 2.2-2 2.2.5 3-2.8 1-1 2.8-3-.5-2.2 2-2.2-2-3 .5-1-2.8-2.8-1 .5-3-2-2.2 2-2.2-.5-3 2.8-1 1-2.8 3 .5z" fill="#d6a017"/><path d="M8 12.5l3 3 5-6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -4252,6 +4256,47 @@ function stampHtml(id) {
   return "";
 }
 const BM_PATHS = { def: "M7 4h10v16l-5-3.6L7 20z", star: "M12 3l2.6 5.6 6.1.7-4.5 4.1 1.2 6L12 16.4 6.6 19.4l1.2-6L3.3 9.3l6.1-.7z", flag: "M6 3v18M6 4.5h12l-3 4 3 4H6", ribbon: "M7 3h10v18l-5-4-5 4zM7 8h10", leaf: "M5 20C5 10 11 4 20 4c0 9-5 15-12 15zM5 20l9-9", heart: "M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.5 4.2 4.2 0 0 1 19.5 10C19.5 15.4 12 20 12 20z" };
+/* season pass: 15 more rewards, each in 4 season versions */
+const SP_N = ["First Steps", "Rising Action", "Plot Twist", "Final Chapter"], SP_C = SEASON_COL, SP_L = ["#8fd18a", "#ff9a7a", "#c58cff", "#ffd978"];
+const SP_STAT = [["#10261a", "#17331f", "#e8f7e6", "#a5cfa6", "#2f6a45", "#5ccf7e"], ["#2a0f0d", "#3a1613", "#ffe9e5", "#e8aaa0", "#7a2a22", "#ff6b57"], ["#240d2b", "#331240", "#fbe6ff", "#d9a6e8", "#6e2a80", "#ff5ce0"], ["#231b05", "#322608", "#fff4cf", "#d8bd6a", "#7a5f12", "#ffcc33"]];
+const SP_GLYPH = ['<path d="M7 12.5l3.2 3.2L17 8.8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', '<path d="M12 17V7M7.5 11.5L12 7l4.5 4.5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', '<path d="M12 6.5l5 5.5-5 5.5-5-5.5z" fill="#fff"/>', '<path d="M12 6l1.8 4 4.3.4-3.2 2.9 1 4.2-3.9-2.3-3.9 2.3 1-4.2L5.9 10.4 10.2 10z" fill="#fff"/>'];
+const SP_BM = { A: ["M12 21V11M12 11C12 7 9 5 5 5c0 4 3 6 7 6zM12 13c0-3 2-5 6-5 0 3-2 5-6 5z", "M12 20V5M6 11l6-6 6 6", "M12 3l8 9-8 9-8-9z", "M15 4a8 8 0 1 0 0 16 6.5 6.5 0 1 1 0-16z"], B: ["M12 8a4 4 0 1 0 .01 0zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M5 19l2-2", "M13 2L5 14h6l-1 8 8-12h-6z", "M4 12c0-4 4-4 8 0s8 4 8 0-4-4-8 0-8 4-8 0z", "M8 15a4 4 0 1 1 3.9-5H21v3h-2v2h-3v-2h-4.1A4 4 0 0 1 8 15z"] };
+const SP_CHIME = [(t) => [523, 659, 784].forEach((f, i) => tone(f, t + i * .12, .6, "sine", .16)), (t) => [392, 494, 587, 740, 988].forEach((f, i) => tone(f, t + i * .07, .5, "triangle", .14)), (t) => [659, 523, 740, 494, 880].forEach((f, i) => tone(f, t + i * .09, .25, "square", .05)), (t) => { [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, t + i * .08, 1.1, "sine", .12)); }];
+const SPPAL = {}, SPSHAPE = {}, SP_GRAD = {}, SPCH = {};
+(function () {
+  const css = [];
+  const add = (cat, lvl, pre, label) => {
+    const ids = [0, 1, 2, 3].map(i => pre + i); S_ITEMS.push([cat, lvl, ids]);
+    ids.forEach((id, i) => {
+      S_NAMES[id] = SP_N[i] + " " + label;
+      const c = XCATS.find(x => x.k === cat); if (c) c.opts.push([id, S_NAMES[id]]);
+      EXTRA_SPECIAL[cat] = EXTRA_SPECIAL[cat] || {};
+      EXTRA_SPECIAL[cat][id] = { desc: `Reach season level ${lvl} in a "${SP_N[i]}" season`, test: () => seasonBest(i) >= lvl };
+    });
+    return ids;
+  };
+  add("bm", 5, "sbA", "bookmark").forEach((id, i) => BM_PATHS[id] = SP_BM.A[i]);
+  add("bm", 15, "sbB", "bookmark II").forEach((id, i) => BM_PATHS[id] = SP_BM.B[i]);
+  add("nflair", 20, "sfA", "name flair").forEach((id, i) => { SP_GRAD[id] = `linear-gradient(90deg,${SP_C[i]},${SP_L[i]})`; css.push(`:root[data-nflair=${id}] .nflair{background-image:${SP_GRAD[id]}}`); });
+  const sh = ["leaves", "stars", "petals", "suns"];
+  add("conf", 25, "scA", "confetti").forEach((id, i) => { SPPAL[id] = [SP_C[i], SP_L[i], "#ffffff", SP_C[i] + "cc"]; SPSHAPE[id] = sh[i]; });
+  add("pframe", 30, "spA", "frame").forEach((id, i) => css.push(`:root[data-pframe=${id}] :is(#titleLine,#pvTitle):not(:empty){border:3px double ${SP_C[i]};border-radius:10px;background:color-mix(in srgb,${SP_C[i]} 12%,transparent)}`));
+  add("stat", 35, "ssA", "stats look").forEach((id, i) => { const p = SP_STAT[i], v = `--bg:${p[0]};--surface:${p[1]};--ink:${p[2]};--muted:${p[3]};--line:${p[4]};--accent:${p[5]}`; css.push(`:root[data-stat=${id}] .pvstat,:root[data-stat=${id}] body[data-screen=stats]{${v}}`); });
+  const tint = ["sepia(1) saturate(2.6) hue-rotate(55deg) brightness(1.05)", "sepia(1) saturate(3) hue-rotate(-38deg) brightness(1.05)", "sepia(1) saturate(2.6) hue-rotate(255deg) brightness(1.05)", TINTS.gold];
+  add("atomc", 40, "saA", "Atom color").forEach((id, i) => TINTS[id] = tint[i]);
+  add("atomc", 60, "saB", "Atom glow").forEach((id, i) => TINTS[id] = tint[i] + ` drop-shadow(0 0 7px ${SP_C[i]})`);
+  add("greet", 45, "sgA", "greeting").forEach((id, i) => GREET[id] = [[["Still up", "Late chapter", "Twisty night", "Last page, late"][i], ["Fresh start", "Rise and read", "Twist of fate", "Opening the chapter"][i], ["Keep growing", "Rising strong", "Plot twist", "Chapter time"][i], ["First steps tonight", "Evening climb", "Twisty evening", "Closing chapter"][i]], ""]);
+  add("cov", 50, "scvA", "book covers").forEach((id, i) => css.push(`:root[data-cov=${id}] .cover{border-radius:8px;box-shadow:0 0 0 3px ${SP_C[i]},0 5px 12px -2px rgba(0,0,0,.4)}`));
+  add("chime", 55, "sdA", "sound").forEach((id, i) => SPCH[id] = SP_CHIME[i]);
+  add("plate", 65, "slA", "bookplate");
+  add("nflair", 70, "sfB", "name flair II").forEach((id, i) => css.push(`:root[data-nflair=${id}] .nflair{background-image:linear-gradient(100deg,${SP_C[i]} 20%,#fff 45%,${SP_L[i]} 55%,${SP_C[i]} 80%);background-size:220% 100%;animation:nshim 3.2s linear infinite}`));
+  add("pframe", 85, "spB", "banner").forEach((id, i) => css.push(`:root[data-pframe=${id}] :is(#titleLine,#pvTitle):not(:empty){background:${SP_C[i]};color:#fff;border-radius:4px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 50%,100% 100%,0 100%,9px 50%);padding:4px 18px}`));
+  add("pframe", 90, "spC", "glow frame").forEach((id, i) => css.push(`:root[data-pframe=${id}] :is(#titleLine,#pvTitle):not(:empty){border:2px solid transparent;border-radius:12px;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,${SP_C[i]},${SP_L[i]},${SP_C[i]}) border-box;background-size:auto,300% 100%;animation:spb 3s linear infinite}`));
+  add("title", 100, "tc", "Complete").forEach((id, i) => S_NAMES[id] = SP_N[i] + " Complete");
+  XCATS.find(c => c.k === "title").opts.forEach(o => { if (S_NAMES[o[0]]) o[1] = S_NAMES[o[0]]; });
+  css.push("@keyframes spb{to{background-position:0 0,-300% 0}}", "@media (prefers-reduced-motion:reduce){:root[data-pframe^=spC] :is(#titleLine,#pvTitle){animation:none!important}:root[data-nflair^=sfB] .nflair{animation:none!important}}");
+  const st = document.createElement("style"); st.textContent = css.join("\n"); document.head.append(st);
+})();
 /* try before you unlock */
 var pv = null, pvTimer = 0;
 const PV_KEYS = { theme: "theme", accent: "accent", font: "font", pivot: "pivotColor" };
@@ -4690,6 +4735,7 @@ function badgeIcon(id, weekly) {
 }
 /* confetti */
 function drawPiece(c, q, st) {
+  if (SPSHAPE[st]) st = SPSHAPE[st];
   const z = q.w * .9;
   if (st === "stars") { c.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? z * .45 : z, a = -Math.PI / 2 + i * Math.PI / 5; c.lineTo(rr * Math.cos(a), rr * Math.sin(a)); } c.closePath(); c.fill(); }
   else if (st === "leaves") { c.beginPath(); c.moveTo(0, -z); c.quadraticCurveTo(z * .9, -z * .2, 0, z); c.quadraticCurveTo(-z * .9, -z * .2, 0, -z); c.fill(); }
@@ -4717,7 +4763,7 @@ function confetti() {
   const ps = Array.from({ length: 90 }, () => ({ x: W / 2 + (Math.random() - .5) * W * .3, y: H * .35, vx: (Math.random() - .5) * 14 * dpr, vy: (-Math.random() * 13 - 4) * dpr,
     w: (5 + Math.random() * 6) * dpr, h: (3 + Math.random() * 5) * dpr, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[(Math.random() * cols.length) | 0] }));
   const cs = (window.__xr && xGet("conf")) || "";
-  if (cs) { const P = { stars: ["#ffd23f", "#ffb703", "#fff3b0", "#ff9f1c"], leaves: ["#5fa05a", "#8bbf6a", "#e08a3c", "#c9a227"], hearts: ["#ff5d8f", "#ff8fab", "#d6144f", "#ffc2d1"], sparks: ["#ffd23f", "#fff", "#ffb703", "#ffe8a3"], atoms: [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#3fa7d6", "#b07cf0"], pumpkin: ["#ff8c1a", "#ffa94d", "#e8590c", "#f59f00"], boo: ["#f4f4f8", "#cfd2e8", "#b9a7ff", "#ffffff"], flakes: ["#ffffff", "#cfe8ff", "#9ed0ff", "#e8f4ff"], petals: ["#ffb7d5", "#ff8fb8", "#ffd6e7", "#fff0f6"], fireworks: ["#ff4d6d", "#ffd23f", "#4dd0ff", "#7cff6b", "#c77dff"], suns: ["#ffcf33", "#ffb703", "#ff9f1c", "#fff1a8"], seeds: ["#8a6a3b", "#c9a227", "#6b8f3a", "#a47c48"], embers: ["#ff6b1a", "#ffb703", "#ff3d00", "#ffd166"], pixels: ["#39ff88", "#00e5ff", "#ff3df2", "#ffee33"], bubbles: ["#8fd3ff", "#b8e6ff", "#7bc4f0", "#d9f1ff"] }[cs]; ps.forEach(q => { q.c = P[(Math.random() * P.length) | 0]; }); }
+  if (cs) { const P = { stars: ["#ffd23f", "#ffb703", "#fff3b0", "#ff9f1c"], leaves: ["#5fa05a", "#8bbf6a", "#e08a3c", "#c9a227"], hearts: ["#ff5d8f", "#ff8fab", "#d6144f", "#ffc2d1"], sparks: ["#ffd23f", "#fff", "#ffb703", "#ffe8a3"], atoms: [getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#d7372b", "#3fa7d6", "#b07cf0"], pumpkin: ["#ff8c1a", "#ffa94d", "#e8590c", "#f59f00"], boo: ["#f4f4f8", "#cfd2e8", "#b9a7ff", "#ffffff"], flakes: ["#ffffff", "#cfe8ff", "#9ed0ff", "#e8f4ff"], petals: ["#ffb7d5", "#ff8fb8", "#ffd6e7", "#fff0f6"], fireworks: ["#ff4d6d", "#ffd23f", "#4dd0ff", "#7cff6b", "#c77dff"], suns: ["#ffcf33", "#ffb703", "#ff9f1c", "#fff1a8"], seeds: ["#8a6a3b", "#c9a227", "#6b8f3a", "#a47c48"], embers: ["#ff6b1a", "#ffb703", "#ff3d00", "#ffd166"], pixels: ["#39ff88", "#00e5ff", "#ff3df2", "#ffee33"], bubbles: ["#8fd3ff", "#b8e6ff", "#7bc4f0", "#d9f1ff"] }[cs] || SPPAL[cs] || ["#ffffff"]; ps.forEach(q => { q.c = P[(Math.random() * P.length) | 0]; }); }
   const t0 = performance.now();
   (function tick(t) {
     const e = t - t0; c.clearRect(0, 0, W, H);
@@ -5149,8 +5195,8 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-06b", WHATS = [
-  ["Season battle pass", "Seasons now have 100 levels. Scroll the track to see every reward. Tap the Season card."],
+const WHATS_VER = "2026-10-06c", WHATS = [
+  ["Season battle pass", "Seasons have 100 levels and a reward every few levels. Tap the Season tile to see the track."],
   ["Short stories", "13 free short stories you can finish in one sitting. Open the Class Library from the home screen."],
   ["Name flair and profile frames", "Make your name shine and put a frame around your title. Open the Rewards tab, then Identity."],
   ["Season themes", "Reach season level 78 to earn that season's theme. Find them in Settings, Display."],
