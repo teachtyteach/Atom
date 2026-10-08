@@ -202,6 +202,18 @@ table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:ta
 th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
 td:not(:first-child),th:not(:first-child){text-align:right}
 .life{display:grid;gap:8px}
+@media (hover:none){.keys{display:none}}
+.fold{margin-top:0}
+.fold>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;cursor:pointer;color:var(--ink);font-size:inherit}
+.fold>summary h2{margin:0;white-space:nowrap}
+.fold>summary .fine{text-align:right;margin:0 4px 0 auto}
+.fold[open]>summary{margin-bottom:8px}
+#stats .life{grid-template-columns:1fr 1fr;gap:10px 14px}
+#stats .life>div{display:grid;gap:1px;align-content:start}
+#stats .life>div span{font-size:12px;color:var(--muted)}
+#stats .life>div b{font-size:16px}
+#stats #life>div:last-child{grid-column:1/-1}
+
 .life div{display:flex;justify-content:space-between;gap:12px}
 .life span{color:var(--muted)}
 
@@ -270,7 +282,7 @@ body::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-
 .nextcard{display:grid;gap:4px;border-left:4px solid var(--accent)}
 .nextcard b{font-family:Georgia,serif;font-size:17px}
 .xtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.xtile{display:grid;justify-items:start;gap:4px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;min-height:92px;align-content:start}
+.xtile{display:grid;grid-template-columns:minmax(0,1fr);justify-items:start;gap:4px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;min-height:92px;align-content:start}
 .xtile b{font-family:Georgia,serif;font-size:17px}
 .xtile .fine{font-size:12px}
 .xtile:last-child:nth-child(odd){grid-column:1/-1}
@@ -282,17 +294,17 @@ body::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-
 .xcard .xth{height:46px;border-radius:8px;background:color-mix(in srgb,var(--line) 60%,transparent) center/cover no-repeat;display:grid;place-items:center;overflow:hidden}
 .xcard .xth img{height:40px}
 .xcard .xtag{font-size:11px;color:var(--muted)}
-.pvcard{display:grid;gap:8px;justify-items:stretch}
+.pvcard{display:grid;gap:6px;justify-items:stretch}
 .pvlab{letter-spacing:.12em;font-weight:700;margin:0}
 .pvcard .greet{margin:0}
 .pvcard #pvTitle{margin:0;min-height:20px}
-.pvstage{height:84px;min-height:0;cursor:default}
+.pvstage{height:64px;min-height:0;cursor:default}
 .pvstage .word{font-size:34px}
 .pvrow{display:flex;align-items:center;gap:14px;justify-content:space-around}
 body.adult .pvrow .mascot{display:block!important}
-.pvrow .mascot{width:64px;height:auto;margin:0}
-.pvrow .cover{width:54px;height:72px;flex:none}
-.pvstat{background-color:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px;font-size:14px}
+.pvrow .mascot{width:48px;height:auto;margin:0}
+.pvrow .cover{width:42px;height:56px;flex:none}
+.pvstat{background-color:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:grid;gap:4px;font-size:13px}
 body.xg #nextCard,body.xg #xTiles,body.xg #rewardsCard,body.xg #evBadgesCard{display:none}
 #xgDlg .sheet{max-height:46vh}
 #xgDlg{overflow:hidden;position:fixed;left:0;right:0;bottom:0;top:auto;margin:0 auto;max-height:46vh;z-index:70;box-shadow:0 -8px 30px rgba(0,0,0,.28)}
@@ -348,6 +360,33 @@ body.xg #nextCard,body.xg #xTiles,body.xg #rewardsCard,body.xg #evBadgesCard{dis
 .bpt.got .bpst{color:var(--sc)}
 .bpsum{display:grid;gap:6px}
 .bpsum .bar{height:10px}
+dialog.fundlg{inset:0;margin:0;padding:0;border:0;width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;background:var(--bg);color:var(--ink)}
+.fbox{display:flex;flex-direction:column;height:100%}
+.fhead{display:flex;justify-content:space-between;align-items:center;padding:max(12px,env(safe-area-inset-top)) 16px 8px;font:700 20px Georgia,serif}
+#funBody{flex:1;overflow:auto;padding:8px 16px max(24px,env(safe-area-inset-bottom));display:grid;align-content:start;gap:12px;max-width:560px;width:100%;margin:0 auto;box-sizing:border-box}
+.fundlg.calm{background:#0b1020;color:#e8eefc}
+.fundlg.calm #funBody{padding:0;position:relative;display:block;overflow:hidden;max-width:none}
+.calmcv{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.calmhint{position:absolute;left:0;right:0;top:12%;text-align:center;font:600 26px Georgia,serif;margin:0;pointer-events:none;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.calmrow{position:absolute;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom));justify-content:center;flex-wrap:wrap;padding:0 12px}
+.fchips{display:flex;gap:8px;overflow-x:auto}
+.fchip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:8px 14px;font:inherit;font-size:14px;white-space:nowrap}
+.fchip.on{background:var(--accent);color:var(--btn-ink,#fff);border-color:var(--accent)}
+.calm .fchip{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+.calm .fchip.on{background:#fff;color:#0b1020}
+.wpstage{display:grid}
+.wpslide{min-height:52vh;border-radius:22px;padding:26px 22px;display:grid;align-content:center;justify-items:start;gap:10px;color:#fff;background:linear-gradient(160deg,var(--wc,#2f8a4c),#111 150%)}
+.wpa{font-size:18px;opacity:.85}.wpbig{font:700 58px/1.05 Georgia,serif;overflow-wrap:anywhere}.wpbig.sm{font-size:34px}.wpc{font-size:18px;opacity:.9}
+.wpnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wpdots{display:flex;gap:5px}.wpdots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.wpdots i.on{background:var(--accent)}
+.arcg{display:grid;gap:3px;text-align:left;width:100%}
+.arcrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.arct{flex:0 1 46px;min-width:28px;height:52px;padding:0;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:700 24px Georgia,serif;text-transform:uppercase}
+.arct.empty{border-style:dashed}.arct.used{opacity:.25}.arct.right{background:#2f9e5b;color:#fff;border-color:#2f9e5b}.arct.wrong{background:#c8281f;color:#fff;border-color:#c8281f}
+.arcword{font:700 40px Georgia,serif;letter-spacing:.12em;text-align:center;margin:4px 0}
+.arcmsg{min-height:24px;text-align:center;font-weight:700;margin:0}.arcmsg.good{color:#2f9e5b}.arcmsg.bad{color:#c8281f}
+.arcopt{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px;font:600 18px Georgia,serif}
+.arcopt.right{background:#2f9e5b;color:#fff;border-color:#2f9e5b}.arcopt.wrong{background:#c8281f;color:#fff;border-color:#c8281f}
 .srow{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .srow.got{border-color:var(--accent)}
 .srow span{flex:1}
@@ -627,6 +666,10 @@ body.big .setrow input[type=checkbox]::after{width:30px;height:30px}
 body.big .setrow input[type=checkbox]:checked::after{transform:translateX(22px)}
 .setrow{border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);padding:4px 0}
 .themegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+details.tg{grid-column:1/-1;margin:0;border-top:1px solid var(--line);padding-top:2px}
+details.tg>summary{display:flex;justify-content:space-between;align-items:center;min-height:42px;cursor:pointer;font:600 13px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+details.tg>summary span{font-weight:500;letter-spacing:0;text-transform:none}
+.tgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:4px 0 10px}
 .tgroup{grid-column:1/-1;margin:8px 0 0;font:600 12px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .themegrid button{flex-direction:column;align-items:stretch;gap:6px;padding:0;min-height:0;border:0;background:transparent;box-shadow:none;border-radius:14px;font:500 13px system-ui,sans-serif}
 .themegrid .sw{display:flex;align-items:flex-end;justify-content:space-between;height:58px;border-radius:14px;padding:8px 10px;border:1px solid rgba(128,128,128,.35);font:600 20px Georgia,serif}
@@ -697,17 +740,17 @@ body.nomotion .impbar.ind i{animation:none!important;left:0;width:100%;opacity:.
 .greetrow{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .greetrow .greet{flex:1;min-width:0}
 .minis{display:flex;gap:6px;flex:none}
-.mini{width:80px;box-sizing:border-box;display:grid;gap:3px;text-align:left;padding:6px 7px;border:1px solid var(--line);border-top:3px solid var(--sc,var(--accent));border-radius:10px;background:var(--surface);color:inherit;font:inherit}
-.mini[hidden]{display:none}
-.mini .mt{display:flex;align-items:center;gap:4px;min-width:0}
-.mini .mt i{flex:none;line-height:0}
-.mini b{font:700 11px/1.1 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini .ms{font-size:10px;line-height:1.1;color:var(--muted)}
-.mini .bar,.mini .pips{height:5px;margin:0}
-.mini .pips i{height:5px}
-.mini .bar i{background:var(--ev,var(--accent))}
+.stile{width:80px;box-sizing:border-box;display:grid;gap:3px;text-align:left;padding:6px 7px;border:1px solid var(--line);border-top:3px solid var(--sc,var(--accent));border-radius:10px;background:var(--surface);color:inherit;font:inherit}
+.stile[hidden]{display:none}
+.stile .mt{display:flex;align-items:center;gap:4px;min-width:0}
+.stile .mt i{flex:none;line-height:0}
+.stile b{font:700 11px/1.1 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stile .ms{font-size:10px;line-height:1.1;color:var(--muted)}
+.stile .bar,.stile .pips{height:5px;margin:0}
+.stile .pips i{height:5px}
+.stile .bar i{background:var(--ev,var(--accent))}
 .evcard .bar i{background:var(--ev,var(--accent))}
-body.adult #evCard,body.adult #evBadgesCard,body.adult #rankPin{display:none}
+body.adult #evBadgesCard,body.adult #rankPin{display:none}
 .evg button.lock .remblem{filter:grayscale(1);opacity:.35}
 .peek{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom) + 62px);width:96px;z-index:45;padding:0;margin:0;min-height:0;border:0;background:transparent;box-shadow:none;line-height:0;
   transform:translateY(135%);visibility:hidden;pointer-events:none;transition:transform .55s cubic-bezier(.2,1.25,.4,1),visibility 0s .55s;-webkit-tap-highlight-color:transparent}
@@ -749,8 +792,8 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </header>
   <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><span class="rkl"><i id="rankEmb" class="remblem" aria-hidden="true"></i><i id="rankPin" class="remblem" aria-hidden="true"></i><span class="clab">CAREER</span><b id="rankName"></b></span><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
   <div class="greetrow"><p class="greet" id="greet"></p><div class="minis">
-    <button type="button" class="mini" id="seasonCard" hidden><span class="mt"><i id="seasonIc" aria-hidden="true"></i><b id="seasonName"></b></span><span class="pips" id="seasonPips"></span><span id="seasonSub" class="ms"></span></button>
-    <button type="button" class="mini evcard" id="evCard" hidden><span class="mt"><i class="evic" id="evIc" aria-hidden="true"></i><b id="evName"></b></span><span class="bar"><i id="evFill"></i></span><span id="evSub" class="ms"></span></button>
+    <button type="button" class="stile" id="seasonCard" hidden><span class="mt"><i id="seasonIc" aria-hidden="true"></i><b id="seasonName"></b></span><span class="pips" id="seasonPips"></span><span id="seasonSub" class="ms"></span></button>
+    <button type="button" class="stile evcard" id="evCard" hidden><span class="mt"><i class="evic" id="evIc" aria-hidden="true"></i><b id="evName"></b></span><span class="bar"><i id="evFill"></i></span><span id="evSub" class="ms"></span></button>
   </div></div>
   <p id="titleLine"></p>
   <div class="actmenu">
@@ -786,6 +829,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </header>
   <div class="card statsempty" id="statsEmpty" hidden><img class="mascot" src="mascot.png" alt=""><b>Your stats start with your first page.</b><p class="fine">Read for a minute and your words, speed and streak show up here.</p><button class="primary" id="statsGo" type="button">Pick a book</button></div>
   <div class="tiles" id="tiles"></div>
+  <div class="card life" id="life"></div>
   <div class="card" id="goalCard"></div>
   <div class="card" id="wkCard"></div>
   <div class="card">
@@ -814,30 +858,27 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="life" id="lapseNums"></div>
     <div class="row" style="margin-top:10px"><button id="lapseBtn">Replay time-lapse</button></div>
   </div>
-  <div class="card">
-    <h2>Reading report</h2>
+  <details class="card fold">
+    <summary><h2>Reading report</h2></summary>
     <p class="fine">A one-page summary you can print or save as a PDF.</p>
     <div class="row"><select id="repRange" aria-label="Report range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="0">All time</option></select><button id="repBtn">Print report</button></div>
-  </div>
-  <div class="card" id="rewardsCard">
-    <h2>Rank rewards</h2>
+  </details>
+  <details class="card fold" id="rewardsCard">
+    <summary><h2>Rank rewards</h2></summary>
     <p class="fine" id="rewardCap"></p>
     <div class="rgrid" id="rewardGrid"></div>
     <p class="fine" id="rewardDetail">Tap a rank to see what it unlocks.</p>
-  </div>
-  <div class="card" id="evBadgesCard">
-    <h2>Event badges</h2>
-    <p class="fine" id="evCap"></p>
+  </details>
+  <details class="card fold" id="evBadgesCard">
+    <summary><h2>Event badges</h2><span class="fine" id="evCap"></span></summary>
     <div class="rgrid" id="evGrid"></div>
     <p class="fine" id="evDetail">Tap a badge to see when it runs.</p>
-  </div>
-  <div class="card">
-    <h2>Badges</h2>
-    <p class="fine" id="badgeCap"></p>
+  </details>
+  <details class="card fold">
+    <summary><h2>Badges</h2><span class="fine" id="badgeCap"></span></summary>
     <div id="badges"></div>
     <p class="fine" id="badgeDetail">Tap a badge to see what it takes.</p>
-  </div>
-  <div class="card life" id="life"></div>
+  </details>
 </section>
 <section id="rewards" class="screen">
   <header>
@@ -855,7 +896,10 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </div>
   <div class="card nextcard" id="nextCard"></div>
   <div class="xtiles" id="xTiles"></div>
+  <p class="xlab" style="margin:14px 2px 0">Fun room</p>
+  <div class="xtiles" id="funTiles"></div>
 </section>
+<dialog id="funDlg" class="fundlg"><div class="fbox"><div class="fhead"><b id="funTitle"></b><button class="icon" data-close aria-label="Close">✕</button></div><div id="funBody"></div></div></dialog>
 <dialog id="xgDlg"><div class="sheet">
   <div class="sheet-head"><h2 id="xgTitle"></h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <p class="fine" id="xgNote"></p>
@@ -1049,7 +1093,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Teacher</option><option value="reader">Adult</option></select></label>
     <label class="setrow">Atom drops by <input type="checkbox" id="peekChk"></label>
     <label class="setrow">Tiny buzz on rewards <input type="checkbox" id="hapChk"></label>
-    <p class="fine">Name is used for your backup file, like Dan.Atom. Teacher mode turns off the mascot and needs the teacher password. Adult mode keeps the unlocks and hides school things. Atom drops by pops up on the home screen now and then.</p>
+    <p class="fine">Your name names your backup file. Teacher and Adult modes need a password.</p>
   </div>
   <p class="gt">Home screen icon</p>
   <div class="grp">
@@ -3429,7 +3473,7 @@ function syncSpeedInfo() {
   let t = `Limit on this device: ${cap} wpm.`;
   if (pw) t += " Teacher unlock is on."; else if (nxt) t += ` Read ${fmt(nxt[0])} words in total to unlock ${nxt[1]} wpm (you're at ${fmt(Math.min(w, nxt[0]))}).`;
   const sh = $("#speedHint");
-  if (nxt && !pw) { const rk = RANKS.filter(r => r[0] <= nxt[0]).pop(); sh.hidden = false; sh.textContent = `Top speed for now: ${cap} wpm. Read ${fmt(Math.max(0, nxt[0] - w))} more words (${rk ? rk[1] : "more"} rank) to unlock ${nxt[1]}.`; } else sh.hidden = true;
+  if (nxt && !pw) { const rk = RANKS.filter(r => r[0] <= nxt[0]).pop(); sh.hidden = false; sh.textContent = `Top speed ${cap} wpm. ${nxt[1]} wpm unlocks at ${rk ? rk[1] : "a higher rank"}.`; } else sh.hidden = true;
   $("#speedInfo").textContent = t; $("#pwBox").hidden = pw || cap >= 600; $("#pwRelock").hidden = !pw;
 }
 function applyCap() { $("#wpm").max = speedCap(); if (wpm > speedCap()) setWpm(wpm); syncSpeedInfo(); }
@@ -3859,6 +3903,22 @@ function unlockList(f) {
   if (typeof XCATS !== "undefined") XCATS.forEach(c => at(UNLOCK[c.k] || {}).forEach(k => out.push(XNAME(c.k, k) + " " + c.label.toLowerCase())));
   return out;
 }
+(function groupThemes() {
+  const seg = $("#themeSeg"); if (!seg) return; let grid = null;
+  [...seg.children].forEach(k => {
+    if (k.classList.contains("tgroup")) { const d = el("details", "tg"), sm = el("summary"); sm.dataset.name = k.textContent.replace(/\s*\(.*\)/, ""); d.title = k.textContent; d.append(sm); grid = el("div", "tgrid"); d.append(grid); seg.insertBefore(d, k); k.remove(); }
+    else if (grid) grid.append(k);
+  });
+})();
+let tgInit = false;
+function updateThemeGroups() {
+  $$("#themeSeg details.tg").forEach(d => {
+    const bs = [...d.querySelectorAll("button")], un = bs.filter(b => !b.classList.contains("locked")).length, sm = d.querySelector("summary");
+    sm.replaceChildren(document.createTextNode(sm.dataset.name)); if (bs.length > 1) sm.append(el("span", "", `${un} of ${bs.length}`));
+    if (!tgInit && bs.some(b => b.getAttribute("aria-pressed") === "true")) d.open = true;
+  });
+  if ($$("#themeSeg button[aria-pressed=true]").length) tgInit = true;
+}
 function applyLockUI() {
   const mark = (nodes, kind, key) => nodes.forEach(b => {
     b.classList.add("lockable");
@@ -3868,6 +3928,7 @@ function applyLockUI() {
   });
   mark($$("#themeSeg button[data-theme]"), "theme", "theme"); mark($$("#accentSeg button"), "accent", "accent");
   mark($$("#fontSeg button"), "font", "font"); mark($$("#pivotSeg button"), "pivot", "pc"); mark($$("#iconPick button"), "icon", "ic");
+  updateThemeGroups();
   const n = $("#unlockNote"); if (n) n.textContent = isAdult() ? "" : "Rank up to unlock more themes, colors and fonts. Tap a locked one to see how.";
 }
 function lockedTap(kind, id) {
@@ -3906,6 +3967,7 @@ function checkSecrets() {
   if (w > 0) {
     if (h < 5) secEarn("owl");
     if (h >= 5 && h < 7) secEarn("bird");
+    timeSecrets();
     if (now.getDay() === 0 && dayW(tk) >= 500) secEarn("sun");
     if ((stats.days[tk] || {}).sl >= 500) secEarn("snail");
     const prev = Object.keys(stats.days).filter(k => k < tk && stats.days[k].w > 0).sort().pop();
@@ -4113,7 +4175,7 @@ function renderRewardsTab() {
   });
   const se = seasonNow(), sw = seasonWords(se), sr = seasonRank(sw), st = el("button", "xtile"); st.type = "button";
   st.append(el("b", "", "Season " + se.n), el("span", "fine", se.name), el("span", "xcount", sr.name));
-  st.onclick = openSeason; box.append(st);
+  st.onclick = openSeason; box.append(st); renderFunTiles();
 }
 function openRewards() { renderRewardsTab(); show("rewards"); }
 function renderExtras() { renderRewardsTab(); if (xgCur && $("#xgDlg").open) renderGroup(xgCur); }
@@ -4250,6 +4312,7 @@ function stampHtml(id) {
   if (!id) return "";
   if (/^s[1-4]$/.test(id)) { const i = +id[1] - 1; return evIcon(SEASON_ICON[i], SEASON_COL[i], 16); }
   if (id.startsWith("e_")) { const e = EVENTS.find(x => "e_" + x.id === id); return e ? evIcon(e.icon, e.col, 16) : ""; }
+  if (typeof STAMP_X !== "undefined" && STAMP_X[id]) return evIcon(STAMP_X[id][0], STAMP_X[id][1], 16);
   if (id === "flame") return FLAME(16);
   if (id === "book") return evIcon("book", "#8a6a3a", 16);
   if (id === "star") return evIcon("star", "#d6a017", 16);
@@ -4660,7 +4723,7 @@ function syncSettingsUI() {
   $("#dimChk").checked = settings.dim !== false; $("#peekChk").checked = settings.peek !== false; $("#hapChk").checked = settings.haptic !== false;
   $("#eyesSel").value = String(settings.eyes ?? (isAdult() || isReader() ? 0 : 20));
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
-  $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme)));
+  $$("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === settings.theme))); updateThemeGroups();
   $$("#accentSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === settings.accent)));
   $$("#pivotSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pc === (settings.pivotColor || "accent"))));
   $$("#iconPick button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ic === (settings.icon || "classic"))));
@@ -4880,7 +4943,7 @@ function renderStats() {
   const avg = wpmOf(week, weekMs);
 
   const tiles = $("#tiles"); tiles.replaceChildren();
-  [["Today", fmt(today.w), "words", today.w], ["This week", fmt(week), "words", week], ["Streak", String(streak), streak === 1 ? "day" : "days", streak], ["Avg speed, 7 days", avg ? String(avg) : "–", avg ? "wpm" : ""]]
+  [["This week", fmt(week), "words", week], ["Avg speed, 7 days", avg ? String(avg) : "–", avg ? "wpm" : ""]]
     .forEach(([a, b, u, n]) => {
       const t = el("div", "tile"), v = el("b"), num = el("span", "", b);
       if (a === "Streak" && streak > 0) v.insertAdjacentHTML("beforeend", FLAME(22));
@@ -5195,7 +5258,8 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-06c", WHATS = [
+const WHATS_VER = "2026-10-06d", WHATS = [
+  ["Fun room", "New in Rewards: Wrapped (your reading story), the Arcade (word games after your goal) and the Calm corner. New secret badges for lunch, after school, bedtime, holidays and anniversaries."],
   ["Season battle pass", "Seasons have 100 levels and a reward every few levels. Tap the Season tile to see the track."],
   ["Short stories", "13 free short stories you can finish in one sitting. Open the Class Library from the home screen."],
   ["Name flair and profile frames", "Make your name shine and put a frame around your title. Open the Rewards tab, then Identity."],
@@ -5906,7 +5970,204 @@ $("#repBtn").onclick = () => { buildReport(+$("#repRange").value); setTimeout(()
 checkHash(); addEventListener("hashchange", checkHash);
 
 /* test hook (harmless in normal use) */
-window.__pace = { confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+/* ---------- more secrets, anniversaries ---------- */
+SECRETS.push(
+  { id: "lunch", name: "Lunch Reader", hint: "Read between 11 AM and 1 PM." },
+  { id: "after", name: "After School", hint: "Read between 3 and 5 PM." },
+  { id: "bed", name: "Bedtime Story", hint: "Read between 8 PM and midnight." },
+  { id: "holiday", name: "Holiday Reader", hint: "Read on a holiday." },
+  { id: "a30", name: "Month One", hint: "Use Atom for 30 days." },
+  { id: "a100", name: "Day 100", hint: "Use Atom for 100 days." },
+  { id: "a365", name: "Atom Year", hint: "Use Atom for a whole year." }
+);
+var STAMP_X = { h_lunch: ["sun", "#e8a50c", "Lunch Reader stamp", "lunch"], h_after: ["book", "#2f6db5", "After School stamp", "after"], h_bed: ["star", "#6a4fc0", "Bedtime Story stamp", "bed"], h_holiday: ["heart", "#d6456a", "Holiday Reader stamp", "holiday"] };
+const secHas = id => !!store.get("pace:sec", {})[id];
+Object.keys(STAMP_X).forEach(id => {
+  XCATS.find(c => c.k === "stamp").opts.push([id, STAMP_X[id][2]]);
+  EXTRA_SPECIAL.stamp[id] = { desc: `Earn the "${SECRETS.find(s => s.id === STAMP_X[id][3]).name}" secret`, test: () => secHas(STAMP_X[id][3]) };
+});
+[["ta30", "Regular", "a30"], ["ta100", "Centurion", "a100"], ["ta365", "Veteran", "a365"]].forEach(([id, nm, sid]) => {
+  XCATS.find(c => c.k === "title").opts.push([id, nm]);
+  EXTRA_SPECIAL.title[id] = { desc: `Earn the "${SECRETS.find(s => s.id === sid).name}" secret`, test: () => secHas(sid) };
+});
+if (!store.get("pace:since", null)) { const ks = Object.keys(stats.days).sort(); store.set("pace:since", ks[0] || todayKey()); }
+function timeSecrets() {
+  const now = new Date(), h = now.getHours();
+  if (h >= 11 && h < 13) secEarn("lunch");
+  if (h >= 15 && h < 17) secEarn("after");
+  if (h >= 20) secEarn("bed");
+  if ([[9, 31], [11, 25], [0, 1], [1, 14], [6, 4], [10, 11]].some(([m, d]) => now.getMonth() === m && now.getDate() === d)) secEarn("holiday");
+  const days = Math.floor((keyToDate(todayKey()) - keyToDate(store.get("pace:since", todayKey()))) / 864e5);
+  if (days >= 30) secEarn("a30"); if (days >= 100) secEarn("a100"); if (days >= 365) secEarn("a365");
+}
+
+/* ---------- fun room: Wrapped, Arcade, Calm corner ---------- */
+var FUN_LVL = { wrapped: 5, arcade: 3 };
+function funOpen(k) { return isAdult() || lvlNow() >= FUN_LVL[k]; }
+var funStop = null;
+function funEnd() { if (funStop) { try { funStop(); } catch (e) {} funStop = null; } }
+function funShow(title, calm) {
+  funEnd(); const d = $("#funDlg"); d.classList.toggle("calm", !!calm); $("#funTitle").textContent = title;
+  const b = $("#funBody"); b.replaceChildren(); if (!d.open) d.showModal(); return b;
+}
+$("#funDlg").addEventListener("close", funEnd);
+function renderFunTiles() {
+  const box = $("#funTiles"); if (!box || !FUN_LVL) return; box.replaceChildren();
+  [["wrapped", "Wrapped", "Your reading story", openWrapped], ["arcade", "Arcade", "Word games after your goal", openArcade], ["calm", "Calm corner", "Quiet scenes to relax", openCalm]].forEach(([k, n, sub, fn]) => {
+    const b = el("button", "xtile"); b.type = "button"; const ok = k === "calm" || funOpen(k);
+    b.append(el("b", "", n), el("span", "fine", sub), el("span", "xcount", ok ? "Open" : "Unlocks at " + LEVELS[FUN_LVL[k]][1]));
+    b.onclick = () => { if (ok) fn(); else toast(`${n} unlocks at ${LEVELS[FUN_LVL[k]][1]}.`); }; box.append(b);
+  });
+}
+/* Wrapped */
+const DAYN = ["Sundays", "Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays"];
+function wrapData(per) {
+  const se = seasonNow(), a = per === "all" ? "0000-00-00" : se.a, b = per === "all" ? "9999-99-99" : se.b;
+  let w = 0, ms = 0, days = 0, best = ["", 0]; const wd = [0, 0, 0, 0, 0, 0, 0], keys = Object.keys(stats.days).filter(k => k >= a && k <= b && stats.days[k].w > 0).sort();
+  keys.forEach(k => { const d = stats.days[k]; w += d.w; ms += d.ms || 0; days++; if (d.w > best[1]) best = [k, d.w]; wd[keyToDate(k).getDay()] += d.w; });
+  let run = 0, longest = 0, prev = null; keys.forEach(k => { if (prev && Math.round((keyToDate(k) - keyToDate(prev)) / 864e5) === 1) run++; else run = 1; longest = Math.max(longest, run); prev = k; });
+  const bw = {}; for (const id in stats.books) for (const k in stats.books[id]) if (k >= a && k <= b) bw[id] = (bw[id] || 0) + stats.books[id][k];
+  const top = Object.entries(bw).sort((x, y) => y[1] - x[1])[0], m = top && lib.find(x => x.id === top[0]);
+  return { w, ms, days, best, longest, wd, wpm: wpmOf(w, ms), top: top ? { t: m ? m.title : "A book you removed", w: top[1] } : null, se, per };
+}
+function hm(ms) { const m = Math.round(ms / 60000); return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min`; }
+function wrapSlides(d) {
+  if (!d.w) return [["Nothing yet", "", "Read a little, then come back. Your story starts with the first word."]];
+  const fav = d.wd.indexOf(Math.max(...d.wd)), s = [];
+  s.push(["You read", fmt(d.w), d.w < 5000 ? "words. A great start." : `words. About ${(d.w / 50000).toFixed(1)} novels.`]);
+  s.push(["That took", hm(d.ms), "of focused reading."]);
+  s.push(["You showed up", String(d.days), d.days === 1 ? "day." : `days. Longest run: ${d.longest} in a row.`]);
+  s.push(["Your best day", fmt(d.best[1]), `words on ${keyToDate(d.best[0]).toLocaleDateString(undefined, { month: "long", day: "numeric" })}.`]);
+  if (d.top) s.push(["Your top book", d.top.t, `${fmt(d.top.w)} words.`]);
+  s.push(["You love", DAYN[fav], d.wpm ? `Your average speed: ${d.wpm} words per minute.` : "for reading."]);
+  return s;
+}
+function wrapCard(d) {
+  const c = document.createElement("canvas"); c.width = 1080; c.height = 1350; const g = c.getContext("2d"), col = SEASON_COL[d.se.idx];
+  const gr = g.createLinearGradient(0, 0, 1080, 1350); gr.addColorStop(0, col); gr.addColorStop(1, "#0d0d12"); g.fillStyle = gr; g.fillRect(0, 0, 1080, 1350);
+  g.fillStyle = "#fff"; g.textAlign = "center"; g.font = "700 64px Georgia,serif"; g.fillText(settings.name ? settings.name + "'s reading" : "My reading", 540, 190);
+  g.font = "400 38px sans-serif"; g.globalAlpha = .8; g.fillText(d.per === "all" ? "All time" : `Season ${d.se.n}: ${d.se.name}`, 540, 250); g.globalAlpha = 1;
+  const rows = [[fmt(d.w), "words"], [hm(d.ms), "reading"], [String(d.days), "days read"], [String(d.longest), "day streak"]];
+  rows.forEach(([v, l], i) => { const x = i % 2 ? 790 : 290, y = 520 + Math.floor(i / 2) * 330; g.font = "700 96px Georgia,serif"; g.fillText(v, x, y); g.font = "400 40px sans-serif"; g.globalAlpha = .8; g.fillText(l, x, y + 62); g.globalAlpha = 1; });
+  if (d.top) { g.font = "400 40px sans-serif"; g.globalAlpha = .8; g.fillText("Top book", 540, 1120); g.globalAlpha = 1; g.font = "700 52px Georgia,serif"; g.fillText(d.top.t.length > 28 ? d.top.t.slice(0, 27) + "…" : d.top.t, 540, 1185); }
+  g.font = "400 34px sans-serif"; g.globalAlpha = .7; g.fillText("Atom · Made FOR STEM Launch", 540, 1290); return c;
+}
+function openWrapped() {
+  const b = funShow("Wrapped"); let per = "season", i = 0, d, sl;
+  const chips = el("div", "fchips"), stage = el("div", "wpstage"), nav = el("div", "wpnav");
+  const draw = () => {
+    d = wrapData(per); sl = wrapSlides(d); i = Math.min(i, sl.length); stage.replaceChildren(); stage.style.setProperty("--wc", SEASON_COL[d.se.idx]);
+    const last = i === sl.length && d.w > 0;
+    if (!last) { const [a, big, c] = sl[i]; const card = el("div", "wpslide"); card.append(el("span", "wpa", a), el("b", "wpbig" + (big.length > 9 ? " sm" : ""), big), el("span", "wpc", c)); stage.append(card); }
+    else { const card = el("div", "wpslide"); const cv = wrapCard(d); cv.style.cssText = "width:100%;border-radius:14px"; const sv = el("button", "primary", "Save as image"); sv.type = "button";
+      sv.onclick = () => cv.toBlob(async bl => { const f = new File([bl], "my-reading.png", { type: "image/png" }); try { if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return; } } catch (e) { return; } const u = URL.createObjectURL(bl), a = el("a"); a.href = u; a.download = "my-reading.png"; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); });
+      card.append(cv, sv); stage.append(card); }
+    nav.replaceChildren(); const total = d.w > 0 ? sl.length + 1 : 1;
+    const bk = el("button", "", "Back"), nx = el("button", "primary", i >= total - 1 ? "Start over" : "Next"); bk.type = nx.type = "button"; bk.disabled = i === 0;
+    bk.onclick = () => { i = Math.max(0, i - 1); draw(); }; nx.onclick = () => { i = i >= total - 1 ? 0 : i + 1; draw(); };
+    const dots = el("span", "wpdots"); for (let k = 0; k < total; k++) dots.append(el("i", k === i ? "on" : "")); nav.append(bk, dots, nx);
+    if (!last) { const bg = stage.querySelector(".wpbig"); if (bg && /^[\d,]+$/.test(bg.textContent)) animNum(bg, parseInt(bg.textContent.replace(/,/g, ""), 10), fmt); }
+  };
+  [["season", "This season"], ["all", "All time"]].forEach(([k, n]) => { const c = el("button", "fchip" + (k === per ? " on" : ""), n); c.type = "button"; c.onclick = () => { per = k; i = 0; chips.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === c)); draw(); }; chips.append(c); });
+  b.append(chips, stage, nav); draw();
+}
+/* Arcade */
+const BADW = /(sex|porn|nude|naked|fuck|shit|damn|hell|bitch|ass|cock|dick|penis|vagin|rape|drug|kill|murder|suicid|gun|weapon|beer|wine|drunk|alcohol|nazi|slave|casino|gambl|adult|escort|erotic|breast|boob|blood|death|dead|devil|whisky|cigar|smok)/i;
+async function wordPool() {
+  await loadDict(); const out = new Map();
+  const ok = w => /^[a-z]{5,8}$/.test(w) && !BADW.test(w) && DICT.d[w] && DICT.d[w][0] && DICT.d[w][0][1] && !DICT.d[w][0][1].toLowerCase().includes(w);
+  try {
+    let bid = null, bk = ""; Object.keys(stats.books).forEach(id => { const ks = Object.keys(stats.books[id]).sort(), l = ks[ks.length - 1] || ""; if (l >= bk) { bk = l; bid = id; } });
+    if (!bid && lib[0]) bid = lib[0].id; const rec = bid && await dbGet(bid);
+    if (rec) { const cnt = {}; tokensFromText(rec.text).slice(0, 80000).forEach(t => { const w = String(t.w).toLowerCase().replace(/[^\p{L}]/gu, ""); if (ok(w)) cnt[w] = (cnt[w] || 0) + 1; }); Object.keys(cnt).forEach(w => out.set(w, DICT.d[w][0][1])); }
+  } catch (e) {}
+  if (out.size < 30) { let n = 0; for (const w in DICT.d) { if (ok(w) && !out.has(w)) { out.set(w, DICT.d[w][0][1]); if (++n > 800) break; } } }
+  return [...out.entries()];
+}
+const shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const ARC_GAMES = [["scramble", "Word Scramble", "Put the letters in order.", 0], ["missing", "Missing Letter", "Find the missing letter.", 6], ["match", "Word Match", "Match the meaning.", 10]];
+async function openArcade() {
+  const b = funShow("Arcade"), w = dayW(todayKey()), goal = settings.goal || 1000;
+  if (!isAdult() && w < goal) {
+    b.append(el("p", "", `The arcade opens when you reach today's goal.`), el("p", "fine", `${fmt(goal - w)} more words to go.`));
+    const bar = el("span", "bar"), f = el("i"); f.style.width = Math.min(100, w / goal * 100) + "%"; bar.append(f); b.append(bar); return;
+  }
+  b.append(el("p", "fine", "Words come from the book you are reading."));
+  const best = store.get("pace:arc", {});
+  ARC_GAMES.forEach(([k, n, sub, lv]) => {
+    const open = isAdult() || lvlNow() >= lv, c = el("button", "card arcg"); c.type = "button";
+    c.append(el("b", "", n), el("span", "fine", open ? sub : "Unlocks at " + LEVELS[lv][1]), el("span", "xcount", best[k] ? "Best: " + best[k] : ""));
+    c.disabled = !open; c.onclick = () => playArcade(k, n); b.append(c);
+  });
+}
+async function playArcade(kind, name) {
+  const b = funShow(name); b.append(el("p", "fine", "Loading words…"));
+  let pool; try { pool = await wordPool(); } catch (e) { b.replaceChildren(el("p", "", "The dictionary file isn't here yet. Upload dictionary.json to the site.")); return; }
+  const rounds = kind === "scramble" ? 5 : 8, words = shuf(pool).slice(0, rounds); let r = 0, score = 0;
+  const end = () => {
+    b.replaceChildren(); const best = store.get("pace:arc", {}); if (score > (best[kind] || 0)) { best[kind] = score; store.set("pace:arc", best); }
+    b.append(el("h3", "", `You got ${score} of ${rounds}`), el("p", "fine", score === rounds ? "Perfect! Atom is impressed." : "Nice work. Try again?"));
+    const again = el("button", "primary", "Play again"), back = el("button", "", "All games"); again.type = back.type = "button"; again.onclick = () => playArcade(kind, name); back.onclick = openArcade; b.append(again, back);
+    if (score === rounds) confetti();
+  };
+  const next = () => {
+    if (r >= rounds) return end(); const [word, def] = words[r]; b.replaceChildren(); b.append(el("p", "fine", `Round ${r + 1} of ${rounds}`));
+    const msg = el("p", "arcmsg", ""); let done = false;
+    const fin = ok => { if (done) return; done = true; if (ok) score++; msg.textContent = ok ? "Yes!" : `It was “${word}”.`; msg.className = "arcmsg " + (ok ? "good" : "bad"); setTimeout(() => { r++; next(); }, ok ? 650 : 1400); };
+    if (kind === "scramble") {
+      let s; do { s = shuf(word.split("")); } while (s.join("") === word);
+      const hint = el("p", "", def), slots = el("div", "arcrow"), tiles = el("div", "arcrow"), got = []; b.append(hint, slots, tiles, msg);
+      const paint = () => { slots.replaceChildren(); for (let i = 0; i < word.length; i++) { const x = el("button", "arct" + (got[i] ? "" : " empty"), got[i] ? got[i][1] : ""); x.type = "button"; x.onclick = () => { if (done || !got[i]) return; got.splice(i, 1); paint(); }; slots.append(x); }
+        tiles.replaceChildren(); s.forEach((ch, idx) => { const used = got.some(g => g[0] === idx), x = el("button", "arct" + (used ? " used" : ""), ch); x.type = "button"; x.disabled = used; x.onclick = () => { if (done) return; got.push([idx, ch]); paint(); if (got.length === word.length) { const ans = got.map(g => g[1]).join(""); if (ans === word) fin(true); else { msg.textContent = "Not quite."; msg.className = "arcmsg bad"; setTimeout(() => { if (!done) { got.length = 0; msg.textContent = ""; paint(); } }, 700); } } }; tiles.append(x); }); };
+      paint(); const sk = el("button", "", "Skip"); sk.type = "button"; sk.onclick = () => fin(false); b.append(sk);
+    } else if (kind === "missing") {
+      const k = 1 + Math.floor(Math.random() * (word.length - 2)), ch = word[k], opts = shuf([ch, ...shuf("abcdefghijklmnopqrstuvwxyz".split("").filter(x => x !== ch && !word.includes(x))).slice(0, 3)]);
+      b.append(el("p", "", def), el("p", "arcword", word.slice(0, k) + "_" + word.slice(k + 1)), msg); const row = el("div", "arcrow");
+      opts.forEach(o => { const x = el("button", "arct", o); x.type = "button"; x.onclick = () => { if (!done) { x.classList.add(o === ch ? "right" : "wrong"); if (o === ch) $("#funBody .arcword").textContent = word; fin(o === ch); } }; row.append(x); }); b.append(row);
+    } else {
+      const others = shuf(pool.filter(p => p[0] !== word)).slice(0, 3).map(p => p[0]), opts = shuf([word, ...others]);
+      b.append(el("p", "", def), msg); opts.forEach(o => { const x = el("button", "arcopt", o); x.type = "button"; x.onclick = () => { if (!done) { x.classList.add(o === word ? "right" : "wrong"); fin(o === word); } }; b.append(x); });
+    }
+  };
+  next();
+}
+/* Calm corner */
+const CALM = [["breathe", "Breathe", 0], ["snow", "Snow", 5], ["ripples", "Ripples", 10], ["lava", "Lava lamp", 15], ["stars", "Stars", 20], ["rain", "Rain", 25]];
+function calmScene(cv, kind, hint) {
+  const dpr = Math.min(2, devicePixelRatio || 1), W = cv.width = cv.clientWidth * dpr, H = cv.height = cv.clientHeight * dpr, g = cv.getContext("2d"); let raf = 0, alive = true; const R = Math.random;
+  const rings = [], add = (x, y) => rings.push({ x, y, t: 0 }); cv.onpointerdown = e => { const r = cv.getBoundingClientRect(); add((e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr); };
+  const fl = Array.from({ length: 110 }, () => ({ x: R() * W, y: R() * H, r: (1 + R() * 3) * dpr, v: (.4 + R() * 1) * dpr, p: R() * 6 }));
+  const st = Array.from({ length: 220 }, () => ({ x: (R() - .5) * W, y: (R() - .5) * H, z: R() * W, s: R() }));
+  const bl = Array.from({ length: 6 }, (_, i) => ({ x: R(), y: R(), r: .16 + R() * .12, p: R() * 6, h: [330, 20, 280, 10, 300, 40][i] }));
+  const dr = Array.from({ length: 90 }, () => ({ x: R() * W, y: R() * H, v: (9 + R() * 10) * dpr, l: (12 + R() * 18) * dpr }));
+  let last = 0; const t0 = performance.now();
+  (function tick(t) {
+    if (!alive) return; const e = (t - t0) / 1000;
+    if (kind === "snow") { g.fillStyle = "#0e1a30"; g.fillRect(0, 0, W, H); g.fillStyle = "#fff"; fl.forEach(f => { f.y += f.v; f.x += Math.sin(e + f.p) * .6 * dpr; if (f.y > H) { f.y = -5; f.x = R() * W; } g.globalAlpha = .5 + .5 * Math.min(1, f.r / (3 * dpr)); g.beginPath(); g.arc(f.x, f.y, f.r, 0, 7); g.fill(); }); g.globalAlpha = 1; }
+    else if (kind === "stars") { g.fillStyle = "#050814"; g.fillRect(0, 0, W, H); st.forEach(s => { s.z -= .8 * dpr; if (s.z <= 1) { s.z = W; s.x = (R() - .5) * W; s.y = (R() - .5) * H; } const k = W / s.z, x = W / 2 + s.x * k * .5, y = H / 2 + s.y * k * .5; g.globalAlpha = Math.min(1, k * .6) * (.6 + .4 * Math.sin(e * 2 + s.s * 9)); g.fillStyle = "#fff"; g.beginPath(); g.arc(x, y, Math.max(.4, k * dpr * .9), 0, 7); g.fill(); }); g.globalAlpha = 1; }
+    else if (kind === "lava") { g.fillStyle = "#1a0a2a"; g.fillRect(0, 0, W, H); g.globalCompositeOperation = "lighter"; bl.forEach(b => { const x = (.5 + .38 * Math.sin(e * .25 + b.p)) * W, y = (.5 + .42 * Math.sin(e * .19 + b.p * 2)) * H, rr = b.r * Math.max(W, H), gr = g.createRadialGradient(x, y, 0, x, y, rr); gr.addColorStop(0, `hsla(${b.h},90%,60%,.75)`); gr.addColorStop(1, `hsla(${b.h},90%,50%,0)`); g.fillStyle = gr; g.beginPath(); g.arc(x, y, rr, 0, 7); g.fill(); }); g.globalCompositeOperation = "source-over"; }
+    else if (kind === "ripples" || kind === "rain") {
+      g.fillStyle = kind === "rain" ? "#0b1220" : "#0a2a3a"; g.fillRect(0, 0, W, H);
+      if (kind === "ripples" && t - last > 1300) { last = t; add(R() * W, R() * H); }
+      if (kind === "rain") { g.strokeStyle = "rgba(170,200,255,.6)"; g.lineWidth = dpr; dr.forEach(d => { d.y += d.v; if (d.y > H) { if (R() < .35) add(d.x, H * (.8 + R() * .2)); d.y = -d.l; d.x = R() * W; } g.beginPath(); g.moveTo(d.x, d.y); g.lineTo(d.x - 2 * dpr, d.y + d.l); g.stroke(); }); }
+      g.lineWidth = 2 * dpr; for (let i = rings.length - 1; i >= 0; i--) { const q = rings[i]; q.t += kind === "rain" ? .03 : .012; if (q.t > 1) { rings.splice(i, 1); continue; } g.strokeStyle = `rgba(190,230,255,${1 - q.t})`; g.beginPath(); g.ellipse(q.x, q.y, q.t * 150 * dpr, q.t * (kind === "rain" ? 40 : 150) * dpr, 0, 0, 7); g.stroke(); }
+    } else {
+      g.fillStyle = "#0b1020"; g.fillRect(0, 0, W, H); const ph = e % 14, rr = Math.min(W, H) * (ph < 4 ? .12 + .2 * (ph / 4) : ph < 8 ? .32 : .32 - .2 * ((ph - 8) / 6)), gr = g.createRadialGradient(W / 2, H / 2, rr * .2, W / 2, H / 2, rr);
+      gr.addColorStop(0, "rgba(140,200,255,.9)"); gr.addColorStop(1, "rgba(80,120,255,.15)"); g.fillStyle = gr; g.beginPath(); g.arc(W / 2, H / 2, rr, 0, 7); g.fill();
+      hint.textContent = ph < 4 ? "Breathe in" : ph < 8 ? "Hold" : "Breathe out";
+    }
+    raf = requestAnimationFrame(tick);
+  })(t0);
+  return () => { alive = false; cancelAnimationFrame(raf); };
+}
+function openCalm() {
+  const b = funShow("Calm corner", true), cv = el("canvas", "calmcv"), hint = el("p", "calmhint"), row = el("div", "fchips calmrow");
+  let cur = "breathe", stop = null; b.append(cv, hint, row);
+  const go = k => { if (stop) stop(); cur = k; hint.textContent = k === "breathe" ? "" : "Tap the screen."; if (k === "stars" || k === "lava" || k === "snow") hint.textContent = ""; stop = calmScene(cv, k, hint); funStop = stop; row.querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.k === k)); };
+  CALM.forEach(([k, n, lv]) => { const ok = isAdult() || lvlNow() >= lv, c = el("button", "fchip", ok ? n : "🔒 " + n); c.type = "button"; c.dataset.k = k; c.onclick = () => ok ? go(k) : toast(`${n} unlocks at ${LEVELS[lv][1]}.`); row.append(c); });
+  requestAnimationFrame(() => go("breathe"));
+}
+window.__pace = { timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
