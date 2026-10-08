@@ -203,6 +203,15 @@ th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
 td:not(:first-child),th:not(:first-child){text-align:right}
 .life{display:grid;gap:8px}
 @media (hover:none){.keys{display:none}}
+.clcard[hidden]{display:none}
+.clcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:inherit;font:inherit}
+.clcard .clt{flex:1;display:grid;gap:2px}.clcard b{font-family:Georgia,serif;font-size:17px}
+.spines{display:flex;align-items:flex-end;gap:3px;height:34px}
+.spines i{width:9px;border-radius:2px;background:#2f6db5;height:28px}.spines i:nth-child(2){background:#c8281f;height:34px}.spines i:nth-child(3){background:#2f8a4c;height:24px}
+.undobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;gap:12px;background:#1d1b18;color:#fff;border-radius:99px;padding:8px 8px 8px 18px;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:calc(100vw - 24px);font-size:14px}
+.undobar[hidden]{display:none}
+.undobar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46vw}
+.undobar button{background:#fff;color:#1d1b18;border:0;border-radius:99px;padding:8px 16px;font:600 14px system-ui,sans-serif;min-height:0}
 .fold{margin-top:0}
 .fold>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;cursor:pointer;color:var(--ink);font-size:inherit}
 .fold>summary h2{margin:0;white-space:nowrap}
@@ -808,6 +817,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
       <button role="menuitem" id="testBtn" type="button">Test my speed<small>Find your normal reading speed</small></button>
     </div>
   </div>
+  <button class="card clcard" id="classCard" type="button"><span class="spines" aria-hidden="true"><i></i><i></i><i></i></span><span class="clt"><b>Class Library</b><span class="fine">Free books and short stories</span></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <input type="file" id="file" multiple accept=".txt,.md,.epub,.pdf,.html,.htm,.xhtml,text/plain,application/epub+zip,application/pdf" hidden>
   <p class="status" id="status" role="status"></p>
   <div class="impbar ind" id="impBar" hidden><i></i></div>
@@ -1347,11 +1357,12 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 <button class="primary" id="fab" type="button" aria-label="Add a book or article" hidden><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
 <button id="peek" class="peek" type="button" aria-label="Atom says hi" tabindex="-1"></button>
 <nav id="tabbar" aria-label="Main">
-  <button type="button" data-go="library" class="on"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h5a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z"/></svg><span>Library</span></button>
+  <button type="button" data-go="library" class="on"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h5a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-5a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h5z"/></svg><span>My Books</span></button>
   <button type="button" data-go="stats"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 20V11M12 20V5M18 20v-7"/></svg><span>Stats</span></button>
   <button type="button" data-go="rewards"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9H4zM3 7.5h18V11H3zM12 7.5V20M12 7.5C10 3.5 6.5 4 7 6.2c.3 1.3 2.5 1.3 5 1.3 2.5 0 4.7 0 5-1.3.5-2.2-3-2.7-5 1.3z"/></svg><span>Rewards</span></button>
   <button type="button" data-go="settings"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg><span>Settings</span></button>
 </nav>
+<div class="undobar" id="undoBar" hidden role="status"><span id="undoTxt"></span><button id="undoBtn" type="button">Undo</button></div>
 <div id="toast" role="status" aria-live="polite" popover="manual"></div>
 
 <script>
@@ -3519,7 +3530,13 @@ function buzz() {
     hapEl.click();
   } catch (e) {}
 }
-function toastLater(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) { buzz(); chime(); } if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
+var badgeBatch = [], badgeT = 0;
+function toastLater(m) {
+  const bm = /^Badge earned: (.*)/.exec(m);
+  if (bm) { badgeBatch.push(bm[1]); clearTimeout(badgeT); badgeT = setTimeout(() => { const a = badgeBatch.splice(0); toastQ(a.length === 1 ? "Badge earned: " + a[0] : `Badge earned: ${a.length} new badges (${a.slice(0, 3).join(", ")}${a.length > 3 ? "…" : ""})`); }, 500); return; }
+  toastQ(m);
+}
+function toastQ(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) { buzz(); chime(); } if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
 function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m, !isAdult() && /^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
@@ -4905,21 +4922,31 @@ function renderLibrary() {
     hits.forEach(m => list.append(bookItem(m)));
     return;
   }
-  $("#libHead").textContent = "Library";
+  $("#libHead").textContent = "My books"; { const cc = $("#classCard"); if (cc) cc.hidden = !lib.length; }
   $("#libHead").hidden = sorted.length < 2;
   if (sorted.length) {
     cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
   }
   sorted.slice(1).forEach(m => list.append(bookItem(m)));
 }
-async function removeBook(m) {
-  if (!confirm(`Remove "${m.title}" from your library? Its bookmarks go too.`)) return;
-  lib = lib.filter(x => x.id !== m.id); saveLib();
+var pendDel = null;
+async function commitDel(m) {
   await dbDel(m.id);
   store.del("pace:pos:" + m.id); store.del("pace:bm:" + m.id); store.del("pace:rd:" + m.id);
   delete stats.books[m.id]; store.set("pace:stats", stats);
-  renderLibrary();
 }
+function finalizeDel() {
+  if (!pendDel) return; const p = pendDel; pendDel = null; clearTimeout(p.t); $("#undoBar").hidden = true; commitDel(p.m);
+}
+function removeBook(m) {
+  finalizeDel();
+  const idx = lib.findIndex(x => x.id === m.id); lib = lib.filter(x => x.id !== m.id); saveLib(); renderLibrary();
+  const bar = $("#undoBar"); $("#undoTxt").textContent = `Removed "${m.title}"`; bar.hidden = false;
+  pendDel = { m, t: setTimeout(finalizeDel, 7000) };
+  $("#undoBtn").onclick = () => { if (!pendDel || pendDel.m !== m) return; clearTimeout(pendDel.t); pendDel = null; bar.hidden = true; lib.splice(Math.min(idx, lib.length), 0, m); saveLib(); renderLibrary(); };
+}
+addEventListener("pagehide", finalizeDel);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") finalizeDel(); });
 
 /* ---------- stats screen ---------- */
 function niceMax(m) {
@@ -5256,7 +5283,7 @@ async function openClass() {
     row.append(cv, ci, btn); box.append(row);
   });
 }
-$("#classBtn").onclick = openClass; $("#classBtn2").onclick = openClass;
+$("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
 
 const WHATS_VER = "2026-10-06d", WHATS = [
   ["Fun room", "New in Rewards: Wrapped (your reading story), the Arcade (word games after your goal) and the Calm corner. New secret badges for lunch, after school, bedtime, holidays and anniversaries."],
