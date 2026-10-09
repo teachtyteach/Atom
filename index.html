@@ -1337,6 +1337,13 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <button class="primary" id="eyeGo" type="button">Skip break</button>
 </div></dialog>
 
+<dialog id="stillDlg"><div class="sheet eyes">
+  <img class="mascot" src="mascot.png" alt="" width="80">
+  <h2>Still reading?</h2>
+  <p>Atom paused because nobody has touched the screen in 10 minutes.</p>
+  <button class="primary" id="stillGo" type="button">Keep reading</button>
+</div></dialog>
+
 <dialog id="tocDlg"><div class="sheet">
   <div class="sheet-head"><h2>Contents</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <ul class="list" id="tocList"></ul>
@@ -4521,6 +4528,7 @@ function step() {
       cur = last + 1;
       if (wordsSince >= 40) { flush(); save(); }
       eyeLast = performance.now();
+      if (stillCheck()) return;
       if (eyeLimit() > 0 && eyeMs >= eyeLimit()) { eyeMs = 0; pause(); showEyeBreak(); return; }
       if (timerOn && timerLeft <= 0) { timerOn = false; $("#timerSel").value = "0"; pause(); toast(`Time's up. ${fmt(sessionWords)} words this session.`); return; }
       step();
@@ -5726,6 +5734,14 @@ function showEyeBreak() {
   d.showModal();
 }
 $("#eyeGo").onclick = () => { $("#eyeDlg").close(); play(); };
+/* still reading? students only, not in press-and-hold mode */
+var lastAct = performance.now(), STILL_MS = 600000;
+["pointerdown", "keydown", "wheel", "touchstart"].forEach(ev => addEventListener(ev, () => { lastAct = performance.now(); }, { capture: true, passive: true }));
+function stillCheck() {
+  if (isAdult() || isReader() || settings.hold || performance.now() - lastAct < STILL_MS) return false;
+  pause(); const d = $("#stillDlg"); if (!d.open) d.showModal(); return true;
+}
+$("#stillGo").onclick = () => { lastAct = performance.now(); $("#stillDlg").close(); play(); };
 $("#eyeDlg").addEventListener("close", () => clearInterval(eyeTick));
 $("#eyesSel").onchange = e => { settings.eyes = +e.target.value; saveSettings(); eyeMs = 0; };
 $("#timerSel").onchange = e => { const m = +e.target.value; timerOn = m > 0; timerLeft = m * 60000; if (tokens.length) updateStats(); };
@@ -6246,7 +6262,7 @@ function openCalm() {
   CALM.forEach(([k, n, lv]) => { const ok = isAdult() || lvlNow() >= lv, c = el("button", "fchip", ok ? n : "🔒 " + n); c.type = "button"; c.dataset.k = k; c.onclick = () => ok ? go(k) : toast(`${n} unlocks at ${LEVELS[lv][1]}.`); row.append(c); });
   requestAnimationFrame(() => go("breathe"));
 }
-window.__pace = { timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
