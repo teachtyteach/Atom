@@ -5409,7 +5409,7 @@ stage.addEventListener("pointermove", e => {
   if (swState !== "down") return;
   const dx = e.clientX - swX, dy = e.clientY - swY;
   if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-    swState = "swipe"; swDir = dx > 0 ? -1 : 1;
+    swState = "swipe"; swDir = dx > 0 ? 1 : -1;
     try { stage.setPointerCapture(e.pointerId); } catch (x) {}
     if (swDir < 0) sessBacks++;
     seek(cur + swDir); swFlash(swDir); buzz();
