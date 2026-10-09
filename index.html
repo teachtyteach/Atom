@@ -930,7 +930,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button">Text</button></div>
   <div id="chapterBox" hidden>
     <div class="chrow"><div class="chapter"><select id="chapters" aria-label="Chapter"></select></div><button class="mini" id="tocBtn" type="button">Contents</button></div>
-    <div class="chbar" aria-hidden="true"><i id="chfill"></i></div>
+    <div class="chbar" title="Book progress" aria-hidden="true"><i id="chfill"></i></div>
   </div>
   <div class="stage" id="stage">
     <div class="word" id="wordbox"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
@@ -3362,11 +3362,16 @@ async function saveBook(title, b) {
 }
 
 /* ---------- reader ---------- */
+function chBounds() {
+  if (chapters.length < 2) return [0, tokens.length];
+  const k = Math.max(0, chapterIndexAt(cur));
+  return [chapters[k].start, k + 1 < chapters.length ? chapters[k + 1].start : tokens.length];
+}
 function updateStats() {
-  const n = tokens.length;
-  const pct = n > 1 ? Math.floor(cur / (n - 1) * 100) : 100;
-  const left = Math.max(0, n - cur - 1);
-  $("#pos").textContent = `${(cur + 1).toLocaleString()} / ${n.toLocaleString()} · ${pct}%`;
+  const [a, b] = chBounds(), n = b - a, c = cur - a;
+  const pct = n > 1 ? Math.floor(c / (n - 1) * 100) : 100;
+  const left = Math.max(0, n - c - 1);
+  $("#pos").textContent = `${(c + 1).toLocaleString()} / ${n.toLocaleString()} · ${pct}%`;
   $("#left").textContent = left ? `~${fmtMin(Math.max(1, Math.round(left / wpm)))} left` : "End";
   const ms = playedMs + (playing ? performance.now() - playStart : 0);
   const base = sessionWords && ms > 5000 ? `${sessionWords.toLocaleString()} new words this session · ${Math.round(shownWords / (ms / 60000))} wpm actual` : "";
@@ -3385,8 +3390,7 @@ function syncChapter() {
   if (chapters.length < 2) return;
   const lo = chapterIndexAt(cur);
   if (chapSel.selectedIndex !== lo) chapSel.selectedIndex = lo;
-  const start = chapters[lo].start, end = lo + 1 < chapters.length ? chapters[lo + 1].start : tokens.length;
-  $("#chfill").style.width = Math.max(0, Math.min(100, (cur - start) / Math.max(1, end - start) * 100)) + "%";
+  $("#chfill").style.width = Math.max(0, Math.min(100, cur / Math.max(1, tokens.length - 1) * 100)) + "%";
 }
 
 function updateBmIcon() { $("#bmBtn").classList.toggle("on", bms.some(b => Math.abs(b.i - cur) <= 10)); }
@@ -3431,6 +3435,7 @@ function render() {
   paintPart(L, text, 0, p, mask); paintPart(P, text, p, p + 1, mask); paintPart(R, text, p + 1, text.length, mask);
   fitWord(text, p, mask);
   if (document.documentElement.dataset.wfx === "fade" && !settings.motion) { const wb = $("#wordbox"); wb.classList.remove("fade"); void wb.offsetWidth; wb.classList.add("fade"); }
+  { const [a, b] = chBounds(); prog.min = a; prog.max = Math.max(a, b - 1); }
   prog.value = cur; fillR(prog);
   updateStats(); syncChapter(); updateBmIcon();
 }
@@ -4614,7 +4619,7 @@ async function openBook(id) {
   shownWords = 0;
   sessionWords = 0; playedMs = 0; skipCount = 0; noRewind = false; hasPaused = cur > 0; wordsSince = 0;
   sessBacks = 0; coachMark = 0; $("#coach").hidden = true;
-  prog.max = Math.max(0, tokens.length - 1); fillR(prog);
+  { const [a, b] = chBounds(); prog.min = a; prog.max = Math.max(a, b - 1); } fillR(prog);
   $("#title").textContent = rec.title;
   document.title = rec.title + " · Atom";
   chapSel.replaceChildren(...chapters.map((c, i) => {
