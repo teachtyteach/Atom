@@ -428,7 +428,10 @@ dialog.fundlg{inset:0;margin:0;padding:0;border:0;width:100vw;max-width:none;hei
 #toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 .word b{font-weight:700}
-.stage{-webkit-touch-callout:none;touch-action:manipulation}
+.stage{-webkit-touch-callout:none;touch-action:pan-y}
+.stage.swb::after{content:"\2039\2039";position:absolute;left:14px;top:50%;transform:translateY(-50%);font:700 38px Georgia,serif;color:var(--accent);pointer-events:none;animation:swb .45s ease-out forwards}
+.stage.swb[data-sw=fwd]::after{content:"\203A\203A";left:auto;right:14px}
+@keyframes swb{from{opacity:.9}to{opacity:0}}
 .swatch{width:44px;padding:0;border-radius:50%}
 .swatch i{display:block;width:22px;height:22px;border-radius:50%}
 #accentSeg .swatch[aria-pressed=true]{background:var(--surface);border-color:var(--ink);outline:2px solid var(--ink);outline-offset:1px}
@@ -5392,7 +5395,34 @@ $("#menuDlg").addEventListener("close", () => { renderLibrary(); });
 
 $("#back").onclick = () => { setFocus(false); pause(); flush(); save(); renderLibrary(); document.title = "Atom"; show("library"); };
 const stage = $("#stage");
-stage.onclick = () => { if (!settings.hold) toggle(); };
+var swUpT = -1e9, swX = 0, swY = 0, swState = "", swDir = 0, swT = 0, swHold = 0, revT = 0, swResume = false;
+stage.onclick = () => { if (performance.now() - swUpT < 450) return; if (!settings.hold) toggle(); };
+function swFlash(dir) { stage.dataset.sw = dir < 0 ? "back" : "fwd"; stage.classList.remove("swb"); void stage.offsetWidth; stage.classList.add("swb"); }
+function revTick() { if (cur <= 0) { swStop(); return; } seek(cur - 1); revT = setTimeout(revTick, Math.max(60, 60000 / wpm)); }
+function swStop() {
+  clearTimeout(swHold); clearTimeout(revT); revT = 0;
+  if (swState === "hold") { if (swDir > 0 && !swResume) pause(); else if (swDir < 0 && swResume) play(); }
+  swState = "";
+}
+stage.addEventListener("pointerdown", e => { if (settings.hold) return; swX = e.clientX; swY = e.clientY; swState = "down"; swDir = 0; swResume = false; });
+stage.addEventListener("pointermove", e => {
+  if (swState !== "down") return;
+  const dx = e.clientX - swX, dy = e.clientY - swY;
+  if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    swState = "swipe"; swDir = dx > 0 ? -1 : 1;
+    try { stage.setPointerCapture(e.pointerId); } catch (x) {}
+    if (swDir < 0) sessBacks++;
+    seek(cur + swDir); swFlash(swDir); buzz();
+    swHold = setTimeout(() => {
+      if (swState !== "swipe") return;
+      swState = "hold"; swResume = playing;
+      if (swDir < 0) { if (playing) pause(); revT = setTimeout(revTick, 0); }
+      else if (!playing) play();
+    }, 380);
+  }
+});
+const swEnd = () => { const was = swState; if (was === "swipe" || was === "hold") swUpT = performance.now(); swStop(); if (was === "down") swState = ""; };
+stage.addEventListener("pointerup", swEnd); stage.addEventListener("pointercancel", swEnd);
 stage.addEventListener("pointerdown", e => { if (!settings.hold) return; e.preventDefault(); try { stage.setPointerCapture(e.pointerId); } catch (x) {} holdActive = true; play(); });
 const endHold = () => { if (holdActive) { holdActive = false; pause(); } };
 stage.addEventListener("pointerup", endHold); stage.addEventListener("pointercancel", endHold);
@@ -5646,7 +5676,7 @@ window.addEventListener("blur", () => { if (playing) pause(); });
 
 
 /* ---------- accent, chunk, hold, bionic settings ---------- */
-function syncHint() { $("#hintTxt").textContent = settings.hold ? "Press and hold to read" : "Tap or press Space to play"; }
+function syncHint() { $("#hintTxt").textContent = settings.hold ? "Press and hold to read" : "Tap to play · swipe to step · hold to scrub"; }
 $$("#accentSeg button").forEach(b => b.onclick = () => { if (lockedTap("accent", b.dataset.accent)) return; settings.accent = b.dataset.accent; saveSettings(); applyTheme(); syncSettingsUI(); });
 $$("#chunkSeg button").forEach(b => b.onclick = () => { settings.chunk = +b.dataset.chunk; saveSettings(); syncSettingsUI(); if (tokens.length) { render(); showContext(); } });
 $("#holdChk").onchange = e => { settings.hold = e.target.checked; saveSettings(); syncHint(); };
