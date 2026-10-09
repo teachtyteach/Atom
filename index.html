@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="atom-app" content="1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -1380,6 +1381,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <button type="button" data-go="rewards"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9H4zM3 7.5h18V11H3zM12 7.5V20M12 7.5C10 3.5 6.5 4 7 6.2c.3 1.3 2.5 1.3 5 1.3 2.5 0 4.7 0 5-1.3.5-2.2-3-2.7-5 1.3z"/></svg><span>Rewards</span></button>
   <button type="button" data-go="settings"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg><span>Settings</span></button>
 </nav>
+<div class="undobar" id="updBar" hidden role="status"><span>Atom has an update.</span><button id="updBtn" type="button">Update</button></div>
 <div class="undobar" id="undoBar" hidden role="status"><span id="undoTxt"></span><button id="undoBtn" type="button">Undo</button></div>
 <div id="toast" role="status" aria-live="polite" popover="manual"></div>
 
@@ -3008,7 +3010,7 @@ const keyToDate = k => { const [y, m, d] = k.split("-").map(Number); return new 
 function daysBack(n) { const out = []; for (let i = n - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(todayKey(d)); } return out; }
 
 let toastTimer = null;
-function toast(msg, mascot) { const t = $("#toast"); t.replaceChildren(); if (mascot) { const i = new Image(); i.src = "mascot.png"; i.alt = ""; i.className = "tm"; t.append(i); } t.append(document.createTextNode(msg)); clearTimeout(toastTimer); clearTimeout(toastHide);
+function toast(msg, mascot) { const t = $("#toast"); t.replaceChildren(); if (mascot) { const i = new Image(); i.src = (typeof MASCOT_URL === "string" && MASCOT_URL) || "mascot.png"; i.alt = ""; i.className = "tm"; t.append(i); } t.append(document.createTextNode(msg)); clearTimeout(toastTimer); clearTimeout(toastHide);
   try { if (t.showPopover && !t.matches(":popover-open")) t.showPopover(); } catch (e) {}
   void t.offsetWidth; t.classList.add("on");
   toastTimer = setTimeout(() => { t.classList.remove("on"); toastHide = setTimeout(() => { try { if (!t.classList.contains("on") && t.hidePopover && t.matches(":popover-open")) t.hidePopover(); } catch (e) {} }, 400); }, 2200); }
@@ -3869,13 +3871,13 @@ function hatSvg(kind) {
   return g;
 }
 function peekSvg(kind) {
-  return `<svg viewBox="0 0 256 246" aria-hidden="true"><image href="mascot.png" width="256" height="246"/><g transform="translate(168 54) rotate(38) scale(1.15)">${hatSvg(kind)}</g></svg>`;
+  return `<svg viewBox="0 0 256 246" aria-hidden="true"><image href="mascot.png" width="256" height="246"/>${(typeof GEAR_K !== "undefined" && GEAR_K && gearNow().ghat) ? "" : `<g transform="translate(168 54) rotate(38) scale(1.15)">${hatSvg(kind)}</g>`}${(typeof GEAR_K !== "undefined" && GEAR_K) ? gearLayers(gearNow()) : ""}</svg>`;
 }
 let peekHide = null;
 function hidePeek() { clearTimeout(peekHide); $("#peek").classList.remove("on", "hop"); }
 function showPeek() {
   const p = $("#peek"), kind = hatFor(evToday());
-  p.innerHTML = peekSvg(kind); p.dataset.line = HAT_LINES[kind] || "Hi! Happy reading!";
+  p.innerHTML = peekSvg(kind); delete p.dataset.said; p.dataset.line = HAT_LINES[kind] || "Hi! Happy reading!";
   p.classList.remove("hop"); void p.offsetWidth; p.classList.add("on");
   clearTimeout(peekHide); peekHide = setTimeout(hidePeek, 7000);
 }
@@ -3890,8 +3892,8 @@ function peekMaybe(force) {
 $("#peek").onclick = () => {
   const p = $("#peek"); if (!p.classList.contains("on")) return;
   p.classList.remove("hop"); void p.offsetWidth; p.classList.add("hop");
-  toast(p.dataset.line || "Hi!");
-  clearTimeout(peekHide); peekHide = setTimeout(hidePeek, 1400);
+  if (!p.dataset.said) { p.dataset.said = "1"; toast(p.dataset.line || "Hi!"); } else atomSay(null);
+  clearTimeout(peekHide); peekHide = setTimeout(hidePeek, 6000);
 };
 new MutationObserver(() => { if (document.body.dataset.screen === "library") setTimeout(() => peekMaybe(false), 2500); else hidePeek(); }).observe(document.body, { attributes: true, attributeFilter: ["data-screen"] });
 setInterval(() => peekMaybe(false), 60000);
@@ -3945,7 +3947,7 @@ function unlockList(f) {
   at(UNLOCK.font).forEach(k => out.push(cap1(k) + " font"));
   at(UNLOCK.pivot).forEach(k => out.push(cap1(k) + " focus letter"));
   at(UNLOCK.icon).forEach(k => out.push(cap1(k.replace("a-", "")) + " A app icon"));
-  if (typeof XCATS !== "undefined") XCATS.forEach(c => at(UNLOCK[c.k] || {}).forEach(k => out.push(XNAME(c.k, k) + " " + c.label.toLowerCase())));
+  if (typeof XCATS !== "undefined") XCATS.forEach(c => at(UNLOCK[c.k] || {}).forEach(k => out.push(XNAME(c.k, k) + (c.gear ? " for Atom" : " " + c.label.toLowerCase()))));
   return out;
 }
 (function groupThemes() {
@@ -4124,7 +4126,7 @@ function applyExtras() {
   { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
   applyBackdrop();
   { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = stampHtml(st); if (t) tl.append(document.createTextNode(XNAME("title", t))); } }
-  updateGreet(); pvUpdate();
+  updateGreet(); pvUpdate(); if (typeof applyGear === "function" && GEAR_K) applyGear();
 }
 /* reward sounds, made in code */
 let actx = null;
@@ -4146,6 +4148,135 @@ const XGROUPS = [
   { id: "fun", name: "Fun", sub: "Confetti, sounds, greetings", keys: ["conf", "chime", "greet"] },
   { id: "me", name: "Identity", sub: "Titles, name flair, frames", keys: ["title", "nflair", "pframe", "stamp", "plate"] }
 ];
+/* ---------- Atom gear: hats, glasses and neckwear, drawn in code ---------- */
+var GEAR_K = ["ghat", "gface", "gneck"];
+var GEAR_SVG = {
+  ghat: {
+    cap: `<path d="M-31 -2C-33 -38 33 -38 31 -2Z" fill="#d7372b"/><path d="M-12 -34L-8 -3M12 -34L8 -3" stroke="rgba(0,0,0,.2)" stroke-width="1.5" fill="none"/><path d="M22 -5Q48 -8 56 2Q34 8 20 3Z" fill="#a8251c"/><circle cx="0" cy="-35" r="3.5" fill="#a8251c"/>`,
+    tophat: `<ellipse cx="0" cy="-2" rx="44" ry="8" fill="#1d1b18"/><rect x="-25" y="-60" width="50" height="58" rx="4" fill="#26231f"/><rect x="-25" y="-20" width="50" height="9" fill="#d7372b"/><path d="M-19 -55V-26" stroke="rgba(255,255,255,.12)" stroke-width="4"/>`,
+    chef: `<rect x="-27" y="-18" width="54" height="18" rx="3" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><circle cx="-19" cy="-30" r="14" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><circle cx="19" cy="-30" r="14" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><circle cx="0" cy="-40" r="18" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><rect x="-25" y="-24" width="50" height="10" fill="#fff"/><path d="M-12 -16V-2M0 -16V-2M12 -16V-2" stroke="#e4dfd5" stroke-width="1.5"/>`,
+    pirate: `<path d="M-50 -2Q-36 -10 -24 -4Q-28 -44 0 -46Q28 -44 24 -4Q36 -10 50 -2Q30 6 0 4Q-30 6 -50 -2Z" fill="#1d1b18"/><path d="M-26 -8Q0 -2 26 -8" stroke="#f2c230" stroke-width="2.5" fill="none"/><circle cx="0" cy="-26" r="7" fill="#f3f0e8"/><circle cx="-2.5" cy="-27" r="1.6" fill="#1d1b18"/><circle cx="2.5" cy="-27" r="1.6" fill="#1d1b18"/><path d="M-11 -14L11 -6M11 -14L-11 -6" stroke="#f3f0e8" stroke-width="3" stroke-linecap="round"/>`,
+    wizard: `<ellipse cx="0" cy="-2" rx="47" ry="9" fill="#3f2475"/><path d="M-27 -5Q-6 -40 6 -80Q12 -50 27 -5Z" fill="#5b34a8"/><path d="M-26 -8Q0 -2 26 -8L24 -16Q0 -10 -24 -16Z" fill="#f2c230"/><path d="M-6 -36l2 5 5 .5-4 3 1.5 5-4.5-3-4.5 3 1.5-5-4-3 5-.5z" fill="#ffe27a"/><circle cx="8" cy="-54" r="2.2" fill="#ffe27a"/><circle cx="12" cy="-26" r="1.8" fill="#ffe27a"/>`,
+    headph: `<path d="M-41 20C-48 -46 48 -46 41 20" stroke="#2b2926" stroke-width="8" fill="none" stroke-linecap="round"/><rect x="-54" y="6" width="17" height="32" rx="7" fill="#d7372b" stroke="#2b2926" stroke-width="2.5"/><rect x="37" y="6" width="17" height="32" rx="7" fill="#d7372b" stroke="#2b2926" stroke-width="2.5"/>`,
+    crown: `<path d="M-30 0L-33 -34L-16 -18L0 -42L16 -18L33 -34L30 0Z" fill="#f2c230" stroke="#a87b0c" stroke-width="2" stroke-linejoin="round"/><rect x="-30" y="-9" width="60" height="9" fill="#e0ad1c"/><circle cx="0" cy="-4.5" r="3.5" fill="#d7372b"/><circle cx="-17" cy="-4.5" r="3" fill="#2f9bd6"/><circle cx="17" cy="-4.5" r="3" fill="#2fbf71"/><circle cx="0" cy="-42" r="3" fill="#fff"/>`,
+    halo: `<ellipse cx="0" cy="-36" rx="32" ry="9" fill="none" stroke="#ffd84a" stroke-width="6"/><ellipse cx="0" cy="-36" rx="32" ry="9" fill="none" stroke="#fff6c2" stroke-width="2"/>`
+  },
+  gface: {
+    round: `<g fill="none" stroke="#1d1b18" stroke-width="4"><circle cx="-35" cy="0" r="24"/><circle cx="35" cy="0" r="24"/><path d="M-11 -2Q0 -9 11 -2M-59 -4L-70 -8M59 -4L70 -8"/></g>`,
+    shades: `<g fill="#111"><rect x="-61" y="-17" width="50" height="34" rx="10"/><rect x="11" y="-17" width="50" height="34" rx="10"/></g><path d="M-11 -6Q0 -12 11 -6" stroke="#111" stroke-width="5" fill="none"/><path d="M-52 -9L-38 -9M20 -9L34 -9" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round"/>`,
+    star: `<g fill="#e02fc0" stroke="#7a1268" stroke-width="2" stroke-linejoin="round"><path d="M-35 -26l7.6 15.5 17 2.5-12.3 12 2.9 17-15.2-8-15.2 8 2.9-17-12.3-12 17-2.5z"/><path d="M35 -26l7.6 15.5 17 2.5-12.3 12 2.9 17-15.2-8-15.2 8 2.9-17-12.3-12 17-2.5z"/></g><path d="M-14 -4H14" stroke="#7a1268" stroke-width="4"/>`,
+    heart: `<g fill="#e8453c" stroke="#8a1d16" stroke-width="2" stroke-linejoin="round"><path d="M-35 20C-62 2-58-22-44-22C-38-22-35-16-35-13C-35-16-32-22-26-22C-12-22-8 2-35 20Z"/><path d="M35 20C8 2 12-22 26-22C32-22 35-16 35-13C35-16 38-22 44-22C58-22 62 2 35 20Z"/></g><path d="M-12 -6H12" stroke="#8a1d16" stroke-width="4"/>`,
+    monocle: `<circle cx="35" cy="0" r="25" fill="rgba(255,255,255,.15)" stroke="#d4a017" stroke-width="5"/><path d="M50 20Q60 50 40 70" stroke="#d4a017" stroke-width="2" fill="none" stroke-dasharray="3 3"/>`,
+    goggles: `<path d="M-80 -2H80" stroke="#5a3a18" stroke-width="12"/><g stroke="#e8a50c" stroke-width="7" fill="rgba(120,200,255,.45)"><circle cx="-35" cy="0" r="23"/><circle cx="35" cy="0" r="23"/></g><path d="M-12 0H12" stroke="#e8a50c" stroke-width="7"/><path d="M-44 -10L-36 -14M26 -10L34 -14" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`,
+    d3: `<rect x="-64" y="-18" width="128" height="36" rx="6" fill="#f3f0e8" stroke="#1d1b18" stroke-width="3"/><rect x="-58" y="-13" width="44" height="26" rx="4" fill="rgba(230,40,40,.75)"/><rect x="14" y="-13" width="44" height="26" rx="4" fill="rgba(30,200,230,.75)"/>`,
+    stache: `<path transform="translate(0 8) scale(.72)" d="M0 12C-6 8-14 8-22 12C-32 18-40 16-44 10C-42 22-30 28-18 24C-9 21-3 18 0 16C3 18 9 21 18 24C30 28 42 22 44 10C40 16 32 18 22 12C14 8 6 8 0 12Z" fill="#3a2516"/>`
+  },
+  gneck: {
+    bowtie: `<path d="M0 0L-24 -14V14Z" fill="#d7372b" stroke="#8a1d16" stroke-width="2" stroke-linejoin="round"/><path d="M0 0L24 -14V14Z" fill="#d7372b" stroke="#8a1d16" stroke-width="2" stroke-linejoin="round"/><rect x="-6" y="-7" width="12" height="14" rx="3" fill="#a8251c"/>`,
+    scarf: `<path d="M-46 -8Q0 4 46 -8L46 6Q0 18 -46 6Z" fill="#2f9bd6"/><path d="M-30 -4V10M-14 -1V13M2 0V14M18 -1V13M34 -4V10" stroke="#f3f6fa" stroke-width="4"/><path d="M14 8L24 44L36 40L28 6Z" fill="#2f9bd6"/><path d="M20 22L30 19M23 32L33 29" stroke="#f3f6fa" stroke-width="3"/>`,
+    tie: `<path d="M-7 -6H7L5 4H-5Z" fill="#1f4fa8"/><path d="M-5 4L5 4L10 40L0 50L-10 40Z" fill="#2f6db5"/><path d="M-6 16L7 12M-8 28L8 24" stroke="#f2c230" stroke-width="2.5"/>`,
+    bandana: `<path d="M-40 -6Q0 4 40 -6L0 34Z" fill="#c8281f"/><g fill="#fff"><circle cx="-14" cy="4" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="0" cy="18" r="2"/><circle cx="-24" cy="-1" r="1.6"/><circle cx="24" cy="0" r="1.6"/></g>`,
+    medal: `<path d="M-14 -10L0 22L14 -10" stroke="#2f6db5" stroke-width="8" fill="none"/><circle cx="0" cy="32" r="13" fill="#f2c230" stroke="#a87b0c" stroke-width="2.5"/><path d="M0 24l2.4 4.9 5.4.8-3.9 3.8.9 5.4L0 36.4l-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z" fill="#fff6c2"/>`,
+    lei: `<g stroke="rgba(0,0,0,.18)" stroke-width="1"><circle cx="-38" cy="-6" r="8" fill="#e02fc0"/><circle cx="-24" cy="2" r="8" fill="#f2c230"/><circle cx="-8" cy="7" r="8" fill="#2fbf71"/><circle cx="8" cy="7" r="8" fill="#e8453c"/><circle cx="24" cy="2" r="8" fill="#2f9bd6"/><circle cx="38" cy="-6" r="8" fill="#e02fc0"/></g><g fill="#fff8"><circle cx="-38" cy="-6" r="2.5"/><circle cx="-24" cy="2" r="2.5"/><circle cx="-8" cy="7" r="2.5"/><circle cx="8" cy="7" r="2.5"/><circle cx="24" cy="2" r="2.5"/><circle cx="38" cy="-6" r="2.5"/></g>`,
+    badge: `<path d="M0 -4l6.5 13.2 14.5 2.1-10.5 10.2 2.5 14.5L0 29.2l-13 6.8 2.5-14.5L-21 11.3l14.5-2.1z" fill="#f2c230" stroke="#a87b0c" stroke-width="2.5" stroke-linejoin="round"/><circle cx="0" cy="16" r="5" fill="#d7372b"/>`
+  }
+};
+var GEAR_T = { ghat: "translate(168 54) rotate(38) scale(1.15)", gface: "translate(152 108) rotate(40)", gneck: "translate(119 148) rotate(41)" };
+XCATS.push(
+  { k: "ghat", label: "Hat", gear: true, opts: [["cap", "Ball cap"], ["tophat", "Top hat"], ["chef", "Chef hat"], ["pirate", "Pirate hat"], ["wizard", "Wizard hat"], ["headph", "Headphones"], ["crown", "Crown"], ["halo", "Halo"]] },
+  { k: "gface", label: "Face", gear: true, opts: [["round", "Round glasses"], ["shades", "Sunglasses"], ["star", "Star glasses"], ["heart", "Heart glasses"], ["monocle", "Monocle"], ["goggles", "Goggles"], ["d3", "3D glasses"], ["stache", "Mustache"]] },
+  { k: "gneck", label: "Neck", gear: true, opts: [["bowtie", "Bow tie"], ["scarf", "Scarf"], ["tie", "Tie"], ["bandana", "Bandana"], ["medal", "Medal"], ["lei", "Flower lei"], ["badge", "Star badge"]] }
+);
+Object.assign(UNLOCK, {
+  ghat: { cap: 1, tophat: 6, chef: 10, pirate: 14, wizard: 18, headph: 22, crown: 27, halo: 34 },
+  gface: { round: 2, shades: 5, star: 9, heart: 13, monocle: 17, goggles: 21, d3: 25, stache: 30 },
+  gneck: { bowtie: 3, scarf: 8, tie: 12, bandana: 16, medal: 20, lei: 24, badge: 29 }
+});
+XGROUPS.push({ id: "gear", name: "Atom gear", sub: "Hats, glasses, neckwear", keys: GEAR_K });
+function gearLayers(pick, noHat) {
+  // neck first, then face, then hat on top
+  return ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_T[k]}">${g}</g>` : ""; }).join("");
+}
+function gearNow() { const o = {}; GEAR_K.forEach(k => { o[k] = xGet(k); }); return o; }
+var MASCOT_URL = "mascot.png", mascotData = null, gearKey = "";
+async function applyGear() {
+  const pick = gearNow(), key = GEAR_K.map(k => pick[k]).join("|");
+  if (key === gearKey) { setMascots(); return; } gearKey = key;
+  if (!pick.ghat && !pick.gface && !pick.gneck) { MASCOT_URL = "mascot.png"; setMascots(); return; }
+  try {
+    if (!mascotData) { const b = await (await fetch("mascot.png")).blob(); mascotData = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); }); }
+    if (gearKey !== key) return;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 256 246" width="256" height="246"><image href="${mascotData}" xlink:href="${mascotData}" width="256" height="246"/>${gearLayers(pick)}</svg>`;
+    const old = MASCOT_URL; MASCOT_URL = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+    if (old.startsWith("blob:")) setTimeout(() => URL.revokeObjectURL(old), 3000);
+  } catch (e) { MASCOT_URL = "mascot.png"; }
+  setMascots();
+}
+function setMascots() { document.querySelectorAll("img.mascot, img.tm").forEach(i => { if (!i.closest(".xth") && i.getAttribute("src") !== MASCOT_URL) i.src = MASCOT_URL; }); }
+function gearThumb(k, id) {
+  const pick = {}; pick[k] = id;
+  return `<svg viewBox="0 0 256 246" width="44" height="42" aria-hidden="true"><image href="mascot.png" width="256" height="246"/>${gearLayers(pick)}</svg>`;
+}
+
+/* ---------- things Atom says when you tap him ---------- */
+var ATOM_LINES = [
+  "Hi! Ready to read?", "Beep boop. That means 'keep reading' in robot.", "Every word counts.", "One more page?", "You're doing great.",
+  "I run on words, not batteries.", "Books are portals. Pick one!", "My favorite number is your word count.", "3, 2, 1... read!",
+  "STEM Launch, reporting for duty!", "Reading makes your brain stronger. Science says so.", "Hey! That tickles.", "Boop!",
+  "I'm not a button. Okay, I'm kind of a button.", "Ouch! Just kidding. Robots don't feel pokes.", "Stop poking me and start reading!",
+  "Did you know? Your eyes stay still in Atom. That's why it feels fast.", "The red letter is where your eye likes to land.",
+  "Tip: tap the word to pause.", "Tip: swipe right to left on the word to go back.", "Tip: hold after a swipe to scrub.",
+  "Tip: try Focus mode in the ••• menu.", "Tip: tap Define to look up a tricky word.", "Tip: bookmark a spot with the ribbon button.",
+  "Reading 20 minutes a day adds up to over a million words a year.",
+  "I'm a robot, but I still cry at sad books.", "Plot twist: you're the main character.", "I'm saving my battery for chapter 2.",
+  "Words in, smarts out.", "Let's beat yesterday's words.", "You + a book = a great team.", "I believe in you. Beep.",
+  "Reading is a superpower. You already have it.", "Shh... I'm reading over your shoulder.", "Fueling up the rockets...",
+  "¡Hola! ¿Qué vas a leer hoy?", "¡Sigue leyendo!", "¡Muy bien!", "¡Tú puedes!",
+  ["Why did the robot go back to school?", "Its skills were getting a little rusty."],
+  ["What's a robot's favorite snack?", "Computer chips."],
+  ["Why was the math book sad?", "It had too many problems."],
+  ["I read a book about anti-gravity.", "I couldn't put it down."],
+  ["Why don't robots ever panic?", "Nerves of steel."],
+  ["Why did the book go to the doctor?", "It hurt its spine."],
+  ["What did one atom say to the other?", "\"I lost an electron.\" \"Are you sure?\" \"I'm positive.\""],
+  ["How does a robot read?", "Byte by byte."],
+  ["Why do bees have sticky hair?", "They use honeycombs."],
+  ["What do you call a dinosaur that reads a lot?", "A the-saurus."],
+  ["Why did the student eat their homework?", "The teacher said it was a piece of cake."],
+  ["What's a ghost's favorite kind of story?", "A boo-k."],
+  ["Why was the robot so tired?", "It had a hard drive."],
+  ["What do you call a pirate who skips class?", "Captain Hooky."],
+  ["Why can't you trust atoms?", "They make up everything."],
+  ["What did the zero say to the eight?", "Nice belt."]
+];
+var lineBag = [], tapRun = 0, tapRunT = 0, jokeT = 0;
+function atomLine() {
+  const now = new Date(), h = now.getHours(), s = streakInfo(), tw = dayW(todayKey()), g = goalTarget(), dyn = [];
+  if (h < 12) dyn.push("Good morning! Brains work great in the morning."); else if (h < 17) dyn.push("Afternoon reading hits different."); else if (h < 21) dyn.push("Evening is a cozy time to read."); else dyn.push("It's late! Maybe one chapter, then sleep.");
+  if (s.cur > 1) dyn.push(`Day ${s.cur} of your streak! Keep it going.`); else if (s.cur === 1) dyn.push("Your streak started. Come back tomorrow!");
+  if (tw >= g) dyn.push("You hit today's goal! I'm doing a happy beep."); else if (tw > 0) dyn.push(`${fmt(g - tw)} words to go for today's goal.`); else dyn.push(`Today's goal is ${fmt(g)} words. Let's go!`);
+  try { const r = rankInfo(metrics().w); if (r.next) dyn.push(`You're ${r.name}. ${fmt(r.need)} words to the next rank.`); } catch (e) {}
+  try { const m = [...lib].sort((a, b) => (b.opened || 0) - (a.opened || 0))[0]; if (m && !m.done) dyn.push(`How's "${m.title.length > 40 ? m.title.slice(0, 40) + "…" : m.title}" going?`); } catch (e) {}
+  const p = gearNow();
+  if (p.ghat) dyn.push(`Do you like my ${XNAME("ghat", p.ghat).toLowerCase()}?`);
+  if (p.gface) dyn.push(`These ${XNAME("gface", p.gface).toLowerCase()} help me read. Not really. But they look cool.`);
+  if (p.gneck) dyn.push(`I put on my ${XNAME("gneck", p.gneck).toLowerCase()} just for you.`);
+  if (!p.ghat && !p.gface && !p.gneck) dyn.push("I can wear hats and glasses! Check Rewards, Atom gear.");
+  if (Math.random() < 0.4) return dyn[Math.floor(Math.random() * dyn.length)];
+  if (!lineBag.length) lineBag = ATOM_LINES.map((x, i) => i).sort(() => Math.random() - 0.5);
+  return ATOM_LINES[lineBag.pop()];
+}
+function atomSay(node) {
+  const t = Date.now(); tapRun = t - tapRunT < 1500 ? tapRun + 1 : 1; tapRunT = t;
+  let line = tapRun === 4 ? "Okay, okay, I'm here!" : tapRun === 6 ? "You really like tapping me." : atomLine();
+  clearTimeout(jokeT);
+  if (Array.isArray(line)) { toast(line[0]); jokeT = setTimeout(() => toast(line[1]), 2300); } else toast(line);
+  if (node && node.animate && !settings.motion) node.animate([{ transform: "translateY(0)" }, { transform: "translateY(-10px) rotate(-4deg)" }, { transform: "translateY(0)" }], { duration: 380, easing: "ease-out" });
+}
+document.addEventListener("click", e => {
+  const m = e.target.closest && e.target.closest("img.mascot"); if (!m || isAdult() || m.closest(".xth")) return;
+  atomSay(m);
+});
 let xgCur = null, xgKeep = false;
 const PH_IMG = {};
 function xTag(kind, id) {
@@ -4157,6 +4288,7 @@ function xThumb(kind, id) {
   try {
     if (kind === "bd") { if (PH_IMG[id]) t.style.backgroundImage = `url("${PH_IMG[id]}")`; else { t.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, "#888"))}")`; t.style.backgroundSize = "contain"; } }
     else if (kind === "atomc") { const im = document.createElement("img"); im.src = "mascot.png"; im.alt = ""; im.style.filter = TINTS[id] || ""; t.append(im); }
+    else if (GEAR_K && GEAR_K.includes(kind)) t.innerHTML = gearThumb(kind, id);
     else if (kind === "plate") t.innerHTML = plateSvg(id, 34);
     else if (kind === "bm" && BM_PATHS[id]) t.innerHTML = `<svg viewBox="0 0 24 24" width="30" height="30"><path d="${BM_PATHS[id]}" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
     else if (kind === "nflair" && SP_GRAD[id]) { t.textContent = "Aa"; t.style.cssText = `font:700 18px Georgia,serif;display:grid;place-items:center;background-image:${SP_GRAD[id]};-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent`; }
@@ -6265,6 +6397,7 @@ function openCalm() {
 if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
-<script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+<script>if("serviceWorker"in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="atom-update"){const b=document.getElementById("updBar");b.hidden=false;document.getElementById("updBtn").onclick=()=>location.reload();}});}</script>
 </body>
 </html>
