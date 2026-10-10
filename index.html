@@ -106,7 +106,7 @@ html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
 .screen{display:none;min-height:100vh;max-width:760px;margin:0 auto;
   padding:max(16px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));gap:14px}
-body[data-screen="library"] #library,body[data-screen="reader"] #reader,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{display:flex;flex-direction:column}
+body[data-screen="library"] #library,body[data-screen="reader"] #reader,body[data-screen="shelf"] #shelf,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{display:flex;flex-direction:column}
 header{display:flex;align-items:center;gap:8px;min-height:44px}
 h1{font:600 22px/1.2 Georgia,"Iowan Old Style",serif;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 h2{margin:0;font:600 16px/1.3 system-ui,-apple-system,sans-serif}
@@ -215,6 +215,25 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 .life{display:grid;gap:8px}
 @media (hover:none){.keys{display:none}}
 .clcard[hidden]{display:none}
+.hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
+@media (min-width:600px){#shelfGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 16px}#recent{max-width:440px}}
+.btile{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;width:100%;min-width:0;gap:5px;background:none;border:0;padding:0;margin:0;min-height:0;box-shadow:none;border-radius:10px;text-align:left;color:var(--ink);position:relative;font:inherit}
+.btile:active{transform:scale(.97)}
+.btile .cover{width:100%;height:auto;aspect-ratio:2/3;border-radius:8px;font-size:24px;align-self:stretch}
+.btile .cover img{width:100%;height:100%;object-fit:cover;display:block}
+.btile .bt{font:600 13px/1.25 system-ui,-apple-system,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.btile .bm{font:500 11px system-ui,sans-serif;color:var(--muted)}
+.btile .bar{height:4px}
+.btile .bx{position:absolute;top:-6px;right:-6px;width:30px;height:30px;min-height:0;padding:0;border-radius:50%;background:#1d1b18;color:#fff;border:2px solid var(--bg);display:none;font:700 14px system-ui;z-index:2}
+#shelf.editing .btile .bx{display:inline-flex}
+#shelf.editing .btile .cover{outline:2px dashed var(--accent);outline-offset:2px}
+#shelf header{display:flex;align-items:center;gap:10px}#shelf header h1{flex:1}
+.shelfbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 2px}
+.shelfbar .seg{flex:1 1 240px;display:flex;gap:4px}.shelfbar .seg button{flex:1;padding:6px 8px;min-height:36px;font-size:13px}
+.shelfbar select{min-height:36px}
+.shelfbar .seg button{white-space:nowrap}@media (max-width:360px){.shelfbar .seg button{font-size:12px;padding:5px 4px}}
+.shelfico{display:grid;grid-template-columns:repeat(2,13px);gap:3px}.shelfico i{width:13px;height:16px;border-radius:2px;background:#2f6db5}.shelfico i:nth-child(2){background:#c8281f}.shelfico i:nth-child(3){background:#e8a50c}.shelfico i:nth-child(4){background:#2f8a4c}
+#recentBox[hidden],.libbtn[hidden]{display:none}
 .clcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:inherit;font:inherit}
 .clcard .clt{flex:1;display:grid;gap:2px}.clcard b{font-family:Georgia,serif;font-size:17px}
 .spines{display:flex;align-items:flex-end;gap:3px;height:34px}
@@ -563,7 +582,7 @@ body.hc button,body.hc .card{box-shadow:none}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-body[data-screen="library"] #library>*,body[data-screen="stats"] #stats>*,body[data-screen="rewards"] #rewards>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+body[data-screen="library"] #library>*,body[data-screen="shelf"] #shelf>*,body[data-screen="stats"] #stats>*,body[data-screen="rewards"] #rewards>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
 body[data-screen="reader"] #reader{animation:fade .3s ease both}
 body[data-screen] .screen>*:nth-child(2){animation-delay:.04s!important}
 body[data-screen] .screen>*:nth-child(3){animation-delay:.08s!important}
@@ -635,10 +654,10 @@ body.playing .controls{opacity:.22}
 .welcome .row .primary{margin-left:auto}
 /* nav + gradient + dim */
 #library header .icon{display:none}
-body[data-screen="library"] #library,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{padding-bottom:calc(92px + env(safe-area-inset-bottom));position:relative;z-index:1}
-body[data-screen="library"]::before,body[data-screen="stats"]::before,body[data-screen="rewards"]::before{content:"";position:fixed;top:0;left:0;right:0;height:220px;background:linear-gradient(to bottom,color-mix(in srgb,var(--accent) 16%,transparent),transparent);pointer-events:none;z-index:0}
+body[data-screen="library"] #library,body[data-screen="shelf"] #shelf,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{padding-bottom:calc(92px + env(safe-area-inset-bottom));position:relative;z-index:1}
+body[data-screen="library"]::before,body[data-screen="shelf"]::before,body[data-screen="stats"]::before,body[data-screen="rewards"]::before{content:"";position:fixed;top:0;left:0;right:0;height:220px;background:linear-gradient(to bottom,color-mix(in srgb,var(--accent) 16%,transparent),transparent);pointer-events:none;z-index:0}
 #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;justify-content:center;gap:6px;padding:6px 10px max(8px,env(safe-area-inset-bottom));background:color-mix(in srgb,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
-body[data-screen="library"] #tabbar,body[data-screen="stats"] #tabbar,body[data-screen="rewards"] #tabbar{display:flex}
+body[data-screen="library"] #tabbar,body[data-screen="shelf"] #tabbar,body[data-screen="stats"] #tabbar,body[data-screen="rewards"] #tabbar{display:flex}
 #tabbar button{flex:1;max-width:190px;flex-direction:column;gap:2px;border:0;background:transparent;box-shadow:none;color:var(--muted);font:600 11px system-ui,sans-serif;padding:6px 4px;min-height:52px;border-radius:14px}
 #tabbar button.on{color:var(--accent)}
 #tabbar button.on svg{transform:translateY(-1px) scale(1.08)}
@@ -837,12 +856,25 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="impbar ind" id="impBar" hidden><i></i></div>
   <div class="card" id="nudge" hidden><span id="nudgeTxt" class="grow"></span><button id="nudgeBtn">Back up</button><button class="x" id="nudgeX" aria-label="Hide for a week" title="Hide for a week">✕</button></div>
   <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
-  <input type="search" class="libsearch" id="libSearch" placeholder="Search your books" aria-label="Search your books" autocomplete="off" hidden>
   <div id="continue"></div>
-  <h2 class="sect" id="libHead">Library</h2>
-  <ul id="books" class="books"></ul>
+  <div id="recentBox" hidden><h2 class="sect">Recent</h2><div class="hgrid" id="recent"></div></div>
+  <button class="card clcard libbtn" id="libBtn" type="button" hidden><span class="shelfico" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="clt"><b>My library</b><span class="fine" id="libCount"></span></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Add an EPUB or paste some text.</p><button type="button" class="primary" id="classBtn2" style="margin-top:12px">Browse the Class Library</button></div>
   <p class="fine madeby">Made FOR STEM Launch</p>
+</section>
+
+<!-- SHELF -->
+<section id="shelf" class="screen">
+  <header>
+    <button class="icon" id="shelfBack" aria-label="Back"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1>My library</h1>
+    <button class="mini" id="shelfEdit" type="button" aria-pressed="false">Edit</button>
+  </header>
+  <input type="search" class="libsearch" id="libSearch" placeholder="Search your books" aria-label="Search your books" autocomplete="off">
+  <div class="shelfbar"><div class="seg" id="shelfSeg" role="group" aria-label="Show"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="reading" aria-pressed="false">Reading</button><button type="button" data-f="new" aria-pressed="false">New</button><button type="button" data-f="done" aria-pressed="false">Finished</button></div>
+  <select id="shelfSort" aria-label="Sort"><option value="recent">Recent</option><option value="title">A to Z</option><option value="progress">Progress</option></select></div>
+  <p class="fine" id="shelfNote"></p>
+  <div class="hgrid" id="shelfGrid"></div>
 </section>
 
 <!-- STATS -->
@@ -3686,7 +3718,7 @@ function afterStats() {
 /* tab bar, add button, dimmer, tints */
 (function () {
   const tabs = document.querySelectorAll("#tabbar button");
-  const sync = () => tabs.forEach(t => t.classList.toggle("on", t.dataset.go === document.body.dataset.screen));
+  const sync = () => tabs.forEach(t => t.classList.toggle("on", t.dataset.go === (document.body.dataset.screen === "shelf" ? "library" : document.body.dataset.screen)));
   new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ["data-screen"] }); sync();
   tabs.forEach(t => t.onclick = () => {
     const g = t.dataset.go, sc = document.body.dataset.screen;
@@ -3694,7 +3726,7 @@ function afterStats() {
     if (g === "settings") $("#settingsBtn").click();
     else if (g === "rewards") { if (sc !== "rewards") openRewards(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
     else if (g === "stats") { if (sc !== "stats") $("#statsBtn").click(); else window.scrollTo({ top: 0, behavior: "smooth" }); }
-    else { if (sc === "stats") $("#statsBack").click(); else if (sc === "rewards") show("library"); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+    else { if (sc === "stats") $("#statsBack").click(); else if (sc === "rewards" || sc === "shelf") { renderLibrary(); show("library"); } else window.scrollTo({ top: 0, behavior: "smooth" }); }
   });
   const fab = $("#fab");
   try {
@@ -4799,7 +4831,9 @@ function setFs(v) {
 
 function show(name) { if (name !== "rewards") { const x = document.getElementById("xgDlg"); if (x && x.open) x.close(); } document.body.dataset.screen = name; window.scrollTo(0, 0); }
 
+var openedFrom = "library";
 async function openBook(id) {
+  openedFrom = document.body.dataset.screen === "shelf" ? "shelf" : "library";
   pause();
   const rec = await dbGet(id);
   if (!rec) { toast("That book's saved text is missing. Remove it and add it again."); return; }
@@ -5108,28 +5142,50 @@ function updateDayCard() {
   { const d = $("#dayStreak"); if (si.cur) { d.innerHTML = FLAME(16); d.append(`${si.cur}-day streak`); } else d.textContent = "No streak yet"; }
 }
 let libQ = "";
+function bookPct(m) { const pos = store.get("pace:pos:" + m.id, 0), total = m.total || 0; return { pos, total, pct: total > 1 ? Math.min(100, Math.floor(pos / (total - 1) * 100)) : 0, left: Math.max(0, total - 1 - pos) }; }
+function bookTile(m, shelf) {
+  const { pct, left, pos } = bookPct(m);
+  const t = el("button", "btile"); t.type = "button"; t.setAttribute("aria-label", m.title + (m.done ? ", finished" : `, ${pct}%`));
+  t.append(coverEl(m, true), el("span", "bt", m.title));
+  t.append(el("span", "bm", m.done && !left ? "Finished" : !pos ? "New" : `${pct}%`));
+  const bar = el("span", "bar"), fill = document.createElement("i"); fill.style.width = pct + "%"; bar.append(fill); t.append(bar);
+  t.onclick = () => { if (shelf && $("#shelf").classList.contains("editing")) { pickCover(m); return; } openBook(m.id); };
+  if (shelf) { const x = el("span", "bx", "✕"); x.setAttribute("role", "button"); x.setAttribute("aria-label", "Remove " + m.title); x.onclick = e => { e.stopPropagation(); removeBook(m); }; t.append(x); }
+  return t;
+}
+const libSorted = () => lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
 function renderLibrary() {
   updateDayCard(); updateRank(true);
   updateNudge();
-  const sorted = lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
-  const cont = $("#continue"), list = $("#books");
-  cont.replaceChildren(); list.replaceChildren();
+  const sorted = libSorted(), cont = $("#continue");
+  cont.replaceChildren();
   updateGreet();
-  const sb = $("#libSearch"); sb.hidden = lib.length < 3; if (lib.length < 3) libQ = "";
   $("#empty").hidden = sorted.length > 0;
-  if (libQ) {
-    const hits = sorted.filter(m => (m.title || "").toLowerCase().includes(libQ));
-    $("#libHead").hidden = false; $("#libHead").textContent = hits.length ? `Results (${hits.length})` : "No matches";
-    hits.forEach(m => list.append(bookItem(m)));
-    return;
-  }
-  $("#libHead").textContent = "My books"; { const cc = $("#classCard"); if (cc) cc.hidden = !lib.length; }
-  $("#libHead").hidden = sorted.length < 2;
-  if (sorted.length) {
-    cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
-  }
-  sorted.slice(1).forEach(m => list.append(bookItem(m)));
+  { const cc = $("#classCard"); if (cc) cc.hidden = !lib.length; }
+  if (sorted.length) cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
+  const rec = sorted.slice(1, 4), rb = $("#recentBox");
+  rb.hidden = !rec.length; $("#recent").replaceChildren(...rec.map(m => bookTile(m, false)));
+  const lb = $("#libBtn"), done = lib.filter(m => m.done).length;
+  lb.hidden = lib.length < 2;
+  $("#libCount").textContent = `${lib.length} book${lib.length === 1 ? "" : "s"}` + (done ? ` · ${done} finished` : "") + " · search and sort";
+  if (document.body.dataset.screen === "shelf") renderShelf();
 }
+let shelfF = "all";
+function shelfState(m) { const { pos } = bookPct(m); return m.done ? "done" : pos > 0 ? "reading" : "new"; }
+function renderShelf() {
+  const grid = $("#shelfGrid"); if (!grid) return;
+  const sort = $("#shelfSort").value;
+  let list = libSorted();
+  if (sort === "title") list.sort((a, b) => (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: "base", numeric: true }));
+  else if (sort === "progress") list.sort((a, b) => bookPct(b).pct - bookPct(a).pct);
+  const counts = { all: list.length, reading: 0, new: 0, done: 0 }; list.forEach(m => counts[shelfState(m)]++);
+  $$("#shelfSeg button").forEach(b => { const f = b.dataset.f; b.setAttribute("aria-pressed", String(f === shelfF)); b.textContent = { all: "All", reading: "Reading", new: "New", done: "Finished" }[f] + (counts[f] ? ` ${counts[f]}` : ""); });
+  if (shelfF !== "all") list = list.filter(m => shelfState(m) === shelfF);
+  if (libQ) list = list.filter(m => (m.title || "").toLowerCase().includes(libQ));
+  grid.replaceChildren(...list.map(m => bookTile(m, true)));
+  $("#shelfNote").textContent = !lib.length ? "No books yet." : !list.length ? (libQ ? "No matches." : "Nothing here yet.") : $("#shelf").classList.contains("editing") ? "Tap a cover to change it. Tap ✕ to remove a book." : "";
+}
+function openShelf() { $("#shelf").classList.remove("editing"); $("#shelfEdit").textContent = "Edit"; $("#shelfEdit").setAttribute("aria-pressed", "false"); renderShelf(); show("shelf"); }
 var pendDel = null;
 async function commitDel(m) {
   await dbDel(m.id);
@@ -5486,7 +5542,8 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-09a", WHATS = [
+const WHATS_VER = "2026-10-09b", WHATS = [
+  ["My library", "Your three most recent books now sit under Continue reading. Tap My library to see every book in a grid, with search, sorting and Reading, New and Finished filters."],
   ["Atom gear", "Dress up Atom with hats, glasses and neckwear. Earn more from events and the season pass. Open Rewards, then Atom gear."],
   ["Atom talks", "Tap Atom for jokes, tips and news about your reading. Keep tapping for more."],
   ["Swipe to step", "Swipe right to left on the word to go back one word. Swipe left to right to go forward. Swipe and hold to keep going."],
@@ -5590,7 +5647,7 @@ $$("[data-close]").forEach(b => b.onclick = () => b.closest("dialog").close());
 $("#settingsBtn").addEventListener("click", () => {});
 $("#menuDlg").addEventListener("close", () => { renderLibrary(); });
 
-$("#back").onclick = () => { setFocus(false); pause(); flush(); save(); renderLibrary(); document.title = "Atom"; show("library"); };
+$("#back").onclick = () => { setFocus(false); pause(); flush(); save(); renderLibrary(); document.title = "Atom"; if (openedFrom === "shelf") { renderShelf(); show("shelf"); } else show("library"); };
 const stage = $("#stage");
 var swUpT = -1e9, swX = 0, swY = 0, swState = "", swDir = 0, swT = 0, swHold = 0, revT = 0, swResume = false;
 stage.onclick = () => { if (performance.now() - swUpT < 450) return; if (!settings.hold) toggle(); };
@@ -5695,7 +5752,12 @@ function updateGreet() {
   const gg = gx ? gx[0][gi] : g;
   { const gEl = $("#greet"); gEl.replaceChildren(); if (n) { gEl.append(document.createTextNode(`${gg}, ${gx ? gx[1] : ""}`)); const nm = el("span", "nflair"); nm.textContent = n; gEl.append(nm); } else gEl.textContent = gg; if ($("#pvGreet")) $("#pvGreet").innerHTML = gEl.innerHTML; }
 }
-$("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderLibrary(); };
+$("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderShelf(); };
+$("#libBtn").onclick = openShelf;
+$("#shelfBack").onclick = () => { renderLibrary(); show("library"); };
+$("#shelfEdit").onclick = () => { const on = $("#shelf").classList.toggle("editing"); $("#shelfEdit").textContent = on ? "Done" : "Edit"; $("#shelfEdit").setAttribute("aria-pressed", String(on)); renderShelf(); };
+$("#shelfSort").onchange = renderShelf;
+$$("#shelfSeg button").forEach(b => b.onclick = () => { shelfF = b.dataset.f; renderShelf(); });
 async function unlockReader(pw) {
   try { if (await sha256("wordsmith:" + pw) !== RD_HASH) return false; } catch (e) { return false; }
   settings.mode = "reader"; saveSettings(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI();
