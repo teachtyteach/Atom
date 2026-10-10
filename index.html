@@ -215,6 +215,18 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 .life{display:grid;gap:8px}
 @media (hover:none){.keys{display:none}}
 .clcard[hidden]{display:none}
+.bdrow{display:flex;gap:14px;align-items:flex-start;margin:4px 0 12px}
+#bdCover .cover{width:96px;height:144px;font-size:28px;border-radius:8px}
+#bdCover .cover img{width:100%;height:100%;object-fit:cover}
+.bdinfo{flex:1;display:grid;gap:10px;min-width:0}.bdinfo label{display:grid;gap:4px}.bdinfo input{width:100%;box-sizing:border-box}
+#bdSearch .row input{flex:1;min-width:0}
+.bdres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;margin:8px 0}
+.bdres button{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:4px;padding:0;border:0;background:none;box-shadow:none;min-height:0;text-align:left;font:600 12px/1.25 system-ui,sans-serif;color:var(--ink)}
+.bdres img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:6px;background:var(--line)}
+.bdres small{color:var(--muted);font-weight:500}
+.bdres button.busy{opacity:.5}
+.bk-au{color:var(--muted);font-size:14px;margin-top:-2px}
+#bdRemove{margin-top:14px;width:100%}
 .hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
 @media (min-width:600px){#shelfGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 16px}#recent{max-width:440px}}
 .btile{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;width:100%;min-width:0;gap:5px;background:none;border:0;padding:0;margin:0;min-height:0;box-shadow:none;border-radius:10px;text-align:left;color:var(--ink);position:relative;font:inherit}
@@ -1108,6 +1120,22 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="sheet-head"><h2>Class Library</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <p class="fine">Free classics. Tap Add to save one to your library. You need internet the first time only.</p>
   <div id="classList" class="classlist"></div>
+</div></dialog>
+
+<dialog id="bookDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Book details</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="bdrow"><div id="bdCover"></div><div class="bdinfo">
+    <label class="fine">Title<input type="text" id="bdTitle" maxlength="100" autocomplete="off"></label>
+    <label class="fine">Author<input type="text" id="bdAuthor" maxlength="80" placeholder="Unknown" autocomplete="off"></label>
+  </div></div>
+  <div class="row"><button id="bdFind" type="button">Find cover online</button><button id="bdPhoto" type="button">Use a photo</button></div>
+  <div id="bdSearch" hidden>
+    <div class="row"><input type="search" class="libsearch" id="bdQ" placeholder="Title and author" autocomplete="off"><button id="bdGo" type="button" class="primary">Search</button></div>
+    <p class="fine" id="bdMsg" role="status"></p>
+    <div class="bdres" id="bdRes"></div>
+    <p class="fine">Covers come from Open Library, a free online library.</p>
+  </div>
+  <button class="danger" id="bdRemove" type="button">Remove this book</button>
 </div></dialog>
 
 <dialog id="pasteDlg"><div class="sheet">
@@ -3329,6 +3357,16 @@ async function readToc(z, dp, dir, items, ncxId) {
   return out;
 }
 
+async function makeCovers(bytes, type) {
+  if (!bytes || !bytes.length) return { small: "", big: "" };
+  const bmp = await createImageBitmap(new Blob([bytes], { type: type || "image/jpeg" }));
+  const draw = (W, H, q) => { const cv = document.createElement("canvas"); cv.width = W; cv.height = H; const sc = Math.max(W / bmp.width, H / bmp.height), w = bmp.width * sc, h = bmp.height * sc, c2 = cv.getContext("2d"); c2.fillStyle = "#fff"; c2.fillRect(0, 0, W, H); c2.imageSmoothingQuality = "high"; c2.drawImage(bmp, (W - w) / 2, (H - h) / 2, w, h); return cv.toDataURL("image/jpeg", q); };
+  const out = { small: draw(96, 144, 0.7), big: draw(400, 600, 0.84) };
+  try { bmp.close(); } catch (e) {}
+  return out;
+}
+const bigCache = new Map();
+async function saveBigCover(m, big) { if (!big) return; bigCache.set(m.id, big); await dbPut({ id: "cv:" + m.id, img: big }); m.hq = Date.now(); }
 async function makeThumb(bytes, type) {
   if (!bytes || !bytes.length) return "";
   const bmp = await createImageBitmap(new Blob([bytes], { type: type || "image/jpeg" }));
@@ -3365,14 +3403,15 @@ async function parseEpub(buf) {
     toc.forEach((t, i) => { if (t.path === path && t.frag) marks.push({ id: i, frag: t.frag }); });
     sections.push({ title: heading || `Section ${++n}`, path, text: htmlToText(doc, marks) });
   }
-  let cover = "";
+  let cover = "", coverBig = "";
   try {
     const mc = Array.from(opf.getElementsByTagNameNS("*", "meta")).find(m => m.getAttribute("name") === "cover");
     let ci = (mc && items[mc.getAttribute("content")]) || Object.values(items).find(it => /(^|\s)cover-image(\s|$)/.test(it.props));
     if (!ci) ci = Object.values(items).find(it => /^image\//.test(it.type) && /cover/i.test(it.href));
-    if (ci) cover = await makeThumb(await z.bytes(resolvePath(dir, ci.href)), ci.type);
-  } catch (e) { cover = ""; }
-  return { title: titleEl ? titleEl.textContent.trim() : "", sections, toc, cover };
+    if (ci) { const cv = await makeCovers(await z.bytes(resolvePath(dir, ci.href)), ci.type); cover = cv.small; coverBig = cv.big; }
+  } catch (e) { cover = ""; coverBig = ""; }
+  const auEl = opf.getElementsByTagNameNS("*", "creator")[0];
+  return { title: titleEl ? titleEl.textContent.trim() : "", author: auEl ? auEl.textContent.trim().slice(0, 80) : "", sections, toc, cover, coverBig };
 }
 
 function bookFromEpub(book) {
@@ -3406,6 +3445,8 @@ async function saveBook(title, b) {
   if (!m) { m = { id, title, added: Date.now(), opened: 0 }; lib.push(m); }
   m.title = title; m.total = rec.total; m.nch = b.chapters.length;
   if (b.cover) m.cover = b.cover;
+  if (b.author && !m.author) m.author = b.author;
+  if (b.coverBig) { try { await saveBigCover(m, b.coverBig); } catch (e) {} }
   saveLib();
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   return { id, ok };
@@ -4847,6 +4888,7 @@ async function openBook(id) {
   sessionWords = 0; playedMs = 0; skipCount = 0; noRewind = false; hasPaused = cur > 0; wordsSince = 0;
   sessBacks = 0; coachMark = 0; $("#coach").hidden = true;
   { const [a, b] = chBounds(); prog.min = a; prog.max = Math.max(a, b - 1); } fillR(prog);
+  { const mt = lib.find(x => x.id === id); if (mt && mt.title) rec.title = mt.title; }
   $("#title").textContent = rec.title;
   document.title = rec.title + " · Atom";
   chapSel.replaceChildren(...chapters.map((c, i) => {
@@ -5004,16 +5046,17 @@ function openSettings(tab) { syncSettingsUI(); syncBackupInfo(); prepareBackup()
 /* ---------- library screen ---------- */
 function coverEl(m, still) {
   const d = el("div", "cover"); d.setAttribute("aria-hidden", "true");
-  if (m.cover) { const img = new Image(); img.src = m.cover; img.alt = ""; d.append(img); }
+  if (m.cover) { const img = new Image(); img.src = bigCache.get(m.id) || m.cover; img.alt = ""; img.decoding = "async"; d.append(img);
+    if (m.hq && !bigCache.has(m.id)) dbGet("cv:" + m.id).then(r => { if (r && r.img) { bigCache.set(m.id, r.img); img.src = r.img; } }).catch(() => {}); }
   else {
     d.style.background = `hsl(${parseInt(hash(m.title || "x"), 36) % 360} 30% 38%)`;
     d.textContent = (String(m.title || "?").match(/[\p{L}\p{N}]+/gu) || ["?"]).slice(0, 2).map(w => w[0]).join("").toUpperCase();
   }
   if (m.done) { const pl = el("span", "plate"); pl.innerHTML = plateSvg(window.__xr ? (xGet("plate") || "def") : "def", 22); d.append(pl); }
   if (still) { d.setAttribute("aria-hidden", "true"); return d; }
-  d.removeAttribute("aria-hidden"); d.setAttribute("role", "button"); d.tabIndex = 0; d.setAttribute("aria-label", "Change cover for " + (m.title || "book"));
-  d.style.cursor = "pointer"; d.onclick = () => pickCover(m);
-  d.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickCover(m); } };
+  d.removeAttribute("aria-hidden"); d.setAttribute("role", "button"); d.tabIndex = 0; d.setAttribute("aria-label", "Details and cover for " + (m.title || "book"));
+  d.style.cursor = "pointer"; d.onclick = () => openBookDlg(m);
+  d.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openBookDlg(m); } };
   return d;
 }
 let coverTarget = null;
@@ -5024,7 +5067,7 @@ function pickCover(m) {
     inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.id = "coverIn"; inp.hidden = true; document.body.append(inp);
     inp.onchange = async () => {
       const f = inp.files[0], t = coverTarget; inp.value = ""; if (!f || !t) return;
-      try { t.cover = await makeThumb(new Uint8Array(await f.arrayBuffer()), f.type); saveLib(); renderLibrary(); toast("Cover updated"); }
+      try { const cv = await makeCovers(new Uint8Array(await f.arrayBuffer()), f.type); t.cover = cv.small; await saveBigCover(t, cv.big); saveLib(); renderLibrary(); bdRefresh(); toast("Cover updated"); }
       catch (e) { toast("Couldn't use that picture."); }
     };
   }
@@ -5109,9 +5152,9 @@ function heroCard(m) {
   const ring = document.createElement("span"); ring.innerHTML = ringSvg(pct); ring.style.display = "contents";
   row.append(ring, info);
   const go = el("button", "primary go", left ? (pos > 0 ? "Continue" : "Start reading") : "Read again"); go.type = "button"; go.onclick = () => openBook(m.id);
-  body.append(el("span", "bk-title", m.title), row, go);
+  body.append(el("span", "bk-title", m.title)); if (m.author) body.append(el("span", "bk-au", m.author)); body.append(row, go);
   const del = el("button", "icon bk-del hdel"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title); del.onclick = () => removeBook(m);
-  const cv = coverEl(m); cv.title = "Tap to change cover";
+  const cv = coverEl(m); cv.title = "Tap for cover and details";
   c.append(cv, body, del); applyTint(c, m);
   return c;
 }
@@ -5149,7 +5192,7 @@ function bookTile(m, shelf) {
   t.append(coverEl(m, true), el("span", "bt", m.title));
   t.append(el("span", "bm", m.done && !left ? "Finished" : !pos ? "New" : `${pct}%`));
   const bar = el("span", "bar"), fill = document.createElement("i"); fill.style.width = pct + "%"; bar.append(fill); t.append(bar);
-  t.onclick = () => { if (shelf && $("#shelf").classList.contains("editing")) { pickCover(m); return; } openBook(m.id); };
+  t.onclick = () => { if (shelf && $("#shelf").classList.contains("editing")) { openBookDlg(m); return; } openBook(m.id); };
   if (shelf) { const x = el("span", "bx", "✕"); x.setAttribute("role", "button"); x.setAttribute("aria-label", "Remove " + m.title); x.onclick = e => { e.stopPropagation(); removeBook(m); }; t.append(x); }
   return t;
 }
@@ -5183,12 +5226,12 @@ function renderShelf() {
   if (shelfF !== "all") list = list.filter(m => shelfState(m) === shelfF);
   if (libQ) list = list.filter(m => (m.title || "").toLowerCase().includes(libQ));
   grid.replaceChildren(...list.map(m => bookTile(m, true)));
-  $("#shelfNote").textContent = !lib.length ? "No books yet." : !list.length ? (libQ ? "No matches." : "Nothing here yet.") : $("#shelf").classList.contains("editing") ? "Tap a cover to change it. Tap ✕ to remove a book." : "";
+  $("#shelfNote").textContent = !lib.length ? "No books yet." : !list.length ? (libQ ? "No matches." : "Nothing here yet.") : $("#shelf").classList.contains("editing") ? "Tap a book to change its cover or name. Tap ✕ to remove it." : "";
 }
 function openShelf() { $("#shelf").classList.remove("editing"); $("#shelfEdit").textContent = "Edit"; $("#shelfEdit").setAttribute("aria-pressed", "false"); renderShelf(); show("shelf"); }
 var pendDel = null;
 async function commitDel(m) {
-  await dbDel(m.id);
+  await dbDel(m.id); dbDel("cv:" + m.id); bigCache.delete(m.id);
   store.del("pace:pos:" + m.id); store.del("pace:bm:" + m.id); store.del("pace:rd:" + m.id);
   delete stats.books[m.id]; store.set("pace:stats", stats);
 }
@@ -5465,7 +5508,7 @@ async function importFiles(files) {
     try {
       const name = f.name.replace(/\.[^.]+$/, "");
       let title, b;
-      if (/\.epub$/i.test(f.name)) { const book = await parseEpub(await f.arrayBuffer()); title = book.title || name; b = bookFromEpub(book); b.cover = book.cover; }
+      if (/\.epub$/i.test(f.name)) { const book = await parseEpub(await f.arrayBuffer()); title = book.title || name; b = bookFromEpub(book); b.cover = book.cover; b.coverBig = book.coverBig; b.author = book.author; }
       else if (/\.(html?|xhtml)$/i.test(f.name)) {
         const doc = new DOMParser().parseFromString(await f.text(), "text/html");
         title = doc.title || name; b = bookFromText(htmlToText(doc));
@@ -5542,7 +5585,8 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-09b", WHATS = [
+const WHATS_VER = "2026-10-09c", WHATS = [
+  ["Sharp covers", "Book covers are now high quality. Tap a cover to find a better one online, add the author or fix the title."],
   ["My library", "Your three most recent books now sit under Continue reading. Tap My library to see every book in a grid, with search, sorting and Reading, New and Finished filters."],
   ["Atom gear", "Dress up Atom with hats, glasses and neckwear. Earn more from events and the season pass. Open Rewards, then Atom gear."],
   ["Atom talks", "Tap Atom for jokes, tips and news about your reading. Keep tapping for more."],
@@ -5754,6 +5798,57 @@ function updateGreet() {
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderShelf(); };
 $("#libBtn").onclick = openShelf;
+/* book details, cover search (Open Library) */
+let bdBook = null;
+function bdRefresh() { if (!bdBook || !$("#bookDlg").open) return; $("#bdCover").replaceChildren(coverEl(bdBook, true)); }
+function openBookDlg(m) {
+  bdBook = m; $("#bdTitle").value = m.title || ""; $("#bdAuthor").value = m.author || "";
+  $("#bdSearch").hidden = true; $("#bdRes").replaceChildren(); $("#bdMsg").textContent = "";
+  bdRefresh(); const d = $("#bookDlg"); if (!d.open) d.showModal(); bdRefresh();
+}
+const bdClean = t => String(t || "").replace(/^\s*[A-Z]{1,4}\d{1,4}\s*[-–:.]\s*/, "").replace(/\s*[\[(].*?[\])]\s*/g, " ").trim();
+$("#bdTitle").onchange = () => { if (!bdBook) return; const v = $("#bdTitle").value.trim().slice(0, 100); if (v) { bdBook.title = v; saveLib(); renderLibrary(); bdRefresh(); } else $("#bdTitle").value = bdBook.title; };
+$("#bdAuthor").onchange = () => { if (!bdBook) return; bdBook.author = $("#bdAuthor").value.trim().slice(0, 80); saveLib(); renderLibrary(); };
+$("#bdPhoto").onclick = () => { if (bdBook) pickCover(bdBook); };
+$("#bdRemove").onclick = () => { const m = bdBook; if (!m) return; $("#bookDlg").close(); removeBook(m); };
+$("#bdFind").onclick = () => { if (!bdBook) return; $("#bdSearch").hidden = false; $("#bdQ").value = (bdClean(bdBook.title) + " " + (bdBook.author || "")).trim(); bdSearch(); };
+$("#bdGo").onclick = () => bdSearch();
+$("#bdQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); bdSearch(); } });
+function fetchT(url, ms, opt) { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms); return fetch(url, Object.assign({ signal: ac.signal }, opt || {})).finally(() => clearTimeout(t)); }
+async function bdSearch() {
+  const q = $("#bdQ").value.trim(), box = $("#bdRes"), msg = $("#bdMsg"); if (!q) return;
+  if (!navigator.onLine) { msg.textContent = "You're offline. Connect to the internet to find a cover."; return; }
+  msg.textContent = "Searching…"; box.replaceChildren();
+  try {
+    const r = await fetchT("https://openlibrary.org/search.json?limit=24&fields=title,author_name,cover_i,first_publish_year&q=" + encodeURIComponent(q), 12000);
+    if (!r.ok) throw new Error("http");
+    const j = await r.json(), hits = (j.docs || []).filter(d => d.cover_i).slice(0, 9);
+    if (!hits.length) { msg.textContent = "No covers found. Try fewer words, or just the title."; return; }
+    msg.textContent = "Tap the right cover.";
+    hits.forEach(h => {
+      const b = el("button"); b.type = "button"; const im = new Image(); im.alt = ""; im.loading = "lazy"; im.src = `https://covers.openlibrary.org/b/id/${h.cover_i}-M.jpg`;
+      b.append(im, el("span", "", (h.title || "").slice(0, 60)), el("small", "", ((h.author_name || [])[0] || "") + (h.first_publish_year ? " · " + h.first_publish_year : "")));
+      b.onclick = () => bdUse(h, b); box.append(b);
+    });
+  } catch (e) { msg.textContent = "Couldn't reach the cover library. School WiFi may block it. Try at home."; }
+}
+async function bdBytes(url) {
+  try { const r = await fetchT(url, 15000, { mode: "cors" }); if (r.ok) { const bl = await r.blob(); if (bl.size > 1000) return [new Uint8Array(await bl.arrayBuffer()), bl.type]; } } catch (e) {}
+  // fallback: draw through a CORS image
+  const im = await new Promise((ok, bad) => { const i = new Image(); i.crossOrigin = "anonymous"; i.onload = () => ok(i); i.onerror = bad; i.src = url; });
+  const c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext("2d").drawImage(im, 0, 0);
+  const bl = await new Promise(ok => c.toBlob(ok, "image/jpeg", 0.92)); return [new Uint8Array(await bl.arrayBuffer()), "image/jpeg"];
+}
+async function bdUse(h, btn) {
+  const m = bdBook; if (!m || btn.classList.contains("busy")) return; btn.classList.add("busy"); $("#bdMsg").textContent = "Saving cover…";
+  try {
+    const [bytes, type] = await bdBytes(`https://covers.openlibrary.org/b/id/${h.cover_i}-L.jpg`);
+    const cv = await makeCovers(bytes, type); if (!cv.small) throw new Error("img");
+    m.cover = cv.small; await saveBigCover(m, cv.big);
+    if (!m.author && h.author_name && h.author_name[0]) { m.author = String(h.author_name[0]).slice(0, 80); $("#bdAuthor").value = m.author; }
+    saveLib(); renderLibrary(); bdRefresh(); $("#bdSearch").hidden = true; toast("Cover saved. It works offline too.");
+  } catch (e) { btn.classList.remove("busy"); $("#bdMsg").textContent = "Couldn't save that one. Try another cover, or use a photo."; }
+}
 $("#shelfBack").onclick = () => { renderLibrary(); show("library"); };
 $("#shelfEdit").onclick = () => { const on = $("#shelf").classList.toggle("editing"); $("#shelfEdit").textContent = on ? "Done" : "Edit"; $("#shelfEdit").setAttribute("aria-pressed", String(on)); renderShelf(); };
 $("#shelfSort").onchange = renderShelf;
@@ -6174,14 +6269,15 @@ function updateNudge() {
   if (need) $("#nudgeTxt").textContent = last ? `Last backup was ${Math.round((Date.now() - last) / 864e5)} days ago.` : "You haven't backed up your library yet.";
 }
 async function makeBackup() {
-  const books = [], pos = {}, bm = {}, rd = {};
+  const books = [], pos = {}, bm = {}, rd = {}, hq = {};
   for (const m of lib) {
     const rec = await dbGet(m.id); if (rec) books.push(rec);
     const p = store.get("pace:pos:" + m.id, null); if (p !== null) pos[m.id] = p;
     const b = store.get("pace:bm:" + m.id, null); if (b && b.length) bm[m.id] = b;
     const r = store.get("pace:rd:" + m.id, null); if (r && r.length) rd[m.id] = r;
+    if (m.hq) { const c = await dbGet("cv:" + m.id); if (c && c.img) hq[m.id] = c.img; }
   }
-  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, stats, settings, wpm, fs, badges: store.get("pace:badges", {}), wk: store.get("pace:wk", {}), extra: Object.fromEntries(["ev", "sp", "sr2", "sec", "arc", "cl", "since"].map(k => [k, store.get("pace:" + k, null)])) };
+  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, hq, stats, settings, wpm, fs, badges: store.get("pace:badges", {}), wk: store.get("pace:wk", {}), extra: Object.fromEntries(["ev", "sp", "sr2", "sec", "arc", "cl", "since"].map(k => [k, store.get("pace:" + k, null)])) };
 }
 async function prepareBackup() {
   const btn = $("#backupBtn"); backupFile = null; btn.disabled = true; btn.textContent = "Preparing…";
@@ -6207,6 +6303,7 @@ async function restoreBackup(file) {
     const n = data.books.length;
     if (!confirm(`Restore ${n} book${n === 1 ? "" : "s"} from ${data.saved ? new Date(data.saved).toLocaleDateString() : "this backup"}? Books already here are updated.`)) return;
     for (const rec of data.books) await dbPut(rec);
+    for (const [id, img] of Object.entries(data.hq || {})) { if (typeof img === "string" && img.startsWith("data:image/")) { await dbPut({ id: "cv:" + id, img }); bigCache.set(id, img); } }
     (data.lib || []).forEach(m => { const i = lib.findIndex(x => x.id === m.id); if (i >= 0) lib[i] = Object.assign({}, lib[i], m); else lib.push(m); });
     saveLib();
     Object.entries(data.pos || {}).forEach(([id, p]) => store.set("pace:pos:" + id, p));
