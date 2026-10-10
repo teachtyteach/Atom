@@ -3843,7 +3843,7 @@ function updateEventUI() {
   else {
     const e = EVENTS[evSel], mo = m => new Date(2026, m[0] - 1, m[1]).toLocaleDateString(undefined, { month: "short", day: "numeric" });
     const yrs = Object.keys(got).filter(x => x.startsWith(e.id + ":")).map(x => x.split(":")[1]);
-    d.textContent = `${e.name}: ${mo(e.from)} to ${mo(e.to)}. Read ${fmt(e.goal)} words in that time.` + (Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id) ? ` Unlocks the ${themeName(Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id))} theme.` : "") + (yrs.length ? ` Earned ${yrs.join(", ")}.` : "");
+    d.textContent = `${e.name}: ${mo(e.from)} to ${mo(e.to)}. Read ${fmt(e.goal)} words in that time.` + (Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id) ? ` Unlocks the ${themeName(Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id))} theme.` : "") + (() => { const g = (window.EV_GEAR || []).find(x => x[3] === e.id); return g ? ` Also unlocks the ${g[2]} for Atom.` : ""; })() + (yrs.length ? ` Earned ${yrs.join(", ")}.` : "");
   }
 }
 $("#evCard").onclick = () => $("#statsBtn").click();
@@ -4157,7 +4157,7 @@ var GEAR_SVG = {
     chef: `<rect x="-27" y="-18" width="54" height="18" rx="3" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><circle cx="-19" cy="-30" r="14" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><circle cx="19" cy="-30" r="14" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><circle cx="0" cy="-40" r="18" fill="#fff" stroke="#c9c4ba" stroke-width="1.5"/><rect x="-25" y="-24" width="50" height="10" fill="#fff"/><path d="M-12 -16V-2M0 -16V-2M12 -16V-2" stroke="#e4dfd5" stroke-width="1.5"/>`,
     pirate: `<path d="M-50 -2Q-36 -10 -24 -4Q-28 -44 0 -46Q28 -44 24 -4Q36 -10 50 -2Q30 6 0 4Q-30 6 -50 -2Z" fill="#1d1b18"/><path d="M-26 -8Q0 -2 26 -8" stroke="#f2c230" stroke-width="2.5" fill="none"/><circle cx="0" cy="-26" r="7" fill="#f3f0e8"/><circle cx="-2.5" cy="-27" r="1.6" fill="#1d1b18"/><circle cx="2.5" cy="-27" r="1.6" fill="#1d1b18"/><path d="M-11 -14L11 -6M11 -14L-11 -6" stroke="#f3f0e8" stroke-width="3" stroke-linecap="round"/>`,
     wizard: `<ellipse cx="0" cy="-2" rx="47" ry="9" fill="#3f2475"/><path d="M-27 -5Q-6 -40 6 -80Q12 -50 27 -5Z" fill="#5b34a8"/><path d="M-26 -8Q0 -2 26 -8L24 -16Q0 -10 -24 -16Z" fill="#f2c230"/><path d="M-6 -36l2 5 5 .5-4 3 1.5 5-4.5-3-4.5 3 1.5-5-4-3 5-.5z" fill="#ffe27a"/><circle cx="8" cy="-54" r="2.2" fill="#ffe27a"/><circle cx="12" cy="-26" r="1.8" fill="#ffe27a"/>`,
-    headph: `<path d="M-41 20C-48 -46 48 -46 41 20" stroke="#2b2926" stroke-width="8" fill="none" stroke-linecap="round"/><rect x="-54" y="6" width="17" height="32" rx="7" fill="#d7372b" stroke="#2b2926" stroke-width="2.5"/><rect x="37" y="6" width="17" height="32" rx="7" fill="#d7372b" stroke="#2b2926" stroke-width="2.5"/>`,
+    headph: `<path d="M-77 -14C-86 -114 74 -134 69 -30" stroke="#2b2926" stroke-width="8" fill="none" stroke-linecap="round"/><rect x="-87" y="-21" width="19" height="38" rx="8" fill="#d7372b" stroke="#2b2926" stroke-width="2.5"/><rect x="-83" y="-14" width="5" height="24" rx="2.5" fill="rgba(255,255,255,.35)"/><g transform="translate(60 -14) rotate(-10)"><rect x="0" y="-19" width="19" height="38" rx="8" fill="#d7372b" stroke="#2b2926" stroke-width="2.5"/><rect x="11" y="-12" width="5" height="24" rx="2.5" fill="rgba(255,255,255,.35)"/></g>`,
     crown: `<path d="M-30 0L-33 -34L-16 -18L0 -42L16 -18L33 -34L30 0Z" fill="#f2c230" stroke="#a87b0c" stroke-width="2" stroke-linejoin="round"/><rect x="-30" y="-9" width="60" height="9" fill="#e0ad1c"/><circle cx="0" cy="-4.5" r="3.5" fill="#d7372b"/><circle cx="-17" cy="-4.5" r="3" fill="#2f9bd6"/><circle cx="17" cy="-4.5" r="3" fill="#2fbf71"/><circle cx="0" cy="-42" r="3" fill="#fff"/>`,
     halo: `<ellipse cx="0" cy="-36" rx="32" ry="9" fill="none" stroke="#ffd84a" stroke-width="6"/><ellipse cx="0" cy="-36" rx="32" ry="9" fill="none" stroke="#fff6c2" stroke-width="2"/>`
   },
@@ -4177,11 +4177,12 @@ var GEAR_SVG = {
     tie: `<path d="M-7 -6H7L5 4H-5Z" fill="#1f4fa8"/><path d="M-5 4L5 4L10 40L0 50L-10 40Z" fill="#2f6db5"/><path d="M-6 16L7 12M-8 28L8 24" stroke="#f2c230" stroke-width="2.5"/>`,
     bandana: `<path d="M-40 -6Q0 4 40 -6L0 34Z" fill="#c8281f"/><g fill="#fff"><circle cx="-14" cy="4" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="0" cy="18" r="2"/><circle cx="-24" cy="-1" r="1.6"/><circle cx="24" cy="0" r="1.6"/></g>`,
     medal: `<path d="M-14 -10L0 22L14 -10" stroke="#2f6db5" stroke-width="8" fill="none"/><circle cx="0" cy="32" r="13" fill="#f2c230" stroke="#a87b0c" stroke-width="2.5"/><path d="M0 24l2.4 4.9 5.4.8-3.9 3.8.9 5.4L0 36.4l-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z" fill="#fff6c2"/>`,
-    lei: `<g stroke="rgba(0,0,0,.18)" stroke-width="1"><circle cx="-38" cy="-6" r="8" fill="#e02fc0"/><circle cx="-24" cy="2" r="8" fill="#f2c230"/><circle cx="-8" cy="7" r="8" fill="#2fbf71"/><circle cx="8" cy="7" r="8" fill="#e8453c"/><circle cx="24" cy="2" r="8" fill="#2f9bd6"/><circle cx="38" cy="-6" r="8" fill="#e02fc0"/></g><g fill="#fff8"><circle cx="-38" cy="-6" r="2.5"/><circle cx="-24" cy="2" r="2.5"/><circle cx="-8" cy="7" r="2.5"/><circle cx="8" cy="7" r="2.5"/><circle cx="24" cy="2" r="2.5"/><circle cx="38" cy="-6" r="2.5"/></g>`,
+    lei: `<g stroke="rgba(0,0,0,.18)" stroke-width="1"><circle cx="-44" cy="-6.0" r="7" fill="#e02fc0"/><circle cx="-33" cy="2.8" r="7" fill="#f2c230"/><circle cx="-22" cy="9.0" r="7" fill="#2fbf71"/><circle cx="-11" cy="12.8" r="7" fill="#e8453c"/><circle cx="0" cy="14.0" r="7" fill="#2f9bd6"/><circle cx="11" cy="12.8" r="7" fill="#f26a8d"/><circle cx="22" cy="9.0" r="7" fill="#ffd84a"/><circle cx="33" cy="2.8" r="7" fill="#c58cff"/><circle cx="44" cy="-6.0" r="7" fill="#e02fc0"/></g><g fill="rgba(255,255,255,.55)"><circle cx="-46" cy="-8.0" r="2.2"/><circle cx="-35" cy="0.8" r="2.2"/><circle cx="-24" cy="7.0" r="2.2"/><circle cx="-13" cy="10.8" r="2.2"/><circle cx="-2" cy="12.0" r="2.2"/><circle cx="9" cy="10.8" r="2.2"/><circle cx="20" cy="7.0" r="2.2"/><circle cx="31" cy="0.8" r="2.2"/><circle cx="42" cy="-8.0" r="2.2"/></g>`,
     badge: `<path d="M0 -4l6.5 13.2 14.5 2.1-10.5 10.2 2.5 14.5L0 29.2l-13 6.8 2.5-14.5L-21 11.3l14.5-2.1z" fill="#f2c230" stroke="#a87b0c" stroke-width="2.5" stroke-linejoin="round"/><circle cx="0" cy="16" r="5" fill="#d7372b"/>`
   }
 };
-var GEAR_T = { ghat: "translate(168 54) rotate(38) scale(1.15)", gface: "translate(152 108) rotate(40)", gneck: "translate(119 148) rotate(41)" };
+var GEAR_TX = { "ghat:headph": "translate(152 108) rotate(40)", "ghat:earmuffs": "translate(152 108) rotate(40)" };
+var GEAR_T = { ghat: "translate(158 46) rotate(28) scale(1.15)", gface: "translate(152 108) rotate(40)", gneck: "translate(119 148) rotate(41)" };
 XCATS.push(
   { k: "ghat", label: "Hat", gear: true, opts: [["cap", "Ball cap"], ["tophat", "Top hat"], ["chef", "Chef hat"], ["pirate", "Pirate hat"], ["wizard", "Wizard hat"], ["headph", "Headphones"], ["crown", "Crown"], ["halo", "Halo"]] },
   { k: "gface", label: "Face", gear: true, opts: [["round", "Round glasses"], ["shades", "Sunglasses"], ["star", "Star glasses"], ["heart", "Heart glasses"], ["monocle", "Monocle"], ["goggles", "Goggles"], ["d3", "3D glasses"], ["stache", "Mustache"]] },
@@ -4195,7 +4196,7 @@ Object.assign(UNLOCK, {
 XGROUPS.push({ id: "gear", name: "Atom gear", sub: "Hats, glasses, neckwear", keys: GEAR_K });
 function gearLayers(pick, noHat) {
   // neck first, then face, then hat on top
-  return ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_T[k]}">${g}</g>` : ""; }).join("");
+  return ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_TX[k + ":" + id] || GEAR_T[k]}">${g}</g>` : ""; }).join("");
 }
 function gearNow() { const o = {}; GEAR_K.forEach(k => { o[k] = xGet(k); }); return o; }
 var MASCOT_URL = "mascot.png", mascotData = null, gearKey = "";
@@ -4403,7 +4404,7 @@ function openSeason() {
   $("#seasonTitle").style.cssText = "display:flex;align-items:center;gap:8px"; $("#seasonTitle").innerHTML = ribbon(r.i, col, 22) + " Season " + se.n + ": " + se.name;
   $("#seasonInfo").textContent = `Season level ${r.i}. You read ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
   { const nr = S_ITEMS.filter(x => x[1] > r.i).sort((p, q) => p[1] - q[1])[0]; if (nr) $("#seasonInfo").textContent += ` Next reward: ${S_NAMES[nr[2][se.idx]]} at level ${nr[1]}.`; }
-  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme", bm: "Bookmark", nflair: "Name flair", pframe: "Frame", stat: "Stats look", atomc: "Atom color", greet: "Greeting", cov: "Covers", chime: "Sound", plate: "Bookplate" };
+  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme", bm: "Bookmark", nflair: "Name flair", pframe: "Frame", stat: "Stats look", atomc: "Atom color", greet: "Greeting", cov: "Covers", chime: "Sound", plate: "Bookplate", ghat: "Atom hat", gface: "Atom face", gneck: "Atom neck" };
   box.className = "bp"; box.style.setProperty("--sc", col);
   let cur = null;
   for (let k = 1; k <= S_MAX; k++) {
@@ -4536,6 +4537,45 @@ const SPPAL = {}, SPSHAPE = {}, SP_GRAD = {}, SPCH = {};
   XCATS.find(c => c.k === "title").opts.forEach(o => { if (S_NAMES[o[0]]) o[1] = S_NAMES[o[0]]; });
   css.push("@keyframes spb{to{background-position:0 0,-300% 0}}", "@media (prefers-reduced-motion:reduce){:root[data-pframe^=spC] :is(#titleLine,#pvTitle){animation:none!important}:root[data-nflair^=sfB] .nflair{animation:none!important}}");
   const st = document.createElement("style"); st.textContent = css.join("\n"); document.head.append(st);
+})();
+/* more Atom gear: event gear and season pass gear */
+(function () {
+  const H = GEAR_SVG.ghat, F = GEAR_SVG.gface, N = GEAR_SVG.gneck;
+  // event gear
+  H.pumpkin = `<ellipse cx="0" cy="-20" rx="38" ry="24" fill="#e8760c"/><path d="M-14 -42C-22 -30 -22 -10 -14 2M14 -42C22 -30 22 -10 14 2M0 -44V4" stroke="rgba(0,0,0,.22)" stroke-width="2.2" fill="none"/><path d="M-1 -42C-1 -50 3 -56 9 -58" stroke="#3d6b2a" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M6 -50C14 -58 24 -56 26 -50C18 -46 10 -46 6 -50Z" fill="#4f8a36"/><path d="M-20 -24L-12 -30L-6 -22ZM20 -24L12 -30L6 -22ZM-18 -12Q0 -4 18 -12Q10 -6 0 -6Q-10 -6 -18 -12Z" fill="#5a2a05"/>`;
+  H.earmuffs = `<path d="M-77 -12C-86 -114 74 -134 69 -28" stroke="#d6456a" stroke-width="6" fill="none" stroke-linecap="round"/><g fill="#fff" stroke="#e2dccf" stroke-width="1.5"><circle cx="-78" cy="-2" r="17"/><circle cx="71" cy="-14" r="17"/></g><g fill="#f3eee4"><circle cx="-83" cy="-8" r="5.5"/><circle cx="-73" cy="5" r="5.5"/><circle cx="66" cy="-20" r="5.5"/><circle cx="76" cy="-7" r="5.5"/></g>`;
+  H.leafcrown = `<path d="M-36 -4Q0 -14 36 -4" stroke="#7a4f22" stroke-width="4" fill="none"/>` + [[-32, -8, -30, "#d6501a"], [-20, -12, -12, "#e8a50c"], [-7, -14, 6, "#c8281f"], [7, -14, -6, "#e8760c"], [20, -12, 14, "#d6a017"], [32, -8, 30, "#b8431a"]].map(([x, y, r, c]) => `<path transform="translate(${x} ${y}) rotate(${r})" d="M0 4C-8 -2 -6 -14 0 -18C6 -14 8 -2 0 4Z" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width="1"/>`).join("");
+  H.flowers = `<path d="M-36 -4Q0 -14 36 -4" stroke="#3d8a3a" stroke-width="5" fill="none"/>` + [[-28, -7, "#f26a8d"], [-10, -11, "#ffd84a"], [10, -11, "#fff"], [28, -7, "#c58cff"]].map(([x, y, c]) => `<g transform="translate(${x} ${y})"><g fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width="1"><circle cx="0" cy="-6" r="5"/><circle cx="5.7" cy="-1.9" r="5"/><circle cx="3.5" cy="4.9" r="5"/><circle cx="-3.5" cy="4.9" r="5"/><circle cx="-5.7" cy="-1.9" r="5"/></g><circle r="3.4" fill="#e8a50c"/></g>`).join("") + `<path d="M-19 -10l-5 -6M1 -13l2 -7M19 -10l5 -6" stroke="#3d8a3a" stroke-width="3" stroke-linecap="round"/>`;
+  N.vampire = `<path d="M-4 2L-46 -30L-42 14Z" fill="#1d1b18"/><path d="M-6 2L-38 -20L-36 8Z" fill="#b01f1f"/><path d="M4 2L46 -30L42 14Z" fill="#1d1b18"/><path d="M6 2L38 -20L36 8Z" fill="#b01f1f"/><circle cx="0" cy="6" r="6" fill="#c8281f" stroke="#f2c230" stroke-width="2.5"/>`;
+  N.heartbow = `<path d="M0 0C-8 -16 -30 -18 -30 -4C-30 8 -10 10 0 0Z" fill="#f26a8d" stroke="#b02a55" stroke-width="2"/><path d="M0 0C8 -16 30 -18 30 -4C30 8 10 10 0 0Z" fill="#f26a8d" stroke="#b02a55" stroke-width="2"/><path d="M-3 2L-9 22L-2 18L0 24L3 18L9 22L3 2Z" fill="#d6456a"/><path d="M0 4C-4 0-6-3-4-5C-2.5-6-1-5 0-4C1-5 2.5-6 4-5C6-3 4 0 0 4Z" fill="#fff" transform="translate(0 -2)"/>`;
+  N.earth = `<path d="M-10 -10L0 10L10 -10" stroke="#1f8a4c" stroke-width="6" fill="none"/><circle cx="0" cy="22" r="14" fill="#2f9bd6" stroke="#1d5f8a" stroke-width="2.5"/><path d="M-9 15C-3 12 2 16 0 21C-3 25 -10 23 -11 19ZM3 26C7 23 12 25 11 29C8 33 3 31 3 26ZM5 11C9 11 12 14 10 17C7 17 5 14 5 11Z" fill="#43b05c"/>`;
+  F.sparkle = `<g fill="rgba(255,200,230,.35)" stroke="#f2c230" stroke-width="5"><circle cx="-35" cy="0" r="23"/><circle cx="35" cy="0" r="23"/></g><path d="M-12 -2Q0 -9 12 -2" stroke="#f2c230" stroke-width="5" fill="none"/>` + [[-35, -0], [35, 0]].map(([x]) => [0, 60, 120, 180, 240, 300].map(a => { const r = a * Math.PI / 180; return `<path d="M${(x + Math.cos(r) * 27).toFixed(1)} ${(Math.sin(r) * 27).toFixed(1)}L${(x + Math.cos(r) * 35).toFixed(1)} ${(Math.sin(r) * 35).toFixed(1)}" stroke="#ffd84a" stroke-width="3" stroke-linecap="round"/>`; }).join("")).join("");
+  F.snorkel = `<path d="M-74 0H-60M60 0H74" stroke="#1d1b18" stroke-width="7"/><rect x="-62" y="-25" width="124" height="50" rx="22" fill="rgba(140,215,255,.38)" stroke="#2f9bd6" stroke-width="6"/><path d="M-50 -14L-36 -18" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M66 6V-48Q66 -58 74 -58" stroke="#e8760c" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M72 -60h8" stroke="#ffd84a" stroke-width="8" stroke-linecap="round"/>`;
+  const EV_GEAR = [["ghat", "pumpkin", "Pumpkin hat", "patch"], ["gneck", "vampire", "Vampire collar", "spooky"], ["ghat", "leafcrown", "Leaf crown", "thanks"], ["ghat", "earmuffs", "Earmuffs", "snow"], ["gface", "sparkle", "Sparkle glasses", "fresh"], ["gneck", "heartbow", "Heart bow", "hearts"], ["ghat", "flowers", "Flower crown", "bloom"], ["gneck", "earth", "Earth badge", "earth"], ["gface", "snorkel", "Snorkel mask", "summer"]];
+  window.EV_GEAR = EV_GEAR;
+  EV_GEAR.forEach(([k, id, name, ev]) => {
+    XCATS.find(c => c.k === k).opts.push([id, name]);
+    const e = EVENTS.find(x => x.id === ev);
+    EXTRA_SPECIAL[k] = EXTRA_SPECIAL[k] || {};
+    EXTRA_SPECIAL[k][id] = { desc: `Earn the ${e.name} event badge`, test: () => evHas(ev) };
+  });
+  // season pass gear, one version per season
+  const glyph = ['<path d="M0 6C-7 2 -6 -7 0 -10C6 -7 7 2 0 6ZM0 6V-6" fill="#fff" stroke="rgba(0,0,0,.25)" stroke-width="1"/>', '<path d="M0 -10l2.9 6 6.6.9-4.8 4.6 1.2 6.5L0 4.9l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z" fill="#fff"/>', '<path d="M0 0C0-3 4-3 4 0C4 5-4 6-6 1C-8-5 1-10 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/>', '<circle r="4.5" fill="#fff"/><path d="M0-10V-7M0 7V10M-10 0H-7M7 0H10M-7-7L-5-5M5 5L7 7M-7 7L-5 5M5-5L7-7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>'];
+  const ids = (pre) => [0, 1, 2, 3].map(i => pre + i);
+  const sadd = (k, lvl, pre, label, draw) => {
+    const list = ids(pre); S_ITEMS.push([k, lvl, list]);
+    list.forEach((id, i) => {
+      S_NAMES[id] = SP_N[i] + " " + label;
+      XCATS.find(c => c.k === k).opts.push([id, S_NAMES[id]]);
+      GEAR_SVG[k][id] = draw(SP_C[i], SP_L[i], i);
+      EXTRA_SPECIAL[k] = EXTRA_SPECIAL[k] || {};
+      EXTRA_SPECIAL[k][id] = { desc: `Reach season level ${lvl} in a "${SP_N[i]}" season`, test: () => seasonBest(i) >= lvl };
+    });
+  };
+  sadd("ghat", 12, "sgh", "beanie", (c, l, i) => `<path d="M-34 -9C-36 -48 36 -48 34 -9Z" fill="${c}"/><path d="M-20 -40L-14 -9M20 -40L14 -9" stroke="rgba(255,255,255,.22)" stroke-width="3" fill="none"/><rect x="-37" y="-13" width="74" height="13" rx="5" fill="${l}"/><circle cx="0" cy="-47" r="8" fill="${l}"/><g transform="translate(0 -28)">${glyph[i]}</g>`);
+  sadd("gface", 28, "sgf", "shades", (c, l) => `<g fill="${c}" fill-opacity=".85" stroke="${c}" stroke-width="5"><rect x="-60" y="-17" width="48" height="34" rx="12"/><rect x="12" y="-17" width="48" height="34" rx="12"/></g><path d="M-12 -5Q0 -12 12 -5" stroke="${c}" stroke-width="5" fill="none"/><path d="M-51 -8L-37 -8M21 -8L35 -8" stroke="${l}" stroke-width="3" stroke-linecap="round"/>`);
+  sadd("gneck", 48, "sgn", "scarf", (c, l) => `<path d="M-46 -8Q0 4 46 -8L46 6Q0 18 -46 6Z" fill="${c}"/><path d="M-30 -4V10M-14 -1V13M2 0V14M18 -1V13M34 -4V10" stroke="${l}" stroke-width="4"/><path d="M14 8L24 44L36 40L28 6Z" fill="${c}"/><path d="M20 22L30 19M23 32L33 29" stroke="${l}" stroke-width="3"/>`);
+  sadd("ghat", 75, "sgc", "crown", (c, l, i) => `<path d="M-30 0L-33 -34L-16 -18L0 -42L16 -18L33 -34L30 0Z" fill="${l}" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><rect x="-30" y="-10" width="60" height="10" fill="${c}"/><circle cx="0" cy="-42" r="3.5" fill="${c}"/><circle cx="-33" cy="-34" r="3" fill="${c}"/><circle cx="33" cy="-34" r="3" fill="${c}"/><g transform="translate(0 -22) scale(.9)">${glyph[i]}</g>`);
 })();
 /* try before you unlock */
 var pv = null, pvTimer = 0;
@@ -6394,7 +6434,7 @@ function openCalm() {
   CALM.forEach(([k, n, lv]) => { const ok = isAdult() || lvlNow() >= lv, c = el("button", "fchip", ok ? n : "🔒 " + n); c.type = "button"; c.dataset.k = k; c.onclick = () => ok ? go(k) : toast(`${n} unlocks at ${LEVELS[lv][1]}.`); row.append(c); });
   requestAnimationFrame(() => go("breathe"));
 }
-if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
