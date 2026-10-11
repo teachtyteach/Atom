@@ -333,6 +333,7 @@ body.xg #rwQuests,body.xg #boxTile,body.xg #funTiles,body.xg #rewards>.xlab{disp
 #tabbar button.dot{position:relative}#tabbar button.dot::after{content:"";position:absolute;top:8px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--surface)}
 #shelf #classCard2{margin:4px 0 10px}
 .sumlist{list-style:none;padding:0;margin:10px 0 14px;display:grid;gap:8px;text-align:left}.sumlist li{padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-weight:600}#sumOk{width:100%}#sumDlg .mascot{display:block;margin:0 auto}
+.pgsearch{display:flex;gap:8px;margin:4px 0 2px}.pgsearch input{flex:1;min-width:0}#pgRes .cover img{width:100%;height:100%;object-fit:cover}#pgRes[hidden],#classList[hidden]{display:none}
 .menugrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 6px}.menugrid button{width:100%}.menugrid button[hidden]{display:none}
 #pasteClip{margin:6px 0}
 .hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
@@ -1252,7 +1253,10 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 
 <dialog id="classDlg"><div class="sheet">
   <div class="sheet-head"><h2>Class Library</h2><button class="icon" data-close aria-label="Close">✕</button></div>
-  <p class="fine">Free classics. Tap Read to add one to your library and start. You need internet the first time only.</p>
+  <div class="pgsearch"><input type="search" class="libsearch" id="pgQ" placeholder="Search 70,000 free classics" autocomplete="off" aria-label="Search free classic books"><button class="primary" id="pgGo" type="button">Search</button></div>
+  <p class="fine" id="pgMsg" role="status"></p>
+  <div id="pgRes" class="classlist" hidden></div>
+  <p class="fine" id="clNote">Free classics. Tap Read to add one to your library and start. You need internet the first time only.</p>
   <div id="classList" class="classlist"></div>
 </div></dialog>
 
@@ -6132,7 +6136,56 @@ async function classAdd(b, k) {
   const got = store.get("pace:cl", {}); got[b.id] = r.id; store.set("pace:cl", got);
   return r.id;
 }
+/* free classics from Project Gutenberg, through Atom's helper on Cloudflare */
+var BOOKS_API = "https://books.readwithatom.org";
+const pgName = n => { const p = String(n || "").split(", "); return p.length === 2 ? p[1] + " " + p[0] : String(n || ""); };
+const pgBad = b => /erotic|sexual|sex instruction|pornograph|obscen/i.test([...(b.subjects || []), ...(b.bookshelves || [])].join(" "));
+function pgReset() { $("#pgRes").hidden = true; $("#pgRes").replaceChildren(); $("#pgMsg").textContent = ""; $("#classList").hidden = false; $("#clNote").hidden = false; }
+async function pgSearch() {
+  const q = $("#pgQ").value.trim(), box = $("#pgRes"), msg = $("#pgMsg"); if (!q) { pgReset(); return; }
+  if (!navigator.onLine) { msg.textContent = "You're offline. Connect to search for free books."; return; }
+  msg.textContent = "Searching…"; box.replaceChildren(); box.hidden = false; $("#classList").hidden = true; $("#clNote").hidden = true;
+  try {
+    const r = await fetchT(BOOKS_API + "/search?q=" + encodeURIComponent(q), 15000);
+    if (r.status === 404) throw new Error("setup");
+    if (!r.ok) throw new Error("http");
+    const j = await r.json(), hits = (j.results || []).filter(b => b.media_type === "Text" && !b.copyright && (b.formats || {})["application/epub+zip"] && !pgBad(b)).slice(0, 20);
+    if (!hits.length) { msg.textContent = "No free books found. Try just the title, or the author's last name."; return; }
+    msg.textContent = `${hits.length} free book${hits.length === 1 ? "" : "s"} found. Tap Read to add one.`;
+    hits.forEach(b => {
+      const row = el("div", "classrow"), cv = el("div", "cover"), au = pgName((b.authors || [])[0] && b.authors[0].name);
+      const img = (b.formats || {})["image/jpeg"]; if (img) { const im = new Image(); im.alt = ""; im.loading = "lazy"; im.src = img; im.onerror = () => im.remove(); cv.append(im); } else cv.textContent = (b.title || "?").charAt(0);
+      const ci = el("div", "ci"); ci.append(el("b", "", (b.title || "").split(/[;:]\s/)[0].slice(0, 90)), el("small", "", au || "Unknown author"));
+      if (b.download_count > 5000) ci.append(el("small", "", "Popular"));
+      const btn = el("button", "primary", "Read"); btn.type = "button"; btn.onclick = () => pgAdd(b, btn);
+      row.append(cv, ci, btn); box.append(row);
+    });
+  } catch (e) { msg.textContent = e.message === "setup" ? "Free book search isn't set up yet. Ask your teacher." : "Couldn't reach the free books. School WiFi may block it. Try at home."; }
+}
+function pgTrim(book) {
+  const S = /\*\*\*\s*START OF (THE|THIS) PROJECT GUTENBERG E-?BOOK[^*]*\*\*\*/i, E = /\*\*\*\s*END OF (THE|THIS) PROJECT GUTENBERG E-?BOOK/i;
+  let si = book.sections.findIndex(x => S.test(x.text));
+  if (si >= 0) { const s0 = book.sections[si]; s0.text = s0.text.slice(s0.text.search(S)).replace(S, ""); book.sections = book.sections.slice(si); }
+  const ei = book.sections.findIndex(x => E.test(x.text));
+  if (ei >= 0) { const s1 = book.sections[ei]; s1.text = s1.text.slice(0, s1.text.search(E)); book.sections = book.sections.slice(0, ei + 1); }
+  book.sections = book.sections.filter(x => x.text.replace(/\u0001\d+\u0001/g, "").trim().length > 0 && !/full project gutenberg license/i.test(x.title || ""));
+  const paths = new Set(book.sections.map(x => x.path)); book.toc = book.toc.filter(t => paths.has(t.path) && !/project gutenberg/i.test(t.title || ""));
+  return book;
+}
+async function pgAdd(b, btn) {
+  if (btn.classList.contains("busy")) return; btn.classList.add("busy"); const old = btn.textContent; btn.textContent = "Getting…";
+  try {
+    const r = await fetchT(BOOKS_API + "/epub/" + b.id, 60000); if (!r.ok) throw new Error("http");
+    const book = pgTrim(await parseEpub(await r.arrayBuffer()));
+    const title = (b.title || book.title || "Book").split(/[;:]\s/)[0].slice(0, 100), bk = bookFromEpub(book);
+    if (bk.tokens.length < 50) throw new Error("empty");
+    bk.cover = book.cover; bk.coverBig = book.coverBig; bk.author = pgName((b.authors || [])[0] && b.authors[0].name) || book.author;
+    const res = await saveBook(title, bk); $("#classDlg").close(); toast("Added to your library."); openBook(res.id);
+  } catch (e) { toast("Couldn't get that book. Try again, or pick another."); }
+  btn.classList.remove("busy"); btn.textContent = old;
+}
 async function openClass() {
+  $("#pgQ").value = ""; pgReset();
   const dlg = $("#classDlg"), box = $("#classList"); box.replaceChildren(); box.append(el("p", "fine", "Loading…")); if (!dlg.open) dlg.showModal();
   let d; try { d = await classLoad(); } catch (e) { box.replaceChildren(el("p", "fine", "Couldn't load the Class Library. Connect to the internet and try again.")); return; }
   box.replaceChildren();
@@ -6151,9 +6204,11 @@ async function openClass() {
     row.append(cv, ci, btn); box.append(row);
   });
 }
+$("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-12c", WHATS = [
+const WHATS_VER = "2026-10-13a", WHATS = [
+  ["70,000 free classics", "Search Project Gutenberg from the Class Library and add any free classic in one tap. It works offline after."],
   ["Cleaner screens", "Daily quests moved to Rewards. Stats has Today, History and Badges tabs. Rewards come in one summary when you earn several at once."],
   ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn one. Rare and legendary gear for Atom is inside."],
   ["Chapter recaps", "After a chapter, answer one quick question. Your answers make a reading journal you can print."],
