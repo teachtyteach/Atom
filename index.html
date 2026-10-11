@@ -805,6 +805,32 @@ body.playing .controls{opacity:.22}
 .wdots i.on{background:var(--accent);transform:scale(1.25)}
 .welcome .row{justify-content:space-between}
 .welcome .row .primary{margin-left:auto}
+/* first open: full screen, no app behind it */
+#welcomeDlg.full{width:100vw;max-width:100vw;height:100vh;height:100dvh;max-height:none;margin:0;border-radius:0;background:linear-gradient(to bottom,color-mix(in srgb,var(--accent) 14%,var(--bg)),var(--bg) 45%)}
+#welcomeDlg.full::backdrop{background:var(--bg)}
+#welcomeDlg.full[open]{animation:fadeIn .3s ease-out}
+#welcomeDlg.full .sheet{max-height:none;height:100%;box-sizing:border-box;max-width:460px;margin:0 auto;display:flex;flex-direction:column;padding:max(24px,env(safe-area-inset-top)) 22px max(22px,env(safe-area-inset-bottom))}
+#welcomeDlg.full .wslides{flex:1;display:grid;align-content:center}
+#welcomeDlg.full .wslide{min-height:0}
+#welcomeDlg.full .wmascot{width:150px}
+#welcomeDlg.full .wdemo{font-size:60px}
+#welcomeDlg.full .wslide h2{font-size:26px}
+.wintro{gap:14px}
+.wintro .spin{animation:flyin .9s cubic-bezier(.2,.9,.25,1.15) both}
+.wbig{width:170px;height:auto;display:block}
+.wintro .splashname{font-size:42px}
+.wintro p{font-size:17px}
+.wintro .wgo{width:min(320px,100%);min-height:56px;font-size:18px;border-radius:999px;margin-top:18px;animation:fadeup .5s .8s ease-out both}
+.wintro .wrest{width:min(320px,100%);min-height:48px;justify-content:center;border-radius:999px;animation:fadeup .5s .95s ease-out both}
+#wRestMsg{min-height:1.4em;font-size:14px;color:var(--accent)}
+.wintro .wfine{font-size:13px;max-width:34ch;animation:fadeup .5s 1.1s ease-out both}
+.linkbtn{display:inline;min-height:0;padding:0;border:0;background:none;box-shadow:none;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
+.legal h3{font:700 17px/1.3 Georgia,serif;margin:6px 0 -6px}
+.legal p,.legal li{font-size:15px;line-height:1.55}.legal p{margin:0}.legal ul{margin:0}
+.legal ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.legal .ld{color:var(--muted);font-size:13px;margin:0}
+html.firstrun body>:not(dialog){visibility:hidden}
+#welcomeDlg.intro #wNav,#welcomeDlg.intro .wdots{visibility:hidden}
 /* nav + gradient + dim */
 #library header .icon{display:none}
 body[data-screen="library"] #library,body[data-screen="shelf"] #shelf,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{padding-bottom:calc(92px + env(safe-area-inset-bottom));position:relative;z-index:1}
@@ -977,7 +1003,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 </head>
 <body data-screen="library">
 <div id="splash" aria-hidden="true"><div class="spin"><img class="mascot splashbot" src="mascot.png" alt=""></div><b class="splashname">Atom<i>.</i></b></div>
-<script>try{var _s=JSON.parse(localStorage.getItem("pace:settings")||"{}");if(!localStorage.getItem("pace:welcomed")||(_s.mode==="adult"&&!_s.viewStudent)||(_s.mode==="reader"&&_s.plain)||matchMedia("(prefers-reduced-motion: reduce)").matches||_s.motion)document.getElementById("splash").remove();}catch(e){}</script>
+<script>try{if(!localStorage.getItem("pace:welcomed"))document.documentElement.classList.add("firstrun");var _s=JSON.parse(localStorage.getItem("pace:settings")||"{}");if(!localStorage.getItem("pace:welcomed")||(_s.mode==="adult"&&!_s.viewStudent)||(_s.mode==="reader"&&_s.plain)||matchMedia("(prefers-reduced-motion: reduce)").matches||_s.motion)document.getElementById("splash").remove();}catch(e){}</script>
 <div id="bd" aria-hidden="true"></div>
 
 <!-- LIBRARY -->
@@ -1176,7 +1202,16 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 <!-- SHEETS -->
 <dialog id="welcomeDlg"><div class="sheet welcome">
   <div class="wslides">
-    <div class="wslide" data-i="0">
+    <div class="wslide wintro" data-i="0" hidden>
+      <div class="spin"><img class="mascot wbig" src="mascot.png" alt=""></div>
+      <b class="splashname">Atom<i>.</i></b>
+      <p>Read faster, one word at a time. Works offline.</p>
+      <button type="button" class="primary wgo" id="wStart">Get started</button>
+      <label class="btn wrest">Restore a backup<input type="file" id="wRestore" accept=".json,application/json" hidden></label>
+      <p id="wRestMsg" role="status"></p>
+      <p class="wfine">Free. No accounts. Your reading stays on your device. By tapping Get started, you agree to the <button type="button" class="linkbtn" id="wLegal">Privacy and Terms</button>.</p>
+    </div>
+    <div class="wslide" data-i="1">
       <img class="mascot wmascot" src="mascot.png" alt="">
       <h2>Hi, I'm Atom!</h2>
       <p>Welcome to Atom. Who is reading?</p>
@@ -1188,17 +1223,17 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
       <input type="password" id="welcomePw" placeholder="Teacher password" autocomplete="off" autocapitalize="off" hidden>
       <p id="welcomeMsg" role="status"></p>
     </div>
-    <div class="wslide" data-i="1" hidden>
+    <div class="wslide" data-i="2" hidden>
       <div class="wdemo" aria-hidden="true">re<span>a</span>ding</div>
       <h2>Read faster, one word at a time</h2>
       <p>Words flash in one spot. Your eyes stay still, and your brain keeps up. Try it for a few minutes.</p>
     </div>
-    <div class="wslide" data-i="2" hidden>
+    <div class="wslide" data-i="3" hidden>
       <div class="wdemo small" aria-hidden="true">📚 📄 🌐</div>
       <h2>Read almost anything</h2>
       <p>Add EPUB books, PDFs, articles or pasted text. Look up any word with Define. It all works offline.</p>
     </div>
-    <div class="wslide" data-i="3" hidden>
+    <div class="wslide" data-i="4" hidden>
       <div class="wdemo small" aria-hidden="true">🔥 🏅 ⭐</div>
       <h2>Build a streak. Rank up.</h2>
       <p>Hit your daily goal to grow your streak, earn badges, and climb from Copper to Champion.</p>
@@ -1206,7 +1241,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     </div>
   </div>
   <div class="wdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
-  <div class="row"><button id="welcomeSkip">Skip</button><button class="primary" id="welcomeNext">Next</button></div>
+  <div class="row" id="wNav"><button id="welcomeSkip">Skip</button><button class="primary" id="welcomeNext">Next</button></div>
 </div></dialog>
 
 <dialog id="modeDlg"><div class="sheet">
@@ -1245,6 +1280,43 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <p style="font-weight:700;font-size:17px;margin:0">SCANNED PDF DOCUMENTS WILL NOT WORK PROPERLY</p>
   <p class="fine">PDFs with real text work best. A scan or photo of a page has no text to read. Page numbers and headers are removed automatically.</p>
   <div class="row"><button id="pdfNo">Cancel</button><button class="primary" id="pdfYes">Continue</button></div>
+</div></dialog>
+
+<dialog id="legalDlg"><div class="sheet legal">
+  <div class="sheet-head"><h2>Privacy and Terms</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+<p class="ld">Last updated October 11, 2026</p>
+<h3>The short version</h3>
+<ul>
+<li>Atom is free. No accounts, no ads, no tracking.</li>
+<li>Your books, reading stats, name and settings stay on your device.</li>
+<li>Nobody else can see what you read. That includes your teacher.</li>
+</ul>
+<h3>What Atom saves</h3>
+<p>Everything is saved in this browser on this device. Atom has no server that stores your stuff. If you clear your browser data or delete the app, it's gone. Use <b>Settings &gt; Backup</b> to save a copy. Backup files go where you choose. Atom never uploads them.</p>
+<h3>When Atom goes online</h3>
+<p>Atom works offline. It only uses the internet to:</p>
+<ul>
+<li><b>Load the app and updates</b> from readwithatom.org (hosted on GitHub Pages).</li>
+<li><b>Find free classics</b> from Project Gutenberg, through books.readwithatom.org (run on Cloudflare). Only your search words are sent.</li>
+<li><b>Find a book cover</b> from Open Library, when you search for one. The title you type is sent.</li>
+<li><b>Open a web article</b> from a link you paste. Wikipedia links load directly. Other links go through r.jina.ai, which sees that link. You can turn this off in Settings.</li>
+</ul>
+<p>Like every website, these services may keep basic logs, such as an IP address and the time of a request. Atom never adds your name or reading info to these requests.</p>
+<p><b>Hear</b> uses your device's built-in voice. On some devices, the voice service from the device maker may process the word.</p>
+<h3>Students</h3>
+<p>Atom doesn't collect personal information from anyone, including children under 13. The name is optional and never leaves the device. Reading stats aren't sent to teachers or the school.</p>
+<h3>Books you add</h3>
+<p>Only add books and files you're allowed to use. Files you add stay on your device. Class Library books and Gutenberg classics are public domain or free to share.</p>
+<h3>Terms</h3>
+<ul>
+<li>Atom is free to use and is given "as is," with no guarantees.</li>
+<li>We aren't responsible for lost books or stats. Make backups.</li>
+<li>Features, rewards and passwords can change at any time.</li>
+<li>Pick a speed that feels comfortable, and take breaks.</li>
+</ul>
+<h3>Questions</h3>
+<p>Ask Mr. Lovrien at STEM Launch. If this page changes, the date at the top will change too.</p>
+  <button class="primary" data-close type="button">Got it</button>
 </div></dialog>
 
 <dialog id="whatsDlg"><div class="sheet">
@@ -1598,7 +1670,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="grp">
     <label class="setrow">Web article button <input type="checkbox" id="grabChk"></label>
     <p class="fine">Turn this off to stop Atom from ever contacting another website.</p>
-    <div class="row"><button id="welcomeAgain">Show the welcome again</button></div>
+    <div class="row"><button id="welcomeAgain">Show the welcome again</button><button id="legalBtn">Privacy and Terms</button></div>
   </div>
   <p class="gt">Reset</p>
   <div class="grp">
@@ -4888,7 +4960,7 @@ const SPPAL = {}, SPSHAPE = {}, SP_GRAD = {}, SPCH = {};
 (function () {
   const H = GEAR_SVG.ghat, F = GEAR_SVG.gface, N = GEAR_SVG.gneck;
   // event gear
-  H.pumpkin = `<ellipse cx="0" cy="-20" rx="38" ry="24" fill="#e8760c"/><path d="M-14 -42C-22 -30 -22 -10 -14 2M14 -42C22 -30 22 -10 14 2M0 -44V4" stroke="rgba(0,0,0,.22)" stroke-width="2.2" fill="none"/><path d="M-1 -42C-1 -50 3 -56 9 -58" stroke="#3d6b2a" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M6 -50C14 -58 24 -56 26 -50C18 -46 10 -46 6 -50Z" fill="#4f8a36"/><path d="M-20 -24L-12 -30L-6 -22ZM20 -24L12 -30L6 -22ZM-18 -12Q0 -4 18 -12Q10 -6 0 -6Q-10 -6 -18 -12Z" fill="#5a2a05"/>`;
+  H.pumpkin = `<g transform="translate(-14 4) scale(.76)"><defs><radialGradient id="pkg" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#ffae4a"/><stop offset=".6" stop-color="#f07a12"/><stop offset="1" stop-color="#c4520a"/></radialGradient></defs><g stroke="#2b1a10" stroke-width="2.6" stroke-linejoin="round"><ellipse cx="-27" cy="-24" rx="20" ry="25" fill="#d9640c"/><ellipse cx="27" cy="-24" rx="20" ry="25" fill="#d9640c"/><ellipse cx="-13" cy="-25" rx="20" ry="27" fill="url(#pkg)"/><ellipse cx="13" cy="-25" rx="20" ry="27" fill="url(#pkg)"/><ellipse cx="0" cy="-26" rx="17" ry="28" fill="url(#pkg)"/></g><path d="M-4 -52C-5 -60 -3 -66 3 -70L9 -67C5 -63 4 -58 5 -52Z" fill="#5d7a2a" stroke="#2b1a10" stroke-width="2.4" stroke-linejoin="round"/><path d="M6 -60C14 -70 28 -70 32 -62C24 -56 14 -55 6 -60Z" fill="#6fa83a" stroke="#2b1a10" stroke-width="2.2" stroke-linejoin="round"/><path d="M-6 -56C-16 -62 -22 -56 -18 -50C-15 -46 -10 -49 -12 -52" fill="none" stroke="#4f7a2a" stroke-width="2.4" stroke-linecap="round"/><g fill="#3a1a04" stroke="#2b1a10" stroke-width="1.2" stroke-linejoin="round"><path d="M-19 -32L-10 -40L-5 -30Z"/><path d="M19 -32L10 -40L5 -30Z"/><path d="M-21 -18Q0 -6 21 -18Q18 -7 10 -5L7 -10L3 -5Q0 -4 -3 -5L-7 -10L-10 -5Q-18 -7 -21 -18Z"/></g><g fill="#ffd36b" opacity=".55"><path d="M-17 -33L-11 -38L-8 -32Z"/><path d="M17 -33L11 -38L8 -32Z"/></g><ellipse cx="-6" cy="-44" rx="5" ry="3" fill="#fff" opacity=".35"/></g>`;
   H.earmuffs = `<path d="M-77 -12C-86 -114 74 -134 69 -28" stroke="#d6456a" stroke-width="6" fill="none" stroke-linecap="round"/><g fill="#fff" stroke="#e2dccf" stroke-width="1.5"><circle cx="-78" cy="-2" r="17"/><circle cx="71" cy="-14" r="17"/></g><g fill="#f3eee4"><circle cx="-83" cy="-8" r="5.5"/><circle cx="-73" cy="5" r="5.5"/><circle cx="66" cy="-20" r="5.5"/><circle cx="76" cy="-7" r="5.5"/></g>`;
   H.leafcrown = `<path d="M-36 -4Q0 -14 36 -4" stroke="#7a4f22" stroke-width="4" fill="none"/>` + [[-32, -8, -30, "#d6501a"], [-20, -12, -12, "#e8a50c"], [-7, -14, 6, "#c8281f"], [7, -14, -6, "#e8760c"], [20, -12, 14, "#d6a017"], [32, -8, 30, "#b8431a"]].map(([x, y, r, c]) => `<path transform="translate(${x} ${y}) rotate(${r})" d="M0 4C-8 -2 -6 -14 0 -18C6 -14 8 -2 0 4Z" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width="1"/>`).join("");
   H.flowers = `<path d="M-36 -4Q0 -14 36 -4" stroke="#3d8a3a" stroke-width="5" fill="none"/>` + [[-28, -7, "#f26a8d"], [-10, -11, "#ffd84a"], [10, -11, "#fff"], [28, -7, "#c58cff"]].map(([x, y, c]) => `<g transform="translate(${x} ${y})"><g fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width="1"><circle cx="0" cy="-6" r="5"/><circle cx="5.7" cy="-1.9" r="5"/><circle cx="3.5" cy="4.9" r="5"/><circle cx="-3.5" cy="4.9" r="5"/><circle cx="-5.7" cy="-1.9" r="5"/></g><circle r="3.4" fill="#e8a50c"/></g>`).join("") + `<path d="M-19 -10l-5 -6M1 -13l2 -7M19 -10l5 -6" stroke="#3d8a3a" stroke-width="3" stroke-linecap="round"/>`;
@@ -6539,33 +6611,41 @@ async function unlockAdult(pw) {
 (function () {
   const dlg = $("#welcomeDlg"); let i = 0, mode = "", modeOnly = false;
   const slides = dlg.querySelectorAll(".wslide"), dots = dlg.querySelectorAll(".wdots i"), nx = $("#welcomeNext"), msg = $("#welcomeMsg");
-  const go = n => { i = n; slides.forEach((x, k) => x.hidden = k !== i); dots.forEach((d, k) => d.classList.toggle("on", k === i)); nx.textContent = i === 3 ? "Get started" : "Next"; $("#welcomeSkip").hidden = i !== 1 && i !== 2; msg.textContent = ""; };
+  let restored = false;
+  const go = n => { i = n; slides.forEach((x, k) => x.hidden = k !== i); dots.forEach((d, k) => d.classList.toggle("on", k === i - 1)); dlg.classList.toggle("intro", i === 0); nx.textContent = i === 4 ? "Get started" : "Next"; $("#welcomeSkip").hidden = i !== 2 && i !== 3; if (!restored || i !== 1) msg.textContent = ""; };
+  $("#wStart").onclick = () => go(1);
+  $("#wRestore").onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+    const r = await restoreBackup(f), m = $("#wRestMsg");
+    if (r && r.n !== undefined) { restored = true; if (settings.name) $("#welcomeName").value = settings.name; go(1); msg.textContent = `Restored ${r.n} book${r.n === 1 ? "" : "s"}. Now pick who is reading.`; }
+    else if (r && r.err) m.textContent = "Couldn't restore: " + r.err; };
   dlg.querySelectorAll(".pick").forEach(b => b.onclick = () => {
     mode = b.dataset.mode; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
     $("#welcomePw").hidden = mode !== "adult" && mode !== "reader"; $("#welcomePw").placeholder = mode === "reader" ? "Password" : "Teacher password"; msg.textContent = ""; if (mode === "adult" || mode === "reader") $("#welcomePw").focus();
   });
-  const done = () => { const v = $("#welcomeName").value.trim(); if (v) { settings.name = v.slice(0, 30); saveSettings(); $("#nameInput").value = settings.name; updateGreet(); } store.set("pace:welcomed", true); if (dlg.open) dlg.close(); };
+  const done = () => { dlg.classList.remove("full"); const v = $("#welcomeName").value.trim(); if (v) { settings.name = v.slice(0, 30); saveSettings(); $("#nameInput").value = settings.name; updateGreet(); } store.set("pace:welcomed", true); if (dlg.open) dlg.close(); };
   nx.onclick = async () => {
-    if (i === 0) {
+    if (i === 1) {
       if (!mode) { msg.textContent = "Pick one to continue."; return; }
       if (mode === "adult" || mode === "reader") {
         const pw = $("#welcomePw").value; if (!pw) { msg.textContent = mode === "reader" ? "Enter the password." : "Enter the teacher password."; return; }
         nx.disabled = true; const ok = await (mode === "reader" ? unlockReader(pw) : unlockAdult(pw)); nx.disabled = false;
         if (!ok) { msg.textContent = "That password isn't right."; return; }
       } else { settings.mode = "student"; saveSettings(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI(); }
-      if (modeOnly) { done(); return; }
-      go(1);
-    } else if (i < 3) go(i + 1); else done();
+      if (modeOnly || restored) { done(); return; }
+      go(2);
+    } else if (i < 4) go(i + 1); else done();
   };
   $("#welcomePw").addEventListener("keydown", e => { if (e.key === "Enter") nx.click(); });
-  $("#welcomeSkip").onclick = () => go(3);
+  $("#welcomeSkip").onclick = () => go(4);
   dlg.addEventListener("cancel", e => { if (!settings.mode || modeOnly) e.preventDefault(); });
-  dlg.addEventListener("close", () => store.set("pace:welcomed", true));
-  window.showWelcome = (only) => { modeOnly = only === true; $("#welcomeName").value = settings.name || ""; $("#welcomePw").value = ""; $("#welcomePw").hidden = true; mode = ""; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", "false")); go(0); dlg.showModal(); };
+  dlg.addEventListener("close", () => { store.set("pace:welcomed", true); dlg.classList.remove("full"); document.documentElement.classList.remove("firstrun"); });
+  window.showWelcome = (only) => { modeOnly = only === true; $("#welcomeName").value = settings.name || ""; $("#welcomePw").value = ""; $("#welcomePw").hidden = true; mode = ""; restored = false; $("#wRestMsg").textContent = ""; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", "false")); dlg.classList.toggle("full", only === "first"); go(only === "first" ? 0 : 1); dlg.showModal(); };
   $("#welcomeAgain").onclick = () => { $("#setDlg").close(); showWelcome(false); };
+  $("#legalBtn").onclick = $("#wLegal").onclick = () => $("#legalDlg").showModal();
   const fresh = !store.get("pace:welcomed", false) && !lib.length && !Object.keys(stats.days).length;
-  if (fresh) setTimeout(() => showWelcome(false), 300);
-  else if (!settings.mode) setTimeout(() => showWelcome(true), 300);
+  if (fresh) showWelcome("first");
+  else { document.documentElement.classList.remove("firstrun"); if (!settings.mode) setTimeout(() => showWelcome(true), 300); }
 })();
 
 /* ---------- web article ---------- */
@@ -7007,7 +7087,7 @@ async function restoreBackup(file) {
     const data = JSON.parse(await file.text());
     if (!data || data.format !== "pace-backup" || !Array.isArray(data.books)) throw new Error("that isn't a Atom backup file");
     const n = data.books.length;
-    if (!confirm(`Restore ${n} book${n === 1 ? "" : "s"} from ${data.saved ? new Date(data.saved).toLocaleDateString() : "this backup"}? Books already here are updated.`)) return;
+    if (!confirm(`Restore ${n} book${n === 1 ? "" : "s"} from ${data.saved ? new Date(data.saved).toLocaleDateString() : "this backup"}? Books already here are updated.`)) return { cancel: true };
     for (const rec of data.books) await dbPut(rec);
     for (const [id, img] of Object.entries(data.hq || {})) { if (typeof img === "string" && img.startsWith("data:image/")) { await dbPut({ id: "cv:" + id, img }); bigCache.set(id, img); } }
     (data.lib || []).forEach(m => { const i = lib.findIndex(x => x.id === m.id); if (i >= 0) lib[i] = Object.assign({}, lib[i], m); else lib.push(m); });
@@ -7030,8 +7110,8 @@ async function restoreBackup(file) {
     if (data.settings) { const { mode: _m, pauses: _p, ...rest } = data.settings; Object.assign(settings, rest); settings.goal = Math.max(1000, +settings.goal || 1000); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
-    toast(`Restored ${n} book${n === 1 ? "" : "s"}`);
-  } catch (e) { toast("Couldn't restore: " + e.message); }
+    toast(`Restored ${n} book${n === 1 ? "" : "s"}`); return { n };
+  } catch (e) { toast("Couldn't restore: " + e.message); return { err: e.message }; }
 }
 $("#backupBtn").onclick = saveBackup;
 $("#restoreFile").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (f) restoreBackup(f); };

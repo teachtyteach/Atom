@@ -1,4 +1,4 @@
-const CACHE = "atom-v93", STATIC = "atom-static-1";
+const CACHE = "atom-v97", STATIC = "atom-static-1";
 const DATA = ["manifest.json", "amb.json", "classlib.json", "storylib.json"];
 const ASSETS = ["icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2", "pdf.min.js", "pdf.worker.min.js", "dictionary.json", "mascot.png",
   "ico-cream.png", "ico-coral.png", "ico-robot.png", "ico-gold.png", "ico-diamond.png", "ico-a-blue.png", "ico-a-green.png", "ico-a-orange.png", "ico-a-purple.png", "ico-a-pink.png", "ico-a-teal.png", "ico-fern.png", "ico-hat.png", "ico-moth.png", "ico-stag.png", "ico-flame.png", "ico-owl.png", "ico-ghost.png"];
@@ -59,7 +59,8 @@ self.addEventListener("fetch", e => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   const name = url.pathname.split("/").pop();
-  const isShell = req.mode === "navigate" || url.pathname.endsWith("/") || name === SHELL;
+  // other pages (like privacy.html) load as themselves, not as the app
+  const isShell = name === SHELL || url.pathname.endsWith("/") || (req.mode === "navigate" && !/\.html$/.test(name));
 
   if (isShell) {
     // open the saved copy right away; check for a newer one in the background
@@ -79,6 +80,16 @@ self.addEventListener("fetch", e => {
       const got = await check;
       if (got) return got;
       try { return await fetch(req); } catch (err) { return new Response("<!doctype html><meta name=viewport content='width=device-width'><body style='font:18px system-ui;padding:40px;text-align:center'>Atom needs internet the first time. Open readwithatom.org once on home WiFi, then it works offline.</body>", { headers: { "Content-Type": "text/html" } }); }
+    })());
+    return;
+  }
+
+  if (/\.html$/.test(name)) {
+    // other pages: get the newest copy, fall back to the saved one offline
+    e.respondWith((async () => {
+      const c = await caches.open(CACHE);
+      try { const res = await fetchSoon(req, 8000); if (plain(res)) { await c.put(name, res.clone()); return res; } } catch (err) {}
+      return (await c.match(name)) || fetch(req);
     })());
     return;
   }
