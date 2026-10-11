@@ -247,12 +247,11 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 .hearbtn{display:inline-flex;align-items:center;gap:4px}.hearbtn.iconly{padding:3px 9px}.hearbtn.iconly svg{width:17px;height:17px}
 @media (max-width:360px){#hintTxt{display:none}}
 #defDlg .sheet-head .hearbtn{margin:0 8px 0 auto}
-.qrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;margin-top:10px;padding:8px 10px;border-radius:14px;min-height:0;justify-content:flex-start;background:color-mix(in srgb,var(--line) 30%,transparent);border:0;box-shadow:none;font:600 12px system-ui,sans-serif;color:var(--ink)}
+.qrow{display:flex;align-items:center;gap:8px;width:100%;margin-top:2px;padding:6px 2px 0;min-height:0;justify-content:flex-start;background:none;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;font:600 13px system-ui,sans-serif;color:var(--muted)}
 .qrow[hidden]{display:none}
-.qlab{color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:11px;margin-right:2px}
-.qchip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 4px;border-radius:99px;background:var(--surface);border:1px solid var(--line);white-space:nowrap}
-.qchip i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;color:#fff;background:conic-gradient(var(--accent) var(--p),var(--line) 0)}
-.qchip.done{border-color:var(--accent)}.qchip.done i{background:var(--accent)}
+.qdots{display:inline-flex;gap:4px}.qdots i{width:12px;height:12px;border-radius:50%;background:conic-gradient(var(--accent) var(--p),var(--line) 0)}.qdots i.done{background:var(--accent)}
+.qrow .qlab{flex:1;text-align:left;color:var(--ink);text-transform:none;letter-spacing:0;font-size:13px;margin:0}
+.qrow .qn{font-weight:700;color:var(--ink)}.qrow.alldone .qn{color:var(--accent)}
 .qlist{display:grid;gap:12px;margin:4px 0 10px}
 .qitem{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
 .qitem.done{border-color:var(--accent)}
@@ -324,6 +323,16 @@ body.plain .mascot,body.plain .peek,body.plain #seasonCard,body.plain #evCard,bo
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #pToggle{min-height:36px}#pausePw,#pwInput{min-height:40px;padding:8px 12px;box-sizing:border-box}
 #setTabs{overflow-x:auto}#setTabs button{flex:1 0 auto;padding:8px 7px;font-size:13.5px}
+#pvCard{display:none}body.xg #pvCard{display:block}
+body.xg #rwQuests,body.xg #boxTile,body.xg #funTiles,body.xg #rewards>.xlab{display:none!important}
+.rwq[hidden]{display:none}.rwqhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.rwqhead h2{margin:0}
+#rwQuests .qlist{margin:10px 0 6px;gap:8px}#rwQuests .qitem{padding:9px 12px;gap:5px}#rwQuests .qitem b{font-size:14px}#rwQuests .qitem .bar{height:5px}
+.sttabs{display:flex;gap:4px;margin:4px 0 10px}.sttabs button{flex:1}
+#stats[data-tab=today] [data-st]:not([data-st=today]):not(.sttabs button),#stats[data-tab=hist] [data-st]:not([data-st=hist]):not(.sttabs button),#stats[data-tab=badge] [data-st]:not([data-st=badge]):not(.sttabs button){display:none!important}
+.innerfold>details>summary{display:none}.innerfold>details{border:0;padding:0;box-shadow:none;background:none;margin:0}
+#tabbar button.dot{position:relative}#tabbar button.dot::after{content:"";position:absolute;top:8px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--surface)}
+#shelf #classCard2{margin:4px 0 10px}
+.sumlist{list-style:none;padding:0;margin:10px 0 14px;display:grid;gap:8px;text-align:left}.sumlist li{padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-weight:600}#sumOk{width:100%}#sumDlg .mascot{display:block;margin:0 auto}
 .menugrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 6px}.menugrid button{width:100%}.menugrid button[hidden]{display:none}
 #pasteClip{margin:6px 0}
 .hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
@@ -893,12 +902,12 @@ body.nomotion .impbar.ind i{animation:none!important;left:0;width:100%;opacity:.
 .greetrow{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .greetrow .greet{flex:1;min-width:0}
 .minis{display:flex;gap:6px;flex:none}
-.stile{width:80px;box-sizing:border-box;display:grid;gap:3px;text-align:left;padding:6px 7px;border:1px solid var(--line);border-top:3px solid var(--sc,var(--accent));border-radius:10px;background:var(--surface);color:inherit;font:inherit}
+.stile{width:92px;box-sizing:border-box;display:grid;gap:3px;text-align:left;padding:6px 7px;border:1px solid var(--line);border-top:3px solid var(--sc,var(--accent));border-radius:10px;background:var(--surface);color:inherit;font:inherit}
 .stile[hidden]{display:none}
 .stile .mt{display:flex;align-items:center;gap:4px;min-width:0}
 .stile .mt i{flex:none;line-height:0}
-.stile b{font:700 11px/1.1 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stile .ms{font-size:10px;line-height:1.1;color:var(--muted)}
+.stile b{font:700 13px/1.1 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stile .ms{font-size:12px;font-weight:600;line-height:1.1;color:var(--muted)}
 .stile .bar,.stile .pips{height:5px;margin:0}
 .stile .pips i{height:5px}
 .stile .bar i{background:var(--ev,var(--accent))}
@@ -969,7 +978,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <p class="status" id="status" role="status"></p>
   <div class="impbar ind" id="impBar" hidden><i></i></div>
   <div class="card" id="nudge" hidden><span id="nudgeTxt" class="grow"></span><button id="nudgeBtn">Back up</button><button class="x" id="nudgeX" aria-label="Hide for a week" title="Hide for a week">✕</button></div>
-  <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span><button class="qrow" id="qRow" type="button" hidden></button></div>
+  <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
   <div id="continue"></div>
   <div id="recentBox" hidden><h2 class="sect">Recent</h2><div class="hgrid" id="recent"></div></div>
   <button class="card clcard libbtn" id="libBtn" type="button" hidden><span class="shelfico" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="clt"><b>My library</b><span class="fine" id="libCount"></span></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -984,6 +993,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <h1>My library</h1>
     <button class="mini" id="shelfEdit" type="button" aria-pressed="false">Edit</button>
   </header>
+  <button class="card clcard" id="classCard2" type="button"><span class="spines" aria-hidden="true"><i></i><i></i><i></i></span><span class="clt"><b>Class Library</b><span class="fine">Free books and short stories</span></span></button>
   <input type="search" class="libsearch" id="libSearch" placeholder="Search your books" aria-label="Search your books" autocomplete="off">
   <div class="shelfbar"><div class="seg" id="shelfSeg" role="group" aria-label="Show"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="reading" aria-pressed="false">Reading</button><button type="button" data-f="new" aria-pressed="false">New</button><button type="button" data-f="done" aria-pressed="false">Finished</button></div>
   <select id="shelfSort" aria-label="Sort"><option value="recent">Recent</option><option value="title">A to Z</option><option value="progress">Progress</option></select></div>
@@ -992,24 +1002,25 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 </section>
 
 <!-- STATS -->
-<section id="stats" class="screen">
+<section id="stats" class="screen" data-tab="today">
   <header>
     <button class="icon" id="statsBack" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <h1>Stats</h1>
   </header>
-  <div class="card statsempty" id="statsEmpty" hidden><img class="mascot" src="mascot.png" alt=""><b>Your stats start with your first page.</b><p class="fine">Read for a minute and your words, speed and streak show up here.</p><button class="primary" id="statsGo" type="button">Pick a book</button></div>
-  <div class="tiles" id="tiles"></div>
-  <div class="card" id="prCard" hidden></div>
-  <div class="card life" id="life"></div>
-  <div class="card" id="goalCard"></div>
-  <div class="card" id="wkCard"></div>
-  <div class="card">
+  <div class="seg sttabs" id="stTabs" role="tablist"><button type="button" data-st="today" aria-pressed="true">Today</button><button type="button" data-st="hist" aria-pressed="false">History</button><button type="button" data-st="badge" aria-pressed="false">Badges</button></div>
+  <div class="card statsempty" data-st="today" id="statsEmpty" hidden><img class="mascot" src="mascot.png" alt=""><b>Your stats start with your first page.</b><p class="fine">Read for a minute and your words, speed and streak show up here.</p><button class="primary" id="statsGo" type="button">Pick a book</button></div>
+  <div class="tiles" data-st="today" id="tiles"></div>
+  <div class="card" data-st="badge" id="prCard" hidden></div>
+  <div class="card" data-st="today" id="goalCard"></div>
+  <div class="card" data-st="today" id="wkCard"></div>
+  <div class="card life" data-st="hist" id="life"></div>
+  <div class="card" data-st="hist">
     <h2>Words read, last 7 days</h2>
     <div id="chart"></div>
     <p class="fine" id="chartCap" aria-live="polite"></p>
     <details><summary>Show as table</summary><div id="chartTable"></div></details>
   </div>
-  <div class="card" id="calCard">
+  <div class="card" data-st="hist" id="calCard">
     <h2>Reading calendar</h2>
     <div class="calhead">
       <button class="icon" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1021,7 +1032,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="legend" id="calLegend"></div>
     <p class="fine" id="heatCap" aria-live="polite"></p>
   </div>
-  <div class="card">
+  <div class="card" data-st="hist">
     <h2>Your year</h2>
     <div class="lapseHead"><b id="lapseVal"></b><span id="lapseDate"></span></div>
     <div id="lapse"></div>
@@ -1029,7 +1040,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="life" id="lapseNums"></div>
     <div class="row" style="margin-top:10px"><button id="lapseBtn">Replay time-lapse</button></div>
   </div>
-  <details class="card fold">
+  <details class="card fold" data-st="hist">
     <summary><h2>Reading report</h2></summary>
     <p class="fine">A one-page summary you can print or save as a PDF.</p>
     <div class="row"><select id="repRange" aria-label="Report range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="0">All time</option></select><button id="repBtn">Print report</button></div>
@@ -1045,7 +1056,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="rgrid" id="evGrid"></div>
     <p class="fine" id="evDetail">Tap a badge to see when it runs.</p>
   </details>
-  <details class="card fold">
+  <details class="card fold" data-st="badge" id="badgeFold" open>
     <summary><h2>Badges</h2><span class="fine" id="badgeCap"></span></summary>
     <div id="badges"></div>
     <p class="fine" id="badgeDetail">Tap a badge to see what it takes.</p>
@@ -1065,13 +1076,22 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="pvrow"><img class="mascot" src="mascot.png" alt=""><span id="pvCover"></span><svg id="pvBm" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=""/></svg><button type="button" id="pvFx">Play effects</button></div>
     <div class="pvstat"><b>Your stats</b><span id="pvStatTxt">1,240 words · 6 day streak</span><span class="bar"><i id="pvStatBar" style="width:48%"></i></span></div>
   </div>
-  <div class="card nextcard" id="nextCard"></div>
+  <div class="card rwq" id="rwQuests" hidden><div class="rwqhead"><h2>Daily quests</h2><span class="fine" id="rwqLeft"></span></div><div id="rwqList" class="qlist"></div><p class="fine" id="rwqNote"></p></div>
   <button class="card boxtile" id="boxTile" type="button" hidden><span class="boxico" aria-hidden="true"></span><span class="clt"><b>Mystery boxes</b><span class="fine" id="boxCount"></span></span></button>
+  <div class="card nextcard" id="nextCard"></div>
   <div class="xtiles" id="xTiles"></div>
   <p class="xlab" style="margin:14px 2px 0">Fun room</p>
   <div class="xtiles" id="funTiles"></div>
 </section>
 <dialog id="funDlg" class="fundlg"><div class="fbox"><div class="fhead"><b id="funTitle"></b><button class="icon" data-close aria-label="Close">✕</button></div><div id="funBody"></div></div></dialog>
+<dialog id="rankDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Rank rewards</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="rankBody" class="innerfold"></div>
+</div></dialog>
+<dialog id="evbDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Event badges</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="evbBody" class="innerfold"></div>
+</div></dialog>
 <dialog id="xgDlg"><div class="sheet">
   <div class="sheet-head"><h2 id="xgTitle"></h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <p class="fine" id="xgNote"></p>
@@ -1087,7 +1107,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <button class="icon" id="bmBtn" aria-label="Bookmark this spot"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h10v16l-5-3.6L7 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="icon" id="menuBtn" aria-label="Book menu"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
   </header>
-  <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button">Text</button></div>
+  <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button" hidden>Text</button></div>
   <div id="chapterBox" hidden>
     <div class="chrow"><div class="chapter"><select id="chapters" aria-label="Chapter"></select></div><button class="mini" id="tocBtn" type="button">Contents</button></div>
     <div class="chbar" title="Book progress" aria-hidden="true"><i id="chfill"></i></div>
@@ -1273,6 +1293,13 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="sheet-head"><h2>Reading journal</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div id="jrList"></div>
   <button class="primary" id="jrPrint" type="button">Print journal</button>
+</div></dialog>
+
+<dialog id="sumDlg"><div class="sheet" style="text-align:center">
+  <img class="mascot" src="mascot.png" alt="" width="90">
+  <h2>Nice reading!</h2>
+  <ul class="sumlist" id="sumList"></ul>
+  <button class="primary" id="sumOk" type="button">Keep going</button>
 </div></dialog>
 
 <dialog id="qDlg"><div class="sheet">
@@ -3752,7 +3779,7 @@ function syncSpeedInfo() {
   let t = `Limit on this device: ${cap} wpm.`;
   if (pw) t += " Teacher unlock is on."; else if (nxt) t += ` Read ${fmt(nxt[0])} words in total to unlock ${nxt[1]} wpm (you're at ${fmt(Math.min(w, nxt[0]))}).`;
   const sh = $("#speedHint");
-  if (nxt && !pw) { const rk = RANKS.filter(r => r[0] <= nxt[0]).pop(); sh.hidden = false; sh.textContent = `Top speed ${cap} wpm. ${nxt[1]} wpm unlocks at ${rk ? rk[1] : "a higher rank"}.`; } else sh.hidden = true;
+  if (nxt && !pw && wpm >= cap && window.__spdFlash) { const rk = RANKS.filter(r => r[0] <= nxt[0]).pop(); sh.hidden = false; sh.textContent = `Top speed ${cap} wpm. ${nxt[1]} wpm unlocks at ${rk ? rk[1] : "a higher rank"}.`; } else sh.hidden = true;
   $("#speedInfo").textContent = t; $("#pwBox").hidden = pw || cap >= 600; $("#pwRelock").hidden = !pw;
 }
 function applyCap() { $("#wpm").max = speedCap(); if (wpm > speedCap()) setWpm(wpm); syncSpeedInfo(); }
@@ -3804,7 +3831,18 @@ function toastLater(m) {
   if (bm) { badgeBatch.push(bm[1]); clearTimeout(badgeT); badgeT = setTimeout(() => { const a = badgeBatch.splice(0); toastQ(a.length === 1 ? "Badge earned: " + a[0] : `Badge earned: ${a.length} new badges (${a.slice(0, 3).join(", ")}${a.length > 3 ? "…" : ""})`); }, 500); return; }
   toastQ(m);
 }
-function toastQ(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) { buzz(); chime(); } if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
+function toastQ(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) { buzz(); chime(); } if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (tqBusy) return; clearTimeout(tqFlushT); tqFlushT = setTimeout(tqFlush, 700); }
+var tqFlushT = 0;
+function tqFlush(tries) {
+  tries = tries || 0; if (tqBusy) return;
+  if (tq.length >= 3 && !playing && !isAdult()) {
+    if (document.querySelector("dialog[open]") && tries < 20) { tqFlushT = setTimeout(() => tqFlush(tries + 1), 1000); return; }
+    const items = tq.splice(0), ul = $("#sumList"); ul.replaceChildren(...items.map(t => el("li", "", t)));
+    const k = items.find(t => /^(Rank up|Season reward|Title upgrade)/.test(t)) || items.find(t => /^(Quest|All 3)/.test(t)) || items[0]; if (typeof rewardFx === "function") rewardFx(k);
+    $("#sumDlg").showModal(); return;
+  }
+  nextToast();
+}
 function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; if (typeof rewardFx === "function") rewardFx(m); toast(m, !isAdult() && !isPlain() && /^(Badge earned|Mystery box|New record|Title upgrade|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
@@ -4064,7 +4102,7 @@ function updateEventUI() {
     card.hidden = false; card.style.setProperty("--ev", ev.e.col);
     $("#evIc").innerHTML = evIcon(ev.e.icon, ev.e.col, 18);
     $("#evName").textContent = "Event";
-    $("#evSub").textContent = (done ? "Earned ✓" : `${Math.floor(Math.min(100, w / ev.e.goal * 100))}%`) + " · " + (left <= 0 ? "last day" : left + "d"); card.setAttribute("aria-label", `${ev.e.name}: ${fmt(Math.min(w, ev.e.goal))} of ${fmt(ev.e.goal)} words. ${left <= 0 ? "Last day." : left + " days left."}`);
+    $("#evSub").textContent = (done ? "Earned ✓" : `${Math.floor(Math.min(100, w / ev.e.goal * 100))}%`) + (left <= 7 ? " · " + (left <= 0 ? "last day" : left + "d left") : ""); card.setAttribute("aria-label", `${ev.e.name}: ${fmt(Math.min(w, ev.e.goal))} of ${fmt(ev.e.goal)} words. ${left <= 0 ? "Last day." : left + " days left."}`);
     $("#evFill").style.width = Math.min(100, w / ev.e.goal * 100) + "%";
     $("#rankPin").innerHTML = done ? evIcon(ev.e.icon, ev.e.col, 18) : "";
   }
@@ -4601,9 +4639,16 @@ function renderRewardsTab() {
   });
   const se = seasonNow(), sw = seasonWords(se), sr = seasonRank(sw), st = el("button", "xtile"); st.type = "button";
   st.append(el("b", "", "Season " + se.n), el("span", "fine", se.name), el("span", "xcount", sr.name));
-  st.onclick = openSeason; box.append(st); renderFunTiles();
+  st.onclick = openSeason; box.append(st);
+  if (!isAdult() && !isPlain()) {
+    const rk = el("button", "xtile"); rk.type = "button"; const ri = rankInfo(metrics().w);
+    rk.append(el("b", "", "Ranks"), el("span", "fine", "What each rank unlocks"), el("span", "xcount", ri.name)); rk.onclick = () => $("#rankDlg").showModal(); box.append(rk);
+    const eb = el("button", "xtile"); eb.type = "button"; const en = Object.keys(evEarned()).length;
+    eb.append(el("b", "", "Events"), el("span", "fine", "Badges from past events"), el("span", "xcount", `${en} of ${EVENTS.length} earned`)); eb.onclick = () => $("#evbDlg").showModal(); box.append(eb);
+  }
+  renderFunTiles();
 }
-function openRewards() { renderRewardsTab(); renderBoxTile(); show("rewards"); }
+function openRewards() { renderRewardsTab(); renderBoxTile(); renderQuestRow(); show("rewards"); }
 function renderExtras() { renderRewardsTab(); if (xgCur && $("#xgDlg").open) renderGroup(xgCur); }
 
 /* ---------- seasons ---------- */
@@ -4644,7 +4689,7 @@ function updateSeasonCard(se, w, r) {
   card.hidden = false; card.style.setProperty("--sc", SEASON_COL[se.idx]); card.setAttribute("aria-label", `Season ${se.n}, ${se.name}. Level ${r.i} of 100. ${fmt(w)} words. ${left === 0 ? "Last day" : left + " days left"}.`);
   $("#seasonIc").innerHTML = ribbon(r.i, SEASON_COL[se.idx], 20);
   $("#seasonName").textContent = "Season";
-  $("#seasonSub").textContent = `Lv ${r.i} · ${left === 0 ? "last day" : left + "d"}`;
+  $("#seasonSub").textContent = `Level ${r.i}` + (left <= 7 ? ` · ${left === 0 ? "last day" : left + "d left"}` : "");
   const pp = $("#seasonPips"); pp.replaceChildren(); const pi = el("i", "cur"); pi.style.setProperty("--p", Math.max(3, Math.min(100, w / sWords(S_MAX) * 100)) + "%"); pp.append(pi);
 }
 function openSeason() {
@@ -4933,11 +4978,19 @@ function questCheck(announce) {
   renderQuestRow();
 }
 function renderQuestRow() {
-  const row = $("#qRow"); if (!row) return;
-  if (!qOn()) { row.hidden = true; return; }
-  const q = questDay(); row.hidden = false; row.replaceChildren(el("span", "qlab", "Quests"));
-  q.ids.forEach(id => { const Q = QUESTS[id], v = Math.min(Q.need, Q.get(q)), d = !!q.done[id]; const c = el("span", "qchip" + (d ? " done" : "")); const dot = el("i", "", d ? "✓" : ""); dot.style.setProperty("--p", (v / Q.need * 100) + "%"); c.append(dot, document.createTextNode(Q.chip)); row.append(c); });
-  row.setAttribute("aria-label", "Daily quests: " + q.ids.map(id => QUESTS[id].txt + (q.done[id] ? ", done" : "")).join(". "));
+  const card = $("#rwQuests"); if (!card) return;
+  if (!qOn()) { card.hidden = true; return; }
+  const q = questDay(), box = $("#rwqList"), n = q.ids.filter(id => q.done[id]).length; card.hidden = false; box.replaceChildren();
+  q.ids.forEach(id => {
+    const Q = QUESTS[id], v = Math.min(Q.need, Q.get(q)), d = !!q.done[id];
+    const r = el("div", "qitem" + (d ? " done" : "")); const top = el("div", "qtop"); top.append(el("b", "", (d ? "✓ " : "") + Q.txt), el("span", "fine", d ? "Done" : `+${fmt(Q_REWARD)}`));
+    const bar = el("span", "bar"), f = el("i"); f.style.width = (v / Q.need * 100) + "%"; bar.append(f);
+    r.append(top, bar); if (!d && Q.need > 1) r.append(el("span", "fine", `${fmt(v)} / ${fmt(Q.need)}`)); box.append(r);
+  });
+  const ms = new Date(); ms.setHours(24, 0, 0, 0); const hrs = Math.max(1, Math.round((ms - new Date()) / 3600000));
+  $("#rwqLeft").textContent = n === 3 ? "All done ✓" : `${n} of 3 · new in ${hrs}h`;
+  $("#rwqNote").textContent = n === 3 ? "Nice work. New quests tomorrow." : `Each quest gives +${fmt(Q_REWARD)} season words. Finish all 3 for +${fmt(Q_ALL)} more.`;
+  const dot = document.querySelector('#tabbar [data-go=rewards]'); if (dot) dot.classList.toggle("dot", boxState().n > 0);
 }
 function openQuests() {
   const q = questDay(), box = $("#qList"); box.replaceChildren();
@@ -5364,7 +5417,7 @@ function setWpm(v) {
   wpm = Math.max(50, Math.min(speedCap(), Math.round(v / 25) * 25));
   coachMark = shownWords; sessBacks = 0;
   $("#wpm").value = wpm; fillR($("#wpm")); $("#wpmVal").textContent = `${wpm} wpm`;
-  store.set("pace:wpm", wpm); if (tokens.length) updateStats();
+  store.set("pace:wpm", wpm); if (tokens.length) updateStats(); try { syncSpeedInfo(); } catch (e) {}
 }
 
 function setFs(v) {
@@ -5658,9 +5711,8 @@ function heroCard(m) {
   row.append(ring, info);
   const go = el("button", "primary go", left ? (pos > 0 ? "Continue" : "Start reading") : "Read again"); go.type = "button"; go.onclick = () => openBook(m.id);
   body.append(el("span", "bk-title", m.title)); if (m.author) body.append(el("span", "bk-au", m.author)); body.append(row, go);
-  const del = el("button", "icon bk-del hdel"); del.type = "button"; del.innerHTML = ICON_TRASH; del.setAttribute("aria-label", "Remove " + m.title); del.onclick = () => removeBook(m);
   const cv = coverEl(m); cv.title = "Tap for cover and details";
-  c.append(cv, body, del); applyTint(c, m);
+  c.append(cv, body); applyTint(c, m);
   return c;
 }
 function bookItem(m, featured) {
@@ -5710,7 +5762,7 @@ function renderLibrary() {
   cont.replaceChildren();
   updateGreet();
   $("#empty").hidden = sorted.length > 0;
-  { const cc = $("#classCard"); if (cc) cc.hidden = !lib.length; }
+  { const cc = $("#classCard"); if (cc) cc.hidden = !lib.length || lib.length >= 3; }
   if (sorted.length) cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
   const rec = sorted.slice(1, 4), rb = $("#recentBox");
   rb.hidden = !rec.length; $("#recent").replaceChildren(...rec.map(m => bookTile(m, false)));
@@ -6099,9 +6151,10 @@ async function openClass() {
     row.append(cv, ci, btn); box.append(row);
   });
 }
-$("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
+$("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-12b", WHATS = [
+const WHATS_VER = "2026-10-12c", WHATS = [
+  ["Cleaner screens", "Daily quests moved to Rewards. Stats has Today, History and Badges tabs. Rewards come in one summary when you earn several at once."],
   ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn one. Rare and legendary gear for Atom is inside."],
   ["Chapter recaps", "After a chapter, answer one quick question. Your answers make a reading journal you can print."],
   ["Night mode", "Tap the moon while reading for a warm, dim screen."],
@@ -6256,7 +6309,7 @@ $("#fwd").onclick = () => seek(cur + 10);
 prog.oninput = () => { if (playing) pause(); seek(+prog.value); };
 chapSel.onchange = () => { const c = chapters[+chapSel.value]; if (c) seek(c.start); };
 ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) { if (+i < cur) sessBacks++; seek(+i); } };
-$("#wpm").oninput = e => setWpm(+e.target.value);
+$("#wpm").oninput = e => { const v = +e.target.value; if (v >= +e.target.max) { window.__spdFlash = true; clearTimeout(window.__spdT); window.__spdT = setTimeout(() => { window.__spdFlash = false; try { syncSpeedInfo(); } catch (x) {} }, 4000); } setWpm(v); };
 $("#fs").oninput = e => setFs(+e.target.value);
 
 
@@ -6533,7 +6586,8 @@ function hearWord(w) {
 function hearCurrent() { if (!tokens.length) return; if (playing) pause(); hearWord(tokens[cur].w); }
 $("#hearBtn").onclick = hearCurrent;
 $("#defHear").onclick = () => hearWord($("#defWord").textContent);
-$("#qRow").onclick = openQuests;
+$$("#stTabs button").forEach(b => b.onclick = () => { $("#stats").dataset.tab = b.dataset.st; $$("#stTabs button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); window.scrollTo(0, 0); });
+$("#sumOk").onclick = () => $("#sumDlg").close();
 var recapAfter = null;
 $("#recapSave").onclick = recapSave;
 $("#recapSkip").onclick = () => $("#recapDlg").close();
@@ -6589,7 +6643,7 @@ $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); ap
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
 applyIcon(); applyExtras(); renderExtras(); ambLoad(); seasonSync(true); setTimeout(seasonEndCheck, 1200); applyNight(); titleCheck(); setTimeout(bdayCheck, 900);
-$("#rewards").append($("#rewardsCard"), $("#evBadgesCard"));
+$("#rankBody").append($("#rewardsCard")); $("#evbBody").append($("#evBadgesCard")); $("#rewardsCard").open = true; $("#evBadgesCard").open = true;
 $("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
 $("#goRewards").onclick = () => { $("#setDlg").close(); openRewards(); };
 $("#xgDlg").addEventListener("close", () => { xgCur = null; document.body.classList.remove("xg"); endPreview(); ambStop(); });
@@ -7159,7 +7213,7 @@ function openCalm() {
 })();
 /* app shortcuts from the home screen icon */
 (function () { try { const g = new URLSearchParams(location.search).get("go"); if (!g) return; history.replaceState(null, "", location.pathname); setTimeout(() => { if (g === "continue") { const m = libSorted()[0]; if (m) openBook(m.id); } else if (g === "class") openClass(); else if (g === "library") openShelf(); }, 600); } catch (e) {} })();
-if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toastLater, gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
