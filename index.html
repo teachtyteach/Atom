@@ -3373,7 +3373,7 @@ Try nudging the speed up by fifty words per minute at a time. Most people are co
 
 /* ---------- reader state ---------- */
 let tokens = [], chapters = [], cur = 0, playing = false, timer = null, wakeLock = null;
-let wpm = store.get("pace:wpm", 350), fs = store.get("pace:fs", 44);
+let wpm = store.get("pace:wpm", 150), fs = store.get("pace:fs", 44);
 let bookId = "", docKey = "", bms = [];
 let playedMs = 0, playStart = 0, sessionWords = 0;
 let hasPaused = false, noRewind = false, skipCount = 0, stepIdx = 0, flushT = 0, wordsSince = 0;
@@ -3776,10 +3776,10 @@ function metrics() {
     best: all.reduce((a, v) => Math.max(a, v.w), 0), d500: all.filter(v => v.w >= 1000).length, streak: streakInfo().longest };
 }
 const HOUR = 3600000;
-/* speed limit: 300 wpm until unlocked by reading milestones or the teacher password */
+/* speed limit: 250 wpm until unlocked by reading milestones or the teacher password */
 const PW_HASH = "2a0e2789c7e50a2fd0141e007182e4e4b3ba4d67912cbffe197c2343a88ae2a5";
 const RD_HASH = "1351f90e4c6296803a017678fd8e8960f12cf3205097f8617fc49d46c8d5a476";
-const SPEED_BASE = 300, SPEED_TIERS = [[250000, 400], [500000, 500], [1000000, 600]];
+const SPEED_BASE = 250, SPEED_TIERS = [[100000, 300], [250000, 400], [500000, 500], [1000000, 600]];
 const speedCap = () => isReader() || isAdult() ? 600 : Math.max(SPEED_BASE, store.get("pace:unlock", 0) || 0, store.get("pace:pw", false) ? 600 : 0);
 function earnedCap() { const w = metrics().w; return SPEED_TIERS.reduce((c, t) => w >= t[0] ? t[1] : c, SPEED_BASE); }
 function syncSpeedInfo() {
@@ -6222,15 +6222,15 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-13a", WHATS = [
+const WHATS_VER = "2026-10-14a", WHATS = [
+  ["New speed levels", "Atom starts at 150 wpm. Top speed starts at 250. Read 100,000 words to unlock 300."],
   ["70,000 free classics", "Search Project Gutenberg from the Class Library and add any free classic in one tap. It works offline after."],
   ["Cleaner screens", "Daily quests moved to Rewards. Stats has Today, History and Badges tabs. Rewards come in one summary when you earn several at once."],
   ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn one. Rare and legendary gear for Atom is inside."],
   ["Chapter recaps", "After a chapter, answer one quick question. Your answers make a reading journal you can print."],
   ["Night mode", "Tap the moon while reading for a warm, dim screen."],
   ["Records and showcase", "Beat your best for a New record. Show 3 favorite badges on your home screen from Stats."],
-  ["Atom", "Atom has moods now, and his birthday is Pi Day, March 14."],
-  ["Easier menus", "The book menu (•••) is simpler, and Paste text can paste what you copied."]
+  ["Atom", "Atom has moods now, and his birthday is Pi Day, March 14."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
@@ -6379,7 +6379,8 @@ $("#fwd").onclick = () => seek(cur + 10);
 prog.oninput = () => { if (playing) pause(); seek(+prog.value); };
 chapSel.onchange = () => { const c = chapters[+chapSel.value]; if (c) seek(c.start); };
 ctxEl.onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) { if (+i < cur) sessBacks++; seek(+i); } };
-$("#wpm").oninput = e => { const v = +e.target.value; if (v >= +e.target.max) { window.__spdFlash = true; clearTimeout(window.__spdT); window.__spdT = setTimeout(() => { window.__spdFlash = false; try { syncSpeedInfo(); } catch (x) {} }, 4000); } setWpm(v); };
+$("#wpm").oninput = e => { const v = +e.target.value; if (v >= +e.target.max) { window.__spdFlash = true; clearTimeout(window.__spdT); window.__spdT = setTimeout(() => { window.__spdFlash = false; try { syncSpeedInfo(); } catch (x) {} }, 4000); } setWpm(v); spdTip(); };
+function spdTip() { if (store.get("pace:spdTip", false)) return; store.set("pace:spdTip", true); toast("Make sure the speed feels comfortable for you! Faster isn't better if the words stop making sense.", true); }
 $("#fs").oninput = e => setFs(+e.target.value);
 
 
@@ -6682,8 +6683,8 @@ document.addEventListener("keydown", e => {
     case " ": case "k": e.preventDefault(); if (settings.hold) { if (!e.repeat) play(); } else toggle(); break;
     case "ArrowLeft": e.preventDefault(); seek(cur - (e.shiftKey ? 50 : 10)); break;
     case "ArrowRight": e.preventDefault(); seek(cur + (e.shiftKey ? 50 : 10)); break;
-    case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
-    case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
+    case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); spdTip(); break;
+    case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); spdTip(); break;
     case "d": defineCurrent(); break;
     case "h": hearCurrent(); break;
     case "b": toggleBookmark(); break;
@@ -6863,7 +6864,7 @@ $("#testDone").onclick = () => {
     stats.timed.push({ d: todayKey(), wpm: w, w: words, book: curMeta() ? curMeta().title : "" });
   } else stats.test = { wpm: w, date: todayKey() };
   store.set("pace:stats", stats);
-  const sug = Math.max(200, Math.min(speedCap(), Math.round(w * 1.3 / 25) * 25));
+  const sug = Math.max(150, Math.min(speedCap(), Math.round(w * 1.3 / 25) * 25));
   $("#testMsg").textContent = `You read about ${w} words per minute. Try Atom at ${sug} wpm.` + prevNote;
   const use = $("#testUse"); use.hidden = false; use.textContent = `Use ${sug} wpm`;
   use.onclick = () => { setWpm(sug); $("#testDlg").close(); toast(`Speed set to ${sug} wpm`); };
