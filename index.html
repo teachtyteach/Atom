@@ -226,7 +226,7 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 .bdres small{color:var(--muted);font-weight:500}
 .bdres button.busy{opacity:.5}
 .bk-au{color:var(--muted);font-size:14px;margin-top:-2px}
-#bdRemove{margin-top:14px;width:100%}
+#bdRemove{margin-top:14px;width:100%}#bdJournal{margin-top:10px;width:100%}
 #evdTitle{display:flex;align-items:center;gap:8px}.evdic{display:inline-flex}
 .evdbar{display:flex;align-items:center;gap:10px;margin:6px 0 14px}.evdbar .bar{flex:1;height:10px}.evdbar .bar i{background:var(--ev)}.evdbar b{font:700 13px system-ui,sans-serif;white-space:nowrap}
 .evtrack{position:relative;display:grid;gap:12px;margin:0 0 12px}
@@ -244,6 +244,85 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 .evth .evsw{width:44px;height:44px;border-radius:10px;margin:0}
 .evtx{display:grid;gap:2px;min-width:0}.evtx b{font-size:14px}.evtx small{color:var(--muted);font-size:12px}
 #evdAll{width:100%}
+.hearbtn{display:inline-flex;align-items:center;gap:4px}.hearbtn.iconly{padding:3px 9px}.hearbtn.iconly svg{width:17px;height:17px}
+@media (max-width:360px){#hintTxt{display:none}}
+#defDlg .sheet-head .hearbtn{margin:0 8px 0 auto}
+.qrow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;margin-top:10px;padding:8px 10px;border-radius:14px;min-height:0;justify-content:flex-start;background:color-mix(in srgb,var(--line) 30%,transparent);border:0;box-shadow:none;font:600 12px system-ui,sans-serif;color:var(--ink)}
+.qrow[hidden]{display:none}
+.qlab{color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:11px;margin-right:2px}
+.qchip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 4px;border-radius:99px;background:var(--surface);border:1px solid var(--line);white-space:nowrap}
+.qchip i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;color:#fff;background:conic-gradient(var(--accent) var(--p),var(--line) 0)}
+.qchip.done{border-color:var(--accent)}.qchip.done i{background:var(--accent)}
+.qlist{display:grid;gap:12px;margin:4px 0 10px}
+.qitem{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.qitem.done{border-color:var(--accent)}
+.qtop{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+body.adult .qrow{display:none!important}
+/* splash */
+#splash{position:fixed;inset:0;z-index:200;display:grid;place-items:center;align-content:center;gap:10px;background:var(--bg);transition:opacity .4s}
+#splash.out{opacity:0;pointer-events:none}
+#splash .spin{width:150px;animation:flyin .9s cubic-bezier(.2,.9,.25,1.15) both}
+#splash img{width:150px;height:auto;display:block}
+.splashname{font:700 34px Georgia,serif;color:var(--ink);opacity:0;animation:fadeup .5s .55s ease-out forwards}.splashname i{color:var(--accent);font-style:normal}
+@keyframes flyin{0%{transform:translate(-60vw,60vh) rotate(-25deg) scale(.6)}70%{transform:translate(6px,-8px) rotate(4deg) scale(1.03)}100%{transform:none}}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* night reading */
+#nightOv{display:none;position:fixed;inset:0;pointer-events:none;z-index:60;background:rgb(200,172,140);mix-blend-mode:multiply}
+body.night[data-screen=reader] #nightOv{display:block}
+#recapTxt{min-height:0;height:96px;resize:vertical}
+#nightBtn.on{color:#e8a50c}
+/* mode-only rows */
+.aonly,.ronly{display:none!important}
+body.adult .aonly{display:flex!important}
+body.reader .ronly{display:flex!important}
+body.adult .sonly,body.reader .sonly{display:none!important}
+/* plain mode */
+body.plain .mascot,body.plain .peek,body.plain #seasonCard,body.plain #evCard,body.plain .qrow,body.plain #rankPin,body.plain #rewardsCard,body.plain #evBadgesCard,body.plain #tabbar [data-go=rewards],body.plain .showcase,body.plain #boxTile{display:none!important}
+/* view as student bar */
+.viewbar{position:fixed;top:env(safe-area-inset-top);left:50%;transform:translateX(-50%);z-index:90;display:flex;gap:10px;align-items:center;background:#1d1b18;color:#fff;border-radius:0 0 14px 14px;padding:6px 8px 6px 14px;font:600 13px system-ui,sans-serif}
+.viewbar[hidden]{display:none}.viewbar button{min-height:0;padding:5px 12px;font-size:13px;border:0}
+/* pull to refresh */
+.ptr{position:fixed;top:0;left:50%;z-index:80;width:40px;height:40px;margin-left:-20px;border-radius:50%;background:var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.2);display:grid;place-items:center;transform:translateY(calc(var(--d,0px) - 50px));opacity:0;transition:opacity .2s;pointer-events:none}
+.ptr.show{opacity:1}.ptr span{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);transform:rotate(calc(var(--d,0px) * 4))}
+.ptr.ready span{border-color:var(--accent)}.ptr.spin span{animation:ptrs .7s linear infinite}
+@keyframes ptrs{to{transform:rotate(360deg)}}
+/* mystery box */
+.boxtile{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:inherit;font:inherit;margin-bottom:10px}
+.boxtile[hidden]{display:none}.boxtile .clt{display:grid;gap:2px}.boxtile b{font-family:Georgia,serif;font-size:17px}
+.boxico{width:38px;height:34px;border-radius:6px;background:linear-gradient(#a34fe0,#6a2fb0);position:relative;flex:none;box-shadow:inset 0 -8px 0 rgba(0,0,0,.18)}
+.boxico::before{content:"";position:absolute;left:15px;top:0;bottom:0;width:8px;background:#ffd84a}
+.boxico::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:800 15px Georgia,serif;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.boxtile.ready{border-color:#a34fe0;box-shadow:0 0 0 3px color-mix(in srgb,#a34fe0 35%,transparent)}
+.boxtile.ready .boxico{animation:boxwig 1.6s ease-in-out infinite}
+@keyframes boxwig{0%,70%,100%{transform:none}75%{transform:rotate(-8deg)}85%{transform:rotate(8deg)}}
+.boxstage{position:relative;width:200px;height:190px;margin:4px auto 6px}
+.boxbody{position:absolute;left:40px;right:40px;bottom:10px;height:90px;border-radius:10px;background:linear-gradient(#8a3fd0,#5a2496);box-shadow:inset 0 -14px 0 rgba(0,0,0,.18)}
+.boxbody::before{content:"";position:absolute;left:50%;margin-left:-9px;top:0;bottom:0;width:18px;background:#ffd84a}
+.boxlid{position:absolute;left:32px;right:32px;bottom:96px;height:28px;border-radius:8px;background:#a34fe0;z-index:2;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.boxlid::before{content:"";position:absolute;left:50%;margin-left:-9px;top:0;bottom:0;width:18px;background:#ffe27a}
+.boxglow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,var(--rc) 0,transparent 65%);opacity:0;transition:opacity .4s}
+.boxit{position:absolute;left:50%;top:6px;transform:translate(-50%,40px) scale(.3);opacity:0;transition:all .5s cubic-bezier(.2,1.4,.4,1);z-index:3}
+.boxstage.shake{animation:bshake .32s linear 4}
+@keyframes bshake{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+.boxstage.open .boxlid{transform:translate(-60px,-70px) rotate(-35deg)}
+.boxstage.open .boxglow{opacity:.85}
+.boxstage.open .boxit{opacity:1;transform:translate(-50%,0) scale(1)}
+#boxDlg[data-tier=legendary] #boxTxt{color:#c98a00}
+#boxDlg[data-tier=rare] #boxTxt{color:#8a3fd0}
+#boxGo{width:100%;margin-top:6px}
+/* showcase + records */
+.showcase{display:flex;gap:8px;margin:2px 0 4px}.showcase[hidden]{display:none}
+.showcase .scb{display:inline-flex}.showcase .bico{width:34px;height:34px}
+#prCard[hidden]{display:none}.prgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pr{display:grid;gap:2px}.pr b{font-size:18px}
+/* recap + journal */
+#recapTxt{width:100%;box-sizing:border-box;font:16px/1.4 system-ui,sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.jrbook{margin:0 0 16px}.jrbook h3{font:700 17px Georgia,serif;margin:0 0 8px}
+.jrent{display:grid;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin:0 0 8px}.jrent p{margin:0}
+#jrPrint{width:100%}
+/* keyboard focus */
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#pToggle{min-height:36px}#pausePw,#pwInput{min-height:40px;padding:8px 12px;box-sizing:border-box}
 .hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
 @media (min-width:600px){#shelfGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 16px}#recent{max-width:440px}}
 .btile{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;width:100%;min-width:0;gap:5px;background:none;border:0;padding:0;margin:0;min-height:0;box-shadow:none;border-radius:10px;text-align:left;color:var(--ink);position:relative;font:inherit}
@@ -650,7 +729,7 @@ body.playing .controls{opacity:.22}
 .bico{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--muted);margin-bottom:4px}
 .badge.earned .bico{background:var(--accent);color:var(--bg)}
 .tile b .flame{vertical-align:-2px}
-.mini{min-height:30px;padding:3px 12px;font-size:13px;margin-left:8px;box-shadow:none}
+.mini{min-height:34px;padding:3px 12px;font-size:13px;margin-left:8px;box-shadow:none}
 #defBody ol{margin:6px 0 0;padding-left:1.3em;display:grid;gap:8px;font:17px/1.45 Georgia,serif}
 #defBody i{color:var(--muted);font:italic 13px system-ui,sans-serif;margin-right:4px}
 .madeby{text-align:center;margin-top:auto;padding:18px 0 4px;letter-spacing:.04em}
@@ -852,6 +931,8 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 </style>
 </head>
 <body data-screen="library">
+<div id="splash" aria-hidden="true"><div class="spin"><img class="mascot splashbot" src="mascot.png" alt=""></div><b class="splashname">Atom<i>.</i></b></div>
+<script>try{var _s=JSON.parse(localStorage.getItem("pace:settings")||"{}");if(!localStorage.getItem("pace:welcomed")||(_s.mode==="adult"&&!_s.viewStudent)||(_s.mode==="reader"&&_s.plain)||matchMedia("(prefers-reduced-motion: reduce)").matches||_s.motion)document.getElementById("splash").remove();}catch(e){}</script>
 <div id="bd" aria-hidden="true"></div>
 
 <!-- LIBRARY -->
@@ -867,6 +948,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <button type="button" class="stile evcard" id="evCard" hidden><span class="mt"><i class="evic" id="evIc" aria-hidden="true"></i><b id="evName"></b></span><span class="bar"><i id="evFill"></i></span><span id="evSub" class="ms"></span></button>
   </div></div>
   <p id="titleLine"></p>
+  <div class="showcase" id="showcase" hidden></div>
   <div class="actmenu">
     <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList"><span>What do you want to do?</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="actlist card" id="actList" role="menu" hidden>
@@ -884,7 +966,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <p class="status" id="status" role="status"></p>
   <div class="impbar ind" id="impBar" hidden><i></i></div>
   <div class="card" id="nudge" hidden><span id="nudgeTxt" class="grow"></span><button id="nudgeBtn">Back up</button><button class="x" id="nudgeX" aria-label="Hide for a week" title="Hide for a week">✕</button></div>
-  <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
+  <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span><button class="qrow" id="qRow" type="button" hidden></button></div>
   <div id="continue"></div>
   <div id="recentBox" hidden><h2 class="sect">Recent</h2><div class="hgrid" id="recent"></div></div>
   <button class="card clcard libbtn" id="libBtn" type="button" hidden><span class="shelfico" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="clt"><b>My library</b><span class="fine" id="libCount"></span></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -914,6 +996,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   </header>
   <div class="card statsempty" id="statsEmpty" hidden><img class="mascot" src="mascot.png" alt=""><b>Your stats start with your first page.</b><p class="fine">Read for a minute and your words, speed and streak show up here.</p><button class="primary" id="statsGo" type="button">Pick a book</button></div>
   <div class="tiles" id="tiles"></div>
+  <div class="card" id="prCard" hidden></div>
   <div class="card life" id="life"></div>
   <div class="card" id="goalCard"></div>
   <div class="card" id="wkCard"></div>
@@ -980,6 +1063,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="pvstat"><b>Your stats</b><span>1,240 words · 6 day streak</span><span class="bar"><i style="width:48%"></i></span></div>
   </div>
   <div class="card nextcard" id="nextCard"></div>
+  <button class="card boxtile" id="boxTile" type="button" hidden><span class="boxico" aria-hidden="true"></span><span class="clt"><b>Mystery boxes</b><span class="fine" id="boxCount"></span></span></button>
   <div class="xtiles" id="xTiles"></div>
   <p class="xlab" style="margin:14px 2px 0">Fun room</p>
   <div class="xtiles" id="funTiles"></div>
@@ -996,10 +1080,11 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <header>
     <button class="icon" id="back" aria-label="Back to library"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <h1 id="title"></h1>
+    <button class="icon" id="nightBtn" aria-label="Night mode" aria-pressed="false" type="button"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="icon" id="bmBtn" aria-label="Bookmark this spot"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h10v16l-5-3.6L7 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="icon" id="menuBtn" aria-label="Bookmarks and goal"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
   </header>
-  <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button">Text</button></div>
+  <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button">Text</button></div>
   <div id="chapterBox" hidden>
     <div class="chrow"><div class="chapter"><select id="chapters" aria-label="Chapter"></select></div><button class="mini" id="tocBtn" type="button">Contents</button></div>
     <div class="chbar" title="Book progress" aria-hidden="true"><i id="chfill"></i></div>
@@ -1094,7 +1179,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 </div></dialog>
 
 <dialog id="defDlg"><div class="sheet">
-  <div class="sheet-head"><h2 id="defWord">Definition</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-head"><h2 id="defWord">Definition</h2><button class="mini hearbtn" id="defHear" type="button" aria-label="Hear this word"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Hear</button><button class="icon" data-close aria-label="Close">✕</button></div>
   <div id="defBody"></div>
   <p class="fine">Basic definitions from WordNet (Princeton University). Works offline.</p>
 </div></dialog>
@@ -1161,7 +1246,36 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="bdres" id="bdRes"></div>
     <p class="fine">Covers come from Open Library, a free online library.</p>
   </div>
+  <button id="bdJournal" type="button" hidden>Reading journal for this book</button>
   <button class="danger" id="bdRemove" type="button">Remove this book</button>
+</div></dialog>
+
+<dialog id="boxDlg"><div class="sheet" style="text-align:center">
+  <div class="sheet-head"><h2>Mystery box</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="boxstage" id="boxStage"><div class="boxlid"></div><div class="boxbody"></div><div class="boxglow"></div><div id="boxIt" class="boxit"></div></div>
+  <h3 id="boxTxt"></h3><p class="fine" id="boxSub"></p>
+  <button class="primary" id="boxGo" type="button" hidden>Done</button>
+</div></dialog>
+
+<dialog id="recapDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Quick recap</h2><button class="icon" data-close aria-label="Skip">✕</button></div>
+  <p class="fine" id="recapCh"></p>
+  <p><b id="recapQ"></b></p>
+  <textarea id="recapTxt" rows="3" maxlength="400" placeholder="Write one sentence"></textarea>
+  <p class="fine" id="recapMsg" role="status"></p>
+  <div class="row"><button class="primary" id="recapSave" type="button">Save</button><button id="recapSkip" type="button">Skip</button></div>
+</div></dialog>
+
+<dialog id="jrDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Reading journal</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="jrList"></div>
+  <button class="primary" id="jrPrint" type="button">Print journal</button>
+</div></dialog>
+
+<dialog id="qDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Today's quests</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="qList" class="qlist"></div>
+  <p class="fine" id="qNote"></p>
 </div></dialog>
 
 <dialog id="pasteDlg"><div class="sheet">
@@ -1188,6 +1302,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <button id="openToc">Contents…</button>
   <button id="openText">Text view…</button>
   <button id="openSearch">Search this book…</button>
+  <button id="openJournal" class="sonly">Reading journal…</button>
   <button id="openSettings">Settings…</button>
 </div></dialog>
 
@@ -1203,6 +1318,8 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <label class="setrow">Mode <select id="modeSel"><option value="student">Student</option><option value="adult">Teacher</option><option value="reader">Adult</option></select></label>
     <label class="setrow">Atom drops by <input type="checkbox" id="peekChk"></label>
     <label class="setrow">Tiny buzz on rewards <input type="checkbox" id="hapChk"></label>
+    <div class="setrow aonly">Preview as a student <button id="viewStuBtn" type="button">Preview</button></div>
+    <label class="setrow ronly">Simple mode (no Atom or rewards) <input type="checkbox" id="plainChk"></label>
     <p class="fine">Your name names your backup file. Teacher and Adult modes need a password.</p>
   </div>
   <p class="gt">Home screen icon</p>
@@ -1358,6 +1475,14 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     </label>
     <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
     <label class="setrow">Speed coach suggestions <input type="checkbox" id="coachChk"></label>
+    <label class="setrow sonly">Chapter recaps <input type="checkbox" id="recapChk"></label>
+  </div>
+  <p class="gt">Sound and night</p>
+  <div class="grp">
+    <label class="setrow">Reward sounds <input type="checkbox" id="sfxChk"></label>
+    <label class="setrow">Sound volume <input type="range" id="sfxVol" min="0" max="100" step="5"></label>
+    <label class="setrow">Night mode turns on <select id="nightSel"><option value="0">Never (use the moon button)</option><option value="19">After 7 PM</option><option value="20">After 8 PM</option><option value="21">After 9 PM</option><option value="22">After 10 PM</option></select></label>
+    <p class="fine">Night mode makes the reader warm and dim. Tap the moon while reading to switch it.</p>
   </div>
   <p class="gt">Screen</p>
   <div class="grp">
@@ -1467,6 +1592,9 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <button type="button" data-go="rewards"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16v9H4zM3 7.5h18V11H3zM12 7.5V20M12 7.5C10 3.5 6.5 4 7 6.2c.3 1.3 2.5 1.3 5 1.3 2.5 0 4.7 0 5-1.3.5-2.2-3-2.7-5 1.3z"/></svg><span>Rewards</span></button>
   <button type="button" data-go="settings"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg><span>Settings</span></button>
 </nav>
+<div class="viewbar" id="viewBar" hidden role="status"><span>Previewing as a student</span><button id="viewExit" type="button">Back to Teacher</button></div>
+<div class="ptr" id="ptr" aria-hidden="true"><span></span></div>
+<div id="nightOv" aria-hidden="true"></div>
 <div class="undobar" id="updBar" hidden role="status"><span>Atom has an update.</span><button id="updBtn" type="button">Update</button></div>
 <div class="undobar" id="undoBar" hidden role="status"><span id="undoTxt"></span><button id="undoBtn" type="button">Undo</button></div>
 <div id="toast" role="status" aria-live="polite" popover="manual"></div>
@@ -3107,7 +3235,7 @@ const settings = Object.assign({ theme: store.get("pace:theme", "auto"), rewind:
 settings.goal = Math.max(1000, +settings.goal || 1000);
 if (!["auto", "fsteps", "rising", "twist", "final", "fog", "cosmos", "light", "sepia", "parchment", "butter", "mint", "sky", "rose", "dark", "black", "midnight", "forest", "sunset", "contrast", "lavender", "newsprint", "slate", "coffee", "ocean", "grape", "terminal", "frontier", "overgrown", "noir", "synthwave", "autumn", "winter", "spring", "summer", "season", "frontier", "overgrown", "noir", "synthwave", "matcha", "bubblegum", "pumpkin", "spooky", "harvest", "snowfall", "fireworks", "valentine", "blossom", "earthday", "beach", "stem", "aurora", "neon", "goldleaf"].includes(settings.theme)) settings.theme = "auto";
 const saveSettings = () => { if (pv && pv.key && settings[pv.key] !== pv.id) { pv = null; clearTimeout(pvTimer); } if (pv && pv.key) { const c = settings[pv.key]; settings[pv.key] = pv.old; store.set("pace:settings", settings); settings[pv.key] = c; } else store.set("pace:settings", settings); };
-const isAdult = () => settings.mode === "adult";
+const isAdult = () => settings.mode === "adult" && !settings.viewStudent;
 const isReader = () => settings.mode === "reader";
 const THEME_BG = { fog: "#101a1c", cosmos: "#070a18", light: "#f6f4ef", sepia: "#f1e6cf", parchment: "#e6d6ae", butter: "#fbf3bd", mint: "#d9f0e2", sky: "#d9e9f7", rose: "#f7dfe3", dark: "#141311", black: "#000000", midnight: "#0d1424", forest: "#0f1a14", sunset: "#fde8d8", contrast: "#ffffff", lavender: "#e9e3f7", newsprint: "#e8e8e6", slate: "#1a1f26", coffee: "#1f1712", ocean: "#0a1f26", grape: "#1a1226", terminal: "#000000", autumn: "#f6e3cf", winter: "#e3eef7", spring: "#eaf5df", summer: "#dcf4f1", frontier: "#241812", overgrown: "#1c231c", fsteps: "#eaf4e4", rising: "#1d0f0d", twist: "#170b1f", final: "#14110a", noir: "#0d0d0d", synthwave: "#1a0b2e", matcha: "#e4ead2", bubblegum: "#ffd6f0", pumpkin: "#ffe3c2", spooky: "#120a1e", harvest: "#2a1a10", snowfall: "#0e2036", fireworks: "#0b0f24", valentine: "#ffd9e2", blossom: "#ffece6", earthday: "#d8ecd0", beach: "#c9edf5", stem: "#1b2a4a", aurora: "#06161c", neon: "#0b0614", goldleaf: "#1a1405" };
 const ACCENTS = { blue: ["#1d5fd1", "#6aa5ff"], green: ["#1f8a4c", "#5fd08a"], orange: ["#c8590a", "#ff9a4d"], purple: ["#7a3fd1", "#b48aff"], pink: ["#c42a75", "#ff7ab3"] };
@@ -3131,6 +3259,9 @@ function applyAccess() {
   document.body.classList.toggle("dim", settings.dim !== false);
   document.body.classList.toggle("adult", isAdult());
   document.body.classList.toggle("reader", isReader());
+  document.body.classList.toggle("plain", isReader() && !!settings.plain);
+  document.body.classList.toggle("viewing", settings.mode === "adult" && !!settings.viewStudent);
+  { const vb = document.getElementById("viewBar"); if (vb) vb.hidden = !(settings.mode === "adult" && settings.viewStudent); }
   if (isReader() && settings.theme === "stem") { settings.theme = "auto"; saveSettings(); applyTheme(); }
   { const sl = document.querySelector("#schoolChk"); if (sl && sl.parentElement) sl.parentElement.firstChild.textContent = isReader() ? "Weekdays only " : "School days only "; }
 }
@@ -3269,8 +3400,12 @@ function delayFor(t) {
   const w = t.w;
   if (/[.!?…]["'”’)\]]*$/.test(w)) d *= 2.2;
   else if (/[,;:—–]["'”’)\]]*$/.test(w)) d *= 1.5;
-  if (t.end) d *= 1.6;
-  if (w.length > 8) d *= 1 + (w.length - 8) * 0.04;
+  if (t.end) d *= 1.9;
+  if (/^["“‘'(]/.test(w)) d *= 1.15;
+  if (/[.!?,…]["”’']$/.test(w)) d *= 1.2;
+  const L = w.replace(/[^\p{L}\p{N}]/gu, "").length;
+  if (L > 7) d *= Math.min(1.7, 1 + (L - 7) * 0.07);
+  if (/\d|-\p{L}/u.test(w)) d *= 1.2;
   return d;
 }
 
@@ -3663,7 +3798,7 @@ function toastLater(m) {
   toastQ(m);
 }
 function toastQ(m) { if (/^(Badge earned|Rank up|Secret found|Event badge|Flame upgrade)/.test(m)) { buzz(); chime(); } if (/^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)) confetti(); tq.push(m); if (!tqBusy) nextToast(); }
-function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; toast(m, !isAdult() && /^(Badge earned|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)); setTimeout(nextToast, 2600); }
+function nextToast() { const m = tq.shift(); if (!m) { tqBusy = false; return; } tqBusy = true; if (typeof rewardFx === "function") rewardFx(m); toast(m, !isAdult() && !isPlain() && /^(Badge earned|Mystery box|New record|Title upgrade|Daily goal|Weekly challenge|Speed unlocked|Rank up|Event badge)/.test(m)); setTimeout(nextToast, 2600); }
 function checkBadges() {
   const first = store.get("pace:badges", null) === null;
   const have = store.get("pace:badges", {}), m = metrics(); let changed = false;
@@ -3778,7 +3913,7 @@ function afterStats() {
   if (settings.goal > 0 && dayW(k) >= settings.goal && stats.goalDay !== k) {
     stats.goalDay = k; store.set("pace:stats", stats); toastLater(`Daily goal reached: ${fmt(settings.goal)} words`);
   }
-  checkBadges(); checkWeekly(); checkEvent(true); checkSpecials(true); checkSecrets(); updateRank(); checkSpeed(false);
+  checkBadges(); checkWeekly(); checkEvent(true); checkSpecials(true); checkSecrets(); updateRank(); checkSpeed(false); if (typeof questCheck === "function") questCheck(true); if (typeof titleCheck === "function") titleCheck();
 }
 
 
@@ -3971,7 +4106,7 @@ function hatSvg(kind) {
   return g;
 }
 function peekSvg(kind) {
-  return `<svg viewBox="0 0 256 246" aria-hidden="true"><image href="mascot.png" width="256" height="246"/>${(typeof GEAR_K !== "undefined" && GEAR_K && gearNow().ghat) ? "" : `<g transform="translate(168 54) rotate(38) scale(1.15)">${hatSvg(kind)}</g>`}${(typeof GEAR_K !== "undefined" && GEAR_K) ? gearLayers(gearNow()) : ""}</svg>`;
+  return `<svg viewBox="0 0 256 246" aria-hidden="true"><image href="mascot.png" width="256" height="246"/>${(typeof GEAR_K !== "undefined" && GEAR_K && (gearNow().ghat || gearNow().bday)) ? "" : `<g transform="translate(168 54) rotate(38) scale(1.15)">${hatSvg(kind)}</g>`}${(typeof GEAR_K !== "undefined" && GEAR_K) ? gearLayers(gearNow()) : ""}</svg>`;
 }
 let peekHide = null;
 function hidePeek() { clearTimeout(peekHide); $("#peek").classList.remove("on", "hop"); }
@@ -3983,7 +4118,7 @@ function showPeek() {
 }
 function peekMaybe(force) {
   if (!force) {
-    if (isAdult() || settings.peek === false) return;
+    if (isAdult() || isPlain() || settings.peek === false) return;
     if (document.body.dataset.screen !== "library" || document.querySelector("dialog[open]") || document.body.classList.contains("playing")) return;
     if (Date.now() - store.get("pace:peek", 0) < 25 * 60000 || Math.random() > 0.35) return;
   }
@@ -4225,7 +4360,7 @@ function applyExtras() {
   ["stat", "cov"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
   { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
   applyBackdrop();
-  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = stampHtml(st); if (t) tl.append(document.createTextNode(XNAME("title", t))); } }
+  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = stampHtml(st); if (t) tl.append(document.createTextNode(typeof titleName === "function" ? titleName(t) : XNAME("title", t))); } }
   updateGreet(); pvUpdate(); if (typeof applyGear === "function" && GEAR_K) applyGear();
 }
 /* reward sounds, made in code */
@@ -4296,14 +4431,16 @@ Object.assign(UNLOCK, {
 XGROUPS.push({ id: "gear", name: "Atom gear", sub: "Hats, glasses, neckwear", keys: GEAR_K });
 function gearLayers(pick, noHat) {
   // neck first, then face, then hat on top
-  return ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_TX[k + ":" + id] || GEAR_T[k]}">${g}</g>` : ""; }).join("");
+  const mood = pick.mood && typeof MOOD_SVG !== "undefined" && MOOD_SVG && MOOD_SVG[pick.mood] ? `<g transform="translate(152 108) rotate(40)">${MOOD_SVG[pick.mood]}</g>` : "";
+  const bday = !pick.ghat && pick.bday && !noHat && typeof BDAY_HAT !== "undefined" && BDAY_HAT ? `<g transform="${GEAR_T.ghat}">${BDAY_HAT}</g>` : "";
+  return mood + ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_TX[k + ":" + id] || GEAR_T[k]}">${g}</g>` : ""; }).join("") + bday;
 }
-function gearNow() { const o = {}; GEAR_K.forEach(k => { o[k] = xGet(k); }); return o; }
+function gearNow() { const o = {}; GEAR_K.forEach(k => { o[k] = xGet(k); }); try { o.mood = atomMood(); o.bday = isBday(); } catch (e) {} return o; }
 var MASCOT_URL = "mascot.png", mascotData = null, gearKey = "";
 async function applyGear() {
-  const pick = gearNow(), key = GEAR_K.map(k => pick[k]).join("|");
+  const pick = gearNow(), key = GEAR_K.map(k => pick[k]).join("|") + "|" + pick.mood + "|" + pick.bday;
   if (key === gearKey) { setMascots(); return; } gearKey = key;
-  if (!pick.ghat && !pick.gface && !pick.gneck) { MASCOT_URL = "mascot.png"; setMascots(); return; }
+  if (!pick.ghat && !pick.gface && !pick.gneck && !pick.mood && !pick.bday) { MASCOT_URL = "mascot.png"; setMascots(); return; }
   try {
     if (!mascotData) { const b = await (await fetch("mascot.png")).blob(); mascotData = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); }); }
     if (gearKey !== key) return;
@@ -4359,6 +4496,8 @@ function atomLine() {
   try { const r = rankInfo(metrics().w); if (r.next) dyn.push(`You're ${r.name}. ${fmt(r.need)} words to the next rank.`); } catch (e) {}
   try { const m = [...lib].sort((a, b) => (b.opened || 0) - (a.opened || 0))[0]; if (m && !m.done) dyn.push(`How's "${m.title.length > 40 ? m.title.slice(0, 40) + "…" : m.title}" going?`); } catch (e) {}
   const p = gearNow();
+  if (p.mood === "sleepy") dyn.push("Yawn... it's getting late. One more page?"); if (p.mood === "sad") dyn.push("I missed you! Let's read a little today."); if (p.mood === "happy") dyn.push("You're on a roll! I'm doing a happy beep.");
+  if (p.bday) { dyn.push("It's my birthday! Thanks for reading with me."); dyn.push("Pi Day is my birthday. 3.14159... beep!"); }
   if (p.ghat) dyn.push(`Do you like my ${XNAME("ghat", p.ghat).toLowerCase()}?`);
   if (p.gface) dyn.push(`These ${XNAME("gface", p.gface).toLowerCase()} help me read. Not really. But they look cool.`);
   if (p.gneck) dyn.push(`I put on my ${XNAME("gneck", p.gneck).toLowerCase()} just for you.`);
@@ -4414,7 +4553,8 @@ function renderGroup(g) {
       const m = lockMsg(c.k, id), b = el("button", "xcard" + (m ? " locked" : "")); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
       if (m) b.title = m;
       const th = xThumb(c.k, id); if (th) b.append(th);
-      b.append(el("span", "", name));
+      b.append(el("span", "", c.k === "title" && typeof TITLE_TIERS !== "undefined" && TITLE_TIERS && TITLE_TIERS[id] ? titleName(id) : name));
+      if (c.k === "title" && typeof TITLE_TIERS !== "undefined" && TITLE_TIERS && TITLE_TIERS[id] && !m) b.append(el("span", "xtag", titleNext(id)));
       if (m) b.append(el("span", "xtag", "Locked: " + xTag(c.k, id)));
       b.setAttribute("aria-pressed", String(settings[c.k] === id && !m));
       b.onclick = () => {
@@ -4455,7 +4595,7 @@ function renderRewardsTab() {
   st.append(el("b", "", "Season " + se.n), el("span", "fine", se.name), el("span", "xcount", sr.name));
   st.onclick = openSeason; box.append(st); renderFunTiles();
 }
-function openRewards() { renderRewardsTab(); show("rewards"); }
+function openRewards() { renderRewardsTab(); renderBoxTile(); show("rewards"); }
 function renderExtras() { renderRewardsTab(); if (xgCur && $("#xgDlg").open) renderGroup(xgCur); }
 
 /* ---------- seasons ---------- */
@@ -4464,7 +4604,7 @@ let seasonOv = null;
 function seasonN(n) { const first = new Date(2026, 8 + (n - 1) * 3, 1), last = new Date(2026, 8 + n * 3, 0); return { n, idx: (n - 1) % 4, name: SEASON_NAMES[(n - 1) % 4], a: todayKey(first), b: todayKey(last), last }; }
 function seasonAt(d) { const mo = (d.getFullYear() - 2026) * 12 + (d.getMonth() - 8); return seasonN(Math.max(1, Math.floor(mo / 3) + 1)); }
 const seasonNow = () => seasonAt(seasonOv || new Date());
-function seasonWords(se) { let t = 0; for (const k in stats.days) if (k >= se.a && k <= se.b) t += stats.days[k].w || 0; return t; }
+function seasonWords(se) { let t = 0; for (const k in stats.days) if (k >= se.a && k <= se.b) t += stats.days[k].w || 0; return t + (typeof qBonus === "function" ? qBonus(se.n) : 0); }
 const S_MAX = 100, S_STEP = 3000, sWords = L => (L - 1) * S_STEP;
 function ribbon(i, col, size) {
   const n = String(i), fs = n.length > 2 ? 7 : 9;
@@ -4740,6 +4880,268 @@ function openEvent() {
   });
   if (!dlg.open) dlg.showModal();
 }
+/* ---------- daily quests: small tasks that give bonus season words ---------- */
+var Q_REWARD = 1000, Q_ALL = 1000;
+var QUESTS = {
+  min10: { txt: "Read for 10 minutes", chip: "10 min", need: 10, get: () => Math.floor(((stats.days[todayKey()] || {}).ms || 0) / 60000) },
+  min20: { txt: "Read for 20 minutes", chip: "20 min", need: 20, get: () => Math.floor(((stats.days[todayKey()] || {}).ms || 0) / 60000) },
+  w1500: { txt: "Read 1,500 words", chip: "1,500 words", need: 1500, get: () => dayW(todayKey()) },
+  w3000: { txt: "Read 3,000 words", chip: "3,000 words", need: 3000, get: () => dayW(todayKey()) },
+  goal: { txt: "Hit your daily goal", chip: "Daily goal", need: 1, get: () => dayW(todayKey()) >= goalTarget() ? 1 : 0 },
+  chap: { txt: "Finish a chapter", chip: "A chapter", need: 1, get: q => q.c.chap || 0 },
+  define: { txt: "Look up a word with Define", chip: "Define", need: 1, get: q => q.c.define || 0 },
+  hear: { txt: "Hear how a word sounds", chip: "Hear a word", need: 1, get: q => q.c.hear || 0 },
+  bm: { txt: "Bookmark a spot in a book", chip: "Bookmark", need: 1, get: q => q.c.bm || 0 },
+  run3: { txt: "Read 3 minutes without pausing", chip: "3 min nonstop", need: 3, get: q => Math.floor((q.c.run || 0) / 60000) },
+  two: { txt: "Read from 2 different books", chip: "2 books", need: 2, get: () => Object.values(stats.books).filter(b => (b[todayKey()] || 0) > 0).length },
+  newb: { txt: "Start a new book", chip: "New book", need: 1, get: q => q.c.newb || 0 },
+  recap: { txt: "Write a chapter recap", chip: "Recap", need: 1, get: q => q.c.recap || 0 },
+  arc: { txt: "Play a game in the Arcade", chip: "Arcade", need: 1, get: q => q.c.arc || 0 }
+};
+var Q_GROUPS = [["min10", "min20", "w1500", "w3000", "goal"], ["define", "hear", "bm", "run3", "chap", "recap"], ["two", "chap", "newb", "arc", "run3", "goal"]];
+function questDay() {
+  const k = todayKey(); let q = store.get("pace:q", null);
+  if (!q || q.d !== k) {
+    let h = parseInt(hash("q" + k), 36) || 7; const pick = [];
+    Q_GROUPS.forEach(g => { const opts = g.filter(id => !pick.includes(id) && !(id === "arc" && isReader()) && !(id === "recap" && (isReader() || settings.recap === false))); pick.push(opts[h % opts.length]); h = Math.floor(h / 7) + 3; });
+    q = { d: k, ids: pick, c: {}, done: {} }; store.set("pace:q", q);
+  }
+  return q;
+}
+function qOn() { return !!QUESTS && !isAdult() && !isPlain(); }
+function questBump(name, n) { if (!qOn()) return; const q = questDay(); q.c[name] = (q.c[name] || 0) + (n || 1); store.set("pace:q", q); questCheck(true); }
+function questMax(name, v) { if (!qOn()) return; const q = questDay(); if (v > (q.c[name] || 0)) { q.c[name] = v; store.set("pace:q", q); questCheck(true); } }
+function qBonus(sn) { return (store.get("pace:qb", {})[sn] || 0); }
+function questCheck(announce) {
+  if (!qOn()) return; const q = questDay(); let got = 0;
+  q.ids.forEach(id => {
+    const Q = QUESTS[id]; if (!Q || q.done[id]) return;
+    if (Q.get(q) >= Q.need) { q.done[id] = Date.now(); got += Q_REWARD; if (announce) toastLater(`Quest done: ${Q.txt}. +${fmt(Q_REWARD)} season words`); }
+  });
+  if (got && q.ids.every(id => q.done[id]) && !q.all) { q.all = 1; got += Q_ALL; setTimeout(() => boxQuestDay(q), 0); if (announce) toastLater(`All 3 quests done! Bonus +${fmt(Q_ALL)} season words`); }
+  if (got) { store.set("pace:q", q); const se = seasonNow(), b = store.get("pace:qb", {}); b[se.n] = (b[se.n] || 0) + got; store.set("pace:qb", b); seasonSync(!announce); }
+  renderQuestRow();
+}
+function renderQuestRow() {
+  const row = $("#qRow"); if (!row) return;
+  if (!qOn()) { row.hidden = true; return; }
+  const q = questDay(); row.hidden = false; row.replaceChildren(el("span", "qlab", "Quests"));
+  q.ids.forEach(id => { const Q = QUESTS[id], v = Math.min(Q.need, Q.get(q)), d = !!q.done[id]; const c = el("span", "qchip" + (d ? " done" : "")); const dot = el("i", "", d ? "✓" : ""); dot.style.setProperty("--p", (v / Q.need * 100) + "%"); c.append(dot, document.createTextNode(Q.chip)); row.append(c); });
+  row.setAttribute("aria-label", "Daily quests: " + q.ids.map(id => QUESTS[id].txt + (q.done[id] ? ", done" : "")).join(". "));
+}
+function openQuests() {
+  const q = questDay(), box = $("#qList"); box.replaceChildren();
+  q.ids.forEach(id => {
+    const Q = QUESTS[id], v = Math.min(Q.need, Q.get(q)), d = !!q.done[id];
+    const r = el("div", "qitem" + (d ? " done" : "")); const top = el("div", "qtop"); top.append(el("b", "", (d ? "✓ " : "") + Q.txt), el("span", "fine", d ? "Done" : `+${fmt(Q_REWARD)}`));
+    const bar = el("span", "bar"), f = el("i"); f.style.width = (v / Q.need * 100) + "%"; bar.append(f);
+    r.append(top, bar, el("span", "fine", `${fmt(v)} / ${fmt(Q.need)}`)); box.append(r);
+  });
+  const n = q.ids.filter(id => q.done[id]).length;
+  $("#qNote").textContent = (n === 3 ? "All done today. Nice work! " : `Finish all 3 for a bonus +${fmt(Q_ALL)}. `) + "Season words help you level up the season pass. New quests every day.";
+  $("#qDlg").showModal();
+}
+/* ---------- sounds made in code ---------- */
+function sfx(kind) {
+  try {
+    if (settings.sfx === false || !actx) return; audioInit();
+    const t = actx.currentTime + .02, v = Math.max(0, Math.min(1, (settings.sfxVol ?? 50) / 100)) * 0.22, T = (f, at, d, ty, g) => tone(f, t + at, d, ty, v * g);
+    if (kind === "level") { [523, 659, 784, 1047].forEach((f, i) => T(f, i * .09, .35, "triangle", 1)); T(1568, .38, .5, "sine", .5); }
+    else if (kind === "quest") { T(784, 0, .16, "sine", .9); T(1175, .1, .28, "sine", .8); }
+    else if (kind === "goal") { [392, 523, 659, 784].forEach((f, i) => T(f, i * .07, .3, "sine", .9)); }
+    else if (kind === "badge") { T(880, 0, .5, "sine", .8); T(1320, .06, .5, "sine", .5); T(1760, .12, .4, "sine", .3); }
+    else if (kind === "box") { [330, 440, 554, 659, 880].forEach((f, i) => T(f, i * .06, .25, "square", .35)); }
+    else if (kind === "legend") { [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => T(f, i * .07, .5, "triangle", .9)); }
+    else if (kind === "tap") T(1200, 0, .05, "sine", .4);
+  } catch (e) {}
+}
+function rewardFx(m) {
+  const k = /^(Rank up|Season reward|Title upgrade)/.test(m) ? "level" : /^(Quest done|All 3 quests)/.test(m) ? "quest" : /^Daily goal/.test(m) ? "goal" : /^(Badge earned|Event badge|Event reward|New record|Mystery box)/.test(m) ? "badge" : "";
+  if (!k) return; sfx(k); buzz();
+}
+/* ---------- night reading ---------- */
+function nightAuto() { const at = +settings.nightAt || 0; if (!at) return false; const h = new Date().getHours(); return h >= at || h < 6; }
+function nightActive() { if (settings.night) return true; return nightAuto() && settings.nightOff !== todayKey(); }
+function applyNight() { const on = nightActive(); document.body.classList.toggle("night", on); const b = $("#nightBtn"); if (b) { b.setAttribute("aria-pressed", String(on)); b.classList.toggle("on", on); } }
+function toggleNight() {
+  if (nightActive()) { settings.night = false; if (nightAuto()) settings.nightOff = todayKey(); toast("Night mode off"); }
+  else { settings.night = true; settings.nightOff = ""; toast("Night mode on"); }
+  saveSettings(); applyNight();
+}
+setInterval(applyNight, 60000);
+/* ---------- Atom moods and birthday (Pi Day, March 14) ---------- */
+const isBday = () => { const d = new Date(); return d.getMonth() === 2 && d.getDate() === 14; };
+function atomMood() {
+  if (isAdult()) return "";
+  const h = new Date().getHours(); if (h >= 21 || h < 6) return "sleepy";
+  if (isBday()) return "happy";
+  const s = streakInfo(), tk = todayKey(), y = new Date(); y.setDate(y.getDate() - 1);
+  if (dayW(tk) >= goalTarget() || s.cur >= 3) return "happy";
+  const keys = Object.keys(stats.days).filter(k => dayW(k) > 0).sort(), last = keys[keys.length - 1];
+  if (last && last < todayKey(y) && dayW(tk) === 0 && s.cur === 0 && keys.length >= 3) return "sad";
+  return "";
+}
+var MOOD_SVG = {
+  sleepy: `<g fill="#8f8e8a" stroke="#2b2926" stroke-width="2.5"><path d="M-57 0A22 22 0 0 1 -13 0Z"/><path d="M13 0A22 22 0 0 1 57 0Z"/></g><path d="M-55 2H-15M15 2H55" stroke="#2b2926" stroke-width="3" stroke-linecap="round"/><g fill="#2f6db5" font-family="Georgia,serif" font-weight="700"><text x="22" y="-46" font-size="24">z</text><text x="40" y="-66" font-size="18">z</text><text x="56" y="-82" font-size="13">z</text></g>`,
+  happy: `<g fill="#ffd84a" stroke="#a87b0c" stroke-width="1.2" transform="scale(1.3)"><path d="M-62 -30l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/><path d="M64 -34l2.4 5.5 6 .8-4.4 4.2 1 6-5-2.6-5 2.6 1-6-4.4-4.2 6-.8z"/></g>`,
+  sad: `<path d="M-52 -30L-20 -22M52 -30L20 -22" stroke="#2b2926" stroke-width="4" stroke-linecap="round"/><path d="M40 20C36 28 38 34 43 34C48 34 49 28 44 20Z" fill="#6ab8ff" stroke="#2f6db5" stroke-width="1.5"/>`
+};
+var BDAY_HAT = `<path d="M-24 0L0 -60L24 0Z" fill="#e02fc0"/><path d="M-16 -20L16 -20M-8 -40L8 -40" stroke="#ffd84a" stroke-width="5"/><circle cx="0" cy="-62" r="7" fill="#ffd84a"/><rect x="-2" y="-80" width="4" height="12" rx="2" fill="#fff"/><path d="M0 -92C-4 -86 -3 -82 0 -80C3 -82 4 -86 0 -92Z" fill="#ff8a1c"/><circle cx="-8" cy="-8" r="2.5" fill="#2f9bd6"/><circle cx="9" cy="-12" r="2.5" fill="#2fbf71"/>`;
+GEAR_SVG.ghat.bdayhat = BDAY_HAT; XCATS.find(c => c.k === "ghat").opts.push(["bdayhat", "Birthday hat"]);
+EXTRA_SPECIAL.ghat = EXTRA_SPECIAL.ghat || {}; EXTRA_SPECIAL.ghat.bdayhat = { desc: "Open Atom on his birthday, March 14 (Pi Day)", test: () => Object.keys(store.get("pace:bday", {})).length > 0 };
+function moodLayer() { const m = atomMood(); return m && MOOD_SVG[m] ? `<g transform="translate(152 108) rotate(40)">${MOOD_SVG[m]}</g>` : ""; }
+function bdayCheck() {
+  if (!isBday() || isAdult() || isPlain()) return;
+  const y = String(new Date().getFullYear()), b = store.get("pace:bday", {});
+  if (!b[y]) { b[y] = Date.now(); store.set("pace:bday", b); setTimeout(() => { confetti(); sfx("legend"); toast("It's Atom's birthday! Happy Pi Day. You unlocked his Birthday hat."); }, 1500); }
+}
+/* ---------- bedtime nudge (students) ---------- */
+function bedtimeNudge() {
+  if (isAdult() || isReader()) return; const h = new Date().getHours(); if (!(h >= 22 || h < 5)) return;
+  const k = todayKey(new Date(Date.now() - 6 * 3600000)); if (store.get("pace:bed", "") === k) return; store.set("pace:bed", k);
+  toast("It's late. Sleep helps you remember what you read. Maybe one more chapter, then bed?", true);
+}
+/* ---------- plain mode (Adult option) and view as student (Teacher) ---------- */
+function isPlain() { return isReader() && !!settings.plain; }
+/* ---------- mystery boxes: earned by finishing all 3 quests 5 days in a row ---------- */
+var BOX_ITEMS = [
+  ["ghat", "bucket", "Bucket hat", "common", `<path d="M-34 -2L-24 -36Q0 -44 24 -36L34 -2Z" fill="#6aa3c8"/><ellipse cx="0" cy="-2" rx="48" ry="9" fill="#4f88ad"/><path d="M-26 -14Q0 -8 26 -14" stroke="#fff" stroke-width="3" fill="none" opacity=".6"/>`],
+  ["gface", "tape", "Taped glasses", "common", `<g fill="none" stroke="#1d1b18" stroke-width="5"><rect x="-58" y="-18" width="44" height="34" rx="6"/><rect x="14" y="-18" width="44" height="34" rx="6"/></g><rect x="-16" y="-10" width="32" height="14" rx="3" fill="#f3f0e8" stroke="#c9c4ba" stroke-width="1.5"/>`],
+  ["gneck", "ribbon", "Ribbon", "common", `<path d="M0 0L-26 -12L-22 12Z" fill="#2fbf71"/><path d="M0 0L26 -12L22 12Z" fill="#2fbf71"/><path d="M-3 2L-12 30M3 2L12 30" stroke="#2fbf71" stroke-width="6" stroke-linecap="round"/><circle r="6" fill="#1f8a4c"/>`],
+  ["gface", "nerd", "Big round glasses", "common", `<g fill="rgba(255,255,255,.18)" stroke="#8a1d16" stroke-width="6"><circle cx="-35" cy="0" r="27"/><circle cx="35" cy="0" r="27"/></g><path d="M-9 -3Q0 -10 9 -3" stroke="#8a1d16" stroke-width="5" fill="none"/>`],
+  ["ghat", "viking", "Viking helmet", "rare", `<path d="M-32 -2C-34 -42 34 -42 32 -2Z" fill="#9aa4ad" stroke="#5a6470" stroke-width="2"/><rect x="-34" y="-10" width="68" height="10" rx="3" fill="#7a5230"/><path d="M-30 -24C-50 -30 -56 -50 -48 -62C-44 -44 -36 -38 -28 -36Z" fill="#f3ead2" stroke="#b9a77a" stroke-width="2"/><path d="M30 -24C50 -30 56 -50 48 -62C44 -44 36 -38 28 -36Z" fill="#f3ead2" stroke="#b9a77a" stroke-width="2"/><g fill="#5a6470"><circle cx="-18" cy="-5" r="2.5"/><circle cx="0" cy="-5" r="2.5"/><circle cx="18" cy="-5" r="2.5"/></g>`],
+  ["gface", "visor", "Laser visor", "rare", `<path d="M-76 -4H76" stroke="#1d1b18" stroke-width="7"/><rect x="-66" y="-18" width="132" height="30" rx="15" fill="#e8453c" stroke="#8a1d16" stroke-width="3"/><path d="M-56 -8H56" stroke="#ffb3a8" stroke-width="4" stroke-linecap="round"/><circle cx="-40" cy="-3" r="3" fill="#fff"/>`],
+  ["ghat", "space", "Space helmet", "rare", `<circle cx="0" cy="18" r="70" fill="rgba(170,215,255,.22)" stroke="#e8eef5" stroke-width="6"/><path d="M-44 -26A62 62 0 0 1 10 -50" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/><rect x="-12" y="-58" width="24" height="8" rx="3" fill="#d7372b"/>`],
+  ["gneck", "cape", "Hero cape", "rare", `<path d="M-30 -4Q0 6 30 -4L44 70Q0 82 -44 70Z" fill="#c8281f" opacity=".92"/><path d="M-30 -4Q0 6 30 -4" stroke="#8a1d16" stroke-width="5" fill="none"/><circle cx="0" cy="4" r="6" fill="#f2c230"/>`],
+  ["ghat", "goldcrown", "Golden crown", "legendary", `<path d="M-34 0L-38 -40L-18 -22L0 -50L18 -22L38 -40L34 0Z" fill="#ffd23f" stroke="#a87b0c" stroke-width="2.5" stroke-linejoin="round"/><rect x="-34" y="-11" width="68" height="11" fill="#f2b824"/><circle cx="0" cy="-6" r="5" fill="#c8281f" stroke="#fff" stroke-width="1"/><circle cx="-20" cy="-6" r="4" fill="#2f9bd6"/><circle cx="20" cy="-6" r="4" fill="#2fbf71"/><circle cx="0" cy="-50" r="4" fill="#fff"/><circle cx="-38" cy="-40" r="3.5" fill="#fff"/><circle cx="38" cy="-40" r="3.5" fill="#fff"/><path d="M-24 -30L-20 -26M24 -30L20 -26" stroke="#fff6c2" stroke-width="2"/>`],
+  ["gneck", "rainbowcape", "Rainbow cape", "legendary", `<defs><linearGradient id="rbw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8453c"/><stop offset=".2" stop-color="#ff9a1c"/><stop offset=".4" stop-color="#ffd84a"/><stop offset=".6" stop-color="#2fbf71"/><stop offset=".8" stop-color="#2f9bd6"/><stop offset="1" stop-color="#8a52e0"/></linearGradient></defs><path d="M-30 -4Q0 6 30 -4L48 74Q0 88 -48 74Z" fill="url(#rbw)"/><path d="M-30 -4Q0 6 30 -4" stroke="#fff" stroke-width="4" fill="none" opacity=".7"/><circle cx="0" cy="4" r="6" fill="#fff"/>`],
+  ["gface", "diamond", "Diamond shades", "legendary", `<g fill="#bfefff" stroke="#2f9bd6" stroke-width="3" stroke-linejoin="round"><path d="M-35 -22L-13 -4L-35 20L-57 -4Z"/><path d="M35 -22L57 -4L35 20L13 -4Z"/></g><path d="M-13 -4H13" stroke="#2f9bd6" stroke-width="4"/><path d="M-44 -6L-35 -14M26 -6L35 -14" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`],
+  ["ghat", "flamecrown", "Flame crown", "legendary", `<path d="M-30 0C-34 -24 -22 -30 -20 -46C-12 -36 -10 -30 -8 -40C-4 -52 4 -54 6 -66C12 -54 12 -44 16 -40C20 -46 22 -50 24 -56C30 -42 36 -24 30 0Z" fill="#ff7a1c"/><path d="M-20 0C-22 -16 -14 -22 -10 -30C-6 -22 0 -24 2 -36C8 -26 10 -20 14 -24C18 -14 20 -8 20 0Z" fill="#ffd84a"/><rect x="-32" y="-8" width="64" height="9" rx="3" fill="#c8281f"/>`]
+];
+var BOX_RARE = { common: ["Common", "#6aa3c8"], rare: ["Rare", "#a34fe0"], legendary: ["Legendary", "#f2b824"] };
+BOX_ITEMS.forEach(([k, id, name, r, svg]) => {
+  GEAR_SVG[k][id] = svg; XCATS.find(c => c.k === k).opts.push([id, name]);
+  EXTRA_SPECIAL[k] = EXTRA_SPECIAL[k] || {};
+  EXTRA_SPECIAL[k][id] = { desc: `Find it in a mystery box (${BOX_RARE[r][0].toLowerCase()})`, test: () => !!(store.get("pace:box", {}).own || {})[id] };
+});
+GEAR_TX["ghat:space"] = "translate(152 108) rotate(40)";
+GEAR_TX["gneck:cape"] = GEAR_TX["gneck:rainbowcape"] = "translate(112 152) rotate(41)";
+function boxState() { const b = store.get("pace:box", {}); b.own = b.own || {}; b.n = b.n || 0; b.run = b.run || 0; return b; }
+function boxQuestDay(q) {
+  // call when all 3 quests are done for the day
+  const b = boxState(), y = new Date(); y.setDate(y.getDate() - 1);
+  b.run = b.last === todayKey(y) ? b.run + 1 : b.last === q.d ? b.run : 1; b.last = q.d;
+  if (b.run > 0 && b.run % 5 === 0 && b.got !== q.d) { b.n++; b.got = q.d; toastLater("Mystery box earned! Open it in Rewards."); }
+  store.set("pace:box", b); renderBoxTile();
+}
+function boxRoll() {
+  const b = boxState(), r = Math.random(), tier = r < .07 ? "legendary" : r < .35 ? "rare" : "common";
+  const pool = t => BOX_ITEMS.filter(x => x[3] === t);
+  let it = pool(tier)[Math.floor(Math.random() * pool(tier).length)];
+  if (b.own[it[1]] && tier === "legendary") { const left = pool("legendary").filter(x => !b.own[x[1]]); it = left.length ? left[Math.floor(Math.random() * left.length)] : pool("rare")[Math.floor(Math.random() * pool("rare").length)]; }
+  return it;
+}
+function boxOpen() {
+  const b = boxState(); if (b.n < 1) return; b.n--;
+  const it = boxRoll(), [k, id, name, tier] = it, dupe = !!b.own[id], pts = tier === "rare" ? 800 : tier === "legendary" ? 1500 : 500;
+  if (!dupe) b.own[id] = Date.now(); store.set("pace:box", b);
+  if (dupe) { const se = seasonNow(), qb = store.get("pace:qb", {}); qb[se.n] = (qb[se.n] || 0) + pts; store.set("pace:qb", qb); seasonSync(false); }
+  const dlg = $("#boxDlg"), st = $("#boxStage"); dlg.style.setProperty("--rc", BOX_RARE[tier][1]); dlg.dataset.tier = tier;
+  st.className = "boxstage shake"; $("#boxIt").innerHTML = ""; $("#boxTxt").textContent = "Opening…"; $("#boxSub").textContent = ""; $("#boxGo").hidden = true;
+  if (!dlg.open) dlg.showModal(); sfx("box");
+  setTimeout(() => {
+    st.className = "boxstage open"; $("#boxIt").innerHTML = gearThumb(k, id).replace('width="44" height="42"', 'width="150" height="144"');
+    $("#boxTxt").textContent = `${BOX_RARE[tier][0]}: ${name}`;
+    $("#boxSub").textContent = dupe ? `You already have this one, so it turned into +${fmt(pts)} season words.` : "New gear for Atom! Pick it in Rewards, Atom gear.";
+    $("#boxGo").hidden = false; $("#boxGo").textContent = b.n ? `Open next box (${b.n} left)` : "Done";
+    if (tier === "legendary") { sfx("legend"); confetti(); } buzz(); renderBoxTile(); applyExtras();
+  }, 1300);
+}
+function renderBoxTile() {
+  const t = $("#boxTile"); if (!t) return; const b = boxState(), q = store.get("pace:q", null);
+  if (isAdult() || isPlain()) { t.hidden = true; return; } t.hidden = false;
+  const runNow = b.last && (b.last === todayKey() || b.last === todayKey(new Date(Date.now() - 864e5))) ? b.run : 0;
+  $("#boxCount").textContent = b.n ? `${b.n} to open!` : `${5 - (runNow % 5)} more quest day${5 - (runNow % 5) === 1 ? "" : "s"} to the next box`;
+  t.classList.toggle("ready", b.n > 0);
+}
+/* ---------- personal records ---------- */
+function prCheck() {
+  if (isAdult() || isPlain()) return;
+  const p = store.get("pace:pr", null), first = p === null, r = p || {}, out = [];
+  const ms = playedMs, sw = sessionWords, sp = playedMs > 120000 && shownWords > 200 ? Math.round(shownWords / (playedMs / 60000)) : 0, dw = dayW(todayKey());
+  const test = (k, v, label, f) => { if (v > (r[k] || 0)) { if (!first && (r[k] || 0) > 0) out.push(`New record! ${label}: ${f(v)}`); r[k] = v; } };
+  test("day", dw, "Most words in a day", fmt); test("sess", sw, "Most words in one sitting", fmt);
+  test("long", Math.floor(ms / 60000), "Longest reading session", v => v + " min"); test("wpm", sp, "Fastest reading speed", v => v + " wpm");
+  store.set("pace:pr", r); out.slice(0, 2).forEach(m => toastLater(m));
+}
+/* ---------- badge showcase (3 favorites on the home screen) ---------- */
+function renderShowcase() {
+  const box = $("#showcase"); if (!box) return; const pick = (settings.showcase || []).filter(id => (store.get("pace:badges", {}))[id]);
+  if (!pick.length || isAdult() || isPlain()) { box.hidden = true; return; }
+  box.hidden = false; box.replaceChildren(...pick.map(id => { const b = BADGES.find(x => x.id === id), s = el("span", "scb"); if (!b) return s; const ic = badgeIcon(id); ic.classList.add("on"); s.append(ic); s.title = b.name; s.setAttribute("aria-label", b.name); return s; }));
+}
+function toggleShowcase(id) {
+  const a = (settings.showcase || []).slice(), i = a.indexOf(id);
+  if (i >= 0) a.splice(i, 1); else { if (a.length >= 3) { toast("You can show 3 badges. Remove one first."); return false; } a.push(id); }
+  settings.showcase = a; saveSettings(); renderShowcase(); return true;
+}
+/* ---------- title upgrades: I, II, III ---------- */
+var TITLE_TIERS = {
+  pager: [() => metrics().w, [0, 25000, 100000], "words"],
+  bookworm: [() => metrics().ms / HOUR, [0, 10, 50], "hours"],
+  finisher: [() => stats.finished || 0, [1, 5, 15], "books finished"],
+  explorer: [() => Object.keys(store.get("pace:cl", {})).length, [1, 5, 10], "Class Library books"],
+  keeper: [() => metrics().streak, [7, 30, 100], "day streak"]
+};
+function titleTier(id) { const t = TITLE_TIERS[id]; if (!t) return -1; const v = t[0](); let k = 0; t[1].forEach((x, i) => { if (v >= x) k = i; }); return k; }
+function titleName(id) { const base = XNAME("title", id), k = titleTier(id); return k >= 0 ? base + " " + ROMAN[k] : base; }
+function titleNext(id) { const t = TITLE_TIERS[id]; if (!t) return ""; const k = titleTier(id); return k < 2 ? `${ROMAN[k + 1]} at ${fmt(t[1][k + 1])} ${t[2]}` : "Top tier"; }
+function titleCheck() {
+  if (isAdult()) return; const had = store.get("pace:tt", null), first = had === null, o = had || {};
+  Object.keys(TITLE_TIERS).forEach(id => { if (isLocked("title", id)) return; const k = titleTier(id); if (k > (o[id] ?? -1)) { if (!first && o[id] !== undefined) toastLater("Title upgrade: " + titleName(id)); o[id] = k; } });
+  store.set("pace:tt", o);
+}
+/* ---------- chapter recaps and reading journal (students) ---------- */
+var RECAP_P = ["What happened in this part?", "Who changed in this part, and how?", "What do you think will happen next?", "What was the most important moment?", "How did this part make you feel?", "What problem is the main character facing?", "Which word or line stood out to you?", "If you were in the story, what would you do?", "What do you know now that you didn't before?", "Describe the setting in one sentence."];
+const recapOn = () => !isAdult() && !isReader() && settings.recap !== false;
+const jKey = id => "pace:jr:" + id;
+function journal(id) { return store.get(jKey(id), []); }
+function recapAsk(chTitle) {
+  if (!recapOn() || !bookId) return;
+  const n = journal(bookId).length, p = RECAP_P[(n + (parseInt(hash(bookId), 36) || 0)) % RECAP_P.length];
+  const d = $("#recapDlg"); d.dataset.ch = chTitle || ""; $("#recapCh").textContent = chTitle ? "You finished: " + chTitle : "You finished the book!";
+  $("#recapQ").textContent = p; $("#recapTxt").value = ""; $("#recapMsg").textContent = "";
+  if (!d.open) d.showModal(); setTimeout(() => $("#recapTxt").focus(), 50);
+}
+function recapSave() {
+  const t = $("#recapTxt").value.trim(); if (t.length < 8) { $("#recapMsg").textContent = "Write a full sentence first."; return; }
+  const a = journal(bookId); a.push({ c: $("#recapDlg").dataset.ch || "", p: $("#recapQ").textContent, t: t.slice(0, 400), d: todayKey() }); store.set(jKey(bookId), a);
+  const days = store.get("pace:jd", {}); days[todayKey()] = (days[todayKey()] || 0) + 1; store.set("pace:jd", days);
+  $("#recapDlg").close(); toast("Saved to your reading journal."); checkBadges(); questBump("recap");
+}
+function journalStreakBest() { const ks = Object.keys(store.get("pace:jd", {})).sort(); let best = 0, run = 0, prev = null; ks.forEach(k => { run = prev && (keyToDate(k) - keyToDate(prev)) / 864e5 < 1.5 ? run + 1 : 1; best = Math.max(best, run); prev = k; }); return best; }
+BADGES.push({ id: "journal5", name: "Journal Keeper", desc: "Write a chapter recap 5 days in a row", val: () => journalStreakBest(), goal: 5, unit: "days" });
+function openJournal(only) {
+  const box = $("#jrList"); box.replaceChildren();
+  const books = lib.filter(m => journal(m.id).length && (!only || m.id === only));
+  if (!books.length) box.append(el("p", "fine", "No recaps yet. When you finish a chapter, Atom asks one quick question. Your answers show up here."));
+  books.forEach(m => {
+    const sec = el("div", "jrbook"); sec.append(el("h3", "", m.title));
+    journal(m.id).forEach(j => { const e = el("div", "jrent"); e.append(el("span", "fine", (j.c ? j.c + " · " : "") + keyToDate(j.d).toLocaleDateString(undefined, { month: "short", day: "numeric" })), el("b", "", j.p), el("p", "", j.t)); sec.append(e); });
+    box.append(sec);
+  });
+  $("#jrPrint").hidden = !books.length; $("#jrDlg").dataset.only = only || ""; $("#jrDlg").showModal();
+}
+function printJournal() {
+  const only = $("#jrDlg").dataset.only, box = $("#printArea"); box.replaceChildren(el("h1", "", (settings.name ? settings.name + "'s " : "My ") + "reading journal"));
+  lib.filter(m => journal(m.id).length && (!only || m.id === only)).forEach(m => {
+    box.append(el("h2", "", m.title + (m.author ? " by " + m.author : "")));
+    journal(m.id).forEach(j => { box.append(el("p", "", `${j.c ? j.c + " — " : ""}${keyToDate(j.d).toLocaleDateString()}`)); const q = el("p"); q.append(el("b", "", j.p + " ")); q.append(document.createTextNode(j.t)); box.append(q); });
+  });
+  $("#jrDlg").close(); setTimeout(() => window.print(), 100);
+}
+/* ---------- view as student (Teacher) ---------- */
+function setViewStudent(on) { settings.viewStudent = !!on; saveSettings(); location.reload(); }
 /* try before you unlock */
 var pv = null, pvTimer = 0;
 const PV_KEYS = { theme: "theme", accent: "accent", font: "font", pivot: "pivotColor" };
@@ -4784,7 +5186,7 @@ async function ambLoad() {
 }
 /* rank-up ceremony */
 function showCeremony(r) {
-  const dlg = $("#cerDlg"); if (dlg.open || isAdult()) return;
+  const dlg = $("#cerDlg"); if (dlg.open || isAdult() || isPlain()) return;
   $("#cerEmb").innerHTML = emblem(r.i, 110); $("#cerName").textContent = RANKS[rankFam(r.i)][1];
   const ul = []; for (let l = Math.max(0, r.i - 4); l <= r.i; l++) ul.push(...unlockList(l));
   $("#cerList").replaceChildren(...ul.slice(0, 8).map(t => el("li", "", t)));
@@ -4860,19 +5262,20 @@ function step() {
     const nw = newWordsIn(cur, last); markRead(cur, last);
     shownWords += n; sessionWords += nw; wordsSince += nw;
     if (last < tokens.length - 1) {
-      cur = last + 1;
-      if (wordsSince >= 40) { flush(); save(); }
+      { const pc = chapters.length > 1 ? chapterIndexAt(cur) : -1; cur = last + 1; if (pc >= 0 && chapterIndexAt(cur) > pc) { questBump("chap"); const ce = chapters[pc + 1] ? chapters[pc + 1].start : tokens.length; if (recapOn() && ce - chapters[pc].start >= 200 && readFrac(chapters[pc].start, ce) >= 0.6) { pause(); recapAsk(chapters[pc].title); return; } } }
+      if (wordsSince >= 40) { flush(); save(); questMax("run", performance.now() - playStart); }
       eyeLast = performance.now();
       if (stillCheck()) return;
       if (eyeLimit() > 0 && eyeMs >= eyeLimit()) { eyeMs = 0; pause(); showEyeBreak(); return; }
       if (timerOn && timerLeft <= 0) { timerOn = false; $("#timerSel").value = "0"; pause(); toast(`Time's up. ${fmt(sessionWords)} words this session.`); return; }
       step();
-    } else { finishBook(); pause(); ctxEl.innerHTML = (curMeta() || {}).done ? '<p class="done">Finished. Nice work.</p>' : '<p class="done">End of the book.</p>'; setTimeout(showFinished, 450); }
+    } else { if (chapters.length > 1) questBump("chap"); finishBook(); pause(); ctxEl.innerHTML = (curMeta() || {}).done ? '<p class="done">Finished. Nice work.</p>' : '<p class="done">End of the book.</p>'; setTimeout(() => { if (recapOn() && (curMeta() || {}).done) { recapAfter = showFinished; recapAsk(chapters.length > 1 ? chapterTitleAt(cur) : ""); } else showFinished(); }, 450); }
   }, d);
 }
 
 async function play() {
   if (!tokens.length || playing) return;
+  bedtimeNudge();
   if (cur >= tokens.length - 1) { cur = 0; noRewind = true; }
   if (!noRewind && !settings.hold && settings.rewind > 0 && hasPaused && cur > 0) { const k = Math.min(settings.rewind, cur); cur -= k; skipCount = k; }
   else skipCount = 0;
@@ -4891,7 +5294,7 @@ function pause() {
   if (!playing) return;
   flush();
   playing = false; clearTimeout(timer);
-  playedMs += performance.now() - playStart;
+  playedMs += performance.now() - playStart; questMax("run", performance.now() - playStart); setTimeout(prCheck, 0);
   document.body.classList.remove("playing"); if (window.__xr) ambStop();
   playBtn.innerHTML = ICON_PLAY; playBtn.setAttribute("aria-label", "Play");
   try { if (wakeLock) wakeLock.release(); } catch (e) {} wakeLock = null;
@@ -4965,6 +5368,7 @@ function show(name) { if (name !== "rewards") { const x = document.getElementByI
 var openedFrom = "library";
 async function openBook(id) {
   openedFrom = document.body.dataset.screen === "shelf" ? "shelf" : "library";
+  { const m0 = lib.find(x => x.id === id); if (m0 && !m0.opened && !store.get("pace:pos:" + id, 0)) questBump("newb"); }
   pause();
   const rec = await dbGet(id);
   if (!rec) { toast("That book's saved text is missing. Remove it and add it again."); return; }
@@ -5020,7 +5424,7 @@ function chapterTitleAt(i) { const k = chapterIndexAt(i); return k >= 0 ? chapte
 function toggleBookmark() {
   const near = bms.findIndex(b => Math.abs(b.i - cur) <= 10);
   if (near >= 0) { const a = bms.slice(); a.splice(near, 1); setBms(a); toast("Bookmark removed"); }
-  else { setBms(bms.concat({ i: cur, s: snippet(cur), c: chapterTitleAt(cur), t: Date.now() }).sort((a, b) => a.i - b.i)); toast("Bookmarked"); }
+  else { setBms(bms.concat({ i: cur, s: snippet(cur), c: chapterTitleAt(cur), t: Date.now() }).sort((a, b) => a.i - b.i)); toast("Bookmarked"); questBump("bm"); }
 }
 function renderBookmarks() {
   const ul = $("#bmList"); ul.replaceChildren();
@@ -5100,10 +5504,11 @@ async function pwOk(v) {
 function refreshStreaks() { renderLibrary(); if (document.body.dataset.screen === "stats") { renderStats(); } }
 function syncSettingsUI() {
   setTimeout(fillAll, 0);
+  { const f = id => document.getElementById(id); if (f("sfxChk")) { f("sfxChk").checked = settings.sfx !== false; f("sfxVol").value = settings.sfxVol ?? 50; f("nightSel").value = String(settings.nightAt || 0); f("recapChk").checked = settings.recap !== false; f("plainChk").checked = !!settings.plain; } }
   renderPreview(); renderPresets(); renderPauses();
   $("#cvdChk").checked = !!settings.cvd; $("#motionChk").checked = !!settings.motion; $("#contrastChk").checked = !!settings.contrast; $("#bigChk").checked = !!settings.big;
   $("#grabChk").checked = settings.grab !== false; $("#webBtn").hidden = settings.grab === false;
-  $("#modeSel").value = isAdult() ? "adult" : isReader() ? "reader" : "student";
+  $("#modeSel").value = settings.mode === "adult" ? "adult" : isReader() ? "reader" : "student";
   $("#dimChk").checked = settings.dim !== false; $("#peekChk").checked = settings.peek !== false; $("#hapChk").checked = settings.haptic !== false;
   $("#eyesSel").value = String(settings.eyes ?? (isAdult() || isReader() ? 0 : 20));
   $("#schoolChk").checked = !!settings.schoolDays; $("#focusStartChk").checked = !!settings.focusStart;
@@ -5265,6 +5670,7 @@ function bookItem(m, featured) {
   return li;
 }
 function updateDayCard() {
+  if (typeof renderQuestRow === "function") renderQuestRow();
   const card = $("#dayCard"), si = streakInfo(), w = dayW(todayKey());
   const show = lib.length > 0 && (settings.goal > 0 || si.cur > 0);
   card.hidden = !show; if (!show) return;
@@ -5302,6 +5708,7 @@ function renderLibrary() {
   lb.hidden = lib.length < 2;
   $("#libCount").textContent = `${lib.length} book${lib.length === 1 ? "" : "s"}` + (done ? ` · ${done} finished` : "") + " · search and sort";
   if (document.body.dataset.screen === "shelf") renderShelf();
+  renderShowcase(); renderBoxTile(); if (typeof applyGear === "function" && GEAR_K) applyGear();
 }
 let shelfF = "all";
 function shelfState(m) { const { pos } = bookPct(m); return m.done ? "done" : pos > 0 ? "reading" : "new"; }
@@ -5346,7 +5753,15 @@ function niceMax(m) {
 }
 function wpmOf(w, ms) { return ms >= 10000 && w > 0 ? Math.round(w / (ms / 60000)) : 0; }
 
+function renderPR() {
+  const c = $("#prCard"); if (!c) return; const r = store.get("pace:pr", {});
+  if (isAdult() || isPlain() || !Object.values(r).some(v => v > 0)) { c.hidden = true; return; }
+  c.hidden = false; c.replaceChildren(el("h2", "", "Personal records"));
+  const g = el("div", "prgrid"); [["day", "Most words in a day", fmt], ["sess", "Most in one sitting", fmt], ["long", "Longest session", v => v + " min"], ["wpm", "Fastest speed", v => v + " wpm"]].forEach(([k, l, f]) => { const d = el("div", "pr"); d.append(el("span", "fine", l), el("b", "", r[k] ? f(r[k]) : "–")); g.append(d); });
+  c.append(g);
+}
 function renderStats() {
+  renderPR();
   $("#statsEmpty").hidden = Object.values(stats.days).some(d => d.w > 0);
   const keys = daysBack(7);
   const rows = keys.map(k => {
@@ -5433,7 +5848,8 @@ function renderBadges() {
   const detail = $("#badgeDetail");
   const show = (b, got, v, btn) => {
     box.querySelectorAll(".sel").forEach(x => x.classList.remove("sel")); btn.classList.add("sel");
-    detail.textContent = `${b.name}: ${b.desc}. ` + (got ? "Earned " + keyToDate(got).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) + "." : `${cnt(Math.min(v, b.goal))} / ${fmt(b.goal)}${b.unit ? " " + b.unit : ""}.`);
+    detail.replaceChildren(); detail.append(`${b.name}: ${b.desc}. ` + (got ? "Earned " + keyToDate(got).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) + "." : `${cnt(Math.min(v, b.goal))} / ${fmt(b.goal)}${b.unit ? " " + b.unit : ""}.`));
+    if (got && !isAdult() && !isPlain()) { const on = (settings.showcase || []).includes(b.id), sb = el("button", "mini", on ? "Remove from home" : "Show on home"); sb.type = "button"; sb.onclick = () => { if (toggleShowcase(b.id)) show(b, got, v, btn); }; detail.append(" ", sb); }
   };
   let row = null;
   BADGES.forEach((b, k) => {
@@ -5675,7 +6091,16 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-10a", WHATS = [
+const WHATS_VER = "2026-10-12a", WHATS = [
+  ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn a mystery box. Common, rare and legendary gear for Atom is inside. Open them in Rewards."],
+  ["Chapter recaps and journal", "After each chapter, Atom asks one quick question. Your answers make a reading journal you can print. Write 5 days in a row for a badge."],
+  ["Personal records and badge showcase", "Beat your best day, speed or session for a New record. Tap an earned badge in Stats to show it on your home screen."],
+  ["Title upgrades", "Some titles level up as you read, from I to II to III."],
+  ["Night mode", "Tap the moon while reading for a warm, dim screen. You can also turn it on by itself at night in Settings, Reading."],
+  ["Atom's moods", "Atom gets sleepy at night and excited when you're on a roll. His birthday is Pi Day, March 14."],
+  ["Sounds", "New reward sounds and tiny buzzes. Turn them off or change the volume in Settings, Reading."],
+  ["Daily quests", "Three small quests every day. Each one gives +1,000 season words, and finishing all three gives a bonus. Find them on the Today card."],
+  ["Hear a word", "Tap Hear while reading, or in Define, to hear how the word sounds."],
   ["Event rewards", "Tap the Event tile to see every reward. You now earn them along the way at 25%, 50% and 75%, not just at the end."],
   ["Sharp covers", "Book covers are now high quality. Tap a cover to find a better one online, add the author or fix the title."],
   ["My library", "Your three most recent books now sit under Continue reading. Tap My library to see every book in a grid, with search, sorting and Reading, New and Finished filters."],
@@ -5696,7 +6121,7 @@ function showWhatsNew() {
 $("#whatsOk").onclick = () => { store.set("pace:ver", WHATS_VER); $("#whatsDlg").close(); };
 $("#whatsDlg").addEventListener("cancel", e => e.preventDefault());
 if (!store.get("pace:ver", null) && !store.get("pace:welcomed", false) && !lib.length) store.set("pace:ver", WHATS_VER);
-else if (store.get("pace:ver", null) !== WHATS_VER) setTimeout(() => { if (!$("#welcomeDlg").open) showWhatsNew(); }, 700);
+else if (store.get("pace:ver", null) !== WHATS_VER) setTimeout(() => { if (!$("#welcomeDlg").open) showWhatsNew(); }, 1500);
 $("#sample").onclick = async () => { const r = await saveBook("How RSVP works", bookFromText(SAMPLE)); openBook(r.id); };
 $("#pasteBtn").onclick = () => { $("#pasteDlg").showModal(); $("#paste").focus(); };
 function pasteTitle(text) { const first = text.trim().split(/\s+/).slice(0, 6).join(" "); return $("#pasteTitle").value.trim().slice(0, 100) || (first.length > 40 ? first.slice(0, 40) + "…" : first); }
@@ -5744,7 +6169,7 @@ let modeTarget = "adult";
 $("#modeSel").onchange = e => {
   const v = e.target.value;
   if (v === "adult" || v === "reader") {
-    modeTarget = v; e.target.value = isAdult() ? "adult" : isReader() ? "reader" : "student";
+    modeTarget = v; e.target.value = settings.mode === "adult" ? "adult" : isReader() ? "reader" : "student";
     $("#modeTitle").textContent = v === "adult" ? "Teacher mode" : "Adult mode";
     $("#modeInfo").textContent = v === "adult" ? "Teacher mode turns off the mascot and unlocks everything. Enter the teacher password." : "Adult mode is for people who aren't students or teachers. Enter the password.";
     $("#modePw").placeholder = v === "adult" ? "Teacher password" : "Password";
@@ -5896,12 +6321,14 @@ function bdRefresh() { if (!bdBook || !$("#bookDlg").open) return; $("#bdCover")
 function openBookDlg(m) {
   bdBook = m; $("#bdTitle").value = m.title || ""; $("#bdAuthor").value = m.author || "";
   $("#bdSearch").hidden = true; $("#bdRes").replaceChildren(); $("#bdMsg").textContent = "";
+  $("#bdJournal").hidden = !journal(m.id).length;
   bdRefresh(); const d = $("#bookDlg"); if (!d.open) d.showModal(); bdRefresh();
 }
 const bdClean = t => String(t || "").replace(/^\s*[A-Z]{1,4}\d{1,4}\s*[-–:.]\s*/, "").replace(/\s*[\[(].*?[\])]\s*/g, " ").trim();
 $("#bdTitle").onchange = () => { if (!bdBook) return; const v = $("#bdTitle").value.trim().slice(0, 100); if (v) { bdBook.title = v; saveLib(); renderLibrary(); bdRefresh(); } else $("#bdTitle").value = bdBook.title; };
 $("#bdAuthor").onchange = () => { if (!bdBook) return; bdBook.author = $("#bdAuthor").value.trim().slice(0, 80); saveLib(); renderLibrary(); };
 $("#bdPhoto").onclick = () => { if (bdBook) pickCover(bdBook); };
+$("#bdJournal").onclick = () => { const id = bdBook && bdBook.id; $("#bookDlg").close(); if (id) openJournal(id); };
 $("#bdRemove").onclick = () => { const m = bdBook; if (!m) return; $("#bookDlg").close(); removeBook(m); };
 $("#bdFind").onclick = () => { if (!bdBook) return; $("#bdSearch").hidden = false; $("#bdQ").value = (bdClean(bdBook.title) + " " + (bdBook.author || "")).trim(); bdSearch(); };
 $("#bdGo").onclick = () => bdSearch();
@@ -5952,7 +6379,7 @@ async function unlockReader(pw) {
 }
 async function unlockAdult(pw) {
   try { if (await sha256("wordsmith:" + pw) !== PW_HASH) return false; } catch (e) { return false; }
-  settings.mode = "adult"; saveSettings(); applyCap(); applyAccess(); syncSettingsUI();
+  settings.mode = "adult"; settings.viewStudent = false; saveSettings(); applyCap(); applyAccess(); syncSettingsUI();
   return true;
 }
 (function () {
@@ -6084,6 +6511,7 @@ function dictFind(raw) {
 }
 async function defineCurrent() {
   if (!tokens.length) return;
+  questBump("define");
   if (playing) pause();
   const raw = tokens[cur].w, dlg = $("#defDlg"), body = $("#defBody");
   const shown = raw.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, "") || raw;
@@ -6097,6 +6525,36 @@ async function defineCurrent() {
   body.append(ol);
 }
 $("#defBtn").onclick = defineCurrent;
+function hearWord(w) {
+  w = String(w || "").replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ""); if (!w) return;
+  if (!("speechSynthesis" in window)) { toast("This device can't say words out loud."); return; }
+  try {
+    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(w); u.lang = "en-US"; u.rate = 0.85;
+    const vs = speechSynthesis.getVoices(), v = vs.find(x => /^en[-_]US/i.test(x.lang) && x.localService) || vs.find(x => /^en/i.test(x.lang));
+    if (v) u.voice = v; speechSynthesis.speak(u); questBump("hear");
+  } catch (e) { toast("Couldn't play the word."); }
+}
+function hearCurrent() { if (!tokens.length) return; if (playing) pause(); hearWord(tokens[cur].w); }
+$("#hearBtn").onclick = hearCurrent;
+$("#defHear").onclick = () => hearWord($("#defWord").textContent);
+$("#qRow").onclick = openQuests;
+var recapAfter = null;
+$("#recapSave").onclick = recapSave;
+$("#recapSkip").onclick = () => $("#recapDlg").close();
+$("#recapDlg").addEventListener("close", () => { const f = recapAfter; recapAfter = null; if (f) setTimeout(f, 200); });
+$("#jrPrint").onclick = printJournal;
+$("#openJournal").onclick = () => { $("#menuDlg").close(); openJournal(); };
+$("#nightBtn").onclick = toggleNight;
+$("#boxTile").onclick = () => { const b = boxState(); if (b.n > 0) boxOpen(); else toast("Finish all 3 daily quests 5 days in a row to earn a mystery box."); };
+$("#boxGo").onclick = () => { if (boxState().n > 0) boxOpen(); else $("#boxDlg").close(); };
+$("#sfxChk").onchange = e => { settings.sfx = e.target.checked; saveSettings(); if (e.target.checked) sfx("quest"); };
+$("#sfxVol").oninput = e => { settings.sfxVol = +e.target.value; saveSettings(); };
+$("#sfxVol").onchange = () => sfx("quest");
+$("#nightSel").onchange = e => { settings.nightAt = +e.target.value; settings.nightOff = ""; saveSettings(); applyNight(); };
+$("#recapChk").onchange = e => { settings.recap = e.target.checked; saveSettings(); };
+$("#plainChk").onchange = e => { settings.plain = e.target.checked; saveSettings(); applyAccess(); renderLibrary(); };
+$("#viewStuBtn").onclick = () => setViewStudent(true);
+$("#viewExit").onclick = () => setViewStudent(false);
 document.addEventListener("keydown", e => {
   if (document.body.dataset.screen !== "reader" || document.querySelector("dialog[open]")) return;
   if (e.target.matches("textarea,select,input:not([type=range])")) return;
@@ -6107,6 +6565,7 @@ document.addEventListener("keydown", e => {
     case "ArrowUp": e.preventDefault(); setWpm(wpm + 25); break;
     case "ArrowDown": e.preventDefault(); setWpm(wpm - 25); break;
     case "d": defineCurrent(); break;
+    case "h": hearCurrent(); break;
     case "b": toggleBookmark(); break;
     case "r": replaySentence(); break;
     case "n": nextSentence(); break;
@@ -6133,7 +6592,7 @@ $$("#fontSeg button").forEach(b => b.onclick = () => { if (lockedTap("font", b.d
 $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
-applyIcon(); applyExtras(); renderExtras(); ambLoad(); seasonSync(true); setTimeout(seasonEndCheck, 1200);
+applyIcon(); applyExtras(); renderExtras(); ambLoad(); seasonSync(true); setTimeout(seasonEndCheck, 1200); applyNight(); titleCheck(); setTimeout(bdayCheck, 900);
 $("#rewards").append($("#rewardsCard"), $("#evBadgesCard"));
 $("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
 $("#goRewards").onclick = () => { $("#setDlg").close(); openRewards(); };
@@ -6623,7 +7082,7 @@ async function playArcade(kind, name) {
   let pool; try { pool = await wordPool(); } catch (e) { b.replaceChildren(el("p", "", "The dictionary file isn't here yet. Upload dictionary.json to the site.")); return; }
   const rounds = kind === "scramble" ? 5 : 8, words = shuf(pool).slice(0, rounds); let r = 0, score = 0;
   const end = () => {
-    b.replaceChildren(); const best = store.get("pace:arc", {}); if (score > (best[kind] || 0)) { best[kind] = score; store.set("pace:arc", best); }
+    b.replaceChildren(); const best = store.get("pace:arc", {}); if (score > (best[kind] || 0)) { best[kind] = score; store.set("pace:arc", best); } questBump("arc");
     b.append(el("h3", "", `You got ${score} of ${rounds}`), el("p", "fine", score === rounds ? "Perfect! Atom is impressed." : "Nice work. Try again?"));
     const again = el("button", "primary", "Play again"), back = el("button", "", "All games"); again.type = back.type = "button"; again.onclick = () => playArcade(kind, name); back.onclick = openArcade; b.append(again, back);
     if (score === rounds) confetti();
@@ -6685,6 +7144,24 @@ function openCalm() {
   CALM.forEach(([k, n, lv]) => { const ok = isAdult() || lvlNow() >= lv, c = el("button", "fchip", ok ? n : "🔒 " + n); c.type = "button"; c.dataset.k = k; c.onclick = () => ok ? go(k) : toast(`${n} unlocks at ${LEVELS[lv][1]}.`); row.append(c); });
   requestAnimationFrame(() => go("breathe"));
 }
+/* loading screen: Atom flies in, then gets out of the way */
+(function () { const sp = document.getElementById("splash"); if (!sp) return; const t0 = performance.now(); const done = () => { sp.classList.add("out"); setTimeout(() => sp.remove(), 450); }; setTimeout(done, Math.max(0, 1100 - (performance.now() - t0))); sp.addEventListener("click", done); })();
+/* pull down on the home screen to check for an update */
+(function () {
+  const ind = $("#ptr"); let y0 = null, dy = 0, busy = false;
+  addEventListener("touchstart", e => { if (busy || document.body.dataset.screen !== "library" || scrollY > 0 || document.querySelector("dialog[open]")) { y0 = null; return; } y0 = e.touches[0].clientY; dy = 0; }, { passive: true });
+  addEventListener("touchmove", e => { if (y0 === null) return; dy = e.touches[0].clientY - y0; if (dy > 10) { ind.style.setProperty("--d", Math.min(90, dy * .5) + "px"); ind.classList.add("show"); ind.classList.toggle("ready", dy > 140); } }, { passive: true });
+  addEventListener("touchend", async () => {
+    if (y0 === null) return; const go = dy > 140; y0 = null; ind.classList.remove("ready");
+    if (!go) { ind.classList.remove("show"); return; }
+    busy = true; ind.classList.add("spin");
+    let found = false;
+    try { const r = await navigator.serviceWorker.getRegistration(); if (r) { await r.update(); found = !!(r.installing || r.waiting); } } catch (e) {}
+    setTimeout(() => { ind.classList.remove("show", "spin"); busy = false; if (!navigator.onLine) toast("You're offline. Atom still works."); else if (found || !$("#updBar").hidden) toast("Update found. Tap Update when it shows."); else toast("You're up to date."); renderLibrary(); }, 900);
+  });
+})();
+/* app shortcuts from the home screen icon */
+(function () { try { const g = new URLSearchParams(location.search).get("go"); if (!g) return; history.replaceState(null, "", location.pathname); setTimeout(() => { if (g === "continue") { const m = libSorted()[0]; if (m) openBook(m.id); } else if (g === "class") openClass(); else if (g === "library") openShelf(); }, 600); } catch (e) {} })();
 if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, get ambOn() { return !!ambAudio; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
