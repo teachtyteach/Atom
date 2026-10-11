@@ -323,6 +323,9 @@ body.plain .mascot,body.plain .peek,body.plain #seasonCard,body.plain #evCard,bo
 /* keyboard focus */
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #pToggle{min-height:36px}#pausePw,#pwInput{min-height:40px;padding:8px 12px;box-sizing:border-box}
+#setTabs{overflow-x:auto}#setTabs button{flex:1 0 auto;padding:8px 7px;font-size:13.5px}
+.menugrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 6px}.menugrid button{width:100%}.menugrid button[hidden]{display:none}
+#pasteClip{margin:6px 0}
 .hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
 @media (min-width:600px){#shelfGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 16px}#recent{max-width:440px}}
 .btile{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;width:100%;min-width:0;gap:5px;background:none;border:0;padding:0;margin:0;min-height:0;box-shadow:none;border-radius:10px;text-align:left;color:var(--ink);position:relative;font:inherit}
@@ -954,10 +957,10 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="actlist card" id="actList" role="menu" hidden>
       <button role="menuitem" id="addBtn" type="button">Add a book or PDF<small>EPUB, PDF, text or web page file</small></button>
       <button role="menuitem" id="pasteBtn" type="button">Paste text<small>Type or paste anything</small></button>
-      <button role="menuitem" id="clipBtn" type="button">Read from clipboard<small>Read what you copied</small></button>
+      <button role="menuitem" id="clipBtn" type="button" hidden>Read from clipboard<small>Read what you copied</small></button>
       <button role="menuitem" id="webBtn" type="button">Web article<small>Get an article from a link</small></button>
-      <button role="menuitem" id="classBtn" type="button">Class Library<small>Free classic books, built in</small></button>
-      <button role="menuitem" id="sample" type="button">Try a sample<small>See how it works</small></button>
+      <button role="menuitem" id="classBtn" type="button" hidden>Class Library<small>Free classic books, built in</small></button>
+      <button role="menuitem" id="sample" type="button" hidden>Try a sample<small>See how it works</small></button>
       <button role="menuitem" id="testBtn" type="button">Test my speed<small>Find your normal reading speed</small></button>
     </div>
   </div>
@@ -970,7 +973,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div id="continue"></div>
   <div id="recentBox" hidden><h2 class="sect">Recent</h2><div class="hgrid" id="recent"></div></div>
   <button class="card clcard libbtn" id="libBtn" type="button" hidden><span class="shelfico" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="clt"><b>My library</b><span class="fine" id="libCount"></span></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-  <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Add an EPUB or paste some text.</p><button type="button" class="primary" id="classBtn2" style="margin-top:12px">Browse the Class Library</button></div>
+  <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Pick a free story to start.</p><button type="button" class="primary" id="classBtn2" style="margin-top:12px">Browse the Class Library</button></div>
   <p class="fine madeby">Made FOR STEM Launch</p>
 </section>
 
@@ -1060,7 +1063,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="stage pvstage"><div class="word"><span class="l">rea</span><span class="p">d</span><span class="r">ing</span></div></div>
     <span class="bar"><i style="width:62%"></i></span>
     <div class="pvrow"><img class="mascot" src="mascot.png" alt=""><span id="pvCover"></span><svg id="pvBm" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=""/></svg><button type="button" id="pvFx">Play effects</button></div>
-    <div class="pvstat"><b>Your stats</b><span>1,240 words · 6 day streak</span><span class="bar"><i style="width:48%"></i></span></div>
+    <div class="pvstat"><b>Your stats</b><span id="pvStatTxt">1,240 words · 6 day streak</span><span class="bar"><i id="pvStatBar" style="width:48%"></i></span></div>
   </div>
   <div class="card nextcard" id="nextCard"></div>
   <button class="card boxtile" id="boxTile" type="button" hidden><span class="boxico" aria-hidden="true"></span><span class="clt"><b>Mystery boxes</b><span class="fine" id="boxCount"></span></span></button>
@@ -1082,7 +1085,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <h1 id="title"></h1>
     <button class="icon" id="nightBtn" aria-label="Night mode" aria-pressed="false" type="button"><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="icon" id="bmBtn" aria-label="Bookmark this spot"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h10v16l-5-3.6L7 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
-    <button class="icon" id="menuBtn" aria-label="Bookmarks and goal"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
+    <button class="icon" id="menuBtn" aria-label="Book menu"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
   </header>
   <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button">Text</button></div>
   <div id="chapterBox" hidden>
@@ -1140,7 +1143,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
     <div class="wslide" data-i="2" hidden>
       <div class="wdemo small" aria-hidden="true">📚 📄 🌐</div>
       <h2>Read almost anything</h2>
-      <p>Add EPUB books, PDFs, articles or pasted text. Tap a word to see what it means. It all works offline.</p>
+      <p>Add EPUB books, PDFs, articles or pasted text. Look up any word with Define. It all works offline.</p>
     </div>
     <div class="wslide" data-i="3" hidden>
       <div class="wdemo small" aria-hidden="true">🔥 🏅 ⭐</div>
@@ -1229,7 +1232,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 
 <dialog id="classDlg"><div class="sheet">
   <div class="sheet-head"><h2>Class Library</h2><button class="icon" data-close aria-label="Close">✕</button></div>
-  <p class="fine">Free classics. Tap Add to save one to your library. You need internet the first time only.</p>
+  <p class="fine">Free classics. Tap Read to add one to your library and start. You need internet the first time only.</p>
   <div id="classList" class="classlist"></div>
 </div></dialog>
 
@@ -1282,34 +1285,38 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="sheet-head"><h2>Paste text</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <input type="text" id="pasteTitle" placeholder="Title (optional)" autocomplete="off">
   <textarea id="paste" placeholder="Paste an article, chapter, or notes…"></textarea>
+  <button id="pasteClip" type="button">Paste what I copied</button>
   <p class="fine" id="pasteEst"></p>
   <div class="row"><button id="pasteLink">Copy share link</button><button id="pastePrint">Print handout</button></div>
   <button class="primary" id="pasteGo">Add and read</button>
 </div></dialog>
 
 <dialog id="menuDlg"><div class="sheet">
-  <div class="sheet-head"><h2>Bookmarks</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-head"><h2>This book</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="menugrid">
+  <button id="openToc">Contents</button>
+  <button id="openText">Text view</button>
+  <button id="openSearch">Search</button>
+  <button id="openJournal" class="sonly">My journal</button>
+  <button id="focusBtn">Focus mode</button>
+  <button id="timedBtn">Timed read</button>
+  </div>
+  <h2>Bookmarks</h2>
   <button class="primary" id="addBm">Bookmark this spot</button>
   <ul class="list" id="bmList"></ul>
   <p class="fine" id="bmEmpty">No bookmarks yet.</p>
-  <h2>Reading goal</h2>
+  <h2>Finish by a date</h2>
   <div class="goalrow"><input type="date" id="goalDate" aria-label="Finish by"><button id="goalClear">Clear</button></div>
   <p class="fine" id="goalInfo">Pick a finish date and Atom works out how much to read each day.</p>
   <h2>Session timer</h2>
   <label class="setrow">Stop after <select id="timerSel"><option value="0">Off</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="30">30 min</option></select></label>
-  <button id="focusBtn">Focus mode</button>
-  <button id="timedBtn">Timed read</button>
-  <button id="openToc">Contents…</button>
-  <button id="openText">Text view…</button>
-  <button id="openSearch">Search this book…</button>
-  <button id="openJournal" class="sonly">Reading journal…</button>
-  <button id="openSettings">Settings…</button>
+  <button id="openSettings">All settings</button>
 </div></dialog>
 
 <dialog id="setDlg"><div class="sheet">
   <div class="sheet-head"><h2>Settings</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div class="seg tabs" id="setTabs" role="tablist">
-    <button data-tab="general" role="tab">Profile</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="access" role="tab">Accessibility</button><button data-tab="storage" role="tab">Storage</button>
+    <button data-tab="general" role="tab">Profile</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="access" role="tab">Access</button><button data-tab="storage" role="tab">Backup</button>
   </div>
   <div class="pane" data-pane="general" hidden>
   <p class="gt">You</p>
@@ -1481,7 +1488,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <div class="grp">
     <label class="setrow">Reward sounds <input type="checkbox" id="sfxChk"></label>
     <label class="setrow">Sound volume <input type="range" id="sfxVol" min="0" max="100" step="5"></label>
-    <label class="setrow">Night mode turns on <select id="nightSel"><option value="0">Never (use the moon button)</option><option value="19">After 7 PM</option><option value="20">After 8 PM</option><option value="21">After 9 PM</option><option value="22">After 10 PM</option></select></label>
+    <label class="setrow">Auto night mode <select id="nightSel"><option value="0">Off</option><option value="19">After 7 PM</option><option value="20">After 8 PM</option><option value="21">After 9 PM</option><option value="22">After 10 PM</option></select></label>
     <p class="fine">Night mode makes the reader warm and dim. Tap the moon while reading to switch it.</p>
   </div>
   <p class="gt">Screen</p>
@@ -4348,6 +4355,7 @@ const GREET = {
 };
 function pvUpdate() {
   if (!$("#pvCard")) return;
+  try { const m = metrics(), si = streakInfo(), w = dayW(todayKey()); $("#pvStatTxt").textContent = `${fmt(m.w)} words · ${si.cur} day streak`; $("#pvStatBar").style.width = Math.min(100, w / goalTarget() * 100) + "%"; } catch (e) {}
   const g = $("#greet"); if (g) $("#pvGreet").innerHTML = g.innerHTML;
   const tl = $("#titleLine"); if (tl) $("#pvTitle").innerHTML = tl.innerHTML;
   const b = $("#pvBm path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def);
@@ -4899,11 +4907,13 @@ var QUESTS = {
   arc: { txt: "Play a game in the Arcade", chip: "Arcade", need: 1, get: q => q.c.arc || 0 }
 };
 var Q_GROUPS = [["min10", "min20", "w1500", "w3000", "goal"], ["define", "hear", "bm", "run3", "chap", "recap"], ["two", "chap", "newb", "arc", "run3", "goal"]];
+function qOk(id) { if (id === "arc") return typeof FUN_LVL !== "undefined" && !!FUN_LVL && funOpen("arcade"); if (id === "recap") return recapOn(); return true; }
 function questDay() {
   const k = todayKey(); let q = store.get("pace:q", null);
+  if (q && q.d === k) { let ch = false; q.ids = q.ids.map((id, gi) => { if (q.done[id] || qOk(id)) return id; const alt = (Q_GROUPS[gi] || []).find(x => !q.ids.includes(x) && qOk(x)); if (alt) { ch = true; return alt; } return id; }); if (ch) store.set("pace:q", q); }
   if (!q || q.d !== k) {
     let h = parseInt(hash("q" + k), 36) || 7; const pick = [];
-    Q_GROUPS.forEach(g => { const opts = g.filter(id => !pick.includes(id) && !(id === "arc" && isReader()) && !(id === "recap" && (isReader() || settings.recap === false))); pick.push(opts[h % opts.length]); h = Math.floor(h / 7) + 3; });
+    Q_GROUPS.forEach(g => { const opts = g.filter(id => !pick.includes(id) && qOk(id)); pick.push(opts[h % opts.length]); h = Math.floor(h / 7) + 3; });
     q = { d: k, ids: pick, c: {}, done: {} }; store.set("pace:q", q);
   }
   return q;
@@ -5269,7 +5279,7 @@ function step() {
       if (eyeLimit() > 0 && eyeMs >= eyeLimit()) { eyeMs = 0; pause(); showEyeBreak(); return; }
       if (timerOn && timerLeft <= 0) { timerOn = false; $("#timerSel").value = "0"; pause(); toast(`Time's up. ${fmt(sessionWords)} words this session.`); return; }
       step();
-    } else { if (chapters.length > 1) questBump("chap"); finishBook(); pause(); ctxEl.innerHTML = (curMeta() || {}).done ? '<p class="done">Finished. Nice work.</p>' : '<p class="done">End of the book.</p>'; setTimeout(() => { if (recapOn() && (curMeta() || {}).done) { recapAfter = showFinished; recapAsk(chapters.length > 1 ? chapterTitleAt(cur) : ""); } else showFinished(); }, 450); }
+    } else { questBump("chap"); finishBook(); pause(); ctxEl.innerHTML = (curMeta() || {}).done ? '<p class="done">Finished. Nice work.</p>' : '<p class="done">End of the book.</p>'; setTimeout(() => { if (recapOn() && (curMeta() || {}).done) { recapAfter = showFinished; recapAsk(chapters.length > 1 ? chapterTitleAt(cur) : ""); } else showFinished(); }, 450); }
   }, d);
 }
 
@@ -5881,7 +5891,7 @@ function daysThisYear() { const now = new Date(); return Math.round((new Date(no
 function lapseBuild() {
   cancelAnimationFrame(lapseRaf); lapseDraw = null;
   const box = $("#lapse"); box.replaceChildren();
-  const y = new Date().getFullYear(), n = daysThisYear();
+  const y = new Date().getFullYear(), n = Math.min(daysThisYear(), Math.max(1, Math.round((keyToDate(todayKey()) - keyToDate(store.get("pace:since", todayKey()) < y + "-01-01" ? y + "-01-01" : store.get("pace:since", todayKey()))) / 864e5) + 1));
   const cum = [], months = new Array(12).fill(0); let c = 0, cw = 0, dr = 0;
   for (let i = 0; i < n; i++) { const d = new Date(y, 0, 1 + i), v = stats.days[todayKey(d)] || { w: 0, ms: 0 }; c += v.ms; cw += v.w; if (v.w > 0) dr++; months[d.getMonth()] += v.ms; cum.push(c); }
   const nums = $("#lapseNums"); nums.replaceChildren();
@@ -6080,7 +6090,7 @@ async function openClass() {
     if (shelf !== lastShelf) { lastShelf = shelf; box.append(el("p", "xlab", shelf === "stories" ? "Short stories · about 5 to 15 minutes" : "Classic books")); }
     const row = el("div", "classrow"), cv = el("div", "cover"), img = new Image(); img.alt = ""; img.src = clCover(b, k); cv.append(img);
     const ci = el("div", "ci"); ci.append(el("b", "", b.title), el("small", "", b.author), el("small", "", `${fmt(b.words)} words · about ${fmtMin(Math.max(1, Math.round(b.words / wpm)))} at ${wpm} wpm` + (b.grade ? ` · Grade ${b.grade} level` : "")), el("small", "", b.blurb));
-    const have = store.get("pace:cl", {})[b.id], btn = el("button", have && lib.find(x => x.id === have) ? "" : "primary", have && lib.find(x => x.id === have) ? "Open" : "Add"); btn.type = "button";
+    const have = store.get("pace:cl", {})[b.id], btn = el("button", have && lib.find(x => x.id === have) ? "" : "primary", have && lib.find(x => x.id === have) ? "Open" : "Read"); btn.type = "button";
     btn.onclick = async () => {
       const cur2 = store.get("pace:cl", {})[b.id]; let id = cur2 && lib.find(x => x.id === cur2) ? cur2 : null;
       if (!id) { btn.disabled = true; btn.textContent = "Adding…"; id = await classAdd(b, k); }
@@ -6091,27 +6101,13 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-12a", WHATS = [
-  ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn a mystery box. Common, rare and legendary gear for Atom is inside. Open them in Rewards."],
-  ["Chapter recaps and journal", "After each chapter, Atom asks one quick question. Your answers make a reading journal you can print. Write 5 days in a row for a badge."],
-  ["Personal records and badge showcase", "Beat your best day, speed or session for a New record. Tap an earned badge in Stats to show it on your home screen."],
-  ["Title upgrades", "Some titles level up as you read, from I to II to III."],
-  ["Night mode", "Tap the moon while reading for a warm, dim screen. You can also turn it on by itself at night in Settings, Reading."],
-  ["Atom's moods", "Atom gets sleepy at night and excited when you're on a roll. His birthday is Pi Day, March 14."],
-  ["Sounds", "New reward sounds and tiny buzzes. Turn them off or change the volume in Settings, Reading."],
-  ["Daily quests", "Three small quests every day. Each one gives +1,000 season words, and finishing all three gives a bonus. Find them on the Today card."],
-  ["Hear a word", "Tap Hear while reading, or in Define, to hear how the word sounds."],
-  ["Event rewards", "Tap the Event tile to see every reward. You now earn them along the way at 25%, 50% and 75%, not just at the end."],
-  ["Sharp covers", "Book covers are now high quality. Tap a cover to find a better one online, add the author or fix the title."],
-  ["My library", "Your three most recent books now sit under Continue reading. Tap My library to see every book in a grid, with search, sorting and Reading, New and Finished filters."],
-  ["Atom gear", "Dress up Atom with hats, glasses and neckwear. Earn more from events and the season pass. Open Rewards, then Atom gear."],
-  ["Atom talks", "Tap Atom for jokes, tips and news about your reading. Keep tapping for more."],
-  ["Swipe to step", "Swipe right to left on the word to go back one word. Swipe left to right to go forward. Swipe and hold to keep going."],
-  ["Chapter progress", "The bottom bar now shows the chapter. The thin bar at the top shows the whole book."],
-  ["New scenes", "Two new picture themes, Misty Pines and Starfield. Find them in Settings, Display."],
-  ["Works offline", "Atom now opens instantly with no internet, even on blocked WiFi, after you open it once at home."],
-  ["Still reading?", "Atom pauses if nobody touches the screen for 10 minutes."],
-  ["Fun room", "Wrapped, the Arcade and the Calm corner live in the Rewards tab."]
+const WHATS_VER = "2026-10-12b", WHATS = [
+  ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn one. Rare and legendary gear for Atom is inside."],
+  ["Chapter recaps", "After a chapter, answer one quick question. Your answers make a reading journal you can print."],
+  ["Night mode", "Tap the moon while reading for a warm, dim screen."],
+  ["Records and showcase", "Beat your best for a New record. Show 3 favorite badges on your home screen from Stats."],
+  ["Atom", "Atom has moods now, and his birthday is Pi Day, March 14."],
+  ["Easier menus", "The book menu (•••) is simpler, and Paste text can paste what you copied."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
@@ -6899,6 +6895,7 @@ async function importText(title, text) {
   if (!r.ok) toast("Couldn't save for later. This text will vanish when you close the app.");
   openBook(r.id);
 }
+$("#pasteClip").onclick = async () => { try { const t = await navigator.clipboard.readText(); if (!t || !t.trim()) { toast("Nothing copied yet."); return; } const a = $("#paste"); a.value = t; a.dispatchEvent(new Event("input")); } catch (e) { toast("Tap in the box and paste instead."); } };
 $("#clipBtn").onclick = async () => {
   try {
     const t = await navigator.clipboard.readText();
