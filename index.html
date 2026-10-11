@@ -227,6 +227,23 @@ td:not(:first-child),th:not(:first-child){text-align:right}
 .bdres button.busy{opacity:.5}
 .bk-au{color:var(--muted);font-size:14px;margin-top:-2px}
 #bdRemove{margin-top:14px;width:100%}
+#evdTitle{display:flex;align-items:center;gap:8px}.evdic{display:inline-flex}
+.evdbar{display:flex;align-items:center;gap:10px;margin:6px 0 14px}.evdbar .bar{flex:1;height:10px}.evdbar .bar i{background:var(--ev)}.evdbar b{font:700 13px system-ui,sans-serif;white-space:nowrap}
+.evtrack{position:relative;display:grid;gap:12px;margin:0 0 12px}
+.evtrack::before{content:"";position:absolute;left:21px;top:20px;bottom:20px;width:3px;border-radius:2px;background:var(--line)}
+.evt{position:relative;display:flex;gap:12px;align-items:flex-start}
+.evnode{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:3px solid var(--line);font:800 12px system-ui,sans-serif;color:var(--muted);z-index:1}
+.evt.got .evnode{background:var(--ev);border-color:var(--ev);color:#fff;font-size:18px}
+.evitems{flex:1;display:grid;gap:8px;min-width:0}
+.evitem{display:flex;align-items:center;gap:12px;justify-content:flex-start;text-align:left;width:100%;padding:8px 12px;border-radius:14px;min-height:58px}
+.evt:not(.got) .evitem .evth{filter:grayscale(.7);opacity:.75}
+.evt.got .evitem{border-color:var(--ev)}
+.evth{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:10px;background:color-mix(in srgb,var(--line) 45%,transparent);overflow:hidden}
+.evth svg{max-width:100%;max-height:100%}
+.evth.evbadge{border-radius:50%;background:color-mix(in srgb,var(--ev) 18%,var(--surface));box-shadow:inset 0 0 0 2px var(--ev)}
+.evth .evsw{width:44px;height:44px;border-radius:10px;margin:0}
+.evtx{display:grid;gap:2px;min-width:0}.evtx b{font-size:14px}.evtx small{color:var(--muted);font-size:12px}
+#evdAll{width:100%}
 .hgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 12px}
 @media (min-width:600px){#shelfGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 16px}#recent{max-width:440px}}
 .btile{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;width:100%;min-width:0;gap:5px;background:none;border:0;padding:0;margin:0;min-height:0;box-shadow:none;border-radius:10px;text-align:left;color:var(--ink);position:relative;font:inherit}
@@ -1100,6 +1117,15 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
   <p class="fine" id="seasonInfo"></p>
   <div id="seasonRewards" class="classlist"></div>
   <p class="fine">Your career rank never resets. Only your season rank starts over, and the rewards you earn are yours forever.</p>
+</div></dialog>
+
+<dialog id="evDlg"><div class="sheet">
+  <div class="sheet-head"><h2 id="evdTitle"></h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <p class="fine" id="evdInfo"></p>
+  <div class="evdbar"><span class="bar"><i id="evdFill"></i></span><b id="evdPct"></b></div>
+  <div id="evdTrack" class="evtrack"></div>
+  <p class="fine">Event rewards are yours to keep. Each event comes back next year.</p>
+  <button id="evdAll" type="button">See all event badges</button>
 </div></dialog>
 
 <dialog id="seasonEndDlg"><div class="sheet" style="text-align:center">
@@ -3883,6 +3909,7 @@ const evEarned = () => store.get("pace:ev", {});
 function checkEvent(announce) {
   const ev = activeEvent(); if (!ev || isAdult()) return;
   const got = evEarned();
+  if (typeof evPeakUpdate === "function") evPeakUpdate(ev, announce);
   if (!got[ev.key] && evWords(ev.a, ev.b) >= ev.e.goal) { got[ev.key] = Date.now(); store.set("pace:ev", got); if (announce) { toastLater(`Event badge: ${ev.e.name}`); const th = Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === ev.e.id); if (th) toastLater("New theme: " + themeName(th)); } }
 }
 let evSel = -1;
@@ -3919,7 +3946,7 @@ function updateEventUI() {
     d.textContent = `${e.name}: ${mo(e.from)} to ${mo(e.to)}. Read ${fmt(e.goal)} words in that time.` + (Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id) ? ` Unlocks the ${themeName(Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id))} theme.` : "") + (() => { const g = (window.EV_GEAR || []).find(x => x[3] === e.id); return g ? ` Also unlocks the ${g[2]} for Atom.` : ""; })() + (yrs.length ? ` Earned ${yrs.join(", ")}.` : "");
   }
 }
-$("#evCard").onclick = () => $("#statsBtn").click();
+$("#evCard").onclick = () => openEvent();
 
 /* Atom drops by (seasonal hats, drawn in code) */
 const HAT_WINDOWS = [[101, 107, "party"], [108, 131, "beanie"], [201, 214, "hearts"], [215, 229, "beanie"], [301, 414, "bucket"], [415, 514, "sprout"], [515, 610, "grad"], [611, 814, "straw"], [815, 930, "prop"], [1001, 1031, "witch"], [1101, 1130, "acorn"], [1201, 1231, "beanie"]];
@@ -4650,6 +4677,69 @@ const SPPAL = {}, SPSHAPE = {}, SP_GRAD = {}, SPCH = {};
   sadd("gneck", 48, "sgn", "scarf", (c, l) => `<path d="M-46 -8Q0 4 46 -8L46 6Q0 18 -46 6Z" fill="${c}"/><path d="M-30 -4V10M-14 -1V13M2 0V14M18 -1V13M34 -4V10" stroke="${l}" stroke-width="4"/><path d="M14 8L24 44L36 40L28 6Z" fill="${c}"/><path d="M20 22L30 19M23 32L33 29" stroke="${l}" stroke-width="3"/>`);
   sadd("ghat", 75, "sgc", "crown", (c, l, i) => `<path d="M-30 0L-33 -34L-16 -18L0 -42L16 -18L33 -34L30 0Z" fill="${l}" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><rect x="-30" y="-10" width="60" height="10" fill="${c}"/><circle cx="0" cy="-42" r="3.5" fill="${c}"/><circle cx="-33" cy="-34" r="3" fill="${c}"/><circle cx="33" cy="-34" r="3" fill="${c}"/><g transform="translate(0 -22) scale(.9)">${glyph[i]}</g>`);
 })();
+/* ---------- event pass: rewards along the way, like the season pass ---------- */
+var EV_CONF = { patch: "pumpkin", spooky: "boo", snow: "flakes", bloom: "petals", fresh: "fireworks", summer: "suns" };
+function evPeak(id) { if (evHas(id)) return 100; const p = store.get("pace:evp", {}); let m = 0; for (const k in p) if (k.startsWith(id + ":")) m = Math.max(m, p[k]);
+  const ev = activeEvent(); if (ev && ev.e.id === id) m = Math.max(m, Math.floor(Math.min(100, evWords(ev.a, ev.b) / ev.e.goal * 100))); return m; }
+function evTiers(e) {
+  const th = Object.keys(THEME_EVENT).find(t => THEME_EVENT[t] === e.id), g = (window.EV_GEAR || []).find(x => x[3] === e.id), cf = EV_CONF[e.id];
+  const t = [[{ kind: "stamp", id: "e_" + e.id, name: e.name + " stamp", what: "Stamp for your title" }]];
+  if (g) t.push([{ kind: g[0], id: g[1], name: g[2], what: "Gear for Atom" }]);
+  if (cf) t.push([{ kind: "conf", id: cf, name: XNAME("conf", cf) + " confetti", what: "Confetti" }]);
+  const fin = [{ kind: "badge", id: e.id, name: e.name + " badge", what: "Event badge" }]; if (th) fin.push({ kind: "theme", id: th, name: themeName(th) + " theme", what: "Theme" });
+  t.push(fin);
+  return t.map((items, i) => ({ pct: Math.round(100 * (i + 1) / t.length), items }));
+}
+EVENTS.forEach(e => evTiers(e).forEach(({ pct, items }) => items.forEach(it => {
+  if (pct >= 100 || it.kind === "badge" || it.kind === "theme") return;
+  EXTRA_SPECIAL[it.kind] = EXTRA_SPECIAL[it.kind] || {};
+  EXTRA_SPECIAL[it.kind][it.id] = { desc: `Reach ${pct}% in the ${e.name} event`, test: () => evPeak(e.id) >= pct };
+})));
+function evPeakUpdate(ev, announce) {
+  const pct = Math.floor(Math.min(100, evWords(ev.a, ev.b) / ev.e.goal * 100)), p = store.get("pace:evp", {}), old = p[ev.key] || 0;
+  if (pct <= old) return; p[ev.key] = pct; store.set("pace:evp", p);
+  if (announce) evTiers(ev.e).forEach(t => { if (t.pct > old && t.pct <= pct && t.pct < 100) t.items.forEach(it => toastLater("Event reward: " + it.name)); });
+}
+function evThumb(e, it) {
+  const s = el("span", "evth"); s.setAttribute("aria-hidden", "true");
+  if (it.kind === "stamp") s.innerHTML = evIcon(e.icon, e.col, 26);
+  else if (it.kind === "badge") { s.classList.add("evbadge"); s.style.setProperty("--ev", e.col); s.innerHTML = evIcon(e.icon, e.col, 30); }
+  else if (it.kind === "theme") { const sw = document.querySelector(`#themeSeg [data-theme="${it.id}"] .sw`); if (sw) { const c = sw.cloneNode(true); c.classList.add("evsw"); s.append(c); } }
+  else if (it.kind === "conf") s.innerHTML = `<svg viewBox="0 0 40 40" width="34" height="34">${[[8, 10, 20], [26, 7, -30], [18, 22, 45], [31, 27, 10], [9, 30, -15]].map(([x, y, r], i) => `<rect x="${x}" y="${y}" width="6" height="10" rx="1.5" transform="rotate(${r} ${x + 3} ${y + 5})" fill="${[e.col, "#ffd84a", "#2f9bd6", e.col, "#2fbf71"][i]}"/>`).join("")}</svg>`;
+  else if (GEAR_K.includes(it.kind)) s.innerHTML = gearThumb(it.kind, it.id);
+  return s;
+}
+function openEvent() {
+  const ev = activeEvent(); if (!ev) return;
+  const e = ev.e, w = evWords(ev.a, ev.b), pct = Math.min(100, w / e.goal * 100), peak = Math.max(evPeak(e.id), Math.floor(pct)), t = isAdult();
+  const left = Math.round((keyToDate(ev.b) - keyToDate(evToday())) / 864e5), mo = k => keyToDate(k).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  $("#evdTitle").innerHTML = ""; $("#evdTitle").append(el("span", "evdic"), document.createTextNode(e.name)); $("#evdTitle .evdic").innerHTML = evIcon(e.icon, e.col, 22);
+  $("#evdInfo").textContent = `${mo(ev.a)} to ${mo(ev.b)} · ${left <= 0 ? "last day!" : left === 1 ? "1 day left" : left + " days left"}. Read ${fmt(e.goal)} words during the event.`;
+  const dlg = $("#evDlg"); dlg.style.setProperty("--ev", e.col);
+  $("#evdFill").style.width = pct + "%"; $("#evdPct").textContent = `${fmt(Math.min(w, e.goal))} / ${fmt(e.goal)}`;
+  const box = $("#evdTrack"); box.replaceChildren();
+  evTiers(e).forEach(({ pct: p, items }) => {
+    const got = t || peak >= p, need = Math.max(0, Math.ceil(e.goal * p / 100) - w);
+    const row = el("div", "evt" + (got ? " got" : ""));
+    const node = el("div", "evnode", got ? "✓" : p + "%"); row.append(node);
+    const col = el("div", "evitems");
+    items.forEach(it => {
+      const b = el("button", "evitem"); b.type = "button";
+      b.append(evThumb(e, it));
+      const tx = el("span", "evtx"); tx.append(el("b", "", it.name), el("small", "", it.what + " · " + (got ? "Unlocked" : `${fmt(need)} words to go`)));
+      b.append(tx);
+      b.onclick = () => {
+        if (got) { toast(it.kind === "badge" ? "Earned! It's on your Stats page." : "Unlocked! Pick it in Rewards."); return; }
+        if (it.kind === "badge") { toast(`Read ${fmt(need)} more words before the event ends.`); return; }
+        const k = it.kind === "theme" ? "theme" : it.kind;
+        if (startPreview(k, it.id)) toast(`Trying it for 10 seconds. ${fmt(need)} more words to keep it.`); else toast(`${fmt(need)} more words to unlock it.`);
+      };
+      col.append(b);
+    });
+    row.append(col); box.append(row);
+  });
+  if (!dlg.open) dlg.showModal();
+}
 /* try before you unlock */
 var pv = null, pvTimer = 0;
 const PV_KEYS = { theme: "theme", accent: "accent", font: "font", pivot: "pivotColor" };
@@ -5585,7 +5675,8 @@ async function openClass() {
 }
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-09c", WHATS = [
+const WHATS_VER = "2026-10-10a", WHATS = [
+  ["Event rewards", "Tap the Event tile to see every reward. You now earn them along the way at 25%, 50% and 75%, not just at the end."],
   ["Sharp covers", "Book covers are now high quality. Tap a cover to find a better one online, add the author or fix the title."],
   ["My library", "Your three most recent books now sit under Continue reading. Tap My library to see every book in a grid, with search, sorting and Reading, New and Finished filters."],
   ["Atom gear", "Dress up Atom with hats, glasses and neckwear. Earn more from events and the season pass. Open Rewards, then Atom gear."],
@@ -5798,6 +5889,7 @@ function updateGreet() {
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderShelf(); };
 $("#libBtn").onclick = openShelf;
+$("#evdAll").onclick = () => { $("#evDlg").close(); $("#statsBtn").click(); };
 /* book details, cover search (Open Library) */
 let bdBook = null;
 function bdRefresh() { if (!bdBook || !$("#bookDlg").open) return; $("#bdCover").replaceChildren(coverEl(bdBook, true)); }
