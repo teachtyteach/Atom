@@ -6650,7 +6650,13 @@ async function unlockAdult(pw) {
   $("#wRestore").onchange = async e => {
     const f = e.target.files[0]; e.target.value = ""; if (!f) return;
     const r = await restoreBackup(f), m = $("#wRestMsg");
-    if (r && r.n !== undefined) { restored = true; if (settings.name) $("#welcomeName").value = settings.name; go(1); msg.textContent = `Restored ${r.n} book${r.n === 1 ? "" : "s"}. Now pick who is reading.`; }
+    if (r && r.n !== undefined) {
+      restored = true; if (settings.name) $("#welcomeName").value = settings.name;
+      const books = `Restored ${r.n} book${r.n === 1 ? "" : "s"}.`;
+      // a student backup goes straight in; teacher and adult backups only need their password
+      if (r.mode === "student" || !r.mode) { settings.mode = "student"; saveSettings(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI(); done(); toast(books + " Welcome back!"); return; }
+      go(1); const pk = dlg.querySelector(`.pick[data-mode="${r.mode}"]`); if (pk) pk.click();
+      msg.textContent = books + (r.mode === "reader" ? " Enter the password to finish." : " Enter the teacher password to finish."); }
     else if (r && r.err) m.textContent = "Couldn't restore: " + r.err; };
   dlg.querySelectorAll(".pick").forEach(b => b.onclick = () => {
     mode = b.dataset.mode; dlg.querySelectorAll(".pick").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
@@ -7144,7 +7150,7 @@ async function restoreBackup(file) {
     if (data.settings) { const { mode: _m, pauses: _p, ...rest } = data.settings; Object.assign(settings, rest); settings.goal = Math.max(1000, +settings.goal || 1000); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
     syncSettingsUI(); syncBackupInfo(); renderLibrary(); prepareBackup();
-    toast(`Restored ${n} book${n === 1 ? "" : "s"}`); return { n };
+    toast(`Restored ${n} book${n === 1 ? "" : "s"}`); return { n, mode: data.settings && data.settings.mode };
   } catch (e) { toast("Couldn't restore: " + e.message); return { err: e.message }; }
 }
 $("#backupBtn").onclick = saveBackup;
