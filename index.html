@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
+<meta name="atom-build" content="atom-v116"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -5084,7 +5085,7 @@ function applyExtras() {
   ["stat", "cov"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
   { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
   applyBackdrop();
-  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = t ? stampHtml(st) : ""; if (t) tl.append(document.createTextNode(typeof titleName === "function" ? titleName(t) : XNAME("title", t))); } if (typeof updateGreet === "function") updateGreet(); }
+  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) renderTitleLine(tl, t, st); if (typeof updateGreet === "function") updateGreet(); }
   updateGreet(); pvUpdate(); if (typeof applyGear === "function" && GEAR_K) applyGear();
 }
 /* reward sounds, made in code */
@@ -5378,7 +5379,7 @@ function seasonSync(silent) {
   const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), o = srStore(), had = o[se.n] || 0;
   if (r.i > had) {
     o[se.n] = r.i; store.set("pace:sr2", o);
-    if (!silent && !isAdult()) S_ITEMS.forEach(([cat, lvl, ids]) => { if (had < lvl && r.i >= lvl) toastLater("Season reward: " + S_NAMES[ids[se.idx]]); });
+    if (!silent && !isAdult()) S_ITEMS.forEach(([cat, lvl, ids]) => { if (had < lvl && r.i >= lvl) toastLater("Season reward: " + S_NAMES[ids[se.idx]] + (SKIND[cat] ? " " + SKIND[cat] : "")); });
   }
   updateSeasonCard(se, w, r);
 }
@@ -5395,9 +5396,9 @@ function updateSeasonCard(se, w, r) {
 function openSeason() {
   const se = seasonNow(), w = seasonWords(se), r = seasonRank(w), box = $("#seasonRewards"), col = SEASON_COL[se.idx]; box.replaceChildren();
   $("#seasonTitle").style.cssText = "display:flex;align-items:center;gap:8px"; $("#seasonTitle").innerHTML = ribbon(r.i, col, 22) + " Season " + se.n + ": " + se.name;
-  $("#seasonInfo").textContent = `Season level ${r.i}. You read ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
-  { const nr = S_ITEMS.filter(x => x[1] > r.i).sort((p, q) => p[1] - q[1])[0]; if (nr) $("#seasonInfo").textContent += ` Next reward: ${S_NAMES[nr[2][se.idx]]} at level ${nr[1]}.`; }
-  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme", bm: "Bookmark", nflair: "Name flair", pframe: "Frame", stat: "Stats look", atomc: "Atom color", greet: "Greeting", cov: "Covers", chime: "Sound", plate: "Bookplate", ghat: "Atom hat", gface: "Atom face", gneck: "Atom neck" };
+  $("#seasonInfo").textContent = `${SZ[se.idx].name} season. Level ${r.i}. You read ${fmt(w)} words.` + (r.next ? ` ${fmt(r.need)} more to ${r.next}.` : " Top season rank!");
+  { const nr = S_ITEMS.filter(x => x[1] > r.i).sort((p, q) => p[1] - q[1])[0]; if (nr) $("#seasonInfo").textContent += ` Next reward: ${S_NAMES[nr[2][se.idx]]}${typeof SKIND !== "undefined" && SKIND[nr[0]] ? " " + SKIND[nr[0]] : ""} at level ${nr[1]}.`; }
+  const peak = Math.max(srStore()[se.n] || 0, r.i), kn = { bar: "Progress bar", bd: "Backdrop", conf: "Confetti", stamp: "Stamp", title: "Title", theme: "Theme", bm: "Bookmark", nflair: "Name flair", pframe: "Frame", stat: "Stats look", atomc: "Atom color", greet: "Greeting", cov: "Covers", chime: "Sound", plate: "Bookplate", ghat: "Atom hat", gface: "Atom face", gneck: "Atom neck" };
   box.className = "bp"; box.style.setProperty("--sc", col);
   let cur = null;
   for (let k = 1; k <= S_MAX; k++) {
@@ -5780,7 +5781,7 @@ function xThumb2(kind, id) {
   else if (kind === "greet") { const g = GREET[id]; if (!g) return null; t.append(el("span", "tgr", g[0][1] + "!")); }
   else if (kind === "chime") { const m = CH_IC[id]; let col = m ? m[0] : "", g = m ? SND_G[m[1]] : ""; if (!m && SPCH[id]) { const i = +String(id).slice(-1) || 0; col = SEASON_COL[i] || "#888"; g = SND_G.harp; } if (!g) return null; t.innerHTML = tkGlyph(g, col); }
   else if (kind === "amb") { if (!SND_G[id]) return null; t.innerHTML = tkGlyph(SND_G[id], AMB_IC[id] || "var(--accent)"); }
-  else if (kind === "stamp") { const h = stampHtml(id); if (!h) return null; t.innerHTML = h.replace(/width="16" height="16"/, 'width="30" height="30"'); }
+  else if (kind === "stamp") { const h = STAMP_C[id] ? STAMP_C[id](30) : stampHtml(id).replace(/width="16" height="16"/, 'width="30" height="30"'); if (!h) return null; t.innerHTML = h; }
   else if (kind === "title") { const cc = collOf("title", id), col = cc ? cc.c2 : TITLE_COL[id] || (/^tc|^t\d/.test(id) ? SEASON_COL[(+String(id).slice(-1) || 1) - 1] || "#888" : "var(--accent)"); const p = el("span", "tpill"); p.innerHTML = tkGlyph('<circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/>', col, 16); p.append(document.createTextNode(XNAME("title", id).split(" ")[0])); t.append(p); }
   else if (kind === "conf") { const cv = document.createElement("canvas"), dpr = 2; cv.width = 64 * dpr; cv.height = 46 * dpr; const c = cv.getContext("2d"); c.scale(dpr, dpr);
     const cols = (SPPAL[id] || ({ stars: ["#ffd23f", "#ffb703", "#ff9f1c"], leaves: ["#5fa05a", "#e08a3c", "#c9a227"], hearts: ["#ff5d8f", "#d6144f", "#ff8fab"], sparks: ["#ffd23f", "#ffb703", "#ffe8a3"], atoms: ["#3fa7d6", "#b07cf0", "#d7372b"], pumpkin: ["#ff8c1a", "#e8590c"], boo: ["#cfd2e8", "#b9a7ff"], flakes: ["#9ed0ff", "#cfe8ff"], petals: ["#ffb7d5", "#ff8fb8"], fireworks: ["#ff4d6d", "#ffd23f", "#4dd0ff", "#7cff6b"], suns: ["#ffcf33", "#ff9f1c"], seeds: ["#8a6a3b", "#c9a227", "#6b8f3a"], embers: ["#ff6b1a", "#ffb703", "#ff3d00"], pixels: ["#39ff88", "#00e5ff", "#ff3df2", "#ffee33"], bubbles: ["#8fd3ff", "#7bc4f0"] }[id]) || ["#888"]);
@@ -5872,6 +5873,478 @@ function renderColls(g) {
   sadd("gneck", 48, "sgn", "scarf", (c, l) => `<path d="M-46 -8Q0 4 46 -8L46 6Q0 18 -46 6Z" fill="${c}"/><path d="M-30 -4V10M-14 -1V13M2 0V14M18 -1V13M34 -4V10" stroke="${l}" stroke-width="4"/><path d="M14 8L24 44L36 40L28 6Z" fill="${c}"/><path d="M20 22L30 19M23 32L33 29" stroke="${l}" stroke-width="3"/>`);
   sadd("ghat", 75, "sgc", "crown", (c, l, i) => `<path d="M-30 0L-33 -34L-16 -18L0 -42L16 -18L33 -34L30 0Z" fill="${l}" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><rect x="-30" y="-10" width="60" height="10" fill="${c}"/><circle cx="0" cy="-42" r="3.5" fill="${c}"/><circle cx="-33" cy="-34" r="3" fill="${c}"/><circle cx="33" cy="-34" r="3" fill="${c}"/><g transform="translate(0 -22) scale(.9)">${glyph[i]}</g>`);
 })();
+/* ---------- season pass, remastered: every season has its own story ---------- */
+var SZ = [
+  { name: "Forest Explorer", c: "#2f6b3a", l: "#9fd36a", a: "#e0a03a", d: "#1d3b22", months: "Sep to Nov" },
+  { name: "Liftoff", c: "#e63946", l: "#4cc9f0", a: "#ff9f1c", d: "#14213d", months: "Dec to Feb" },
+  { name: "Magic Show", c: "#c026d3", l: "#f2c14e", a: "#7c3aed", d: "#1b1035", months: "Mar to May" },
+  { name: "Treasure Hunt", c: "#e8a50c", l: "#ffe08a", a: "#0f6e7a", d: "#5a3a08", months: "Jun to Aug" }
+];
+var svgU = s => `url("data:image/svg+xml,${encodeURIComponent(s.indexOf("xmlns") > 0 ? s : s.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" '))}")`;
+var PLATE_X = {}, STAMP_X2 = {};
+(function () {
+  const css = [], R = (n, f) => { let o = ""; for (let i = 0; i < n; i++) o += f(i); return o; };
+  // drop the old one-color season styles; everything below replaces them
+  document.querySelectorAll("style").forEach(s => { if (s.textContent.includes("data-pframe=spA0")) s.textContent = "@keyframes spb{to{background-position:0 0,-300% 0}}"; });
+  const slot = (cat, lvl, pre, names) => {
+    const ids = [0, 1, 2, 3].map(i => pre + i); let it = S_ITEMS.find(x => x[2][0] === ids[0]);
+    if (it) it[1] = lvl; else { it = [cat, lvl, ids]; S_ITEMS.push(it); }
+    const c = XCATS.find(x => x.k === cat);
+    ids.forEach((id, i) => { S_NAMES[id] = names[i]; if (c) { const o = c.opts.find(x => x[0] === id); if (o) o[1] = names[i]; else c.opts.push([id, names[i]]); } });
+    return ids;
+  };
+  const sel = { cov: id => `:root[data-cov=${id}] .cover`, bar: id => `:root[data-bar=${id}] .bar`, nflair: id => `:root[data-nflair=${id}] .nflair`, pframe: id => `:root[data-pframe=${id}] :is(#titleLine,#pvTitle):not(:empty)`, stat: id => `:root[data-stat=${id}] .pvstat,:root[data-stat=${id}] body[data-screen=stats]` };
+  const G = "animation:grow .8s cubic-bezier(.2,.8,.2,1) both";
+  css.push("@keyframes sspark{to{background-position:18px 50%,0 0}}", "@keyframes sflick{50%{filter:brightness(1.25)}}", "@keyframes swarp{to{background-position:24px 0,0 0}}", "@keyframes stw{to{background-position:32.3px 0}}",
+    "@keyframes slant{50%{filter:brightness(1.3) saturate(1.2)}}", "@keyframes sblink{50%{opacity:.15}}", "@keyframes smarq{50%{border-color:#fff8e1;box-shadow:0 0 14px -1px #f2c14e}}", "@keyframes shyp{to{background-position:40px 0,0 0}}",
+    "@keyframes sspot{from{background-position:0% 50%,0 0}to{background-position:100% 50%,0 0}}", "@keyframes sffly{0%{background-position:0% 0,100% 0,0 0}100%{background-position:100% 0,0% 0,0 0}}", "@keyframes sfhyp{to{background-position:-200% 0,0 0}}",
+    "@keyframes twk{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}", "@keyframes sfly{0%{background-position:0 0,0 0}100%{background-position:12px -18px,-10px -26px}}",
+    "@keyframes snova{0%,100%{box-shadow:0 0 0 2px #fff,0 0 14px 2px #4cc9f0}50%{box-shadow:0 0 0 2px #ffd166,0 0 24px 7px #ff9f1c}}", "@keyframes svan{0%,100%{opacity:1}50%{opacity:.72}}",
+    "@property --oa{syntax:'<angle>';inherits:false;initial-value:0deg}", "@keyframes sorbit{to{--oa:360deg}}", "@keyframes mglw{0%,100%{filter:var(--mt)}50%{filter:var(--mt) drop-shadow(0 0 12px var(--mg)) drop-shadow(0 0 4px var(--mg))}}");
+
+  /* 1 greeting */
+  slot("greet", 1, "sgA", ["Trail talk", "Mission control", "Showtime", "Treasure talk"]).forEach((id, i) => GREET[id] = [
+    [["Night hike", "Trail's open", "Onward, explorer", "Camp's set"], ""], [["Night launch", "Rise and launch", "All systems go", "Orbit reached"], "Captain "],
+    [["The midnight act", "Ta-da", "And now", "For my next trick"], "the Great "], [["X marks the night", "Gold at sunrise", "Treasure awaits", "Sunset sail"], ""]][i]);
+
+  /* 3 + 33 progress bars */
+  const bA = slot("bar", 3, "sbrA", ["Trail path", "Rocket trail", "Wand sparkle", "Coin stack"]), bB = slot("bar", 33, "sbrB", ["Lantern glow", "Warp speed", "Twisting ribbon", "Ruby & gold"]);
+  [`background:radial-gradient(ellipse 1.6px 2.4px at 30% 32%,#f3e6c8 95%,transparent) 0 0/10px 100%,radial-gradient(ellipse 1.6px 2.4px at 70% 68%,#f3e6c8 95%,transparent) 0 0/10px 100%,linear-gradient(90deg,#1d3b22,#2f6b3a 60%,#6a9a45)`,
+    `background:linear-gradient(90deg,rgba(255,159,28,.15),#ff9f1c 35%,#ffd166 75%,#fff 90%,#e63946 90%);${G},sflick .3s steps(2) infinite`,
+    `background:radial-gradient(circle,#fff 0 .8px,transparent 1.3px) 0 50%/9px 100%,linear-gradient(90deg,#7c3aed,#c026d3 55%,#f2c14e);${G},sspark 1.6s linear infinite`,
+    `background:radial-gradient(circle at 50% 50%,#fff3c4 0 1px,#f2c14e 1.4px 2.4px,#a8740a 2.8px 3.4px,transparent 3.6px) 0 50%/7px 100% repeat-x,linear-gradient(#c98a0a,#7a5208)`].forEach((v, i) => css.push(`${sel.bar(bA[i])} i{${v}}`));
+  [`background:linear-gradient(90deg,#7a3d0a,#e0862a 60%,#ffd27a);${G},slant 2.4s ease-in-out infinite`,
+    `background:linear-gradient(90deg,transparent 40%,rgba(255,255,255,.9) 50%,transparent 60%) 0 0/24px 100%,linear-gradient(90deg,#14213d,#3a0ca3 50%,#4cc9f0);${G},swarp .45s linear infinite`,
+    `background:repeating-linear-gradient(120deg,#7c3aed 0 6px,#c026d3 6px 12px,#f2c14e 12px 14px);${G},stw 1.4s linear infinite`,
+    `background:radial-gradient(circle,#ff8a8a 0 .8px,#c0392b 1.3px 2.2px,transparent 2.6px) 0 50%/9px 100% repeat-x,linear-gradient(#ffe08a,#e8a50c 55%,#a8740a)`].forEach((v, i) => css.push(`${sel.bar(bB[i])} i{${v}}`));
+
+  /* 5 + 15 bookmarks */
+  const mA = slot("bm", 5, "sbA", ["Acorn", "Planet", "Magic wand", "Treasure chest"]), mB = slot("bm", 15, "sbB", ["Mushroom", "Comet", "Rabbit", "Skeleton key"]);
+  ["M12 9.5c-3.8 0-6.2 2.4-6.2 5.4 0 3.4 2.9 6.1 6.2 6.1s6.2-2.7 6.2-6.1c0-3-2.4-5.4-6.2-5.4zM4.6 9.3C5 6.4 8 4.8 12 4.8s7 1.6 7.4 4.5zM12 4.8V2.4",
+    "M12 6.3a5.7 5.7 0 1 0 .01 0zM2.2 16.3c1.6-1.4 6-3.2 10-4.3 4.2-1.2 8.3-1.9 9.4-1.2.7.9-2.4 3-6.4 4.4-4.2 1.5-9.5 2.6-11.9 2.3-.9-.2-1.4-.6-1.1-1.2z",
+    "M3.5 19.5L14.5 8.5l1.6 1.6-11 11zM17 2.5l.9 2.2 2.2.9-2.2.9L17 8.7l-.9-2.2-2.2-.9 2.2-.9zM21 10.2l.5 1.1 1.1.5-1.1.5-.5 1.1-.5-1.1-1.1-.5 1.1-.5zM10.5 2.8l.5 1.1 1.1.5-1.1.5-.5 1.1-.5-1.1-1.1-.5 1.1-.5z",
+    "M3 10.2c0-3.6 4-5.6 9-5.6s9 2 9 5.6zM3 11.8h18v8.4H3z"].forEach((d, i) => BM_PATHS[mA[i]] = d);
+  ["M12 3.5C6.4 3.5 2.8 7 2.8 11h18.4c0-4-3.6-7.5-9.2-7.5zM9.4 11.6h5.2l1.1 8.9H8.3z",
+    "M16.5 3.5a3.5 3.5 0 1 1-.01 0zM2.5 21.5L13.2 9.6l1.3 1.2L3.7 22.5zM2.8 15.6L11.8 8l.8 1-9 7.6zM8.2 21.2l7.3-9.6 1 .7-7.2 9.8z",
+    "M9.2 2.5c-1.6 0-2.2 3.1-1.6 6.8L8 12a5 5 0 1 0 8 0l.4-2.7c.6-3.7 0-6.8-1.6-6.8s-2.2 3-2.3 6.4h-1c-.1-3.4-.7-6.4-2.3-6.4z",
+    "M6.5 3a3.5 3.5 0 1 1-.01 0zM8.6 8.6L20.5 20.5M16.4 16.4l2.6-2.6M13.6 13.6l2.2-2.2"].forEach((d, i) => BM_PATHS[mB[i]] = d);
+
+  /* 7, 43, 95 book covers */
+  const cB = slot("cov", 7, "scvB", ["Field journal", "Star chart", "Playing card", "Treasure map"]), cA = slot("cov", 43, "scvA", ["Falling leaves", "Porthole", "Magic mirror", "Jeweled chest"]), cC = slot("cov", 95, "scvC", ["Enchanted forest", "Supernova", "Vanishing act", "Legendary gold"]);
+  const ov = (id, v, b) => { css.push(`${sel.cov(id)}::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;${v}}`); if (b) css.push(`${sel.cov(id)}::before{content:"";position:absolute;pointer-events:none;z-index:2;${b}}`); };
+  const starsSvg = svgU(`<svg viewBox="0 0 48 72"><g fill="#fff">${R(22, i => `<circle cx="${(i * 37 % 46) + 1}" cy="${(i * 53 % 70) + 1}" r="${i % 5 ? .5 : .9}" opacity="${.5 + (i % 3) * .2}"/>`)}</g><path d="M9 14L19 9L27 18L38 12M27 18L24 30" stroke="#bfe9ff" stroke-width=".6" fill="none" opacity=".8"/><g fill="#fff"><circle cx="9" cy="14" r="1.2"/><circle cx="19" cy="9" r="1.2"/><circle cx="27" cy="18" r="1.4"/><circle cx="38" cy="12" r="1.1"/><circle cx="24" cy="30" r="1.1"/></g></svg>`);
+  const spade = c => svgU(`<svg viewBox="0 0 20 24"><path d="M10 1C7 6 1 9 1 14a5 5 0 0 0 8 4l-1.5 5h5L11 18a5 5 0 0 0 8-4c0-5-6-8-9-13z" fill="${c}"/></svg>`);
+  const mapSvg = svgU(`<svg viewBox="0 0 48 72"><path d="M8 62C14 52 6 44 16 38S34 34 30 24 36 12 40 10" stroke="#b03a2e" stroke-width="1.4" stroke-dasharray="2.5 2.5" fill="none"/><path d="M36 6l8 8M44 6l-8 8" stroke="#b03a2e" stroke-width="2.2" stroke-linecap="round"/><g transform="translate(10 62)" stroke="#5a3a1c" stroke-width=".8" fill="none"><circle r="5"/><path d="M0-7V7M-7 0H7"/></g></svg>`);
+  const leafSvg = svgU(`<svg viewBox="0 0 48 72">${[[6, 8, -20, "#d9480f"], [42, 14, 30, "#e8a50c"], [38, 62, 160, "#b5401f"], [8, 58, -150, "#e0862a"]].map(([x, y, a, c]) => `<path transform="translate(${x} ${y}) rotate(${a}) scale(.62)" d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width="1"/>`).join("")}</svg>`);
+  const gems = (c, c2) => svgU(`<svg viewBox="0 0 48 72">${[[5, 5], [43, 5], [5, 67], [43, 67]].map(([x, y]) => `<g transform="translate(${x} ${y})"><circle r="4.4" fill="#e8a50c"/><path d="M0-3L3 0 0 3-3 0Z" fill="${c}"/><path d="M0-3L1.5-1.5-1.5-1.5Z" fill="${c2}"/></g>`).join("")}<g fill="#ffe08a">${R(6, i => `<circle cx="${12 + i * 5}" cy="2.2" r=".9"/><circle cx="${12 + i * 5}" cy="69.8" r=".9"/>`)}</g></svg>`);
+  const twinkle = c => svgU(`<svg viewBox="0 0 48 72">${[[8, 10, 1], [40, 22, .7], [14, 52, .8], [38, 60, 1.1]].map(([x, y, s]) => `<path transform="translate(${x} ${y}) scale(${s})" d="M0-6Q.8-.8 6 0Q.8.8 0 6Q-.8.8-6 0Q-.8-.8 0-6Z" fill="${c}"/>`).join("")}</svg>`);
+  const flies = svgU(`<svg viewBox="0 0 48 72">${R(9, i => `<circle cx="${(i * 29 % 44) + 2}" cy="${(i * 41 % 66) + 3}" r="${1 + (i % 3) * .4}" fill="#fff7a8"/><circle cx="${(i * 29 % 44) + 2}" cy="${(i * 41 % 66) + 3}" r="${3.5 + (i % 3)}" fill="#fff7a8" opacity=".25"/>`)}</svg>`);
+  const burst = svgU(`<svg viewBox="0 0 48 72"><g transform="translate(24 30)" stroke="#fff" stroke-linecap="round" opacity=".85">${R(12, i => { const a = i * Math.PI / 6, r1 = 9, r2 = i % 2 ? 22 : 30; return `<path d="M${(Math.cos(a) * r1).toFixed(1)} ${(Math.sin(a) * r1).toFixed(1)}L${(Math.cos(a) * r2).toFixed(1)} ${(Math.sin(a) * r2).toFixed(1)}" stroke-width="${i % 2 ? .6 : 1}"/>`; })}</g></svg>`);
+  const sweep = (c, t) => `background:linear-gradient(115deg,transparent 32%,${c} 50%,transparent 68%);background-size:260% 100%;animation:covfoil ${t || 4}s ease-in-out infinite`;
+  css.push(`${sel.cov(cB[0])}{border:none;border-radius:4px 8px 8px 4px;box-shadow:0 0 0 2px #2f6b3a,0 5px 10px -3px rgba(0,0,0,.45)}`); ov(cB[0], `background:linear-gradient(90deg,transparent 72%,#3b2a1a 72% 80%,transparent 80%),linear-gradient(90deg,rgba(29,59,34,.6) 0 4px,rgba(255,255,255,.25) 4px 5px,transparent 7px),linear-gradient(rgba(47,107,58,.15),rgba(47,107,58,.15))`);
+  css.push(`${sel.cov(cB[1])}{border:none;box-shadow:0 0 0 2px #14213d,0 0 0 3px #4cc9f0,0 0 12px -2px #4cc9f0}`); ov(cB[1], `background:${starsSvg} center/100% 100%,linear-gradient(rgba(20,33,61,.45),rgba(20,33,61,.15))`);
+  css.push(`${sel.cov(cB[2])}{border:3px solid #fff;border-radius:7px;box-shadow:0 0 0 1px rgba(0,0,0,.2),0 5px 10px -3px rgba(0,0,0,.4)}`); ov(cB[2], `background:${spade("#c026d3")} right 2px bottom 2px/8px 10px no-repeat`, `left:2px;top:2px;width:8px;height:10px;background:${spade("#c026d3")} center/contain no-repeat`);
+  css.push(`${sel.cov(cB[3])}{border:none;border-radius:3px;box-shadow:0 0 0 2px #e8cf9a,0 0 0 3px #8a5a2b,0 5px 10px -3px rgba(0,0,0,.45)}`, `${sel.cov(cB[3])} img{filter:sepia(.55)}`); ov(cB[3], `background:${mapSvg} center/100% 100%,radial-gradient(transparent 50%,rgba(120,70,20,.4))`);
+  css.push(`${sel.cov(cA[0])}{border:none;box-shadow:0 0 0 2px #e0862a,0 5px 10px -3px rgba(0,0,0,.45)}`); ov(cA[0], `background:${leafSvg} center/100% 100%`);
+  css.push(`${sel.cov(cA[1])}{border:none;border-radius:24px 24px 6px 6px;box-shadow:0 0 0 3px #9aa5b1,0 0 0 4px #5a6570,0 6px 12px -4px rgba(0,0,0,.5)}`); ov(cA[1], `border-radius:inherit;background:radial-gradient(circle,#e6ebf0 0 1px,#5a6570 1.3px,transparent 1.7px) 0 0/100% 100% no-repeat,linear-gradient(135deg,rgba(255,255,255,.45),transparent 38%),radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(20,33,61,.4));box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)`);
+  css.push(`${sel.cov(cA[2])}{border:none;border-radius:8px;box-shadow:0 0 0 2px #f2c14e,0 0 0 4px #7c3aed,0 0 0 5px #f2c14e,0 0 14px -2px #c026d3}`); ov(cA[2], `background:${twinkle("#fff")} center/100% 100%;animation:twk 2.4s ease-in-out infinite`, `inset:0;${sweep("rgba(255,255,255,.5)", 5)}`);
+  css.push(`${sel.cov(cA[3])}{border:none;border-radius:4px;box-shadow:0 0 0 3px #e8a50c,0 0 0 4px #5a3a08,0 6px 12px -4px rgba(0,0,0,.5)}`); ov(cA[3], `background:${gems("#d7263d", "#ff9aa6")} center/100% 100%`, `inset:0;${sweep("rgba(255,240,180,.6)")}`);
+  css.push(`${sel.cov(cC[0])}{border:none;box-shadow:0 0 0 2px #9fd36a,0 0 16px 2px rgba(159,211,106,.55)}`); ov(cC[0], `background:${flies} 0 0/48px 72px,${flies} 20px 30px/48px 72px;opacity:.95;animation:sfly 5s ease-in-out infinite alternate`, `inset:0;background:radial-gradient(ellipse at 50% 120%,rgba(29,59,34,.6),transparent 60%)`);
+  css.push(`${sel.cov(cC[1])}{border:none;animation:snova 2.6s ease-in-out infinite}`); ov(cC[1], `background:${burst} center/100% 100%;mix-blend-mode:screen;animation:twk 2.6s ease-in-out infinite`);
+  css.push(`${sel.cov(cC[2])}{border:none;box-shadow:0 0 0 2px #c026d3,0 0 18px 2px rgba(192,38,211,.6);animation:svan 4s ease-in-out infinite}`); ov(cC[2], `background:${twinkle("#ffe9a8")} center/100% 100%;animation:twk 1.8s ease-in-out infinite`, `inset:0;${sweep("rgba(242,193,78,.6)", 3)}`);
+  css.push(`${sel.cov(cC[3])}{border:none;border-radius:4px;box-shadow:0 0 0 3px #ffe08a,0 0 0 5px #e8a50c,0 0 0 6px #5a3a08,0 0 18px 2px rgba(232,165,12,.6)}`); ov(cC[3], `background:${twinkle("#fff3c4")} center/100% 100%;animation:twk 2s ease-in-out infinite`, `inset:0;${sweep("rgba(255,245,200,.75)", 3)}`);
+
+  /* 10 + 50 stamps (16px) */
+  const sv = g => n => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" aria-hidden="true">${g}</svg>`;
+  ["s1", "s2", "s3", "s4"].forEach((id, i) => { S_NAMES[id] = ["Compass", "Rocket", "Top hat", "Treasure X"][i]; const o = XCATS.find(c => c.k === "stamp").opts.find(x => x[0] === id); if (o) o[1] = S_NAMES[id]; });
+  ["s1", "s2", "s3", "s4"].forEach((id, i) => STAMP_C[id] = sv([
+    `<circle cx="12" cy="12" r="10" fill="#f3e6c8" stroke="#6b4426" stroke-width="1.6"/><path d="M12 3.5L14 12 12 20.5 10 12Z" fill="#2f6b3a"/><path d="M12 3.5L14 12H10Z" fill="#d7372b"/><path d="M3.5 12L12 10.6 20.5 12 12 13.4Z" fill="#6b4426" opacity=".55"/><circle cx="12" cy="12" r="1.4" fill="#e0a03a"/>`,
+    `<path d="M12 2c3.5 2.6 5 6.5 4.6 11L14.8 17H9.2L7.4 13C7 8.5 8.5 4.6 12 2z" fill="#eef2f7" stroke="#14213d" stroke-width="1"/><circle cx="12" cy="9.5" r="2" fill="#4cc9f0" stroke="#14213d" stroke-width=".8"/><path d="M9 14l-3.5 4.5 4-1.2M15 14l3.5 4.5-4-1.2" fill="#e63946"/><path d="M10 17.5l2 4.5 2-4.5z" fill="#ff9f1c"/>`,
+    `<ellipse cx="12" cy="18.5" rx="10" ry="2.6" fill="#1b1035"/><path d="M6.5 18V7.5Q12 5.5 17.5 7.5V18Z" fill="#2a1650"/><path d="M6.5 14.5Q12 16 17.5 14.5V17Q12 18.5 6.5 17Z" fill="#c026d3"/><path d="M15 9l.6 1.4 1.4.6-1.4.6L15 13l-.6-1.4-1.4-.6 1.4-.6z" fill="#f2c14e"/>`,
+    `<circle cx="12" cy="12" r="10" fill="#f2d49b" stroke="#8a5a2b" stroke-width="1.4"/><path d="M8 8l8 8M16 8l-8 8" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>`][i]));
+  slot("stamp", 50, "stB", ["Owl", "Astronaut", "Crystal ball", "Ship's wheel"]).forEach((id, i) => STAMP_C[id] = sv([
+    `<path d="M5 5l3 3h8l3-3v11a7 7 0 0 1-14 0z" fill="#8a5a2b"/><circle cx="9" cy="11" r="3" fill="#fff4dd"/><circle cx="15" cy="11" r="3" fill="#fff4dd"/><circle cx="9" cy="11" r="1.4" fill="#1d3b22"/><circle cx="15" cy="11" r="1.4" fill="#1d3b22"/><path d="M11 13.5l1 1.5 1-1.5z" fill="#e0a03a"/><path d="M8 18q4 2 8 0" stroke="#c98d4e" stroke-width="1" fill="none"/>`,
+    `<circle cx="12" cy="11" r="9" fill="#eef2f7" stroke="#14213d" stroke-width="1.2"/><rect x="6" y="7" width="12" height="8" rx="4" fill="#14213d"/><path d="M8 9.5q2-1.5 4 0" stroke="#4cc9f0" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M5 19h14v3H5z" fill="#e63946"/>`,
+    `<circle cx="12" cy="10.5" r="8" fill="#7c3aed"/><circle cx="12" cy="10.5" r="8" fill="url(#cbg)"/><defs><radialGradient id="cbg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".4" stop-color="#f0abfc" stop-opacity=".4"/><stop offset="1" stop-color="#c026d3" stop-opacity="0"/></radialGradient></defs><path d="M6 18h12l1.5 4h-15z" fill="#f2c14e"/><path d="M14 8l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="#fff"/>`,
+    `<g stroke="#8a5a2b" stroke-width="2" stroke-linecap="round">${R(8, k => { const a = k * Math.PI / 4; return `<path d="M${(12 + Math.cos(a) * 4).toFixed(1)} ${(12 + Math.sin(a) * 4).toFixed(1)}L${(12 + Math.cos(a) * 10.5).toFixed(1)} ${(12 + Math.sin(a) * 10.5).toFixed(1)}"/>`; })}</g><circle cx="12" cy="12" r="7" fill="none" stroke="#c98d4e" stroke-width="2.2"/><circle cx="12" cy="12" r="2.6" fill="#e8a50c"/>`][i]));
+
+  /* 12 + 75 hats, 28 face, 48 neck */
+  slot("ghat", 12, "sgh", ["Explorer hat", "Flight cap", "Magician's hat", "Captain's hat"]).forEach((id, i) => GEAR_SVG.ghat[id] = [
+    `<ellipse cx="0" cy="-4" rx="46" ry="9" fill="#b89664"/><path d="M-30 -6C-32 -36 -16 -46 0 -46S32 -36 30 -6Z" fill="#d8bd8a"/><path d="M-30 -13Q0 -6 30 -13V-6Q0 1 -30 -6Z" fill="#2f6b3a"/><path d="M-12 -44Q-16 -28 -14 -12" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="0" cy="-46" r="3" fill="#b89664"/><path d="M14 -12l7 -10 2 2-6 9z" fill="#e0a03a"/>`,
+    `<path d="M-31 -2C-34 -40 34 -40 31 -2Z" fill="#7a4a22"/><path d="M-31 -2C-34 -40 34 -40 31 -2" fill="none" stroke="#4a2c12" stroke-width="2"/><path d="M-36 -4Q-40 14 -30 20Q-26 6 -28 -4Z" fill="#7a4a22"/><path d="M36 -4Q40 14 30 20Q26 6 28 -4Z" fill="#7a4a22"/><g transform="translate(0 -26)"><rect x="-26" y="-6" width="52" height="5" fill="#3a2a1a"/><circle cx="-12" cy="-3" r="9" fill="#4cc9f0" stroke="#c98d4e" stroke-width="3.5"/><circle cx="12" cy="-3" r="9" fill="#4cc9f0" stroke="#c98d4e" stroke-width="3.5"/><path d="M-16 -6a5 5 0 0 1 5 -3M8 -6a5 5 0 0 1 5 -3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></g>`,
+    `<path d="M-22 -58C-26 -70 -18 -78 -14 -70L-12 -56ZM14 -56C16 -76 26 -74 24 -60Z" fill="#fff" stroke="#d9d2e9" stroke-width="2"/><path d="M-19 -66L-15 -58M18 -66L18 -58" stroke="#f9b4d0" stroke-width="3" stroke-linecap="round"/><ellipse cx="0" cy="-2" rx="44" ry="8" fill="#1b1035"/><rect x="-25" y="-58" width="50" height="56" rx="4" fill="#2a1650"/><rect x="-25" y="-20" width="50" height="9" fill="#c026d3"/><path d="M-12 -46l2 4.5 5 .6-3.7 3.4 1 5-4.3-2.5-4.4 2.5 1-5-3.6-3.4 5-.6z" fill="#f2c14e"/><circle cx="12" cy="-34" r="2" fill="#f2c14e"/><circle cx="6" cy="-46" r="1.4" fill="#f2c14e"/><path d="M-19 -54V-26" stroke="rgba(255,255,255,.12)" stroke-width="4"/>`,
+    `<path d="M-50 -6Q-30 -46 0 -40Q30 -46 50 -6Q30 -14 0 -10Q-30 -14 -50 -6Z" fill="#1d2a4a"/><path d="M-50 -6Q-30 -14 0 -10Q30 -14 50 -6" stroke="#e8a50c" stroke-width="3.5" fill="none"/><path d="M-48 -10Q-30 -42 0 -36Q30 -42 48 -10" stroke="#e8a50c" stroke-width="2" fill="none" opacity=".7"/><path d="M-8 -34l8 -6 8 6-8 6z" fill="#e8a50c"/><path d="M20 -38C34 -60 50 -60 56 -54C44 -54 34 -48 24 -36Z" fill="#fff" stroke="#d6d1c4" stroke-width="1.5"/>`][i]);
+  slot("ghat", 75, "sgc", ["Forest crown", "Star captain cap", "Crystal tiara", "Treasure crown"]).forEach((id, i) => GEAR_SVG.ghat[id] = [
+    `<path d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="#d9480f" stroke="#7a3a10" stroke-width=".8" transform="translate(-30 -12) rotate(-50) scale(1.1)"/><path d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="#e0a03a" stroke="#7a3a10" stroke-width=".8" transform="translate(-18 -22) rotate(-25) scale(1.3)"/><path d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="#c92a2a" stroke="#7a3a10" stroke-width=".8" transform="translate(0 -28) rotate(0) scale(1.5)"/><path d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="#f2c14e" stroke="#7a3a10" stroke-width=".8" transform="translate(18 -22) rotate(25) scale(1.3)"/><path d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="#e8590c" stroke="#7a3a10" stroke-width=".8" transform="translate(30 -12) rotate(50) scale(1.1)"/><path d="M-34 -2Q0 10 34 -2L32 -10Q0 0 -32 -10Z" fill="#e0a03a" stroke="#8a5a2b" stroke-width="1.5"/><path d="M0 -8c-3.4 0-5.4 2-5.4 4.6 0 3 2.5 5.4 5.4 5.4s5.4-2.4 5.4-5.4c0-2.6-2-4.6-5.4-4.6zM-6.4 -8.4c.4-2.6 3-4 6.4-4s6 1.4 6.4 4z" fill="#8a5a2b" transform="translate(0 2)"/>`,
+    `<path d="M-30 -8C-34 -40 34 -40 30 -8Z" fill="#14213d"/><path d="M-30 -8Q0 -2 30 -8V-1Q0 5 -30 -1Z" fill="#e8a50c"/><path d="M-8 -2Q22 0 42 10Q20 14 -4 6Z" fill="#0b1226"/><path d="M0 -32l3 6.2 6.8 1-5 4.8 1.2 6.8L0 -16.4l-6 3.2 1.2-6.8-5-4.8 6.8-1z" fill="#e8a50c"/><path d="M-22 -30C-24 -22 -24 -14 -22 -9" stroke="rgba(255,255,255,.18)" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+    `<path d="M-30 0Q0 8 30 0L26 -8Q0 -2 -26 -8Z" fill="#e6e0f5"/><path d="M-26 -8L-22 -24L-12 -14L0 -36L12 -14L22 -24L26 -8Q0 -2 -26 -8Z" fill="#f4efff" stroke="#c9bde6" stroke-width="1.5" stroke-linejoin="round"/><path d="M0 -26l5 7-5 7-5-7z" fill="#c026d3"/><path d="M0 -26l5 7h-10z" fill="#f0abfc"/><circle cx="-16" cy="-10" r="3" fill="#7c3aed"/><circle cx="16" cy="-10" r="3" fill="#7c3aed"/><path d="M8 -34l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/></path><path d="M-20 -28l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" fill="#fff"><animate attributeName="opacity" values="1;0;1" dur="2.4s" repeatCount="indefinite"/></path>`,
+    `<path d="M-32 0L-36 -34L-18 -16L0 -44L18 -16L36 -34L32 0Z" fill="#f2c14e" stroke="#a8740a" stroke-width="2.5" stroke-linejoin="round"/><rect x="-32" y="-11" width="64" height="11" fill="#e8a50c" stroke="#a8740a" stroke-width="2"/><circle cx="0" cy="-6" r="4" fill="#d7263d"/><circle cx="-18" cy="-6" r="3" fill="#0f6e7a"/><circle cx="18" cy="-6" r="3" fill="#0f6e7a"/><circle cx="0" cy="-44" r="3.5" fill="#fff"/><circle cx="-36" cy="-34" r="3" fill="#fff"/><circle cx="36" cy="-34" r="3" fill="#fff"/><path d="M-14 -30l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#fff"><animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/></path>`][i]);
+  slot("gface", 28, "sgf", ["Binoculars", "Space visor", "Masquerade mask", "Eye patch"]).forEach((id, i) => GEAR_SVG.gface[id] = [
+    `<g><rect x="-50" y="-16" width="40" height="34" rx="9" fill="#2f3b2a"/><rect x="10" y="-16" width="40" height="34" rx="9" fill="#2f3b2a"/><rect x="-12" y="-8" width="24" height="12" rx="4" fill="#4a5a3f"/><circle cx="-30" cy="1" r="13" fill="#1d2a1a" stroke="#6a9a45" stroke-width="3"/><circle cx="30" cy="1" r="13" fill="#1d2a1a" stroke="#6a9a45" stroke-width="3"/><path d="M-36 -5a8 8 0 0 1 8 -4M24 -5a8 8 0 0 1 8 -4" stroke="#bfe9ff" stroke-width="3" fill="none" stroke-linecap="round"/></g>`,
+    `<path d="M-66 -20Q0 -34 66 -20L62 14Q0 26 -62 14Z" fill="#e8a50c"/><path d="M-66 -20Q0 -34 66 -20L62 14Q0 26 -62 14Z" fill="url(#gvz)"/><defs><linearGradient id="gvz" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4" stop-opacity=".9"/><stop offset=".35" stop-color="#e8a50c" stop-opacity=".1"/><stop offset=".6" stop-color="#ff9f1c" stop-opacity=".2"/><stop offset="1" stop-color="#7a4a08" stop-opacity=".6"/></linearGradient></defs><path d="M-66 -20Q0 -34 66 -20L62 14Q0 26 -62 14Z" fill="none" stroke="#9aa5b1" stroke-width="4"/><path d="M-44 -18Q-20 -24 0 -24" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>`,
+    `<path d="M-64 -10C-56 -26 -20 -24 0 -12C20 -24 56 -26 64 -10C60 8 34 18 16 10C8 6 4 2 0 2S-8 6 -16 10C-34 18 -60 8 -64 -10Z" fill="#7c3aed" stroke="#f2c14e" stroke-width="3"/><ellipse cx="-30" cy="-3" rx="12" ry="8" fill="#1b1035"/><ellipse cx="30" cy="-3" rx="12" ry="8" fill="#1b1035"/><path d="M58 -16C70 -40 84 -46 92 -42C80 -36 72 -26 64 -12Z" fill="#c026d3"/><path d="M62 -18C78 -34 92 -34 96 -28C84 -28 74 -22 66 -10Z" fill="#f0abfc"/><circle cx="0" cy="-12" r="3" fill="#f2c14e"/>`,
+    `<path d="M-74 -20L-10 -4M18 -6L74 -26" stroke="#1d1b18" stroke-width="4" stroke-linecap="round"/><ellipse cx="30" cy="-2" rx="17" ry="14" fill="#1d1b18"/><path d="M20 -8a10 10 0 0 1 10 -5" stroke="#555" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="-30" cy="-2" r="4" fill="#1d1b18" opacity="0"/>`][i]);
+  slot("gneck", 48, "sgn", ["Scout scarf", "Space collar", "Magic cape", "Doubloon chain"]).forEach((id, i) => GEAR_SVG.gneck[id] = [
+    `<path d="M-50 -12Q0 6 50 -12L46 6Q0 22 -46 6Z" fill="#3f8a4a"/><path d="M-50 -12Q0 6 50 -12" stroke="#e0a03a" stroke-width="3" fill="none"/><path d="M-12 8L-2 52L14 8Z" fill="#3f8a4a"/><path d="M-22 6L-10 40L0 10Z" fill="#2f6b3a"/><circle cx="0" cy="12" r="9" fill="none" stroke="#e0a03a" stroke-width="5"/><path d="M-4 30l6 16M6 26l4 14" stroke="#e0a03a" stroke-width="2" opacity=".7"/>`,
+    `<path d="M-50 -10Q0 8 50 -10L48 10Q0 28 -48 10Z" fill="#eef2f7" stroke="#9aa5b1" stroke-width="2.5"/><path d="M-48 0Q0 18 48 0" stroke="#9aa5b1" stroke-width="2" fill="none"/><rect x="18" y="4" width="16" height="10" rx="2" fill="#e63946"/><path d="M18 9h16M26 4v10" stroke="#fff" stroke-width="1.5"/><circle cx="-24" cy="9" r="4" fill="#4cc9f0" stroke="#14213d" stroke-width="1.5"/>`,
+    `<path d="M-48 -14Q-58 -40 -40 -46L-34 -12ZM48 -14Q58 -40 40 -46L34 -12Z" fill="#c026d3" stroke="#f2c14e" stroke-width="2"/><path d="M-46 -10Q0 6 46 -10L58 56Q0 70 -58 56Z" fill="#2a1650"/><path d="M-46 -10Q0 6 46 -10L58 56Q0 70 -58 56Z" fill="none" stroke="#c026d3" stroke-width="3"/><circle cx="0" cy="0" r="5" fill="#f2c14e"/>`,
+    `<path d="M-42 -8Q0 30 42 -8" stroke="#e8a50c" stroke-width="3.5" fill="none" stroke-dasharray="5 2.5"/><circle cx="0" cy="22" r="12" fill="#f2c14e" stroke="#a8740a" stroke-width="2.5"/><circle cx="0" cy="22" r="8" fill="none" stroke="#a8740a" stroke-width="1.5"/><path d="M0 16v12M-6 22h12" stroke="#a8740a" stroke-width="2"/><path d="M-6 16a7 7 0 0 1 6 -2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>`][i]);
+
+  /* 17 + 45 sounds */
+  const noiseHit = (t, d, g, f, q) => { const n = actx.sampleRate * d, b = actx.createBuffer(1, n, actx.sampleRate), dd = b.getChannelData(0); for (let k = 0; k < n; k++) dd[k] = (Math.random() * 2 - 1) * (1 - k / n); const s = actx.createBufferSource(), bp = actx.createBiquadFilter(), v = actx.createGain(); s.buffer = b; bp.type = "bandpass"; bp.frequency.value = f; bp.Q.value = q || 1; v.gain.value = g; s.connect(bp); bp.connect(v); v.connect(actx.destination); s.start(t); };
+  const sweepT = (f1, f2, t, d, g, type) => { const o = actx.createOscillator(), v = actx.createGain(); o.type = type || "sine"; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + d); v.gain.setValueAtTime(.0001, t); v.gain.linearRampToValueAtTime(g, t + .02); v.gain.exponentialRampToValueAtTime(.0001, t + d + .05); o.connect(v); v.connect(actx.destination); o.start(t); o.stop(t + d + .1); };
+  slot("chime", 17, "sdB", ["Birdsong", "Countdown", "Ta-da!", "Treasure chest"]).forEach((id, i) => SPCH[id] = [
+    t => { [0, .16, .3, .62, .72].forEach((d, k) => sweepT(2600 + k * 150, 3600 + k * 120, t + d, .09, .06)); sweepT(3200, 2400, t + .9, .18, .05); },
+    t => { [0, .32, .64].forEach(d => tone(880, t + d, .12, "square", .05)); tone(1760, t + .96, .5, "square", .05); noiseHit(t + .96, .9, .25, 600, .6); sweepT(200, 1200, t + .96, .8, .05, "sawtooth"); },
+    t => { tone(392, t, .12, "square", .04); tone(392, t + .12, .1, "square", .04); [523, 659, 784, 1047].forEach(f => { tone(f, t + .26, .9, "triangle", .1); tone(f, t + .26, .5, "square", .02); }); },
+    t => { sweepT(140, 90, t, .35, .06, "sawtooth"); for (let k = 0; k < 9; k++) tone(2200 + Math.random() * 2400, t + .35 + k * .05 + Math.random() * .03, .25, "sine", .05); }][i]);
+  slot("chime", 45, "sdA", ["Wind chimes", "Liftoff", "Harp sweep", "Steel drum"]).forEach((id, i) => SPCH[id] = [
+    t => [1047, 1175, 1397, 1568, 1760, 2093].sort(() => Math.random() - .5).forEach((f, k) => { tone(f, t + k * .14 + Math.random() * .05, 1.6, "sine", .07); tone(f * 2.76, t + k * .14, .4, "sine", .015); }),
+    t => { noiseHit(t, 1.4, .35, 300, .5); sweepT(120, 1600, t + .1, 1.1, .06, "triangle"); tone(1568, t + 1.15, .5, "sine", .08); },
+    t => [392, 440, 494, 587, 659, 784, 880, 988, 1175, 1319].forEach((f, k) => tone(f, t + k * .035, .7, "triangle", .07)),
+    t => [[587, 0], [784, .14], [659, .28], [880, .42]].forEach(([f, d]) => { sweepT(f * 1.03, f, t + d, .5, .14); tone(f * 2, t + d, .2, "sine", .04); tone(f * 3, t + d, .12, "sine", .02); })][i]);
+
+  /* 20 + 55 name flair */
+  const fA = slot("nflair", 20, "sfA", ["Autumn", "Nebula", "Spellbound", "Doubloon"]), fB = slot("nflair", 55, "sfB", ["Firefly", "Hyperdrive", "Enchanted", "Sunken gold"]);
+  [`background-image:linear-gradient(90deg,#b5401f,#e0862a 40%,#d9a02a 65%,#5f8f3e)`,
+    `background-image:linear-gradient(90deg,#4361ee,#b5179e,#f72585,#4cc9f0,#4361ee);background-size:300% 100%;animation:nshim 8s linear infinite`,
+    `background-image:linear-gradient(100deg,#7c3aed 20%,#e879f9 40%,#f5c2ff 48%,#e8a50c 55%,#c026d3 75%);background-size:240% 100%;animation:nshim 3.6s linear infinite`,
+    `background-image:linear-gradient(180deg,#f5d77a 0%,#d99a0b 48%,#8a5a06 54%,#e8a50c 100%)`].forEach((v, i) => css.push(`${sel.nflair(fA[i])}{${v}}`));
+  [`background-image:radial-gradient(circle at 20% 45%,#fff36b 0 7%,rgba(255,243,107,.5) 11%,transparent 18%),radial-gradient(circle at 75% 55%,#fff36b 0 6%,rgba(255,243,107,.5) 10%,transparent 16%),linear-gradient(90deg,#24552d,#3e7a35);background-size:200% 100%,200% 100%,100% 100%;animation:sffly 4s ease-in-out infinite alternate`,
+    `background-image:linear-gradient(90deg,transparent 40%,rgba(255,255,255,.95) 50%,transparent 60%),linear-gradient(90deg,#3a0ca3,#4361ee,#2fa8d6);background-size:50% 100%,100% 100%;animation:sfhyp 1.1s linear infinite`,
+    `background-image:linear-gradient(90deg,#c026d3,#e8a50c,#7c3aed,#c026d3);background-size:300% 100%;animation:nshim 4s linear infinite;filter:drop-shadow(0 0 3px rgba(192,38,211,.6))`,
+    `background-image:linear-gradient(100deg,#0f6e7a 10%,#d99a0b 35%,#fff3c4 48%,#d99a0b 60%,#0f6e7a 90%);background-size:250% 100%;animation:nshim 4.5s linear infinite`].forEach((v, i) => css.push(`${sel.nflair(fB[i])}{${v}}`));
+
+  /* 22 + 65 bookplates */
+  const pl = (id, g) => PLATE_X[id] = g;
+  slot("plate", 22, "slB", ["Pressed leaf", "Mission patch", "Ace of spades", "Doubloon"]).forEach((id, i) => pl(id, [
+    `<circle cx="12" cy="12" r="10.5" fill="#f3e6c8" stroke="#6b4426" stroke-width="1.4"/><path transform="translate(12 12.5) scale(.62)" d="M0-12L3-6 9-8 6-2 11 1 4 3 5 10 0 6-5 10-4 3-11 1-6-2-9-8-3-6Z" fill="#d9480f"/><path d="M12 13v6" stroke="#6b4426" stroke-width="1.2"/>`,
+    `<circle cx="12" cy="12" r="10.5" fill="#14213d" stroke="#e63946" stroke-width="2"/><circle cx="12" cy="12" r="8.4" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="1.4 1.2"/><path d="M12 5c2 1.6 2.8 4 2.6 6.6L13.4 14h-2.8l-1.2-2.4C9.2 9 10 6.6 12 5z" fill="#fff"/><path d="M11 14.5l1 3 1-3z" fill="#ff9f1c"/><circle cx="7" cy="9" r=".8" fill="#fff"/><circle cx="17" cy="15" r=".8" fill="#4cc9f0"/>`,
+    `<rect x="4.5" y="2" width="15" height="20" rx="2.5" fill="#fff" stroke="#c026d3" stroke-width="1.4"/><path transform="translate(7 6) scale(.5)" d="M10 1C7 6 1 9 1 14a5 5 0 0 0 8 4l-1.5 5h5L11 18a5 5 0 0 0 8-4c0-5-6-8-9-13z" fill="#1b1035"/><text x="7" y="7" font-size="5" font-weight="700" font-family="Georgia,serif" fill="#c026d3">A</text>`,
+    `<circle cx="12" cy="12" r="10.5" fill="#f2c14e" stroke="#a8740a" stroke-width="1.6"/><circle cx="12" cy="12" r="7.6" fill="none" stroke="#a8740a" stroke-width="1"/><path d="M12 6.5l1.6 3.6 3.9.4-2.9 2.6.9 3.8-3.5-2-3.5 2 .9-3.8-2.9-2.6 3.9-.4z" fill="#a8740a"/><path d="M7 7a7 7 0 0 1 5-2" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round"/>`][i]));
+  slot("plate", 65, "slA", ["Golden acorn seal", "Moon badge", "Wax seal", "Treasure crest"]).forEach((id, i) => pl(id, [
+    `<path d="M12 1.5l2.2 2 3-.5 1 2.8 2.8 1-.5 3 2 2.2-2 2.2.5 3-2.8 1-1 2.8-3-.5-2.2 2-2.2-2-3 .5-1-2.8-2.8-1 .5-3-2-2.2 2-2.2-.5-3 2.8-1 1-2.8 3 .5z" fill="#2f6b3a"/><path d="M12 9c-2.6 0-4.2 1.6-4.2 3.7 0 2.3 2 4.2 4.2 4.2s4.2-1.9 4.2-4.2C16.2 10.6 14.6 9 12 9zM7 9c.3-2 2.4-3 5-3s4.7 1 5 3zM12 6V4.4" fill="#f2c14e"/>`,
+    `<circle cx="12" cy="12" r="10.5" fill="#14213d" stroke="#e8a50c" stroke-width="1.8"/><path d="M14 5.5a7 7 0 1 0 4.5 11A5.6 5.6 0 0 1 14 5.5z" fill="#dfe7f0"/><circle cx="10" cy="11" r="1" fill="#b8c4d2"/><circle cx="12.5" cy="15" r=".8" fill="#b8c4d2"/><path d="M18 5l.5 1.2 1.2.5-1.2.5L18 8.4l-.5-1.2-1.2-.5 1.2-.5z" fill="#ffd166"/>`,
+    `<path d="M12 1.8c2 0 2.6 1.6 4.4 1.8s3.4 1 3.6 3-1 2.8-.6 4.6 1.6 3 .4 4.8-3 .8-4.4 2.2-1.4 3.2-3.4 3.2-2.4-1.8-4-2.4-3.6.2-4.4-1.6.8-3.2.2-5-2.2-2.4-1.2-4 2.8-1.4 4-2.8S10 1.8 12 1.8z" fill="#c026d3"/><circle cx="12" cy="12" r="6" fill="#a21caf"/><path d="M12 8l1.2 2.6 2.8.3-2.1 1.9.6 2.8L12 14.2l-2.5 1.4.6-2.8-2.1-1.9 2.8-.3z" fill="#f0abfc"/>`,
+    `<path d="M12 2L20 5v7c0 5-3.6 8.4-8 10-4.4-1.6-8-5-8-10V5z" fill="#e8a50c" stroke="#5a3a08" stroke-width="1.4"/><path d="M8 8.5l8 7M16 8.5l-8 7" stroke="#5a3a08" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="2.6" fill="#d7263d" stroke="#5a3a08" stroke-width=".8"/>`][i]));
+
+  /* 25 + 90 confetti */
+  const kA = slot("conf", 25, "scA", ["Maple leaves", "Stardust", "Card suits", "Gold coins"]), kB = slot("conf", 90, "scB", ["Feathers", "Rocket fleet", "Top hats", "Gems"]);
+  [["maple", ["#d9480f", "#e8590c", "#e0a03a", "#b5401f", "#f2c14e"]], ["comet", ["#ffffff", "#4cc9f0", "#ffd166", "#bfe9ff"]], ["suits", ["#c026d3", "#1b1035", "#f2c14e", "#ffffff"]], ["coins", ["#f2c14e", "#e8a50c", "#ffe08a"]]].forEach(([s, p], i) => { SPSHAPE[kA[i]] = s; SPPAL[kA[i]] = p; });
+  [["feather", ["#8a5a2b", "#c98d4e", "#e0a03a", "#f3e6c8"]], ["rocket", ["#e63946", "#eef2f7", "#4cc9f0"]], ["tophat", ["#2a1650", "#1b1035", "#c026d3"]], ["gems", ["#d7263d", "#2fbf71", "#3a86ff", "#c026d3", "#f2c14e"]]].forEach(([s, p], i) => { SPSHAPE[kB[i]] = s; SPPAL[kB[i]] = p; });
+
+  /* 30, 70, 85 frames */
+  const pA = slot("pframe", 30, "spA", ["Trail sign", "Mission control", "Marquee lights", "Treasure map"]), pB = slot("pframe", 70, "spB", ["Birch bark", "Orbit", "Velvet curtain", "Sunset sail"]), pC = slot("pframe", 85, "spC", ["Aurora", "Hyperspace", "Spotlight", "Gold rush"]);
+  const xmark = svgU(`<svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="#b03a2e" stroke-width="2.2" stroke-linecap="round"/></svg>`);
+  const birch = svgU(`<svg viewBox="0 0 60 24"><g fill="#2b2a26" opacity=".38"><rect x="4" y="5" width="9" height="1.6" rx=".8"/><rect x="22" y="15" width="12" height="1.4" rx=".7"/><rect x="42" y="7" width="7" height="1.6" rx=".8"/><rect x="50" y="18" width="6" height="1.2" rx=".6"/><rect x="14" y="20" width="5" height="1.1" rx=".5"/></g></svg>`);
+  const P = (id, v) => css.push(`${sel.pframe(id)}{${v}}`);
+  P(pA[0], `background:radial-gradient(circle at 7px 50%,#e8d3a6 1.4px,#4a2c12 2px,transparent 2.4px),radial-gradient(circle at calc(100% - 7px) 50%,#e8d3a6 1.4px,#4a2c12 2px,transparent 2.4px),repeating-linear-gradient(177deg,rgba(0,0,0,.1) 0 1px,transparent 1px 5px),linear-gradient(#a8703a,#7a4a22);color:#fff4dd;border:1px solid #4a2c12;border-radius:4px;padding:4px 18px;box-shadow:0 2px 0 #4a2c12,0 4px 8px -2px rgba(0,0,0,.35);text-shadow:0 1px 0 rgba(0,0,0,.35)`);
+  P(pA[1], `background:#0d1730;color:#bfe9ff;border:1px solid #4cc9f0;border-radius:6px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.9em;letter-spacing:.03em;box-shadow:inset 0 0 10px rgba(76,201,240,.25),0 0 8px -2px rgba(76,201,240,.6)`);
+  css.push(`${sel.pframe(pA[1])}::before{content:"";width:7px;height:7px;border-radius:50%;background:#e63946;box-shadow:0 0 6px #e63946;animation:sblink 1.2s steps(2) infinite;flex:none}`);
+  P(pA[2], `background:#2a0f3d;color:#fff4d6;border:3px dotted #f2c14e;border-radius:8px;padding:4px 14px;box-shadow:0 0 10px -2px #f2c14e;animation:smarq .9s steps(2) infinite`);
+  P(pA[3], `background:${xmark} right 7px center/9px 9px no-repeat,radial-gradient(transparent 55%,rgba(138,90,43,.35)),#f2d49b;color:#4a2c12;border-radius:2px;padding:5px 24px 5px 14px;font-family:Georgia,"Iowan Old Style",serif;clip-path:polygon(0 10%,6% 0,20% 7%,35% 0,52% 6%,70% 0,86% 7%,100% 0,98% 50%,100% 100%,82% 93%,64% 100%,47% 94%,30% 100%,14% 93%,0 100%,2% 50%)`);
+  P(pB[0], `background:${birch} 0 0/60px 100%,linear-gradient(#fbf9f4,#ece7dc);color:#2b2a26;border:1px solid #cfc8b8;border-radius:4px;padding:4px 14px`);
+  P(pB[1], `border:2px solid transparent;border-radius:999px;background:linear-gradient(var(--surface),var(--surface)) padding-box,conic-gradient(from var(--oa,0deg),#4cc9f0 0deg,#ffd166 20deg,transparent 60deg,transparent 300deg,#4cc9f0 360deg) border-box,linear-gradient(#26365f,#26365f) border-box;animation:sorbit 2.6s linear infinite;box-shadow:0 0 10px -4px #4cc9f0`);
+  P(pB[2], `background:repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 2px,transparent 2px 5px) left/14px 100% no-repeat,repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 2px,transparent 2px 5px) right/14px 100% no-repeat,linear-gradient(90deg,#8a1229 0 14px,transparent 14px calc(100% - 14px),#8a1229 calc(100% - 14px)),radial-gradient(ellipse at 50% 0,rgba(255,236,170,.5),transparent 70%),#1b1035;color:#fff4d6;padding:4px 24px;border-radius:6px;border-top:3px solid #f2c14e`);
+  P(pB[3], `background:radial-gradient(circle at calc(100% - 8px) 62%,#fff3c4 0 3.5px,transparent 4px),linear-gradient(transparent 72%,rgba(15,110,122,.85) 72%),linear-gradient(#ffb36b,#e8578a);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);border-radius:10px;padding:4px 14px 7px`);
+  P(pC[0], `border:2px solid transparent;border-radius:12px;background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(90deg,#2f6b3a,#9fd36a,#4cc9f0,#9fd36a,#2f6b3a) border-box;background-size:auto,300% 100%;animation:spb 4s linear infinite;box-shadow:0 0 12px -3px #9fd36a`);
+  P(pC[1], `background:linear-gradient(90deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%) 0 0/40px 100%,linear-gradient(90deg,#0d1730,#3a0ca3);color:#e8f1ff;border:1px solid #4cc9f0;border-radius:8px;animation:shyp .6s linear infinite`);
+  P(pC[2], `background:radial-gradient(circle,rgba(255,240,200,.55),transparent 60%) 0% 50%/60% 170% no-repeat,#1b1035;color:#fff4d6;border:1.5px solid #f2c14e;border-radius:10px;animation:sspot 3s ease-in-out infinite alternate`);
+  P(pC[3], `border:2px solid transparent;border-radius:10px;background:linear-gradient(#2b1d05,#2b1d05) padding-box,linear-gradient(100deg,#a8740a,#ffe08a,#e8a50c,#fff3c4,#a8740a) border-box;background-size:auto,300% 100%;animation:spb 2.5s linear infinite;color:#ffe9a8;box-shadow:0 0 12px -2px rgba(232,165,12,.7)`);
+
+  /* 35 stats looks */
+  const topo = svgU(`<svg viewBox="0 0 200 200"><g fill="none" stroke="#2f6b3a" stroke-opacity=".12" stroke-width="1.2">${R(7, k => `<path d="M${100 - 14 - k * 13} 100c0-${30 + k * 10} ${30 + k * 8}-${44 + k * 12} ${60 + k * 10}-${34 + k * 10}s${40 + k * 6} ${30 + k * 6} ${20 + k * 6} ${60 + k * 10}-${60 + k * 8} ${30 + k * 6}-${80 + k * 12}-${26 + k * 6}z"/>`)}</g></svg>`);
+  slot("stat", 35, "ssA", ["Field notes", "Starship console", "Velvet stage", "Captain's log"]).forEach((id, i) => css.push(`${sel.stat(id)}{${[
+    `--bg:#f3ecd8;--surface:#fbf6e8;--ink:#23331f;--muted:#5d6b52;--line:#d6cba8;--accent:#2f6b3a;background-image:${topo};background-size:260px 260px`,
+    `--bg:#0b1226;--surface:#121b36;--ink:#e8f1ff;--muted:#8fa6cf;--line:#26365f;--accent:#4cc9f0;background-image:radial-gradient(#fff 0 .7px,transparent 1px),radial-gradient(#fff 0 .5px,transparent .8px);background-size:37px 41px,23px 29px;background-position:0 0,11px 7px;font-family:ui-monospace,"SF Mono",Menlo,monospace`,
+    `--bg:#1b1035;--surface:#2a1650;--ink:#fdf0ff;--muted:#cfa8e6;--line:#4b2a7a;--accent:#f2c14e;background-image:radial-gradient(ellipse at 50% 0,rgba(255,236,170,.14),transparent 60%),repeating-linear-gradient(90deg,rgba(0,0,0,.12) 0 10px,rgba(255,255,255,.025) 10px 22px)`,
+    `--bg:#efdcae;--surface:#f7e9c6;--ink:#3b2510;--muted:#7a5a35;--line:#d2b77c;--accent:#b03a2e;background-image:linear-gradient(rgba(122,90,53,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(122,90,53,.09) 1px,transparent 1px);background-size:24px 24px`][i]}}`));
+
+  /* 38 + 100 titles, 40 + 60 Atom colors */
+  ["t1", "t2", "t3", "t4"].forEach((id, i) => { S_NAMES[id] = ["Pathfinder", "Rocketeer", "Illusionist", "Treasure Hunter"][i]; const o = XCATS.find(c => c.k === "title").opts.find(x => x[0] === id); if (o) o[1] = S_NAMES[id]; });
+  slot("title", 100, "tc", ["Master Explorer", "Star Commander", "Grand Illusionist", "Legendary Captain"]);
+  slot("atomc", 40, "saA", ["Forest Atom", "Rocket Atom", "Mystic Atom", "Golden Atom"]);
+  slot("atomc", 60, "saB", ["Firefly glow", "Thruster glow", "Magic glow", "Treasure glow"]);
+  ["#9fd36a", "#ff9f1c", "#e879f9", "#ffd166"].forEach((c, i) => { TINTS["saB" + i] = TINTS["saA" + i]; SZ[i].glow = c; });
+  css.push("body:not(.adult).mglw .mascot{animation:mglw 2.6s ease-in-out infinite}", "@media (prefers-reduced-motion:reduce){body.mglw .mascot{animation:none!important}}");
+
+  /* season names in the pass and in the rewards lists */
+  S_ITEMS.forEach(([cat, lvl, ids]) => ids.forEach((id, i) => { EXTRA_SPECIAL[cat] = EXTRA_SPECIAL[cat] || {}; EXTRA_SPECIAL[cat][id] = { desc: `Reach level ${lvl} of a ${SEASON_NAMES[i]} season pass (${SZ[i].months})`, test: () => seasonBest(i) >= lvl }; }));
+  css.push("@media (prefers-reduced-motion:reduce){:root[data-pframe] :is(#titleLine,#pvTitle),:root[data-pframe] :is(#titleLine,#pvTitle)::before,:root[data-nflair] .nflair,:root[data-bar] .bar i,:root[data-cov] .cover,:root[data-cov] .cover::before,:root[data-cov] .cover::after{animation:none!important}}");
+  const st = document.createElement("style"); st.id = "seasonCss"; st.textContent = css.join("\n"); document.head.append(st);
+})();
+/* ---------- rank sets: every rank has its own look, from copper to champion ---------- */
+var RK = [
+  { k: "kcopper", t: "copper", fam: "Copper", c: "#c46a32", l: "#f4b48a", d: "#6e3416", x: "#3f9e8a" },
+  { k: "kbronze", t: "bronze", fam: "Bronze", c: "#b8823a", l: "#f3d39a", d: "#6b4416", x: "#8a2a1f" },
+  { k: "ksilver", t: "silver", fam: "Silver", c: "#8d99a6", l: "#d5dde5", d: "#4f5b67", x: "#3a5a8a" },
+  { k: "kgold", t: "gold", fam: "Gold", c: "#e0a915", l: "#fff1a8", d: "#946405", x: "#c8281f" },
+  { k: "kplat", t: "platinum", fam: "Platinum", c: "#94b2c0", l: "#d8eef7", d: "#4a6573", x: "#4fc9d1" },
+  { k: "kemer", t: "emerald", fam: "Emerald", c: "#1fa463", l: "#a8f0c6", d: "#0b5a32", x: "#e0a915" },
+  { k: "kdiam", t: "diamond", fam: "Diamond", c: "#7fc4ff", l: "#ffffff", d: "#3a6fd8", x: "#c7b8ff" },
+  { k: "kchamp", t: "champ", fam: "Champion", c: "#c455ff", l: "#ffd166", d: "#6a1fb0", x: "#ff4fa8" }
+];
+var RK_NAMES = [ // stamp, flair, bar, bookplate, cover, frame, confetti, sound
+  ["Copper crest", "Copper", "Copper wire", "Copper penny", "Copper plate", "Riveted copper", "Pennies", "Copper bell"],
+  ["Bronze crest", "Bronze", "Bronze", "Bronze medal", "Bronze cast", "Bronze plaque", "Bronze medals", "Bronze gong"],
+  ["Silver crest", "Sterling", "Quicksilver", "Silver medal", "Silverleaf", "Silver filigree", "Silver sparkles", "Silver bells"],
+  ["Gold crest", "24 Karat", "Gold bar", "Gold medal", "Gilded", "Golden laurel", "Gold stars", "Gold fanfare"],
+  ["Platinum crest", "Platinum", "Platinum", "Platinum medal", "Platinum record", "Platinum", "Platinum discs", "Platinum chime"],
+  ["Emerald crest", "Emerald", "Emerald", "Emerald medal", "Emerald cut", "Emerald", "Emeralds", "Emerald harp"],
+  ["Diamond crest", "Brilliant", "Diamond dust", "Diamond medal", "Diamond", "Facets", "Diamonds", "Crystal"],
+  ["Champion crest", "Champion", "Champion", "Champion crown", "Champion", "Champion", "Champion", "Champion fanfare"]
+];
+var RK_T = { copper: 0, bronze: 1, silver: 2, gold: 3, platinum: 4, emerald: 5, diamond: 6, champ: 7 };
+var RK_GLYPH = [
+  '<circle cx="12" cy="13" r="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M12 11v4" stroke="#fff" stroke-width="1.4"/>',
+  '<circle cx="12" cy="14.5" r="3.6" fill="#fff"/><path d="M9.5 8l2.5 4 2.5-4" stroke="#fff" stroke-width="1.6" fill="none"/>',
+  '<path d="M12 7.5Q12.9 12.1 17 13Q12.9 13.9 12 18.5Q11.1 13.9 7 13Q11.1 12.1 12 7.5Z" fill="#fff"/>',
+  '<path d="M12 7.6l1.7 3.5 3.8.5-2.8 2.6.7 3.8-3.4-1.8-3.4 1.8.7-3.8-2.8-2.6 3.8-.5z" fill="#fff"/>',
+  '<circle cx="12" cy="13" r="4.6" fill="#fff"/><circle cx="12" cy="13" r="1.4" fill="#55717f"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="#55717f" stroke-width=".5"/>',
+  '<path d="M10 8.5h4l2.5 2.5v4L14 17.5h-4L7.5 15v-4z" fill="#fff"/><path d="M10 8.5h4l-1 2.5h-2z" fill="#a8f0c6"/>',
+  '<path d="M8.5 9.5h7l2 2.5-5.5 6.5-5.5-6.5z" fill="#fff"/><path d="M6.5 12h11M10 9.5l2 2.5 2-2.5M12 12v6.5" stroke="#7fc4ff" stroke-width=".7" fill="none"/>',
+  '<path d="M7 16.5L6.5 9.5l3 2.8L12 7.5l2.5 4.8 3-2.8-.5 7z" fill="#ffd166"/><rect x="7" y="16" width="10" height="2" fill="#ffd166"/>'
+];
+function rankCrest(f, n) {
+  const r = RK[f];
+  return `<svg viewBox="0 0 24 28" width="${n}" height="${Math.round(n * 28 / 24)}" aria-hidden="true"><defs><linearGradient id="kcg${f}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${r.l}"/><stop offset=".45" stop-color="${r.c}"/><stop offset="1" stop-color="${r.d}"/></linearGradient></defs><path d="M12 1.5L22 5v8c0 6.5-5 11-10 13.5C7 24 2 19.5 2 13V5z" fill="url(#kcg${f})" stroke="${r.d}" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 3.4L20 6.3v6.6c0 5.4-4 9.2-8 11.4" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1"/>${RK_GLYPH[f]}</svg>`;
+}
+var BM_COL = { star: "#e0a915", flag: "#d7372b", ribbon: "#c8281f", leaf: "#3f9e5b", heart: "#e0457b", rocket: "#e63946", paw: "#8a5a2b", crown: "#e0a915", note: "#7c3aed", gem: "#2fa8d6", sheriff: "#b8862a", lighthouse: "#d7372b", sprout: "#4f8a3a", moons: "#d08a3a", key: "#4f86b8",
+  sbA0: "#8a5a2b", sbA1: "#e0862a", sbA2: "#c026d3", sbA3: "#c98a0a", sbB0: "#d7372b", sbB1: "#2fa8d6", sbB2: "#9aa5b1", sbB3: "#b8862a" };
+(function () {
+  const css = [], R = (n, f) => { let o = ""; for (let i = 0; i < n; i++) o += f(i); return o; };
+  const G = "animation:grow .8s cubic-bezier(.2,.8,.2,1) both", cats = ["stamp", "nflair", "bar", "plate", "cov", "pframe", "conf", "chime"], off = [0, 1, 1, 2, 2, 3, 3, 4];
+  const sel = { cov: id => `:root[data-cov=${id}] .cover`, bar: id => `:root[data-bar=${id}] .bar`, nflair: id => `:root[data-nflair=${id}] .nflair`, pframe: id => `:root[data-pframe=${id}] :is(#titleLine,#pvTitle):not(:empty)` };
+  const tc = XCATS.find(c => c.k === "title"); if (!tc.opts.some(o => o[0] === "copper")) tc.opts.unshift(["copper", "Copper Reader"]); UNLOCK.title.copper = 0;
+  RK.forEach((r, f) => {
+    const base = f * 5, items = [["title", r.t]];
+    cats.forEach((k, j) => { const c = XCATS.find(x => x.k === k); c.opts.push([r.k, RK_NAMES[f][j]]); UNLOCK[k] = UNLOCK[k] || {}; UNLOCK[k][r.k] = base + off[j]; items.push([k, r.k]); });
+    COLLS.push({ id: "rk_" + r.t, grp: "rank", f, name: r.fam + " set", blurb: `Unlocks as you climb through ${r.fam} rank.`, c1: r.l, c2: f === 6 ? "#2c4f9e" : f === 7 ? "#4a1680" : r.d, items });
+    STAMP_C[r.k] = n => rankCrest(f, n);
+  });
+  css.push("@keyframes kglint{to{background-position:-250% 0,0 0}}", "@keyframes dmd{to{background-position:20px 50%,-300% 0}}", "@keyframes kfs5{from{background-position:left 3px center,right 3px center,0 0,120% 0,0 0}to{background-position:left 3px center,right 3px center,0 0,-120% 0,0 0}}",
+    "@keyframes kchg{0%,100%{box-shadow:0 0 0 2px #c455ff,0 0 14px 1px rgba(196,85,255,.7)}50%{box-shadow:0 0 0 2px #ffd166,0 0 20px 4px rgba(255,79,168,.6)}}",
+    "@keyframes kspk{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.6) rotate(70deg);opacity:.8}}",
+    ".collchips{display:flex;gap:6px;margin:2px 0 4px}", ".collchips button{flex:1;min-height:0;border-radius:999px;padding:8px 6px;font:700 12.5px system-ui,sans-serif;border:1px solid var(--line);background:var(--surface);color:var(--ink)}", ".collchips button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}");
+  const spark = (host, col, x, y, d) => `${host}::after{content:"";position:absolute;${x};${y};width:9px;height:9px;background:${col};clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:kspk 2.4s ease-in-out ${d || 0}s infinite;pointer-events:none;z-index:3}`;
+  const metalV = r => `linear-gradient(180deg,${r.l} 0%,${r.c} 45%,${r.d} 55%,${r.c} 80%,${r.l} 100%)`, glint = a => `linear-gradient(100deg,transparent 42%,rgba(255,255,255,${a || .9}) 50%,transparent 58%)`;
+  const prism = "linear-gradient(100deg,#2b5fc9 0%,#5fa8f0 18%,#8fcaf7 28%,#8f7be6 40%,#3f8ff0 54%,#8fcaf7 64%,#2b5fc9 80%,#8f7be6 100%)", champ = "linear-gradient(90deg,#c455ff,#ff4fa8,#ffb000,#3fb8c2,#c455ff)";
+  RK.forEach((r, f) => {
+    const id = r.k, anim = f >= 2;
+    /* name flair */
+    let nf;
+    if (f <= 4) nf = anim ? `background-image:${glint(.55)},${metalV(r)};background-size:250% 100%,100% 100%;animation:kglint ${4 - f * .3}s linear infinite` : `background-image:${metalV(r)}`;
+    else if (f === 5) nf = `background-image:${glint(.85)},linear-gradient(115deg,${r.d} 0 22%,${r.c} 22% 45%,${r.l} 45% 52%,${r.c} 52% 74%,${r.d} 74%);background-size:250% 100%,100% 100%;animation:kglint 3s linear infinite`;
+    else if (f === 6) nf = `background-image:${prism};background-size:250% 100%;animation:nshim 4s linear infinite;filter:drop-shadow(0 0 3px rgba(127,196,255,.75)) drop-shadow(0 1px 0 rgba(20,40,90,.35))`;
+    else nf = `background-image:${champ};background-size:300% 100%;animation:nshim 3.5s linear infinite;filter:drop-shadow(0 0 4px rgba(196,85,255,.6))`;
+    css.push(`${sel.nflair(id)}{${nf}${f <= 5 ? ";filter:drop-shadow(0 1px 0 rgba(0,0,0,.22))" : ""}}`);
+    if (f >= 6) css.push(`${sel.nflair(id)}{position:relative}`, spark(sel.nflair(id), f === 6 ? "#fff" : "#ffd166", "right:-8px", "top:-4px"));
+    /* progress bar */
+    let bv;
+    if (f === 0) bv = `background:repeating-linear-gradient(70deg,${r.c} 0 2px,${r.l} 2px 3px,${r.d} 3px 4.5px)`;
+    else if (f <= 1) bv = `background:linear-gradient(180deg,${r.l},${r.c} 50%,${r.d})`;
+    else if (f <= 4) bv = `background:${glint(.75)} 0 0/220% 100%,linear-gradient(180deg,${r.l},${r.c} 50%,${r.d});${G},bshim ${3 - f * .2}s linear infinite`;
+    else if (f === 5) bv = `background:${glint(.7)} 0 0/220% 100%,repeating-linear-gradient(115deg,${r.c} 0 6px,${r.l} 6px 7.5px,${r.d} 7.5px 12px);${G},bshim 2.4s linear infinite`;
+    else if (f === 6) bv = `background:radial-gradient(circle,#fff 0 .9px,transparent 1.4px) 0 50%/10px 100%,linear-gradient(90deg,#9fd8ff,#fff,#c7b8ff,#7fc4ff,#fff,#9fd8ff) 0 0/300% 100%;${G},dmd 3s linear infinite`;
+    else bv = `background:${champ} 0 0/300% 100%;${G},bshim 3s linear infinite`;
+    css.push(`${sel.bar(id)} i{${bv}}`);
+    if (f >= 6) css.push(`${sel.bar(id)}{box-shadow:0 0 7px -1px ${f === 6 ? "#9fd8ff" : "#c455ff"}}`);
+    /* book cover */
+    const cv = sel.cov(id), after = v => css.push(`${cv}::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;${v}}`), before = v => css.push(`${cv}::before{content:"";position:absolute;pointer-events:none;z-index:2;${v}}`);
+    const sweep = (a, t) => `inset:0;background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,${a}) 50%,transparent 68%);background-size:260% 100%;animation:covfoil ${t}s ease-in-out infinite`;
+    if (f <= 4) {
+      css.push(`${cv}{border:none;border-radius:${f === 1 ? 3 : 5}px;box-shadow:0 0 0 ${f === 1 || f === 3 ? 3 : 2}px ${r.c},0 0 0 ${f === 1 || f === 3 ? 4 : 3}px ${r.d},0 6px 12px -4px rgba(0,0,0,.45)}`);
+      if (f === 0) after(`background:radial-gradient(circle at 4px 4px,${r.l} 0 1.2px,${r.d} 1.6px,transparent 2px),radial-gradient(circle at calc(100% - 4px) 4px,${r.l} 0 1.2px,${r.d} 1.6px,transparent 2px),radial-gradient(circle at 4px calc(100% - 4px),${r.l} 0 1.2px,${r.d} 1.6px,transparent 2px),radial-gradient(circle at calc(100% - 4px) calc(100% - 4px),${r.l} 0 1.2px,${r.d} 1.6px,transparent 2px),linear-gradient(160deg,rgba(255,220,190,.25),transparent 40%),radial-gradient(circle at 100% 100%,rgba(63,158,138,.35),transparent 45%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)`);
+      else if (f === 1) { after(`box-shadow:inset 0 0 0 1px rgba(255,235,200,.5);background:linear-gradient(160deg,rgba(255,230,190,.25),transparent 40%)`); before(`inset:3px;border:1px solid rgba(243,211,154,.75);border-radius:2px`); }
+      else if (f === 2) { after(`background:${svgU(`<svg viewBox="0 0 48 72"><g fill="none" stroke="#f4f7fa" stroke-width="1.1" stroke-linecap="round">${[[0, 0, 1, 1], [48, 0, -1, 1], [0, 72, 1, -1], [48, 72, -1, -1]].map(([x, y, a, b]) => `<path d="M${x + a * 3} ${y + b * 12}C${x + a * 3} ${y + b * 5} ${x + a * 6} ${y + b * 3} ${x + a * 12} ${y + b * 3}M${x + a * 4} ${y + b * 8}c${a * 3} 0 ${a * 4} ${b * 2} ${a * 2} ${b * 4}M${x + a * 8} ${y + b * 4}c0 ${b * 3} ${a * 2} ${b * 4} ${a * 4} ${b * 2}"/>`).join("")}</g></svg>`)} center/100% 100%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)`); before(sweep(.55, 4.5)); }
+      else if (f === 3) { after(`box-shadow:inset 0 0 0 1px #fff1a8,inset 0 0 0 3px rgba(148,100,5,.5);background:linear-gradient(160deg,rgba(255,241,168,.3),transparent 40%)`); before(sweep(.75, 3.5)); }
+      else { after(`background:radial-gradient(circle at 100% 100%,#1d2328 0 9px,#c9d6df 9.5px 10px,#2a3238 10.5px 13px,#3a444c 13.5px 14px,#1d2328 14.5px 17px,transparent 17.5px),radial-gradient(circle at 100% 100%,transparent 0 2.5px,transparent 3px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)`); before(sweep(.6, 4)); }
+    } else if (f === 5) {
+      css.push(`${cv}{border:none;border-radius:0;clip-path:polygon(7px 0,calc(100% - 7px) 0,100% 7px,100% calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,0 calc(100% - 7px),0 7px)}`);
+      after(`background:linear-gradient(135deg,rgba(168,240,198,.55) 0 12%,transparent 12% 88%,rgba(11,90,50,.55) 88%),linear-gradient(45deg,rgba(11,90,50,.45) 0 12%,transparent 12% 88%,rgba(168,240,198,.45) 88%);box-shadow:inset 0 0 0 2px ${r.c},inset 0 0 0 3px ${r.l}`); before(sweep(.6, 3.5));
+    } else if (f === 6) {
+      css.push(`${cv}{border:none;border-radius:6px;box-shadow:0 0 0 2px #e8f6ff,0 0 0 3px #5f9dff,0 0 16px -2px #9fd8ff}`);
+      after(`background:${svgU(`<svg viewBox="0 0 48 72">${[[8, 9, 1], [41, 20, .7], [12, 54, .8], [39, 63, 1.1], [26, 34, .5]].map(([x, y, s]) => `<path transform="translate(${x} ${y}) scale(${s})" d="M0-6Q.8-.8 6 0Q.8.8 0 6Q-.8.8-6 0Q-.8-.8 0-6Z" fill="#fff"/>`).join("")}</svg>`)} center/100% 100%;animation:twk 1.8s ease-in-out infinite`);
+      before(`inset:0;background:${prism};background-size:300% 100%;mix-blend-mode:overlay;opacity:.7;animation:covholo 5s linear infinite`);
+    } else {
+      css.push(`${cv}{border:none;border-radius:6px;animation:kchg 3s ease-in-out infinite}`);
+      after(`background:${svgU(`<svg viewBox="0 0 48 72"><path d="M16 9L15 2l4.5 3L24 0l4.5 5L33 2l-1 7z" fill="#ffd166" stroke="#6a1fb0" stroke-width=".8"/>${[[8, 22, .8], [40, 40, .9], [10, 60, .7]].map(([x, y, s]) => `<path transform="translate(${x} ${y}) scale(${s})" d="M0-6Q.8-.8 6 0Q.8.8 0 6Q-.8.8-6 0Q-.8-.8 0-6Z" fill="#fff"/>`).join("")}</svg>`)} center/100% 100%`);
+      before(`inset:0;background:linear-gradient(115deg,transparent 32%,rgba(255,209,102,.6) 50%,transparent 68%);background-size:260% 100%;animation:covfoil 3s ease-in-out infinite`);
+    }
+    /* frame */
+    const fr = sel.pframe(id), P = v => css.push(`${fr}{${v}}`);
+    const metalBorder = (bg, a) => `border:2px solid transparent;border-radius:10px;background:${bg ? bg + "," : ""}linear-gradient(var(--surface),var(--surface)) padding-box,${a ? glint(.9) + " border-box," : ""}${metalV(r)} border-box`;
+    if (f === 0) P(`${metalBorder(`radial-gradient(circle at 6px 50%,${r.l} 0 1.4px,${r.d} 1.8px,transparent 2.2px) padding-box,radial-gradient(circle at calc(100% - 6px) 50%,${r.l} 0 1.4px,${r.d} 1.8px,transparent 2.2px) padding-box`)};border-radius:6px;padding:4px 16px`);
+    else if (f === 1) P(`background:radial-gradient(circle at 6px 50%,#f3d39a 0 1.3px,#4a2e0e 1.8px,transparent 2.2px),radial-gradient(circle at calc(100% - 6px) 50%,#f3d39a 0 1.3px,#4a2e0e 1.8px,transparent 2.2px),linear-gradient(180deg,#9a6a2c,#6b4416);color:#fbe7c0;border:1px solid #4a2e0e;border-radius:3px;padding:4px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 4px rgba(0,0,0,.3);text-shadow:0 1px 0 rgba(0,0,0,.4)`);
+    else if (f === 2) P(`${metalBorder(`${svgU(`<svg viewBox="0 0 12 16"><path d="M10 2C4 2 2 6 4 9s6 2 5-1-4-2-3 0" fill="none" stroke="#8d99a6" stroke-width="1.2" stroke-linecap="round"/></svg>`)} left 3px center/9px 13px no-repeat padding-box,${svgU(`<svg viewBox="0 0 12 16"><path d="M2 2c6 0 8 4 6 7s-6 2-5-1 4-2 3 0" fill="none" stroke="#8d99a6" stroke-width="1.2" stroke-linecap="round"/></svg>`)} right 3px center/8px 12px no-repeat padding-box`, true)};background-size:8px 12px,8px 12px,auto,250% 100%,auto;padding:4px 21px;animation:kfs5 4s linear infinite`);
+    else if (f === 3) { const laurel = flip => svgU(`<svg viewBox="0 0 12 18"><g transform="${flip ? "translate(12 0) scale(-1 1)" : ""}"><path d="M9 17C3 14 2 8 5 2" stroke="#946405" stroke-width="1" fill="none"/>${[[4.6, 4, -40], [3.4, 7.5, -30], [3.2, 11, -15], [4.6, 14.4, 10]].map(([x, y, a]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.2" transform="rotate(${a} ${x} ${y})" fill="#e0a915"/><ellipse cx="${x + 2.6}" cy="${y + .6}" rx="2.2" ry="1" transform="rotate(${-a} ${x + 2.6} ${y + .6})" fill="#c48a08"/>`).join("")}</g></svg>`);
+      P(`${metalBorder(`${laurel(0)} left 3px center/10px 15px no-repeat padding-box,${laurel(1)} right 3px center/10px 15px no-repeat padding-box`, true)};background-size:10px 15px,10px 15px,auto,250% 100%,auto;padding:4px 20px;animation:kfs5 3.5s linear infinite`); }
+    else if (f === 4) P(`${metalBorder("", true)};background-size:auto,250% 100%,auto;animation:spb 3.6s linear infinite;box-shadow:0 0 10px -4px ${r.x}`);
+    else if (f === 5) P(`border:2px solid transparent;border-radius:4px;background:linear-gradient(color-mix(in srgb,${r.c} 12%,var(--surface)),color-mix(in srgb,${r.c} 12%,var(--surface))) padding-box,${glint(.85)} border-box,linear-gradient(115deg,${r.d} 0 22%,${r.c} 22% 45%,${r.l} 45% 52%,${r.c} 52% 74%,${r.d} 74%) border-box;background-size:auto,250% 100%,auto;animation:spb 3s linear infinite;clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0 calc(100% - 5px),0 5px)`);
+    else if (f === 6) { P(`position:relative;border:2px solid transparent;border-radius:10px;background:linear-gradient(var(--surface),var(--surface)) padding-box,${prism} border-box;background-size:auto,300% 100%;animation:spb 4s linear infinite;box-shadow:0 0 12px -3px #7fc4ff`); css.push(spark(fr, "#fff", "right:-5px", "top:-5px"), `${fr}::before{content:"";position:absolute;left:-4px;bottom:-4px;width:7px;height:7px;background:#e8f6ff;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:kspk 2.4s ease-in-out 1.2s infinite;pointer-events:none}`); }
+    else { P(`position:relative;border:2px solid transparent;border-radius:12px;background:linear-gradient(color-mix(in srgb,#c455ff 10%,var(--surface)),color-mix(in srgb,#c455ff 10%,var(--surface))) padding-box,${champ} border-box;background-size:auto,300% 100%;animation:spb 3s linear infinite,kchg 3s ease-in-out infinite;padding:4px 14px 4px 26px`); css.push(`${fr}::before{content:"";position:absolute;left:7px;top:50%;width:14px;height:11px;margin-top:-6px;background:${svgU('<svg viewBox="0 0 14 11"><path d="M1 10L.5 2.5l3.5 3L7 0l3 5.5 3.5-3L13 10z" fill="#ffd166" stroke="#6a1fb0" stroke-width=".8"/></svg>')} center/contain no-repeat}`, spark(fr, "#ffd166", "right:-5px", "top:-5px")); }
+    /* bookplate */
+    PLATE_X[id] = f === 7 ? `<circle cx="12" cy="12" r="10.5" fill="#4a1680" stroke="#ffd166" stroke-width="1.4"/><path d="M5.5 16.5L5 8.5l3.6 3.2L12 5.5l3.4 6.2L19 8.5l-.5 8z" fill="#ffd166" stroke="#6a1fb0" stroke-width=".7"/><circle cx="12" cy="13.5" r="1.3" fill="#ff4fa8"/><rect x="5.5" y="16" width="13" height="2" fill="#ffd166"/>`
+      : `<defs><linearGradient id="kpg${f}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${r.l}"/><stop offset=".5" stop-color="${r.c}"/><stop offset="1" stop-color="${r.d}"/></linearGradient></defs><path d="M7.5 12L4 22.5l3.6-1.4L9.8 24l2.6-10zM16.5 12L20 22.5l-3.6-1.4-2.2 2.9-2.6-10z" fill="${r.x}"/><circle cx="12" cy="9.5" r="8" fill="url(#kpg${f})" stroke="${r.d}" stroke-width="1"/><circle cx="12" cy="9.5" r="6" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width=".8"/><g transform="translate(0 -3.5)">${RK_GLYPH[f]}</g>`;
+    /* confetti */
+    SPSHAPE[id] = ["coins", "medal", "glints", "stars", "disc", "emerald", "diamond", "crown"][f];
+    SPPAL[id] = f === 6 ? ["#ffffff", "#9fd3ff", "#3a8ff0", "#a99bf0"] : f === 7 ? ["#c455ff", "#ffd166", "#ff4fa8", "#3fb8c2"] : [r.l, r.c, r.d, r.c];
+  });
+  /* title looks */
+  const T = (id, bg, extra) => css.push(`.ttx[data-fx=${id}]{-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;background-image:${bg};${extra || ""}}`);
+  RK.forEach((r, f) => {
+    if (f <= 4) T(r.t, f >= 2 ? `${glint(.55)},${metalV(r)}` : metalV(r), (f >= 2 ? `background-size:250% 100%,100% 100%;animation:kglint ${4 - f * .3}s linear infinite;` : "") + "filter:drop-shadow(0 1px 0 rgba(0,0,0,.22));font-weight:700");
+    else if (f === 5) T(r.t, `${glint(.85)},linear-gradient(115deg,${r.d} 0 22%,${r.c} 22% 45%,${r.l} 45% 52%,${r.c} 52% 74%,${r.d} 74%)`, "background-size:250% 100%,100% 100%;animation:kglint 3s linear infinite;font-weight:700;filter:drop-shadow(0 1px 0 rgba(0,0,0,.2))");
+    else if (f === 6) { T(r.t, prism, "background-size:250% 100%;animation:nshim 4s linear infinite;font-weight:700;filter:drop-shadow(0 0 3px rgba(127,196,255,.8)) drop-shadow(0 1px 0 rgba(20,40,90,.35))"); css.push(spark(".ttx[data-fx=diamond]", "#fff", "right:-9px", "top:-5px"), `.ttx[data-fx=diamond]::before{content:"";position:absolute;left:-6px;bottom:-3px;width:7px;height:7px;background:#e8f6ff;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:kspk 2.4s ease-in-out 1.2s infinite;pointer-events:none}`); }
+    else { T(r.t, champ, "background-size:300% 100%;animation:nshim 3.5s linear infinite;font-weight:800;filter:drop-shadow(0 0 4px rgba(196,85,255,.65))"); css.push(spark(".ttx[data-fx=champ]", "#ffd166", "right:-9px", "top:-5px")); }
+  });
+  const TT = {
+    tier1: [`${glint()},linear-gradient(180deg,#eef2f6,#8d99a6 50%,#56616d)`, "background-size:250% 100%,100% 100%;animation:kglint 4s linear infinite;font-weight:700;filter:drop-shadow(0 1px 0 rgba(0,0,0,.2))"],
+    tier2: [`${glint()},linear-gradient(180deg,#fff1a8,#e0a915 50%,#946405)`, "background-size:250% 100%,100% 100%;animation:kglint 3.4s linear infinite;font-weight:700;filter:drop-shadow(0 1px 0 rgba(0,0,0,.2))"],
+    owl: ["linear-gradient(90deg,#3a4a9a,#7f8fd6,#3a4a9a)"], bird: ["linear-gradient(90deg,#e8590c,#ff8a3d,#e0457b)"], sunday: ["linear-gradient(90deg,#6d4fd6,#b06ae0)"],
+    keeper: ["linear-gradient(90deg,#e8590c,#f59f00)"], warden: ["linear-gradient(100deg,#d9480f 20%,#ffb703 45%,#ff6b1a 60%,#d9480f 80%)", "background-size:220% 100%;animation:nshim 2.6s linear infinite"],
+    hundred: ["linear-gradient(100deg,#c92a2a 15%,#ff922b 40%,#ffe066 50%,#ff6b1a 62%,#c92a2a 85%)", "background-size:220% 100%;animation:nshim 2.2s linear infinite;font-weight:800;filter:drop-shadow(0 0 3px rgba(255,107,26,.55))"],
+    agent: ["linear-gradient(90deg,var(--ink),var(--ink))", "font-family:ui-monospace,'SF Mono',Menlo,monospace;text-transform:uppercase;letter-spacing:.12em;font-size:.82em"],
+    marathon: ["linear-gradient(90deg,#0c8599,#2f9e44)"], finisher: ["linear-gradient(90deg,#2f9e44,#66a80f)"], shelf: ["linear-gradient(90deg,#8a5a2b,#c98d4e)"], explorer: ["linear-gradient(90deg,#0c8599,#3b82f6)"],
+    hunter: ["linear-gradient(90deg,#7c83db,#b8bcf2,#7c83db)", "background-size:200% 100%;animation:nshim 4s linear infinite;filter:drop-shadow(0 0 4px rgba(150,160,255,.7))"],
+    trail: ["linear-gradient(180deg,#e8c36a,#b07a2a 55%,#7a4f16)", "font-weight:700"], lkeeper: ["linear-gradient(90deg,#2b8f86,#5fc9bb,#3a7fb0)", "font-weight:700"], survivor: ["linear-gradient(90deg,#3e6b2e,#7fb342)", "font-weight:700"],
+    wander: ["linear-gradient(90deg,#c4471f,#f08c2a,#d9a02a)", "font-weight:700"], caretaker: ["linear-gradient(100deg,#3f7fb8 20%,#a8d8ff 45%,#3f7fb8 70%)", "background-size:220% 100%;animation:nshim 4s linear infinite;font-weight:700"],
+    t1: ["linear-gradient(90deg,#2f6b3a,#6a9a45,#c98a0a)", "font-weight:700"], t2: ["linear-gradient(90deg,#e63946,#ff9f1c)", "font-weight:700"], t3: ["linear-gradient(90deg,#7c3aed,#c026d3)", "font-weight:700"], t4: ["linear-gradient(180deg,#f5d77a,#d99a0b 50%,#8a5a06)", "font-weight:700"],
+    tc0: ["linear-gradient(90deg,#2f6b3a,#9fd36a,#e0a03a,#2f6b3a)", "background-size:300% 100%;animation:nshim 4s linear infinite;font-weight:800"], tc1: ["linear-gradient(90deg,#3a0ca3,#4cc9f0,#e63946,#3a0ca3)", "background-size:300% 100%;animation:nshim 4s linear infinite;font-weight:800"],
+    tc2: ["linear-gradient(90deg,#7c3aed,#f2c14e,#c026d3,#7c3aed)", "background-size:300% 100%;animation:nshim 3.5s linear infinite;font-weight:800;filter:drop-shadow(0 0 3px rgba(192,38,211,.5))"], tc3: ["linear-gradient(100deg,#946405 15%,#ffe08a 45%,#e8a50c 55%,#946405 85%)", "background-size:220% 100%;animation:nshim 3s linear infinite;font-weight:800;filter:drop-shadow(0 0 3px rgba(232,165,12,.55))"]
+  };
+  Object.keys(TT).forEach(k => T(k, TT[k][0], TT[k][1] || ""));
+  css.push(".ttx{display:inline-block;position:relative}",
+    // frames with their own background color keep their own text color, so the title stays readable
+    ["spA0", "spA1", "spA2", "spA3", "spB0", "spB2", "spB3", "spC1", "spC2", "spC3", "kbronze", "banner", "wanted", "spB0", "spB1", "spB2", "spB3"].map(f => `:root[data-pframe=${f}] .ttx[data-fx]`).join(",") + "{background:none!important;color:inherit!important;-webkit-text-fill-color:currentColor!important;filter:none!important}", "#titleLine .kcrest,#pvTitle .kcrest{display:inline-flex;flex:none}", ".xth .ttl{font:700 12px/1.2 Georgia,\"Iowan Old Style\",serif;color:var(--ink);text-align:center;padding:0 6px;display:flex;align-items:center;gap:4px}",
+    "@media (prefers-reduced-motion:reduce){.ttx,.ttx::before,.ttx::after,:root[data-nflair] .nflair::after{animation:none!important}}");
+  const st = document.createElement("style"); st.id = "rankCss"; st.textContent = css.join("\n"); document.head.append(st);
+})();
+function titleFx(t) {
+  if (t in RK_T) return t;
+  if (typeof TITLE_TIERS !== "undefined" && TITLE_TIERS[t]) { const k = titleTier(t); return k === 2 ? "tier2" : k === 1 ? "tier1" : ""; }
+  return /^(agent|owl|bird|sunday|keeper|warden|hundred|marathon|finisher|shelf|explorer|hunter|trail|lkeeper|survivor|wander|caretaker|t[1-4]|tc[0-3])$/.test(t) ? t : "";
+}
+function renderTitleLine(tl, t, st) {
+  tl.innerHTML = t ? stampHtml(st) : ""; if (!t) return;
+  if (!st && t in RK_T) { const c = el("span", "kcrest"); c.innerHTML = rankCrest(RK_T[t], 16); tl.append(c); }
+  const sp = el("span", "ttx", typeof titleName === "function" ? titleName(t) : XNAME("title", t)), fx = titleFx(t); if (fx) sp.dataset.fx = fx; tl.append(sp);
+}
+/* new confetti shapes */
+(function () {
+  const old = drawPiece;
+  drawPiece = function (c, q, st) {
+    if (SPSHAPE[st]) st = SPSHAPE[st];
+    const z = q.w * .9, v = Math.floor((q.w || 7) * 13) % 4, rot = q.r || 0;
+    const poly = pts => { c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x * z, y * z) : c.moveTo(x * z, y * z)); c.closePath(); c.fill(); };
+    const gem = () => { poly([[-.6, -.2], [-.3, -.6], [.3, -.6], [.6, -.2], [0, .7]]); c.strokeStyle = "rgba(255,255,255,.75)"; c.lineWidth = Math.max(.6, z * .06); c.beginPath(); c.moveTo(-.6 * z, -.2 * z); c.lineTo(.6 * z, -.2 * z); c.moveTo(-.15 * z, -.6 * z); c.lineTo(0, .7 * z); c.stroke(); };
+    if (st === "maple") poly([[0, -1], [.27, -.5], [.8, -.7], [.55, -.18], [1, .1], [.36, .27], [.45, .9], [0, .55], [-.45, .9], [-.36, .27], [-1, .1], [-.55, -.18], [-.8, -.7], [-.27, -.5]]);
+    else if (st === "comet") { c.beginPath(); c.arc(z * .5, 0, z * .32, 0, 7); c.fill(); c.globalAlpha *= .45; c.beginPath(); c.moveTo(z * .5, -z * .3); c.lineTo(-z * 1.3, 0); c.lineTo(z * .5, z * .3); c.closePath(); c.fill(); c.globalAlpha /= .45; }
+    else if (st === "suits") {
+      if (v === 0) { c.beginPath(); c.moveTo(0, z * .8); c.bezierCurveTo(-z * 1.3, -z * .1, -z * .5, -z, 0, -z * .35); c.bezierCurveTo(z * .5, -z, z * 1.3, -z * .1, 0, z * .8); c.fill(); }
+      else if (v === 1) poly([[0, -.85], [.55, 0], [0, .85], [-.55, 0]]);
+      else if (v === 2) { [[0, -.4], [-.38, .12], [.38, .12]].forEach(([x, y]) => { c.beginPath(); c.arc(x * z, y * z, z * .33, 0, 7); c.fill(); }); poly([[-.12, .1], [.12, .1], [.25, .85], [-.25, .85]]); }
+      else { c.beginPath(); c.moveTo(0, -z * .85); c.bezierCurveTo(-z * 1.3, z * .1, -z * .5, z * .9, 0, z * .3); c.bezierCurveTo(z * .5, z * .9, z * 1.3, z * .1, 0, -z * .85); c.fill(); poly([[-.1, .2], [.1, .2], [.25, .9], [-.25, .9]]); }
+    }
+    else if (st === "coins") { const sx = Math.max(.15, Math.abs(Math.cos(rot * 1.3))); c.beginPath(); c.ellipse(0, 0, z * .6 * sx, z * .6, 0, 0, 7); c.fill(); c.fillStyle = "rgba(255,255,255,.45)"; c.beginPath(); c.ellipse(-z * .15 * sx, -z * .18, z * .18 * sx, z * .14, 0, 0, 7); c.fill(); c.strokeStyle = "rgba(0,0,0,.25)"; c.lineWidth = Math.max(.6, z * .07); c.beginPath(); c.ellipse(0, 0, z * .42 * sx, z * .42, 0, 0, 7); c.stroke(); }
+    else if (st === "feather") { c.beginPath(); c.ellipse(0, 0, z * .26, z * .95, 0, 0, 7); c.fill(); c.strokeStyle = "rgba(0,0,0,.3)"; c.lineWidth = Math.max(.6, z * .07); c.beginPath(); c.moveTo(0, -z * .9); c.lineTo(0, z * 1.15); c.stroke(); }
+    else if (st === "rocket") { poly([[0, -1], [.32, -.35], [.32, .45], [-.32, .45], [-.32, -.35]]); c.fillStyle = "#e63946"; poly([[.32, .1], [.6, .65], [.32, .45]]); poly([[-.32, .1], [-.6, .65], [-.32, .45]]); c.fillStyle = "#4cc9f0"; c.beginPath(); c.arc(0, -z * .25, z * .14, 0, 7); c.fill(); c.fillStyle = "#ff9f1c"; poly([[-.18, .45], [.18, .45], [0, .95]]); }
+    else if (st === "tophat") { c.fillRect(-z * .75, z * .32, z * 1.5, z * .2); c.fillRect(-z * .42, -z * .62, z * .84, z * .98); c.fillStyle = "#f2c14e"; c.fillRect(-z * .42, z * .08, z * .84, z * .16); }
+    else if (st === "gems" || st === "diamond") gem();
+    else if (st === "medal") { c.fillRect(-z * .35, -z * .95, z * .25, z * .6); c.fillRect(z * .1, -z * .95, z * .25, z * .6); c.beginPath(); c.arc(0, z * .1, z * .5, 0, 7); c.fill(); c.fillStyle = "rgba(255,255,255,.4)"; c.beginPath(); c.arc(-z * .12, 0, z * .15, 0, 7); c.fill(); }
+    else if (st === "disc") { c.beginPath(); c.arc(0, 0, z * .7, 0, 7); c.fill(); c.strokeStyle = "rgba(0,0,0,.25)"; c.lineWidth = Math.max(.5, z * .05); c.beginPath(); c.arc(0, 0, z * .48, 0, 7); c.stroke(); c.fillStyle = "rgba(30,40,50,.7)"; c.beginPath(); c.arc(0, 0, z * .16, 0, 7); c.fill(); }
+    else if (st === "emerald") { poly([[-.3, -.7], [.3, -.7], [.5, -.45], [.5, .45], [.3, .7], [-.3, .7], [-.5, .45], [-.5, -.45]]); c.fillStyle = "rgba(255,255,255,.45)"; poly([[-.2, -.5], [.2, -.5], [.3, -.3], [-.3, -.3]]); }
+    else if (st === "crown") { if (v === 3) old(c, q, "stars"); else poly([[-.7, .45], [-.75, -.35], [-.35, -.02], [0, -.62], [.35, -.02], [.75, -.35], [.7, .45]]); }
+    else old(c, q, st);
+  };
+})();
+/* sounds for the rank sets */
+(function () {
+  const sw = (f1, f2, t, d, g, type) => { const o = actx.createOscillator(), v = actx.createGain(); o.type = type || "sine"; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + d); v.gain.setValueAtTime(.0001, t); v.gain.linearRampToValueAtTime(g, t + .02); v.gain.exponentialRampToValueAtTime(.0001, t + d + .05); o.connect(v); v.connect(actx.destination); o.start(t); o.stop(t + d + .1); };
+  Object.assign(SPCH, {
+    kcopper: t => { tone(659, t, 1.2, "sine", .14); tone(659 * 2.4, t, .5, "sine", .04); tone(659 * 4.1, t, .2, "sine", .02); },
+    kbronze: t => { tone(110, t, 3, "sine", .18); tone(163, t, 2.2, "sine", .07); tone(250, t, 1.4, "sine", .05); tone(341, t, .8, "sine", .03); sw(118, 106, t, 2.5, .05); },
+    ksilver: t => { tone(1319, t, 1.1, "sine", .09); tone(1976, t + .12, .9, "sine", .06); for (let k = 0; k < 10; k++) tone(2600 + Math.random() * 1400, t + k * .055, .18, "triangle", .03); },
+    kgold: t => { [523, 659, 784].forEach((f, k) => { tone(f, t + k * .1, .14, "square", .03); tone(f, t + k * .1, .18, "triangle", .1); }); [1047, 1319].forEach(f => { tone(f, t + .32, 1, "triangle", .1); tone(f, t + .32, .5, "square", .02); }); },
+    kplat: t => { tone(1568, t, 1.8, "sine", .1); tone(1568 * 1.004, t, 1.8, "sine", .07); tone(2349, t + .14, 1.4, "sine", .06); tone(2349 * 1.004, t + .14, 1.4, "sine", .04); },
+    kemer: t => [523, 587, 659, 784, 880, 1047, 1175].forEach((f, k) => tone(f, t + k * .05, 1, "triangle", .08)),
+    kdiam: t => { [2093, 2637, 3136, 3520, 4186].forEach((f, k) => tone(f, t + k * .06, 1.5, "sine", .06)); tone(5274, t + .38, .9, "sine", .02); tone(1047, t, 1.2, "sine", .05); },
+    kchamp: t => { [392, 523, 659, 784].forEach((f, k) => { tone(f, t + k * .1, .2, "triangle", .12); tone(f, t + k * .1, .12, "square", .02); }); [523, 659, 784, 1047].forEach(f => { tone(f, t + .45, 1.5, "triangle", .08); tone(f * 2, t + .45, .6, "sine", .02); }); tone(131, t + .45, 1.4, "sine", .12); }
+  });
+})();
+/* sound icons for the new chimes */
+Object.assign(SND_G, {
+  bird: '<path d="M4 14c3 0 5-2 6-5 1-3 4-5 7-4l3 1-3 1c0 6-4 10-10 10-2 0-3-1-3-3z"/><circle cx="16" cy="7" r=".9" fill="#fff"/>',
+  rocket: '<path d="M12 2c3.5 2.6 5 6.5 4.6 11L14.8 17H9.2L7.4 13C7 8.5 8.5 4.6 12 2z"/><path d="M9 14l-3.5 4.5 4-1.2M15 14l3.5 4.5-4-1.2M10 18l2 4 2-4z"/>',
+  wand: '<path d="M3.5 19.5L14.5 8.5l1.6 1.6-11 11zM17 2.5l.9 2.2 2.2.9-2.2.9L17 8.7l-.9-2.2-2.2-.9 2.2-.9z"/>',
+  chest: '<path d="M3 10.2c0-3.6 4-5.6 9-5.6s9 2 9 5.6zM3 11.8h18v8.4H3z"/>',
+  hang: '<path d="M4 3h16" fill="none" stroke-width="2"/><path d="M7 3v8M11 3v12M15 3v10M19 3v7" fill="none" stroke-width="1.6"/><rect x="5.8" y="11" width="2.4" height="5" rx="1"/><rect x="9.8" y="15" width="2.4" height="5" rx="1"/><rect x="13.8" y="13" width="2.4" height="5" rx="1"/><rect x="17.8" y="10" width="2.4" height="5" rx="1"/>',
+  drum: '<ellipse cx="12" cy="8" rx="9" ry="4"/><path d="M3 8v6c0 2.2 4 4 9 4s9-1.8 9-4V8" fill="none" stroke-width="2"/>',
+  gong: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="#fff" opacity=".35"/>',
+  gem: '<path d="M6.5 4h11l4 5.2L12 21 2.5 9.2z"/>',
+  crown: '<path d="M3 18.5l1.6-11 5 4.6L12 4.5l2.4 7.6 5-4.6 1.6 11z"/>',
+  disc: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5" fill="#fff"/>'
+});
+Object.assign(CH_IC, { sdB0: ["#4f8a3a", "bird"], sdB1: ["#e63946", "rocket"], sdB2: ["#c026d3", "wand"], sdB3: ["#c98a0a", "chest"], sdA0: ["#4f8a3a", "hang"], sdA1: ["#ff9f1c", "rocket"], sdA2: ["#7c3aed", "harp"], sdA3: ["#0f6e7a", "drum"],
+  kcopper: ["#c46a32", "bell"], kbronze: ["#b8823a", "gong"], ksilver: ["#8d99a6", "bell"], kgold: ["#e0a915", "horn"], kplat: ["#55717f", "disc"], kemer: ["#1fa463", "harp"], kdiam: ["#3a6fd8", "gem"], kchamp: ["#c455ff", "crown"] });
+/* collections: story, season and rank sets */
+var COLL_TAB = "story";
+COLLS.forEach(c => { c.grp = c.grp || "story"; });
+SZ.forEach((z, i) => COLLS.push({ id: "sz_" + i, grp: "season", si: i, name: z.name, blurb: `${SEASON_NAMES[i]} seasons (${z.months}). Level up that season's pass to earn these. They're yours forever.`, c1: z.l, c2: i === 0 ? z.c : z.d, items: S_ITEMS.filter(x => x[0] !== "theme").sort((a, b) => a[1] - b[1]).map(x => [x[0], x[2][i]]) }));
+(function () { const o = xTag; xTag = function (k, id) { const it = S_ITEMS.find(x => x[0] === k && x[2].includes(id)); return it ? "Season lvl " + it[1] : o(k, id); }; })();
+var SEASON_ART = [
+  '<circle cx="24" cy="24" r="21" fill="#2f6b3a"/><circle cx="24" cy="24" r="14" fill="#f3e6c8" stroke="#e0a03a" stroke-width="2"/><path d="M24 11L27 24 24 37 21 24Z" fill="#2f6b3a"/><path d="M24 11L27 24H21Z" fill="#d7372b"/><circle cx="24" cy="24" r="2.2" fill="#e0a03a"/>',
+  '<circle cx="24" cy="24" r="21" fill="#14213d"/><g fill="#fff">' + [[10, 12], [36, 10], [40, 30], [8, 32], [30, 40]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".9"/>`).join("") + '</g><path d="M24 8c5.5 4 8 10 7.2 17L28 31h-8l-3.2-6C16 18 18.5 12 24 8z" fill="#eef2f7"/><circle cx="24" cy="19" r="3.2" fill="#4cc9f0" stroke="#14213d" stroke-width="1.2"/><path d="M19 27l-5 7 6-2M29 27l5 7-6-2" fill="#e63946"/><path d="M21 31l3 8 3-8z" fill="#ff9f1c"/>',
+  '<circle cx="24" cy="24" r="21" fill="#2a1650"/><ellipse cx="24" cy="34" rx="15" ry="3.5" fill="#1b1035"/><path d="M15 33V16q9-3 18 0v17z" fill="#1b1035" stroke="#c026d3" stroke-width="1.5"/><path d="M15 28q9 2 18 0v3q-9 2-18 0z" fill="#c026d3"/><path d="M35 9l1.2 2.8 2.8 1.2-2.8 1.2L35 17l-1.2-2.8L31 13l2.8-1.2zM12 12l.8 1.8 1.8.8-1.8.8-.8 1.8-.8-1.8-1.8-.8 1.8-.8z" fill="#f2c14e"/>',
+  '<circle cx="24" cy="24" r="21" fill="#0f6e7a"/><path d="M11 22c0-5 6-8 13-8s13 3 13 8z" fill="#c98a0a"/><path d="M11 24h26v12H11z" fill="#e8a50c"/><path d="M11 24h26" stroke="#5a3a08" stroke-width="2"/><rect x="21.5" y="22" width="5" height="6" rx="1" fill="#5a3a08"/><circle cx="24" cy="25" r="1.2" fill="#ffe08a"/><path d="M14 14l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#ffe08a"/>'
+];
+renderColls = function (g) {
+  const box = $("#xgBody"), sh = $("#xgDlg .sheet"), keep = sh ? sh.scrollTop : 0; box.replaceChildren();
+  $("#xgTitle").textContent = g.name;
+  $("#xgNote").textContent = isAdult() ? "Everything is unlocked in Teacher mode." : "Collect whole sets. Tap a locked one to try it for 10 seconds.";
+  const chips = el("div", "collchips");
+  [["story", "Story sets"], ["season", "Season sets"], ["rank", "Rank sets"]].forEach(([k, n]) => { const b = el("button", "", n); b.type = "button"; b.setAttribute("aria-pressed", String(COLL_TAB === k)); b.onclick = () => { COLL_TAB = k; renderColls(g); if (sh) sh.scrollTop = 0; }; chips.append(b); });
+  box.append(chips);
+  COLLS.filter(c => c.grp === COLL_TAB).forEach(cc => {
+    const [n, tot] = collTotals(cc), h = el("div", "collhead"); h.style.setProperty("--c1", cc.c1); h.style.setProperty("--c2", cc.c2);
+    const em = el("span", "cem");
+    em.innerHTML = cc.grp === "rank" ? rankCrest(cc.f, 46) : `<svg viewBox="0 0 48 48" width="52" height="52">${cc.grp === "season" ? SEASON_ART[cc.si] : COLL_ART[cc.id] || ""}</svg>`;
+    const foot = el("span", "cfoot"), bar = el("span", "bar"), f = el("i"); f.style.width = (n / tot * 100) + "%"; bar.append(f);
+    const wear = el("button", "", n === tot ? "Wear the set" : "Wear what I have"); wear.type = "button"; wear.disabled = !n; wear.style.gridColumn = "2"; wear.style.justifySelf = "start";
+    wear.onclick = () => { cc.items.forEach(([k, id]) => { if (!lockMsg(k, id)) settings[k] = id; }); saveSettings(); applyExtras(); renderLibrary(); renderGroup(g); confetti(); toast(cc.name + " on!"); };
+    foot.append(bar, el("span", "ccount", `${n} of ${tot}`));
+    let sub = cc.blurb;
+    if (cc.grp === "story") { const lv = cc.items.map(([k, id]) => needFam(k, id)); sub += ` Unlocks from ${LEVELS[Math.min(...lv)][1]} to ${LEVELS[Math.max(...lv)][1]}.`; }
+    if (n === tot) sub += " Set complete!";
+    h.append(em, el("b", "", cc.name), el("p", "fine", sub), foot, wear); box.append(h);
+    const grid = el("div", "xgrid"); cc.items.forEach(([k, id]) => { const b = xCardFor(k, id, g, true); if (b) grid.append(b); }); box.append(grid);
+  });
+  if (sh) sh.scrollTop = keep;
+};
+(function () {
+  const old = xThumb;
+  xThumb = function (kind, id) {
+    try {
+      if (kind === "title") { const t = el("span", "xth"); t.setAttribute("aria-hidden", "true"); const w = el("span", "ttl"); if (id in RK_T) { const c = el("span", "kcrest"); c.innerHTML = rankCrest(RK_T[id], 14); w.append(c); } const s = el("span", "ttx", XNAME("title", id)), fx = titleFx(id); if (fx) s.dataset.fx = fx; w.append(s); t.append(w); return t; }
+      if (kind === "plate" && PLATE_X[id]) { const t = el("span", "xth"); t.setAttribute("aria-hidden", "true"); t.innerHTML = plateSvg(id, 34); return t; }
+      const t = old(kind, id); if (t && kind === "bm" && BM_COL[id]) t.style.color = BM_COL[id]; return t;
+    } catch (e) { return null; }
+  };
+  const op = plateSvg; plateSvg = function (st, sz) { return PLATE_X[st] ? `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" aria-hidden="true">${PLATE_X[st]}</svg>` : op(st, sz); };
+  const ae = applyExtras;
+  applyExtras = function () {
+    ae();
+    try {
+      const at = xGet("atomc"), m = /^saB(\d)$/.exec(at || ""); document.body.classList.toggle("mglw", !!m); if (m) document.documentElement.style.setProperty("--mg", SZ[+m[1]].glow);
+      const col = BM_COL[xGet("bm")] || ""; const b = $("#bmBtn svg"); if (b) b.style.color = col; const p = $("#pvBm"); if (p) p.style.color = col;
+    } catch (e) {}
+  };
+})();
+
+/* keep every list in unlock order, with season and event rewards after */
+XCATS.forEach(c => { if (c.k === "title") return; const rk = id => (EXTRA_SPECIAL[c.k] && EXTRA_SPECIAL[c.k][id]) ? 1000 : needFam(c.k, id); c.opts = c.opts.map((o, i) => [o, i]).sort((a, b) => rk(a[0][0]) - rk(b[0][0]) || a[1] - b[1]).map(x => x[0]); });
+{ const g = XGROUPS.find(x => x.coll); if (g) g.sub = "Story, season and rank sets"; }
+var SKIND = { bm: "bookmark", bar: "progress bar", cov: "book cover", nflair: "name flair", pframe: "frame", plate: "bookplate", conf: "confetti", chime: "sound", stamp: "stamp", greet: "greeting", stat: "stats look", title: "title", ghat: "for Atom", gface: "for Atom", gneck: "for Atom", bd: "backdrop" };
 /* ---------- event pass: rewards along the way, like the season pass ---------- */
 var EV_CONF = { patch: "pumpkin", spooky: "boo", snow: "flakes", bloom: "petals", fresh: "fireworks", summer: "suns" };
 function evPeak(id) { if (evHas(id)) return 100; const p = store.get("pace:evp", {}); let m = 0; for (const k in p) if (k.startsWith(id + ":")) m = Math.max(m, p[k]);
@@ -7197,14 +7670,14 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-17", WHATS = [
+const WHATS_VER = "2026-10-18", WHATS = [
+  ["A brand new season pass", "Every season has its own story now: Forest Explorer, Liftoff, Magic Show and Treasure Hunt. 33 rewards each, like a magician's hat, a space visor, a treasure map frame and a gold coin bar."],
+  ["Rank sets", "Every rank from Copper to Champion has its own matching set. Diamond sparkles. Gold shines. Champion glows. Your rank title shows it off too."],
   ["Collections", "5 themed reward sets to collect as you rank up: Outlaw Trail, Haunted Harbor, Overgrown, Sand Sea and Snowbound Lodge. Find them in Rewards."],
   ["Over 100 new rewards", "New book covers, bars, bookmarks, name flair, frames, greetings, hats, sounds and confetti. Every reward now shows a preview."],
   ["Sounds made by Atom", "7 reading sounds like Rain, Campfire and Foggy harbor. They're made live in the app, so there's nothing to download."],
   ["Every scene, redrawn", "All 40 scenes got a cleaner, prettier remaster. Seasonal and holiday themes like Autumn, Spooky, Snowfall and Fireworks now have their own art too."],
   ["Center Lock", "The middle letter of every word now sits on the same spot, so your eyes never move. Try Baseline, Light beam, Tunnel and Ghost words in Settings > Reading."],
-  ["32 new scenes", "Fog Harbor, Snowbound, Sand Sea, Neon Alley, Pixel Hills, Study Night, Koi Pond, Nebula and lots more. Earn them by reading, then pick one in Settings > Display."],
-  ["A cleaner, shinier Atom", "New icons, wallpapers and a fresh look everywhere. Rewards is split into simple groups. The weekly challenge sits with your daily quests."],
   ["Easier reader", "Tap the chapter name to jump around. Tap Aa to change the word size."],
 ];
 function showWhatsNew() {
@@ -8275,6 +8748,33 @@ function openCalm() {
 }
 /* loading screen: Atom flies in, then gets out of the way */
 (function () { const sp = document.getElementById("splash"); if (!sp) return; const t0 = performance.now(); const done = () => { sp.classList.add("out"); setTimeout(() => sp.remove(), 450); }; setTimeout(done, Math.max(0, 1100 - (performance.now() - t0))); sp.addEventListener("click", done); })();
+/* updates: compare this page's build with the newest one online */
+const BUILD = (document.querySelector('meta[name="atom-build"]') || {}).content || "";
+function swSettle(r, ms) { // wait for a new worker to finish installing
+  return new Promise(ok => { const w = r && (r.installing || r.waiting); if (!w || w.state === "activated") return ok();
+    const t = setTimeout(ok, ms); w.addEventListener("statechange", () => { if (w.state === "activated" || w.state === "redundant") { clearTimeout(t); ok(); } }); });
+}
+async function updCheck() {
+  if (!navigator.onLine) return "offline";
+  let r = null; try { r = await navigator.serviceWorker.getRegistration(); if (r) { await r.update(); await swSettle(r, 12000); } } catch (e) {}
+  try {
+    const res = await fetch("index.html?fresh=" + Date.now(), { cache: "no-store" }); if (!res.ok) return "error";
+    const t = await res.text(); if (!t.includes('name="atom-app"')) return "error";
+    const m = t.match(/name="atom-build" content="([^"]+)"/);
+    return m && BUILD && m[1] !== BUILD ? "new" : "same";
+  } catch (e) { return navigator.onLine ? "error" : "offline"; }
+}
+async function updApply() {
+  const b = $("#updBtn"); b.disabled = true; b.textContent = "Updating…";
+  try {
+    const r = await navigator.serviceWorker.getRegistration(); if (r) { await r.update(); await swSettle(r, 12000); }
+    const c = navigator.serviceWorker.controller;
+    if (c) await new Promise(ok => { const ch = new MessageChannel(), t = setTimeout(ok, 10000); ch.port1.onmessage = () => { clearTimeout(t); ok(); }; c.postMessage({ type: "atom-refresh" }, [ch.port2]); });
+  } catch (e) {}
+  location.reload();
+}
+function updShow() { const bar = $("#updBar"); bar.hidden = false; $("#updBtn").onclick = updApply; }
+window.atomUpdate = updShow;
 /* pull down on the home screen to check for an update */
 (function () {
   const ind = $("#ptr"); let y0 = null, dy = 0, busy = false;
@@ -8284,17 +8784,20 @@ function openCalm() {
     if (y0 === null) return; const go = dy > 140; y0 = null; ind.classList.remove("ready");
     if (!go) { ind.classList.remove("show"); return; }
     busy = true; ind.classList.add("spin");
-    let found = false;
-    try { const r = await navigator.serviceWorker.getRegistration(); if (r) { await r.update(); found = !!(r.installing || r.waiting); } } catch (e) {}
-    setTimeout(() => { ind.classList.remove("show", "spin"); busy = false; if (!navigator.onLine) toast("You're offline. Atom still works."); else if (found || !$("#updBar").hidden) toast("Update found. Tap Update when it shows."); else toast("You're up to date."); renderLibrary(); }, 900);
+    const st = await updCheck();
+    ind.classList.remove("show", "spin"); busy = false; renderLibrary();
+    if (st === "new") { updShow(); toast("Update ready. Tap Update."); }
+    else if (st === "offline") toast("You're offline. Atom still works.");
+    else if (st === "error") toast("Couldn't check right now. Try again soon.");
+    else toast("You're up to date.");
   });
 })();
 /* app shortcuts from the home screen icon */
 (function () { try { const g = new URLSearchParams(location.search).get("go"); if (!g) return; history.replaceState(null, "", location.pathname); setTimeout(() => { if (g === "continue") { const m = libSorted()[0]; if (m) openBook(m.id); } else if (g === "class") openClass(); else if (g === "library") openShelf(); }, 600); } catch (e) {} })();
-if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toastLater, gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, ambStart, ambStop, ambObj: () => [AMB, actx], get ambOn() { return !!AMB.node; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toastLater, gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, updCheck, updShow, ambStart, ambStop, ambObj: () => [AMB, actx], get ambOn() { return !!AMB.node; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="atom-update"){const b=document.getElementById("updBar");b.hidden=false;document.getElementById("updBtn").onclick=()=>location.reload();}});}</script>
+navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="atom-update"){if(window.atomUpdate)window.atomUpdate();else{document.getElementById("updBar").hidden=false;document.getElementById("updBtn").onclick=()=>location.reload();}}});}</script>
 </body>
 </html>
