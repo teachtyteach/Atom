@@ -28,15 +28,15 @@
 <style>
 :root{
   --bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;
-  --accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light;
+  --accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light;--focus:#2b6fd6;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme]){
     --bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;
-    --accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark;
+    --accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark;--focus:#6aa8ff;
   }
 }
-:root[data-theme="light"]{--bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;--accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light}
+:root[data-theme="light"]{--focus:#2b6fd6;--bg:#f6f4ef;--surface:#fffdf8;--ink:#1d1b18;--muted:#6f6a61;--line:#d9d4c9;--accent:#d7372b;--btn:#1d1b18;--btn-ink:#fffdf8;color-scheme:light}
 :root[data-theme="sepia"]{--bg:#f1e6cf;--surface:#f8f0dc;--ink:#3b2f22;--muted:#7a6a55;--line:#dccdae;--accent:#b5341f;--btn:#3b2f22;--btn-ink:#f8f0dc;color-scheme:light}
 :root[data-theme="midnight"]{--bg:#0d1424;--surface:#141d33;--ink:#e6ecfa;--muted:#93a0bd;--line:#26324f;--accent:#ff7a6b;--btn:#e6ecfa;--btn-ink:#0d1424;color-scheme:dark}
 :root[data-theme="forest"]{--bg:#0f1a14;--surface:#16241c;--ink:#e3efe6;--muted:#8fa89a;--line:#263a2f;--accent:#ffb454;--btn:#e3efe6;--btn-ink:#0f1a14;color-scheme:dark}
@@ -53,8 +53,8 @@
 :root[data-theme="winter"]{--bg:#e3eef7;--surface:#f2f8fd;--ink:#14263a;--muted:#587390;--line:#c2d7e8;--accent:#2f6db5;--btn:#14263a;--btn-ink:#f2f8fd;color-scheme:light}
 :root[data-theme="spring"]{--bg:#eaf5df;--surface:#f6fbef;--ink:#1f2e1a;--muted:#5f7a54;--line:#cfe3bd;--accent:#d6457a;--btn:#1f2e1a;--btn-ink:#f6fbef;color-scheme:light}
 :root[data-theme="summer"]{--bg:#dcf4f1;--surface:#eefaf8;--ink:#12302e;--muted:#4b7f7a;--line:#b5e0da;--accent:#e8590c;--btn:#12302e;--btn-ink:#eefaf8;color-scheme:light}
-:root[data-theme="dark"]{--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
-:root[data-theme="black"]{--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
+:root[data-theme="dark"]{--focus:#6aa8ff;--bg:#141311;--surface:#1c1b18;--ink:#ece8df;--muted:#9a948a;--line:#34312c;--accent:#ff5a4a;--btn:#ece8df;--btn-ink:#141311;color-scheme:dark}
+:root[data-theme="black"]{--focus:#6aa8ff;--bg:#000;--surface:#0b0b0a;--ink:#e8e4da;--muted:#8f897e;--line:#262421;--accent:#ff5a4a;--btn:#e8e4da;--btn-ink:#000;color-scheme:dark}
 :root[data-theme="parchment"]{--bg:#e6d6ae;--surface:#f1e5c4;--ink:#372a18;--muted:#75623f;--line:#cdb987;--accent:#a3301b;--btn:#372a18;--btn-ink:#f1e5c4;color-scheme:light}
 :root[data-theme="butter"]{--bg:#fbf3bd;--surface:#fffbd9;--ink:#26241a;--muted:#67623a;--line:#e3d993;--accent:#c2410c;--btn:#26241a;--btn-ink:#fffbd9;color-scheme:light}
 :root[data-theme="mint"]{--bg:#d9f0e2;--surface:#ecf9f1;--ink:#1b2a21;--muted:#4f6b5b;--line:#b4d9c4;--accent:#c62d2d;--btn:#1b2a21;--btn-ink:#ecf9f1;color-scheme:light}
@@ -309,10 +309,11 @@ svg{display:block}
 .stage{position:relative;height:clamp(170px,30vh,280px);min-height:calc(var(--fs,44px)*1.7);display:flex;align-items:center;cursor:pointer;
   user-select:none;-webkit-user-select:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .stage::before,.stage::after{content:"";position:absolute;left:50%;width:2px;height:16px;background:var(--muted);transform:translateX(-1px);opacity:.6}
+:root:not([data-marks]) .stage::before,:root:not([data-marks]) .stage::after,:root[data-marks=""] .stage::before,:root[data-marks=""] .stage::after{display:none}
 .stage::before{top:0}.stage::after{bottom:0}
-.word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;
+.word{width:100%;display:flex;justify-content:center;
   font:500 var(--fs,44px)/1.25 var(--rf);letter-spacing:var(--ls);word-spacing:var(--ws);white-space:pre;overflow:hidden}
-.l{text-align:right}.p{color:var(--pivot,var(--accent))}.r{text-align:left}
+.l{text-align:right}.p{color:var(--pivot,var(--focus,var(--accent)))}.r{text-align:left}
 .hint{text-align:center;color:var(--muted);font-size:13px;margin:0 0 6px}
 body.playing .hint{visibility:hidden}
 .ctx{color:var(--muted);font:17px/1.65 var(--rf);letter-spacing:var(--ls);flex:1 1 auto;min-height:3.3em;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -929,7 +930,7 @@ body.playing .controls{opacity:.22}
 .wslide p{margin:0;color:var(--muted);max-width:32ch}
 .wslide input{margin-top:6px;text-align:center}
 .wdemo{font:500 52px/1.2 Georgia,serif;margin-bottom:6px}
-.wdemo span{color:var(--accent)}
+.wdemo span{color:var(--focus,var(--accent))}
 .wdemo.small{font-size:44px;letter-spacing:.15em}
 .wdots{display:flex;gap:8px;justify-content:center}
 .wdots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s}
@@ -1142,6 +1143,7 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 
 /* ---------- premium finish ---------- */
+:root[data-theme]:not([data-theme="light"]):not([data-theme="dark"]):not([data-theme="black"]){--focus:var(--accent)}
 /* ---------- compact home ---------- */
 body.hasbooks #library .actmenu{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:41}
 body.hasbooks #library>header{padding-right:56px}
@@ -1922,7 +1924,8 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
     <p class="fine">Word gap shows when you read 2 or 3 words at a time.</p>
     <label class="setrow">Color the focus letter <input type="checkbox" id="pivotChk"></label>
     <div class="seg" id="pivotSeg" aria-label="Focus letter color">
-      <button class="swatch" data-pc="accent" aria-label="Match accent"><i style="background:var(--accent)"></i></button>
+      <button class="swatch" data-pc="accent" aria-label="Match theme"><i style="background:var(--focus,var(--accent))"></i></button>
+      <button class="swatch" data-pc="red" aria-label="Red"><i style="background:#e0352b"></i></button>
       <button class="swatch" data-pc="blue" aria-label="Blue"><i style="background:#3b82f6"></i></button>
       <button class="swatch" data-pc="green" aria-label="Green"><i style="background:#22a55b"></i></button>
       <button class="swatch" data-pc="orange" aria-label="Orange"><i style="background:#f08a1c"></i></button>
@@ -3723,6 +3726,7 @@ function applyTheme() {
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
   const a = ACCENTS[settings.accent];
   if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || ["midnight", "forest", "slate", "coffee", "ocean", "grape", "terminal", "spooky", "harvest", "snowfall", "fireworks", "stem", "aurora", "neon", "goldleaf", "rising", "twist", "final", "fog", "cosmos", "deepsea", "peaks", "city", "campfire", "alley", "manor", "nebula", "savanna", "storm", "castle", "study", "koi", "harbor", "lodge", "sandsea", "plains", "rain", "nlake", "ember", "ringed", "hollow", "lanterns"].includes(key)) ? 1 : 0]); else root.style.removeProperty("--accent");
+  if (a) root.style.setProperty("--focus", root.style.getPropertyValue("--accent")); else root.style.removeProperty("--focus");
 }
 try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); } catch (e) {}
 applyTheme();
@@ -3740,7 +3744,7 @@ function applyAccess() {
   { const sl = document.querySelector("#schoolChk"); if (sl && sl.parentElement) sl.parentElement.firstChild.textContent = isReader() ? "Weekdays only " : "School days only "; }
 }
 const FONTS = ["serif", "sans", "mono", "lexend", "dyslexic", "typewriter", "book", "rounded", "slab"];
-const PIVOTCOL = { blue: "#3b82f6", green: "#22a55b", orange: "#f08a1c", purple: "#9b5de5", pink: "#f0508c", gold: "#e0ac00" };
+const PIVOTCOL = { red: "#e0352b", blue: "#3b82f6", green: "#22a55b", orange: "#f08a1c", purple: "#9b5de5", pink: "#f0508c", gold: "#e0ac00" };
 function applyFont() {
   if (!FONTS.includes(settings.font)) settings.font = "serif";
   settings.ls = Math.max(0, Math.min(20, +settings.ls || 0)); settings.ws = Math.max(0, Math.min(30, +settings.ws || 0));
@@ -4622,7 +4626,7 @@ const UNLOCK = {
   theme: { fog: 7, cosmos: 11, pixel: 1, balloons: 3, koi: 5, study: 7, sunflower: 9, reef: 11, manor: 12, alley: 14, bamboo: 16, savanna: 18, morning: 20, glacier: 23, storm: 26, castle: 28, falls: 30, nebula: 33, harbor: 2, meadow: 4, rain: 6, cherry: 8, lanterns: 9, nlake: 10, maple: 12, sandsea: 13, ringed: 15, lavender2: 17, reclaimed: 18, hollow: 19, palms: 21, lodge: 22, ember: 24, plains: 25, deepsea: 3, clouds: 5, city: 14, dunes: 16, peaks: 20, campfire: 26, sunset: 1, midnight: 4, frontier: 4, mint: 6, noir: 7, terminal: 9, rose: 9, overgrown: 11, winter: 12, matcha: 13, coffee: 15, butter: 17, synthwave: 18, spring: 19, newsprint: 20, forest: 21, bubblegum: 22, sky: 24, ocean: 25, autumn: 27, lavender: 27, grape: 29, parchment: 30, summer: 32, slate: 32, season: 34 },
   accent: { blue: 5, green: 10, orange: 16, purple: 23, pink: 28 },
   font: { mono: 3 },
-  pivot: { blue: 2, green: 8, orange: 14, purple: 21, pink: 26, gold: 31, rainbow: 35 },
+  pivot: { red: 4, blue: 2, green: 8, orange: 14, purple: 21, pink: 26, gold: 31, rainbow: 35 },
   icon: { "a-blue": 3, "a-green": 5, "a-orange": 8, "a-purple": 10, "a-pink": 14, "a-teal": 17, fern: 12, gold: 15, hat: 19, moth: 24, stag: 28, diamond: 33 }
 };
 const THEME_EVENT = { pumpkin: "patch", spooky: "spooky", harvest: "thanks", snowfall: "snow", fireworks: "fresh", valentine: "hearts", blossom: "bloom", earthday: "earth", beach: "summer" };
