@@ -128,7 +128,7 @@ button[data-theme="dunes"] .sw{background:var(--sc-dunes) center bottom/cover no
 [hidden]{display:none!important}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-.screen{display:none;min-height:100vh;max-width:760px;margin:0 auto;
+.screen{display:none;min-height:100vh;min-height:100dvh;max-width:760px;margin:0 auto;
   padding:max(16px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));gap:14px}
 body[data-screen="library"] #library,body[data-screen="reader"] #reader,body[data-screen="shelf"] #shelf,body[data-screen="stats"] #stats,body[data-screen="rewards"] #rewards{display:flex;flex-direction:column}
 header{display:flex;align-items:center;gap:8px;min-height:44px}
@@ -1014,6 +1014,45 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 
 /* ---------- premium finish ---------- */
+/* ---------- compact home ---------- */
+body.hasbooks #library .actmenu{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:41}
+body.hasbooks #library>header{padding-right:56px}
+body.hasbooks .actbtn{width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;justify-content:center}
+body.hasbooks .actbtn>span,body.hasbooks .actbtn>svg:not(.plus){display:none}
+.actbtn .plus{display:none;transition:transform .2s}
+body.hasbooks .actbtn .plus{display:block}
+body.hasbooks .actbtn[aria-expanded="true"] .plus{transform:rotate(45deg)}
+body.hasbooks .actlist{left:auto;right:0;width:min(300px,calc(100vw - 32px))}
+body.hasbooks #library .madeby:not(.setmade){display:none}
+.setmade{text-align:center;margin:6px 0 2px}
+.hstat{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0;padding:0;overflow:hidden}
+.hstat>*{padding:12px 14px}
+.hstat>.rank{margin:0;gap:6px;border-radius:0;align-content:start}
+.hstat>.rank .rk{display:grid;gap:2px;font-size:12px}
+.hstat>.rank .rk b{font-size:13px}
+.hstat>.rank #rankNext{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hstat>.rank .clab{display:none}
+.hstat>.daybox{border-left:1px solid color-mix(in srgb,var(--line) 70%,transparent);display:grid;gap:6px;align-content:start}
+.hstat>.daybox[hidden]{display:none}
+.hstat:has(>.daybox[hidden]){grid-template-columns:1fr}
+.hstat>.daybox::before{content:"TODAY";font:700 10px system-ui,sans-serif;letter-spacing:.12em;color:var(--muted);margin-bottom:-4px}
+.hstat .dayrow{display:grid!important;gap:2px}
+.hstat #dayTxt{font:700 15px system-ui,sans-serif;white-space:nowrap}
+.hstat #dayStreak{font-size:11.5px!important;display:flex;align-items:center;gap:3px}
+.hstat .bar{height:5px;margin:0}
+.recenthead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.seeall{font:600 13px system-ui,sans-serif;text-decoration:none}
+body.hasbooks #recentBox:not([hidden])~#libBtn{display:none}
+body.hasbooks .hero{padding:12px}
+body.hasbooks .hero .cover{width:72px;height:108px}
+body.hasbooks .hero .bk-title{font-size:19px;-webkit-line-clamp:2}
+body.hasbooks .hero .hbody{gap:4px}
+body.hasbooks #library{gap:14px}
+body.hasbooks .greet{font-size:22px}
+#recent .bm{display:none}
+body.hasbooks #library{gap:12px}
+body.hasbooks .greetrow{margin-top:-2px}
+
 /* no rubber-band scrolling on pages that fit; empty stats shows only the welcome card */
 html,body{overscroll-behavior-y:none}
 #statsEmpty:not([hidden])~.tiles,#statsEmpty:not([hidden])~#goalCard{display:none}
@@ -1136,10 +1175,9 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   </header>
   <div class="greetrow"><p class="greet" id="greet"></p></div>
   <p id="titleLine"></p>
-  <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><span class="rkl"><i id="rankEmb" class="remblem" aria-hidden="true"></i><i id="rankPin" class="remblem" aria-hidden="true"></i><span class="clab">CAREER</span><b id="rankName"></b></span><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
   <div class="showcase" id="showcase" hidden></div>
   <div class="actmenu">
-    <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList"><span>What do you want to do?</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList" aria-label="Add something to read"><span>What do you want to do?</span><svg class="plus" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="actlist card" id="actList" role="menu" hidden>
       <button role="menuitem" id="addBtn" type="button">Add a book or PDF<small>EPUB, PDF, text or web page file</small></button>
       <button role="menuitem" id="pasteBtn" type="button">Paste text<small>Type or paste anything</small></button>
@@ -1155,9 +1193,12 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   <p class="status" id="status" role="status"></p>
   <div class="impbar ind" id="impBar" hidden><i></i></div>
   <div class="card" id="nudge" hidden><span id="nudgeTxt" class="grow"></span><button id="nudgeBtn">Back up</button><button class="x" id="nudgeX" aria-label="Hide for a week" title="Hide for a week">✕</button></div>
-  <div class="card" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
+  <div class="hstat card">
+  <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><span class="rkl"><i id="rankEmb" class="remblem" aria-hidden="true"></i><i id="rankPin" class="remblem" aria-hidden="true"></i><span class="clab">CAREER</span><b id="rankName"></b></span><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
+  <div class="daybox" id="dayCard" hidden><div class="dayrow"><b id="dayTxt"></b><span id="dayStreak"></span></div><span class="bar"><i id="dayFill"></i></span></div>
+  </div>
   <div id="continue"></div>
-  <div id="recentBox" hidden><h2 class="sect">Recent</h2><div class="hgrid" id="recent"></div></div>
+  <div id="recentBox" hidden><div class="recenthead"><h2 class="sect">Recent</h2><button type="button" class="linkbtn seeall" id="seeAll">My library ›</button></div><div class="hgrid" id="recent"></div></div>
   <button class="card clcard libbtn" id="libBtn" type="button" hidden><span class="shelfico" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="clt"><b>My library</b><span class="fine" id="libCount"></span></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div class="empty emptybox" id="empty"><img class="mascot" src="mascot.png" alt="" width="120"><p style="margin:0">Atom is waiting for a book. Pick a free story to start.</p><button type="button" class="primary" id="classBtn2" style="margin-top:12px">Browse the Class Library</button></div>
   <p class="fine madeby">Made FOR STEM Launch</p>
@@ -1796,6 +1837,7 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
     <p class="fine">Turn this off to stop Atom from ever contacting another website.</p>
     <div class="row"><button id="welcomeAgain">Show the welcome again</button><button id="legalBtn">Privacy and Terms</button></div>
   </div>
+  <p class="fine madeby setmade">Made FOR STEM Launch</p>
   <p class="gt">Reset</p>
   <div class="grp">
     <button id="resetSettings">Reset display and reading settings</button>
@@ -4213,7 +4255,7 @@ function afterStats() {
   });
   const fab = $("#fab");
   try {
-    new IntersectionObserver(es => { fab.hidden = es[0].isIntersecting; }, { threshold: 0 }).observe($("#actBtn"));
+    new IntersectionObserver(es => { fab.hidden = es[0].isIntersecting || document.body.classList.contains("hasbooks"); }, { threshold: 0 }).observe($("#actBtn"));
   } catch (e) { fab.hidden = true; }
   fab.onclick = () => { window.scrollTo({ top: 0, behavior: "smooth" }); setTimeout(() => { if ($("#actList").hidden) $("#actBtn").click(); }, 280); };
 })();
@@ -5566,7 +5608,7 @@ function updateRank(silent) {
   $("#rankEmb").innerHTML = emblem(r.i, 18);
   if (r.i >= 5) document.body.style.setProperty("--rk", RCOL[rankFam(r.i)]); else document.body.style.removeProperty("--rk");
   renderRewards(r); updateEventUI();
-  $("#rankNext").textContent = r.next ? `${fmt(r.need)} words to ${r.next}` : "Top rank";
+  $("#rankNext").textContent = r.next ? `${fmt(r.need)} to ${r.next}` : "Top rank";
   $("#rankFill").style.width = Math.max(2, r.pct) + "%";
   const had = store.get("pace:rank", null);
   lvlCache = r.i; applyLockUI();
@@ -6028,9 +6070,9 @@ function updateDayCard() {
   const show = lib.length > 0 && (settings.goal > 0 || si.cur > 0);
   card.hidden = !show; if (!show) return;
   if (settings.goal > 0) {
-    $("#dayTxt").textContent = w >= settings.goal ? `Goal reached: ${fmt(w)} words today` : `Today: ${fmt(w)} of ${fmt(settings.goal)} words`;
+    $("#dayTxt").textContent = w >= settings.goal ? `✓ ${fmt(w)} words` : `${fmt(w)} / ${fmt(settings.goal)}`;
     $("#dayFill").style.width = Math.min(100, w / settings.goal * 100) + "%";
-  } else { $("#dayTxt").textContent = `Today: ${fmt(w)} words`; $("#dayFill").style.width = "0%"; }
+  } else { $("#dayTxt").textContent = `${fmt(w)} words`; $("#dayFill").style.width = "0%"; }
   { const d = $("#dayStreak"); if (si.cur) { d.innerHTML = FLAME(16); d.append(`${si.cur}-day streak`); } else d.textContent = "No streak yet"; }
 }
 let libQ = "";
@@ -6047,6 +6089,7 @@ function bookTile(m, shelf) {
 }
 const libSorted = () => lib.slice().sort((a, b) => (b.opened || b.added || 0) - (a.opened || a.added || 0));
 function renderLibrary() {
+  document.body.classList.toggle("hasbooks", lib.length > 0);
   updateDayCard(); updateRank(true);
   updateNudge();
   const sorted = libSorted(), cont = $("#continue");
@@ -6711,7 +6754,7 @@ function updateGreet() {
     if ($("#pvGreet")) $("#pvGreet").innerHTML = gEl.innerHTML; }
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderShelf(); };
-$("#libBtn").onclick = openShelf;
+$("#libBtn").onclick = $("#seeAll").onclick = openShelf;
 $("#evdAll").onclick = () => { $("#evDlg").close(); $("#statsBtn").click(); };
 /* book details, cover search (Open Library) */
 let bdBook = null;
