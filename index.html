@@ -1014,6 +1014,10 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 
 /* ---------- premium finish ---------- */
+/* no rubber-band scrolling on pages that fit; empty stats shows only the welcome card */
+html,body{overscroll-behavior-y:none}
+#statsEmpty:not([hidden])~.tiles,#statsEmpty:not([hidden])~#goalCard{display:none}
+
 dialog .sheet-head{position:sticky;top:-20px;z-index:3;background:var(--surface);background-image:var(--sheen);margin:-20px -16px 0;padding:20px 16px 8px}
 
 /* type and rhythm */
@@ -5213,7 +5217,7 @@ function openEvent() {
   if (!dlg.open) dlg.showModal();
 }
 /* ---------- daily quests: small tasks that give bonus season words ---------- */
-var Q_REWARD = 1000, Q_ALL = 1000;
+var Q_REWARD = 500, Q_ALL = 500;
 var QUESTS = {
   min10: { txt: "Read for 10 minutes", chip: "10 min", need: 10, get: () => Math.floor(((stats.days[todayKey()] || {}).ms || 0) / 60000) },
   min20: { txt: "Read for 20 minutes", chip: "20 min", need: 20, get: () => Math.floor(((stats.days[todayKey()] || {}).ms || 0) / 60000) },
