@@ -310,7 +310,7 @@ body.plain .mascot,body.plain .peek,body.plain #seasonCard,body.plain #evCard,bo
 .ptr.ready span{border-color:var(--accent)}.ptr.spin span{animation:ptrs .7s linear infinite}
 @keyframes ptrs{to{transform:rotate(360deg)}}
 /* mystery box */
-.boxtile{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:inherit;font:inherit;margin-bottom:10px}
+.boxtile{display:flex;align-items:center;justify-content:flex-start;gap:14px;width:100%;text-align:left;color:inherit;font:inherit;margin-bottom:10px}
 .boxtile[hidden]{display:none}.boxtile .clt{display:grid;gap:2px}.boxtile b{font-family:Georgia,serif;font-size:17px}
 .boxico{width:38px;height:34px;border-radius:6px;background:linear-gradient(#a34fe0,#6a2fb0);position:relative;flex:none;box-shadow:inset 0 -8px 0 rgba(0,0,0,.18)}
 .boxico::before{content:"";position:absolute;left:15px;top:0;bottom:0;width:8px;background:#ffd84a}
@@ -369,6 +369,9 @@ body.xg #rwQuests,body.xg #boxTile,body.xg #funTiles,body.xg #rewards>.xlab{disp
 .btile .bt{font:600 13px/1.25 system-ui,-apple-system,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
 .btile .bm{font:500 11px system-ui,sans-serif;color:var(--muted)}
 .btile .bar{height:4px}
+#recent{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#recent .bt{-webkit-line-clamp:1;font-size:12px}
+#recent .cover{border-radius:7px}
 .btile .bx{position:absolute;top:-6px;right:-6px;width:30px;height:30px;min-height:0;padding:0;border-radius:50%;background:#1d1b18;color:#fff;border:2px solid var(--bg);display:none;font:700 14px system-ui;z-index:2}
 #shelf.editing .btile .bx{display:inline-flex}
 #shelf.editing .btile .cover{outline:2px dashed var(--accent);outline-offset:2px}
@@ -413,7 +416,7 @@ dialog{overflow-y:auto;-webkit-overflow-scrolling:touch}
 body:not(.adult) .mascot{filter:var(--mt) drop-shadow(0 0 6px var(--rk,transparent)) drop-shadow(0 0 2px var(--rk,transparent))}
 @keyframes mrb{from{filter:sepia(1) saturate(3) hue-rotate(0deg) drop-shadow(0 0 6px var(--rk,transparent))}to{filter:sepia(1) saturate(3) hue-rotate(360deg) drop-shadow(0 0 6px var(--rk,transparent))}}
 body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
-#bd{position:fixed;left:0;right:0;bottom:70px;height:min(55vh,420px);z-index:-1;pointer-events:none;opacity:.4;background-repeat:no-repeat;background-position:center bottom;background-size:contain}
+#bd{position:fixed;left:0;right:0;bottom:70px;height:min(55vh,420px);z-index:-1;pointer-events:none;opacity:.55;-webkit-mask-image:linear-gradient(transparent,#000 28%);mask-image:linear-gradient(transparent,#000 28%);background-repeat:no-repeat;background-position:center bottom;background-size:contain}
 #bd.wide{top:0;height:auto;background-size:cover;background-position:center}
 #bd:empty{display:block}
 :root[data-marks=dots] .stage::before,:root[data-marks=dots] .stage::after{width:9px;height:9px;border-radius:50%;background:var(--accent);opacity:.9;transform:translateX(-4.5px)}
@@ -423,9 +426,9 @@ body:not(.adult).mrb .mascot{animation:mrb 7s linear infinite}
 :root[data-marks=arrows] .stage::before,:root[data-marks=arrows] .stage::after{width:0;height:0;background:none;opacity:.9;transform:translateX(-7px);border-left:7px solid transparent;border-right:7px solid transparent}
 :root[data-marks=arrows] .stage::before{border-top:10px solid var(--accent)}
 :root[data-marks=arrows] .stage::after{border-bottom:10px solid var(--accent)}
-:root[data-wfx=glow] .word{text-shadow:0 0 .3em color-mix(in srgb,var(--accent) 60%,transparent)}
-:root[data-wfx=neon] .word{text-shadow:0 0 1px color-mix(in srgb,var(--accent) 55%,transparent),0 0 .14em color-mix(in srgb,var(--accent) 35%,transparent),0 0 .6em color-mix(in srgb,var(--accent) 22%,transparent)}
-:root[data-wfx=deep] .word{text-shadow:.04em .05em 0 color-mix(in srgb,var(--accent) 50%,transparent),.08em .1em 0 color-mix(in srgb,var(--accent) 25%,transparent)}
+:root[data-wfx=glow] .word,.wfxs[data-fx=glow]{text-shadow:0 .05em .5em color-mix(in srgb,var(--accent) 45%,transparent),0 0 1.1em color-mix(in srgb,var(--accent) 22%,transparent)}
+:root[data-wfx=neon] .word,.wfxs[data-fx=neon]{color:color-mix(in srgb,var(--ink) 72%,var(--accent));text-shadow:0 0 1px var(--accent),0 0 2px var(--accent),0 0 .08em color-mix(in srgb,var(--accent) 80%,transparent),0 0 .35em color-mix(in srgb,var(--accent) 30%,transparent)}
+:root[data-wfx=deep] .word,.wfxs[data-fx=deep]{text-shadow:.04em .05em 0 color-mix(in srgb,var(--accent) 50%,transparent),.08em .1em 0 color-mix(in srgb,var(--accent) 25%,transparent)}
 @keyframes wfade{from{opacity:.3}to{opacity:1}}
 .word.fade{animation:wfade .12s ease-out}
 :root[data-bar=stripes] .bar i{background:repeating-linear-gradient(135deg,var(--accent) 0 7px,color-mix(in srgb,var(--accent) 65%,#fff) 7px 14px);background-size:20px 20px;animation:grow .8s cubic-bezier(.2,.8,.2,1) both,bstripe 1s linear infinite}
@@ -467,13 +470,13 @@ body::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-
 :root[data-theme="twist"]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:conic-gradient(from 200deg at 82% 18%,rgba(224,47,192,.34),transparent 30%,rgba(124,58,237,.3) 58%,transparent 82%),conic-gradient(from 20deg at 15% 85%,rgba(124,58,237,.22),transparent 40%,rgba(224,47,192,.2) 75%,transparent)}
 :root[data-theme="final"]{--bg:#14110a;--surface:#1f1a0e;--ink:#fdf3d4;--muted:#c9b27a;--line:#4a3c17;--accent:#e8a50c;--btn:#fdf3d4;--btn-ink:#14110a;color-scheme:dark}
 :root[data-theme="final"]::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 88% 6%,rgba(232,165,12,.3),transparent 55%),repeating-linear-gradient(0deg,rgba(232,165,12,.08) 0 1px,transparent 1px 34px)}
-.nextcard{display:grid;gap:4px;border-left:4px solid var(--accent)}
+.nextcard{display:grid;gap:4px;position:relative;overflow:hidden;padding-left:20px}.nextcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(var(--accent),color-mix(in srgb,var(--accent) 50%,transparent))}
 .nextcard b{font-family:Georgia,serif;font-size:17px}
 .xtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .xtile{display:grid;grid-template-columns:minmax(0,1fr);justify-items:start;gap:4px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;min-height:92px;align-content:start}
 .xtile b{font-family:Georgia,serif;font-size:17px}
 .xtile .fine{font-size:12px}
-.xtile:last-child:nth-child(odd){grid-column:1/-1}
+#xTiles .xtile:last-child:nth-child(odd){grid-column:1/-1}
 .xtile .xcount{font-size:12px;color:var(--accent);font-weight:700}
 .xgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .xcard{display:grid;gap:4px;align-content:start;text-align:center;padding:6px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;min-height:64px;position:relative}
@@ -915,6 +918,15 @@ details.tg>summary span{font-weight:500;letter-spacing:0;text-transform:none}
 .chrow{display:flex;align-items:center;gap:8px}
 .chrow .chapter{flex:1 1 auto;min-width:0}
 .chrow .mini{margin:0;flex:none}
+.chbtn{flex:1 1 auto;min-width:0;justify-content:flex-start;gap:6px;border:0;background:transparent;box-shadow:none!important;padding:8px 2px;min-height:40px;font:600 13px system-ui,sans-serif;color:var(--muted);letter-spacing:.02em;border-radius:10px}
+.chbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chbtn svg{flex:none;opacity:.8}
+.chbtn[hidden]+.chapter+.mini+.rtools,.chbtn[hidden]~.rtools{margin-left:auto}
+.rtools{display:flex;gap:6px;flex:none}
+body.playing .rtools{visibility:hidden}
+#hintRow{margin:2px 0 0}
+#sizeBtn{padding:3px 11px;gap:1px;align-items:baseline}#sizeBtn[aria-expanded=true]{border-color:var(--accent);color:var(--accent)}
+#dayCard .dayrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}#dayCard #dayStreak{font-size:13px;color:var(--muted)}
 .toc{display:block}
 .toc-go{width:100%;display:grid;justify-items:start;gap:4px;text-align:left;padding:10px 12px;border-radius:12px;min-height:48px}
 .toc-go b{font-weight:600}
@@ -960,6 +972,7 @@ body.nomotion .impbar.ind i{animation:none!important;left:0;width:100%;opacity:.
 .evcard{--sc:var(--ev,var(--accent))}
 .greetrow{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .greetrow .greet{flex:1;min-width:0}
+.gstamp{display:inline-flex;vertical-align:middle;margin-left:6px}.gstamp svg{width:20px;height:20px}
 .minis{display:flex;gap:6px;flex:none}
 .stile{width:92px;box-sizing:border-box;display:grid;gap:3px;text-align:left;padding:6px 7px;border:1px solid var(--line);border-top:3px solid var(--sc,var(--accent));border-radius:10px;background:var(--surface);color:inherit;font:inherit}
 .stile[hidden]{display:none}
@@ -1001,6 +1014,75 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 
 /* ---------- premium finish ---------- */
+dialog .sheet-head{position:sticky;top:-20px;z-index:3;background:var(--surface);background-image:var(--sheen);margin:-20px -16px 0;padding:20px 16px 8px}
+
+/* type and rhythm */
+.card>h2,.rwqhead h2,#menuDlg .sheet>h2,#wkCard h2,.grp>h2{font:700 17px/1.25 Georgia,"Iowan Old Style",serif;letter-spacing:-.005em}
+.screen{gap:16px}
+#stats[data-tab] .card:not([hidden]),#stats[data-tab] .tile{animation:rise .32s ease both}
+.xcard,.xtile,.passrow{-webkit-tap-highlight-color:transparent}
+.xtile:active,.passrow:active,.xcard:active{transform:scale(.97)}
+
+/* reward pickers */
+.xgrid{gap:10px}
+.xcard{padding:8px 8px 10px;border-radius:16px;border-color:color-mix(in srgb,var(--line) 70%,transparent);box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 14px -10px rgba(0,0,0,.3),var(--hl)!important;background-image:var(--sheen);font-weight:600;font-size:12.5px;transition:transform .14s ease,box-shadow .2s ease}
+.xcard .xth{height:64px;border-radius:11px;background-color:var(--bg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--line) 70%,transparent)}
+.xcard .xth img{height:54px}
+.xcard[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 8px 18px -10px color-mix(in srgb,var(--accent) 70%,transparent)!important}
+.xcard[aria-pressed=true]::after{content:"✓";position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--btn-ink,#fff);font:700 12px/22px system-ui;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.xcard.locked{opacity:1}
+.xcard.locked .xth{filter:grayscale(.7) opacity(.55)}
+.xcard.locked>span:not(.xth){color:var(--muted)}
+.xcard .xtag{font-weight:500;font-size:10.5px}
+.wfxs{font:600 30px/1 Georgia,serif;color:var(--ink)}.wfxs[data-fx=fade]{animation:wfxf 1.8s ease-in-out infinite alternate}@keyframes wfxf{from{opacity:.15}to{opacity:1}}
+.xnone{color:var(--muted)}
+#xgDlg .xlab{font:700 12px system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:18px 2px 8px}
+
+/* line-art themes: soft glow so the drawings feel lit, not flat */
+:root[data-theme="frontier"]::before,:root[data-theme="frontier"]::after,:root[data-theme="overgrown"]::before{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--accent) 45%,transparent)) drop-shadow(0 0 1px color-mix(in srgb,var(--ink) 40%,transparent))}
+
+/* rewards remaster */
+#rewards .xtiles{gap:12px}
+.xtile{position:relative;overflow:hidden;gap:3px;padding:14px 14px 16px;min-height:0}
+.xtile .xart{width:44px;height:44px;margin-bottom:6px;display:grid;place-items:center;filter:drop-shadow(0 4px 8px rgba(0,0,0,.18))}
+.xtile .xart svg{width:44px;height:44px}
+.xtile .xart img{width:46px;height:auto}
+.xtile b{font:700 18px/1.2 Georgia,"Iowan Old Style",serif;letter-spacing:-.005em}
+.xtile .fine{font-size:12.5px;line-height:1.35}
+.xtile .xcount{margin-top:6px;font-size:12px;font-weight:700;color:var(--ink);opacity:.8}
+.xtile .bar{width:100%;height:5px;margin-top:4px}
+.xtile::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%);pointer-events:none}
+#funTiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ftile{padding:12px 10px 12px;align-items:start}
+.ftile .xart{width:36px;height:36px;margin-bottom:4px}.ftile .xart svg{width:36px;height:36px}
+.ftile b{font-size:15px}
+.ftile .fine{font-size:11.5px}
+.ftile .xcount{margin-top:4px;font-size:11px;color:var(--accent);opacity:1}
+.ftile .xcount.lockd{color:var(--muted)}
+#rewards .xlab{font:700 13px system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:18px 2px 2px}
+.passbody{display:grid;gap:10px}
+.passrow{display:flex;align-items:center;justify-content:flex-start;gap:14px;text-align:left;padding:14px 16px;border-radius:18px;width:100%;box-shadow:var(--elev),var(--hl)!important;background-image:var(--sheen)}
+.passrow .passic{width:40px;height:40px;display:grid;place-items:center;flex:none}.passrow .passic svg{width:36px;height:auto}
+.passrow .clt{display:grid;gap:2px;flex:1;min-width:0}.passrow b{font:700 16px Georgia,serif}
+.passrow .chev{font-size:24px;color:var(--muted);flex:none}
+#rwQuests .wkq{margin-top:2px;border-style:dashed}
+.boxtile .boxico{width:44px;height:40px;border-radius:9px;box-shadow:inset 0 -9px 0 rgba(0,0,0,.18),0 6px 14px -6px #6a2fb0}
+
+/* home header: one pass pill, greeting, rank, today */
+#library>header{gap:10px}
+.passpill{margin-left:auto;display:flex;gap:0;border:1px solid color-mix(in srgb,var(--line) 70%,transparent);border-radius:16px;background:var(--surface);background-image:var(--sheen);box-shadow:var(--elev),var(--hl);overflow:hidden}
+.passpill:not(:has(.stile:not([hidden]))){display:none}
+.passpill .stile{width:auto;min-width:78px;border:0!important;border-radius:0;box-shadow:none!important;background:transparent;padding:7px 11px 8px;gap:4px}
+.passpill .stile+.stile:not([hidden]){border-left:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important}
+.passpill .stile b{font:700 12px/1.1 system-ui,sans-serif;letter-spacing:.02em}
+.passpill .stile .ms{font-size:11px}
+.passpill .stile .bar,.passpill .stile .pips,.passpill .stile .pips i{height:4px}
+.greetrow{margin-top:2px}
+.greet{font:600 24px/1.2 Georgia,"Iowan Old Style",serif;letter-spacing:-.01em}
+.rank{margin:0}
+#dayCard{padding:12px 16px}
+#dayCard .dayrow b{font-size:15px}
+
 :root{--hl:inset 0 1px 0 color-mix(in srgb,#fff 10%,transparent);--elev:0 1px 1px rgba(0,0,0,.04),0 3px 8px -3px rgba(0,0,0,.10),0 16px 32px -18px rgba(0,0,0,.30);--sheen:linear-gradient(180deg,color-mix(in srgb,#fff 5%,transparent),transparent 55%)}
 body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 .card,.tile,.xtile,.grp,.hero,.bk-main,.clcard{border-color:color-mix(in srgb,var(--line) 70%,transparent);box-shadow:var(--elev),var(--hl);background-image:var(--sheen)}
@@ -1021,7 +1103,9 @@ textarea,input[type=text],input[type=date],input[type=search],input[type=passwor
 #tabbar{background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(20px);backdrop-filter:saturate(1.6) blur(20px);border-top:1px solid color-mix(in srgb,var(--line) 60%,transparent);box-shadow:0 -8px 24px -18px rgba(0,0,0,.35)}
 #tabbar button.on{background:color-mix(in srgb,var(--accent) 11%,transparent)}
 dialog{border-radius:26px 26px 0 0;box-shadow:0 -12px 40px -8px rgba(0,0,0,.35);background-image:var(--sheen)}
-dialog:not(.full)::before{content:"";position:sticky;display:block;top:0;left:0;width:40px;height:5px;margin:8px auto -6px;border-radius:3px;background:color-mix(in srgb,var(--muted) 35%,transparent);z-index:2}
+dialog:not(.full)::before{content:"";position:absolute;top:7px;left:calc(50% - 20px);width:40px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--muted) 35%,transparent);pointer-events:none;z-index:4}
+dialog .sheet{padding-top:20px}
+@media (hover:none),(pointer:coarse){.kbonly{display:none!important}}
 dialog::backdrop{background:rgba(10,8,6,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .sheet-head h2{font:700 19px/1.25 Georgia,"Iowan Old Style",serif;letter-spacing:-.005em}
 #toast{box-shadow:0 12px 30px -10px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
@@ -1039,15 +1123,16 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
 <section id="library" class="screen">
   <header>
     <h1 class="brand">Atom<span>.</span></h1>
+    <div class="minis passpill">
+    <button type="button" class="stile" id="seasonCard" hidden><span class="mt"><i id="seasonIc" aria-hidden="true"></i><b id="seasonName"></b></span><span class="pips" id="seasonPips"></span><span id="seasonSub" class="ms"></span></button>
+    <button type="button" class="stile evcard" id="evCard" hidden><span class="mt"><i class="evic" id="evIc" aria-hidden="true"></i><b id="evName"></b></span><span class="bar"><i id="evFill"></i></span><span id="evSub" class="ms"></span></button>
+  </div>
     <button class="icon" id="statsBtn" aria-label="Stats"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 20V11M12 20V5M18 20v-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <button class="icon" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 7h9M19 7h1M4 17h1M11 17h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
   </header>
-  <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><span class="rkl"><i id="rankEmb" class="remblem" aria-hidden="true"></i><i id="rankPin" class="remblem" aria-hidden="true"></i><span class="clab">CAREER</span><b id="rankName"></b></span><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
-  <div class="greetrow"><p class="greet" id="greet"></p><div class="minis">
-    <button type="button" class="stile" id="seasonCard" hidden><span class="mt"><i id="seasonIc" aria-hidden="true"></i><b id="seasonName"></b></span><span class="pips" id="seasonPips"></span><span id="seasonSub" class="ms"></span></button>
-    <button type="button" class="stile evcard" id="evCard" hidden><span class="mt"><i class="evic" id="evIc" aria-hidden="true"></i><b id="evName"></b></span><span class="bar"><i id="evFill"></i></span><span id="evSub" class="ms"></span></button>
-  </div></div>
+  <div class="greetrow"><p class="greet" id="greet"></p></div>
   <p id="titleLine"></p>
+  <button class="rank" id="rankBtn" type="button" aria-label="Your rank. Open stats"><span class="rk"><span class="rkl"><i id="rankEmb" class="remblem" aria-hidden="true"></i><i id="rankPin" class="remblem" aria-hidden="true"></i><span class="clab">CAREER</span><b id="rankName"></b></span><span id="rankNext"></span></span><span class="bar"><i id="rankFill"></i></span></button>
   <div class="showcase" id="showcase" hidden></div>
   <div class="actmenu">
     <button class="primary actbtn" id="actBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="actList"><span>What do you want to do?</span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1100,7 +1185,7 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   <div class="tiles" data-st="today" id="tiles"></div>
   <div class="card" data-st="badge" id="prCard" hidden></div>
   <div class="card" data-st="today" id="goalCard"></div>
-  <div class="card" data-st="today" id="wkCard"></div>
+  <div class="card" data-st="badge" id="wkCard"></div>
   <div class="card life" data-st="hist" id="life"></div>
   <div class="card" data-st="hist">
     <h2>Words read, last 7 days</h2>
@@ -1168,10 +1253,14 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   <button class="card boxtile" id="boxTile" type="button" hidden><span class="boxico" aria-hidden="true"></span><span class="clt"><b>Mystery boxes</b><span class="fine" id="boxCount"></span></span></button>
   <div class="card nextcard" id="nextCard"></div>
   <div class="xtiles" id="xTiles"></div>
-  <p class="xlab" style="margin:14px 2px 0">Fun room</p>
+  <p class="xlab">Fun room</p>
   <div class="xtiles" id="funTiles"></div>
 </section>
 <dialog id="funDlg" class="fundlg"><div class="fbox"><div class="fhead"><b id="funTitle"></b><button class="icon" data-close aria-label="Close">✕</button></div><div id="funBody"></div></div></dialog>
+<dialog id="passDlg"><div class="sheet">
+  <div class="sheet-head"><h2>Passes</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div id="passBody" class="passbody"></div>
+</div></dialog>
 <dialog id="rankDlg"><div class="sheet">
   <div class="sheet-head"><h2>Rank rewards</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div id="rankBody" class="innerfold"></div>
@@ -1195,14 +1284,14 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
     <button class="icon" id="bmBtn" aria-label="Bookmark this spot"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h10v16l-5-3.6L7 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="icon" id="menuBtn" aria-label="Book menu"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg></button>
   </header>
-  <div class="hint"><span id="hintTxt">Tap or press Space to play</span><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button" hidden>Text</button></div>
-  <div id="chapterBox" hidden>
-    <div class="chrow"><div class="chapter"><select id="chapters" aria-label="Chapter"></select></div><button class="mini" id="tocBtn" type="button">Contents</button></div>
+  <div id="chapterBox">
+    <div class="chrow"><button type="button" class="chbtn" id="chBtn" aria-label="Chapters"><span id="chLabel"></span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="chapter" hidden><select id="chapters" aria-label="Chapter" tabindex="-1"></select></div><button class="mini" id="tocBtn" type="button" hidden>Contents</button><span class="rtools"><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini iconly" id="sizeBtn" type="button" aria-label="Text size" aria-expanded="false"><b style="font:700 15px Georgia,serif">A</b><b style="font:700 11px Georgia,serif">a</b></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button" hidden>Text</button></span></div>
     <div class="chbar" title="Book progress" aria-hidden="true"><i id="chfill"></i></div>
   </div>
   <div class="stage" id="stage">
     <div class="word" id="wordbox"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
   </div>
+  <p class="hint" id="hintRow"><span id="hintTxt">Tap to play · swipe to step</span></p>
   <div class="ctx" id="ctx"></div>
   <div class="card coach" id="coach" hidden>
     <span id="coachTxt"></span>
@@ -1222,8 +1311,8 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
     </div>
     <label class="setting">Speed <input type="range" id="wpm" min="50" max="300" step="25"><b id="wpmVal"></b></label>
     <p class="fine speedhint" id="speedHint" hidden></p>
-    <label class="setting">Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
-    <div class="stats"><span id="sess"></span><span class="keys">Space play · ←/→ skip · ↑/↓ speed · D define</span></div>
+    <label class="setting" id="sizeRow" hidden>Size <input type="range" id="fs" min="24" max="140" step="2"><b id="fsVal"></b></label>
+    <div class="stats"><span id="sess"></span><span class="keys kbonly">Space play · ←/→ skip · ↑/↓ speed · D define</span></div>
   </div>
   </div>
 </section>
@@ -1458,8 +1547,8 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
 <dialog id="menuDlg"><div class="sheet">
   <div class="sheet-head"><h2>This book</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div class="menugrid">
-  <button id="openToc">Contents</button>
-  <button id="openText">Text view</button>
+  <button id="openToc" hidden>Contents</button>
+  <button id="openText" hidden>Text view</button>
   <button id="openSearch">Search</button>
   <button id="openJournal" class="sonly">My journal</button>
   <button id="focusBtn">Focus mode</button>
@@ -1480,7 +1569,7 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
 <dialog id="setDlg"><div class="sheet">
   <div class="sheet-head"><h2>Settings</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div class="seg tabs" id="setTabs" role="tablist">
-    <button data-tab="general" role="tab">Profile</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="access" role="tab">Access</button><button data-tab="storage" role="tab">Backup</button>
+    <button data-tab="general" role="tab">Profile</button><button data-tab="display" role="tab">Display</button><button data-tab="reading" role="tab">Reading</button><button data-tab="access" role="tab">Access</button><button data-tab="storage" role="tab">More</button>
   </div>
   <div class="pane" data-pane="general" hidden>
   <p class="gt">You</p>
@@ -1640,35 +1729,36 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
     <p class="fine" id="unlockNote"></p>
     <label class="setrow">Bold word beginnings <input type="checkbox" id="bionicChk"></label>
   </div>
-  <p class="gt">Extras</p>
-  <div class="grp"><p class="fine">Backdrops, titles, sounds and more now live in the Rewards tab.</p><button type="button" id="goRewards">Open Rewards</button></div>
+  <button type="button" id="goRewards" hidden>Open Rewards</button>
   </div>
   <div class="pane" data-pane="reading" hidden>
   <p class="gt">Reading</p>
   <div class="grp">
     <div class="setrow">Words at a time <div class="seg" id="chunkSeg"><button data-chunk="1">1</button><button data-chunk="2">2</button><button data-chunk="3">3</button></div></div>
-    <label class="setrow">Press and hold to read <input type="checkbox" id="holdChk"></label>
     <label class="setrow">Back up when you resume
       <select id="rewindSel"><option value="0">Off</option><option value="3">3 words</option><option value="5">5 words</option><option value="10">10 words</option></select>
     </label>
-    <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
     <label class="setrow">Speed coach suggestions <input type="checkbox" id="coachChk"></label>
     <label class="setrow sonly">Chapter recaps <input type="checkbox" id="recapChk"></label>
   </div>
-  <p class="gt">Sound and night</p>
+  <p class="gt">Comfort</p>
   <div class="grp">
-    <label class="setrow">Reward sounds <input type="checkbox" id="sfxChk"></label>
-    <label class="setrow">Sound volume <input type="range" id="sfxVol" min="0" max="100" step="5"></label>
     <label class="setrow">Auto night mode <select id="nightSel"><option value="0">Off</option><option value="19">After 7 PM</option><option value="20">After 8 PM</option><option value="21">After 9 PM</option><option value="22">After 10 PM</option></select></label>
     <p class="fine">Night mode makes the reader warm and dim. Tap the moon while reading to switch it.</p>
-  </div>
-  <p class="gt">Screen</p>
-  <div class="grp">
-    <label class="setrow">Open books in focus mode <input type="checkbox" id="focusStartChk"></label>
-    <label class="setrow">Dim the screen edges while reading <input type="checkbox" id="dimChk"></label>
     <label class="setrow">Eye break reminder <select id="eyesSel"><option value="0">Off</option><option value="10">Every 10 min</option><option value="20">Every 20 min</option><option value="30">Every 30 min</option></select></label>
     <p class="fine">Pauses you and asks you to look far away for 20 seconds. Short breaks are good for your eyes.</p>
   </div>
+  <p class="gt">Sound</p>
+  <div class="grp">
+    <label class="setrow">Reward sounds <input type="checkbox" id="sfxChk"></label>
+    <label class="setrow">Sound volume <input type="range" id="sfxVol" min="0" max="100" step="5"></label>
+  </div>
+  <details class="grp fold"><summary>Advanced</summary>
+    <label class="setrow">Press and hold to read <input type="checkbox" id="holdChk"></label>
+    <label class="setrow">Ease in when you press play <input type="checkbox" id="rampChk"></label>
+    <label class="setrow">Open books in focus mode <input type="checkbox" id="focusStartChk"></label>
+    <label class="setrow">Dim the screen edges while reading <input type="checkbox" id="dimChk"></label>
+  </details>
   <details class="grp fold"><summary>Speed limit</summary>
     <p class="fine" id="speedInfo"></p>
     <div class="goalrow" id="pwBox"><input type="password" id="pwInput" placeholder="Teacher password" autocomplete="off" autocapitalize="off"><button id="pwBtn">Unlock</button></div>
@@ -3816,10 +3906,11 @@ function chapterIndexAt(i) {
   return lo;
 }
 
+function chLabelSync() { const o = chapSel.options[chapSel.selectedIndex]; $("#chLabel").textContent = o ? o.text.trim() : ""; }
 function syncChapter() {
   if (chapters.length < 2) return;
   const lo = chapterIndexAt(cur);
-  if (chapSel.selectedIndex !== lo) chapSel.selectedIndex = lo;
+  if (chapSel.selectedIndex !== lo) { chapSel.selectedIndex = lo; chLabelSync(); }
   $("#chfill").style.width = Math.max(0, Math.min(100, cur / Math.max(1, tokens.length - 1) * 100)) + "%";
 }
 
@@ -4024,15 +4115,12 @@ function checkWeekly() {
 }
 function renderWeekly() {
   const box = $("#wkCard"); box.replaceChildren();
-  const { ws, c, v } = curWeek(), have = store.get("pace:wk", {}), done = !!have[ws];
-  box.append(el("h2", "", "Weekly challenge"));
-  const row = el("div", "dayrow"); row.append(el("b", "", c.name), el("span", "", done ? "Complete" : "Ends Saturday"));
-  const bar = el("span", "bar wkbar"), fill = document.createElement("i"); fill.style.width = Math.min(100, v / c.goal * 100) + "%"; bar.append(fill);
-  const cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
-  box.append(row, el("p", "fine", c.desc), bar, el("p", "fine", done ? "Badge earned for this week." : `${cnt(Math.min(v, c.goal))} / ${fmt(c.goal)}${c.unit ? " " + c.unit : ""}`));
+  // the weekly challenge itself now lives with the quests on Rewards; Stats keeps the badges it earned
+  const have = store.get("pace:wk", {});
   const keys = Object.keys(have).sort().reverse();
+  box.hidden = !keys.length;
   if (keys.length) {
-    box.append(el("p", "fine", `Weekly badges: ${keys.length}`));
+    box.append(el("h2", "", "Weekly challenge badges"), el("p", "fine", `${keys.length} earned`));
     const g = el("div", "badges");
     keys.forEach(k => {
       const ch = WEEKLY.find(x => x.id === have[k].id) || WEEKLY[0], d = el("div", "badge earned");
@@ -4497,35 +4585,63 @@ const XNAME = (k, id) => { const c = XCATS.find(x => x.k === k), o = c && c.opts
 const xOk = (k, id) => !!id && !isLocked(k, id);
 const xGet = k => (pv && pv.key === k && settings[k] === pv.id) ? settings[k] : xOk(k, settings[k]) ? settings[k] : "";
 const TINTS = { rose: "sepia(1) saturate(2.6) hue-rotate(290deg) brightness(1.05)", ice: "sepia(1) saturate(2.4) hue-rotate(155deg) brightness(1.1)", gold: "sepia(1) saturate(2.6) hue-rotate(-8deg) brightness(1.1)", mint: "sepia(1) saturate(2.4) hue-rotate(75deg) brightness(1.05)", violet: "sepia(1) saturate(2.6) hue-rotate(225deg) brightness(1.05)", shadow: "grayscale(1) brightness(.5) contrast(1.3)", rainbow: "sepia(1) saturate(3)" };
-function bdMarkup(id, col) {
-  const wrap = (vb, inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+function bdMarkup(id, col, acc) {
+  acc = acc || col;
   const R = (n, f) => { let o = ""; for (let i = 0; i < n; i++) o += f(i); return o; };
   const r = i => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
-  const core = t => t.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
-  if (id === "fern") return wrap("0 0 400 260", `<g transform="translate(-6 8) scale(.95)">${core(BD_SVG.fern)}</g><g transform="translate(250 8) scale(.95)">${core(BD_SVG.fern2)}</g>`).replace(/COL/g, col);
-  if (id === "moth") return BD_SVG.moth.replace(/COL/g, col);
-  if (id === "hat") return BD_SVG.hat.replace(/COL/g, col);
-  if (id === "stag") return BD_SVG.stag.replace(/COL/g, col);
-  if (id === "stars") return wrap("0 0 400 700", R(26, i => { const x = r(i) * 380 + 10, y = r(i + 40) * 640 + 10, z = 3 + r(i + 80) * 6; return `<path d="M${x} ${y - z}L${x + z * .3} ${y - z * .3}L${x + z} ${y}L${x + z * .3} ${y + z * .3}L${x} ${y + z}L${x - z * .3} ${y + z * .3}L${x - z} ${y}L${x - z * .3} ${y - z * .3}Z"/>`; }));
-  if (id === "snow") return wrap("0 0 400 700", R(40, i => `<circle cx="${r(i) * 390 + 5}" cy="${r(i + 50) * 690 + 5}" r="${1.5 + r(i + 90) * 3.5}" fill="${col}" stroke="none"/>`));
-  if (id === "leaves") return wrap("0 0 400 700", R(9, i => { const x = r(i) * 340 + 30, y = r(i + 30) * 620 + 30, a = r(i + 70) * 360, z = 16 + r(i + 90) * 14; return `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 ${-z}C${z * .8} ${-z * .4} ${z * .8} ${z * .5} 0 ${z}C${-z * .8} ${z * .5} ${-z * .8} ${-z * .4} 0 ${-z}ZM0 ${-z}V${z}"/></g>`; }));
-  if (id === "waves") return wrap("0 0 400 200", R(5, i => `<path d="M0 ${60 + i * 28}Q50 ${40 + i * 28} 100 ${60 + i * 28}T200 ${60 + i * 28}T300 ${60 + i * 28}T400 ${60 + i * 28}"/>`));
-  if (id === "circuit") return wrap("0 0 400 260", `<path d="M0 220H90V160H170V100H260V40H400M0 180H50V120H120V60H200M60 260V210H140V170M300 260V200H360V140H400"/>` + R(7, i => `<circle cx="${[90, 170, 260, 50, 120, 140, 360][i]}" cy="${[220, 160, 100, 180, 120, 210, 200][i]}" r="4"/>`));
-  if (id === "constel") { const P = [[60, 90], [140, 50], [230, 110], [320, 60], [350, 170], [260, 230], [150, 200], [70, 260]]; return wrap("0 0 400 700", `<path d="${P.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join("")}" opacity=".6"/>` + P.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${col}"/>`).join("")); }
-  if (id === "sprout") return wrap("0 0 400 260", R(7, i => { const x = 30 + i * 55 + r(i) * 20, h = 50 + r(i + 9) * 60; return `<path d="M${x} 260V${260 - h}"/><path d="M${x} ${260 - h}C${x - 28} ${260 - h - 6} ${x - 30} ${260 - h - 34} ${x - 4} ${260 - h - 30}M${x} ${260 - h + 14}C${x + 26} ${260 - h + 8} ${x + 30} ${260 - h - 18} ${x + 4} ${260 - h - 16}"/>`; }));
-  if (id === "pines") return wrap("0 0 400 260", R(6, i => { const x = 30 + i * 66 + r(i) * 14, h = 90 + r(i + 5) * 80, w = 22 + r(i + 7) * 14; return `<path d="M${x} 260V${260 - h * .15}M${x} ${260 - h}L${x - w} ${260 - h * .55}H${x - w * .5}L${x - w * 1.3} ${260 - h * .2}H${x + w * 1.3}L${x + w * .5} ${260 - h * .55}H${x + w}Z"/>`; }));
-  if (id === "grid") return wrap("0 0 400 200", R(9, i => `<path d="M0 ${200 - i * i * 2.6}H400" opacity="${.9 - i * .07}"/>`) + R(13, i => `<path d="M${200 + (i - 6) * 8} 120L${200 + (i - 6) * 70} 200"/>`));
-  if (id === "rays") return wrap("0 0 400 260", `<circle cx="200" cy="260" r="42"/>` + R(11, i => { const a = Math.PI + (i + .5) * Math.PI / 11; return `<path d="M${200 + Math.cos(a) * 62} ${260 + Math.sin(a) * 62}L${200 + Math.cos(a) * 240} ${260 + Math.sin(a) * 240}"/>`; }));
+  const core = t => t.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "").replace(/COL/g, "currentColor");
+  const vbOf = t => (t.match(/viewBox="([^"]+)"/) || [])[1];
+  const svg = (vb, defs, inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"><defs>${defs}<linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${acc}"/><stop offset="1" stop-color="${col}"/></linearGradient><radialGradient id="gh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="${acc}" stop-opacity=".35"/><stop offset="1" stop-color="${acc}" stop-opacity="0"/></radialGradient><filter id="gb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter></defs>${inner}</svg>`;
+  // line drawings: soft halo, colored glow, then the crisp line
+  const lineArt = (t, sw) => { const vb = vbOf(t).split(" ").map(Number), c = core(t), w = vb[2], h = vb[3];
+    return svg(vb.join(" "), "", `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${w * .55}" ry="${h * .55}" fill="url(#gh)"/><g fill="none" stroke-linecap="round" stroke-linejoin="round"><g style="color:${acc}" stroke="${acc}" stroke-width="${sw * 3.2}" opacity=".22" filter="url(#gb)">${c}</g><g style="color:${acc}" stroke="${acc}" stroke-width="${sw * 1.9}" opacity=".35">${c}</g><g style="color:${col}" stroke="${col}" stroke-width="${sw}">${c}</g></g>`); };
+  if (id === "moth") return lineArt(BD_SVG.moth, 1.8);
+  if (id === "hat") return lineArt(BD_SVG.hat, 2.2);
+  if (id === "stag") return lineArt(BD_SVG.stag, 2.2);
+  if (id === "fern") { // two fronds made of leaflets
+    const frond = (x0, flip, s, o) => { let d = ""; const n = 16; for (let i = 0; i < n; i++) { const t = i / n, y = 250 - t * 220 * s, x = x0 + flip * Math.sin(t * 1.4) * 40 * s, L = (1 - t) * 34 * s + 6, a = flip * (34 - t * 10);
+        d += `<ellipse cx="${x + flip * L * .55}" cy="${y - 4}" rx="${L * .55}" ry="${3.6 + (1 - t) * 3}" transform="rotate(${-a} ${x} ${y})"/><ellipse cx="${x - flip * L * .5}" cy="${y - 4}" rx="${L * .5}" ry="${3.4 + (1 - t) * 3}" transform="rotate(${a * .9} ${x} ${y})"/>`; }
+      return `<g opacity="${o}"><path d="M${x0} 262C${x0 + flip * 10 * s} ${200} ${x0 + flip * 40 * s} ${140} ${x0 + flip * 40 * Math.sin(1.4) * s} ${30 + (1 - s) * 200}" stroke="${col}" stroke-width="2.4" fill="none"/><g fill="url(#ga)">${d}</g></g>`; };
+    return svg("0 0 400 260", "", frond(40, 1, 1, .9) + frond(360, -1, .9, .8) + frond(95, 1, .6, .5) + frond(310, -1, .55, .45));
+  }
+  if (id === "stars") return svg("0 0 400 700", "", R(70, i => `<circle cx="${r(i + 200) * 400}" cy="${r(i + 300) * 700}" r="${.6 + r(i + 400) * 1.3}" fill="${col}" opacity="${.3 + r(i + 500) * .6}"/>`) +
+    R(18, i => { const x = r(i) * 370 + 15, y = r(i + 40) * 660 + 20, z = 4 + r(i + 80) * 9; return `<circle cx="${x}" cy="${y}" r="${z * 2.2}" fill="url(#gh)"/><path d="M${x} ${y - z}Q${x + z * .14} ${y - z * .14} ${x + z} ${y}Q${x + z * .14} ${y + z * .14} ${x} ${y + z}Q${x - z * .14} ${y + z * .14} ${x - z} ${y}Q${x - z * .14} ${y - z * .14} ${x} ${y - z}Z" fill="${i % 3 ? col : acc}"/>`; }));
+  if (id === "snow") return svg("0 0 400 700", "", R(60, i => `<circle cx="${r(i) * 400}" cy="${r(i + 50) * 700}" r="${1.2 + r(i + 90) * 3.2}" fill="${col}" opacity="${.25 + r(i + 120) * .6}"${r(i + 7) > .7 ? ` filter="url(#gb)"` : ""}/>`) +
+    R(9, i => { const x = r(i + 600) * 360 + 20, y = r(i + 640) * 660 + 20, z = 9 + r(i + 680) * 12, rot = r(i + 700) * 60; let a = ""; for (let k = 0; k < 6; k++) a += `<g transform="rotate(${k * 60})"><path d="M0 0V${-z}M0 ${-z * .55}l${z * .28} ${-z * .25}M0 ${-z * .55}l${-z * .28} ${-z * .25}"/></g>`;
+      return `<g transform="translate(${x} ${y}) rotate(${rot})" stroke="${i % 2 ? acc : col}" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".85">${a}<circle r="${z * .14}" fill="${col}" stroke="none"/></g>`; }));
+  if (id === "leaves") return svg("0 0 400 700", "", R(14, i => { const x = r(i) * 360 + 20, y = r(i + 30) * 660 + 20, a = r(i + 70) * 360, z = 14 + r(i + 90) * 16, o = .45 + r(i + 110) * .5;
+    return `<g transform="translate(${x} ${y}) rotate(${a})" opacity="${o}"><path d="M0 ${-z}C${z * .8} ${-z * .5} ${z * .7} ${z * .5} 0 ${z}C${-z * .7} ${z * .5} ${-z * .8} ${-z * .5} 0 ${-z}Z" fill="url(#ga)"/><path d="M0 ${-z * .85}V${z * 1.3}" stroke="${col}" stroke-width="1.4" fill="none" opacity=".7"/></g>`; }));
+  if (id === "waves") return svg("0 0 400 260", `<linearGradient id="gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${acc}" stop-opacity=".55"/><stop offset="1" stop-color="${col}" stop-opacity=".9"/></linearGradient>`,
+    R(5, i => { const y = 110 + i * 30, A = 14 - i, ph = i * 37; return `<path d="M0 ${y}Q${50 + ph % 40} ${y - A} ${100} ${y}T${200} ${y}T${300} ${y}T${400} ${y}V260H0Z" fill="url(#gw)" opacity="${.25 + i * .14}"/><path d="M0 ${y}Q${50 + ph % 40} ${y - A} ${100} ${y}T${200} ${y}T${300} ${y}T${400} ${y}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.4"/>`; }));
+  if (id === "circuit") { const P = [[90, 220], [90, 160], [170, 160], [170, 100], [260, 100], [260, 40], [50, 180], [120, 120], [200, 60], [140, 210], [360, 200], [360, 140]];
+    const paths = `<path d="M0 220H90V160H170V100H260V40H400M0 180H50V120H120V60H200M60 260V210H140V170M300 260V200H360V140H400"/>`;
+    return svg("0 0 400 260", "", `<g fill="none" stroke-linecap="round" stroke-linejoin="round"><g stroke="${acc}" stroke-width="7" opacity=".18" filter="url(#gb)">${paths}</g><g stroke="${col}" stroke-width="2.2">${paths}</g></g>` + P.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="9" fill="url(#gh)"/><circle cx="${x}" cy="${y}" r="4" fill="${i % 3 ? col : acc}" stroke="${col}" stroke-width="1"/>`).join("")); }
+  if (id === "constel") { const P = [[60, 90], [140, 50], [230, 110], [320, 60], [350, 170], [260, 230], [150, 200], [70, 260]];
+    return svg("0 0 400 700", "", R(50, i => `<circle cx="${r(i + 900) * 400}" cy="${r(i + 950) * 700}" r="${.6 + r(i + 990) * 1.1}" fill="${col}" opacity="${.3 + r(i + 1100) * .5}"/>`) +
+      `<path d="${P.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join("")}Z" fill="none" stroke="${col}" stroke-width="1.2" stroke-dasharray="3 5" opacity=".7"/>` + P.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="14" fill="url(#gh)"/><circle cx="${x}" cy="${y}" r="${i % 2 ? 3 : 4.2}" fill="${i % 3 ? col : acc}"/>`).join("")); }
+  if (id === "sprout") return svg("0 0 400 260", `<linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".55"/><stop offset="1" stop-color="${col}" stop-opacity=".95"/></linearGradient>`,
+    R(7, i => { const x = 30 + i * 55 + r(i) * 20, h = 50 + r(i + 9) * 60, s = .8 + r(i + 3) * .5, y = 248 - h;
+      return `<path d="M${x} 252C${x - 3} ${252 - h * .5} ${x + 3} ${y + 20} ${x} ${y}" stroke="${col}" stroke-width="2.4" fill="none"/><path d="M${x} ${y + 6}C${x - 30 * s} ${y - 6} ${x - 34 * s} ${y + 22} ${x - 6} ${y + 18}Z" fill="url(#ga)"/><path d="M${x} ${y + 2}C${x + 28 * s} ${y - 16} ${x + 36 * s} ${y + 14} ${x + 6} ${y + 14}Z" fill="url(#ga)"/>`; }) +
+    `<path d="M0 252C80 238 140 246 200 244S330 236 400 248V260H0Z" fill="url(#gs)"/>`);
+  if (id === "pines") { const tree = (x, b, h, w) => { let d = `M${x} ${b - h}`; for (let k = 1; k <= 4; k++) { const t = k / 4, ww = w * (.35 + t * .65); d += `L${x + ww} ${b - h + h * t * .9}L${x + ww * .45} ${b - h + h * t * .9}`; } d += `L${x - w * .45} ${b - h * .1}`; for (let k = 4; k >= 1; k--) { const t = k / 4, ww = w * (.35 + t * .65); d += `L${x - ww * .45} ${b - h + h * t * .9}L${x - ww} ${b - h + h * t * .9}`; } return d + "Z"; };
+    const layer = (n, b, hm, hv, o, seed) => `<g opacity="${o}">` + R(n, i => { const x = (i + .5) * 400 / n + (r(i + seed) - .5) * 30, h = hm + r(i + seed + 20) * hv; return `<path d="${tree(x, b, h, h * .3)}" fill="url(#ga)"/><path d="M${x} ${b}V${b - h * .12}" stroke="${col}" stroke-width="4"/>`; }) + `</g>`;
+    return svg("0 0 400 260", "", layer(9, 230, 70, 50, .35, 1) + layer(6, 262, 110, 70, .85, 50) + `<rect y="200" width="400" height="60" fill="url(#gh)" opacity=".5"/>`); }
+  if (id === "grid") return svg("0 0 400 260", `<linearGradient id="gsun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${acc}"/><stop offset="1" stop-color="${col}"/></linearGradient><mask id="cs"><circle cx="200" cy="118" r="62" fill="#fff"/>${R(5, i => `<rect x="130" y="${88 + i * 7}" width="140" height="${1.5 + i * .9}" fill="#000"/>`)}</mask>`,
+    `<circle cx="200" cy="118" r="110" fill="url(#gh)"/><rect x="130" y="50" width="140" height="70" fill="url(#gsun)" mask="url(#cs)"/>
+    <g stroke="${acc}" stroke-width="1.6" fill="none">${R(9, i => `<path d="M0 ${260 - i * i * 1.8}H400" opacity="${.95 - i * .09}"/>`)}${R(15, i => `<path d="M${200 + (i - 7) * 7} 120L${200 + (i - 7) * 64} 260" opacity=".7"/>`)}</g><rect y="118" width="400" height="3" fill="${acc}" opacity=".8"/>`);
+  if (id === "rays") return svg("0 0 400 260", `<radialGradient id="gr" cx=".5" cy="1" r="1"><stop offset="0" stop-color="${acc}" stop-opacity=".9"/><stop offset="1" stop-color="${acc}" stop-opacity="0"/></radialGradient>`,
+    R(16, i => { const a0 = Math.PI + i * Math.PI / 16, a1 = a0 + Math.PI / 32; return `<path d="M200 260L${200 + Math.cos(a0) * 420} ${260 + Math.sin(a0) * 420}L${200 + Math.cos(a1) * 420} ${260 + Math.sin(a1) * 420}Z" fill="url(#gr)" opacity="${i % 2 ? .35 : .6}"/>`; }) +
+    `<circle cx="200" cy="260" r="90" fill="url(#gh)"/><circle cx="200" cy="260" r="48" fill="url(#ga)"/>`);
   return "";
 }
 function applyBackdrop() {
   const d = $("#bd"); if (!d) return; const id = xGet("bd");
   if (!id) { d.style.backgroundImage = ""; d.style.opacity = ""; return; }
-  const col = (getComputedStyle(document.documentElement).getPropertyValue("--muted") || "#888").trim() || "#888";
+  const cs = getComputedStyle(document.documentElement), col = (cs.getPropertyValue("--muted") || "#888").trim() || "#888", acc = (cs.getPropertyValue("--accent") || col).trim() || col;
   if (/^p_/.test(String(id))) { settings.bd = ""; saveSettings(); d.style.backgroundImage = ""; return; }
   d.classList.toggle("wide", ["stars", "snow", "leaves", "constel"].includes(id));
-  d.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, col))}")`;
-  d.style.backgroundSize = { moth: "170px auto", hat: "250px auto", stag: "200px auto" }[id] || ""; d.style.opacity = ["moth", "hat", "stag"].includes(id) ? ".32" : "";
+  d.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, col, acc))}")`;
+  d.style.backgroundSize = { moth: "220px auto", hat: "280px auto", stag: "240px auto" }[id] || ""; d.style.opacity = ["moth", "hat", "stag"].includes(id) ? ".45" : "";
 }
 const GREET = {
   pirate: [["Ahoy, night owl", "Ahoy", "Ahoy there", "Ahoy, matey"], ""],
@@ -4550,7 +4666,7 @@ function applyExtras() {
   ["stat", "cov"].forEach(k => { const v = xGet(k); if (v) root.dataset[k] = v; else delete root.dataset[k]; });
   { const b = $("#bmBtn path"); if (b) b.setAttribute("d", BM_PATHS[xGet("bm")] || BM_PATHS.def); }
   applyBackdrop();
-  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = stampHtml(st); if (t) tl.append(document.createTextNode(typeof titleName === "function" ? titleName(t) : XNAME("title", t))); } }
+  { const t = xGet("title"), st = xGet("stamp"), tl = $("#titleLine"); if (tl) { tl.innerHTML = t ? stampHtml(st) : ""; if (t) tl.append(document.createTextNode(typeof titleName === "function" ? titleName(t) : XNAME("title", t))); } if (typeof updateGreet === "function") updateGreet(); }
   updateGreet(); pvUpdate(); if (typeof applyGear === "function" && GEAR_K) applyGear();
 }
 /* reward sounds, made in code */
@@ -4568,10 +4684,8 @@ function chime(kind) {
   } catch (e) {}
 }
 const XGROUPS = [
-  { id: "look", name: "Look", sub: "Backdrops, colors, covers", keys: ["bd", "atomc", "cov", "stat", "bar"] },
-  { id: "read", name: "Reading", sub: "Effects, marks, bookmarks, sounds", keys: ["wfx", "marks", "bm", "amb"] },
-  { id: "fun", name: "Fun", sub: "Confetti, sounds, greetings", keys: ["conf", "chime", "greet"] },
-  { id: "me", name: "Identity", sub: "Titles, name flair, frames", keys: ["title", "nflair", "pframe", "stamp", "plate"] }
+  { id: "look", name: "Looks", sub: "Wallpapers, word effects, titles, frames", ic: "look", keys: ["bd", "wfx", "marks", "bm", "cov", "bar", "stat", "title", "nflair", "pframe", "stamp", "plate"] },
+  { id: "sound", name: "Sounds", sub: "Chimes, confetti, background sounds", ic: "sound", keys: ["chime", "conf", "amb", "greet"] }
 ];
 /* ---------- Atom gear: hats, glasses and neckwear, drawn in code ---------- */
 var GEAR_K = ["ghat", "gface", "gneck"];
@@ -4618,7 +4732,7 @@ Object.assign(UNLOCK, {
   gface: { round: 2, shades: 5, star: 9, heart: 13, monocle: 17, goggles: 21, d3: 25, stache: 30 },
   gneck: { bowtie: 3, scarf: 8, tie: 12, bandana: 16, medal: 20, lei: 24, badge: 29 }
 });
-XGROUPS.push({ id: "gear", name: "Atom gear", sub: "Hats, glasses, neckwear", keys: GEAR_K });
+XGROUPS.splice(1, 0, { id: "gear", name: "Atom", sub: "Hats, glasses, colors", ic: "atom", keys: GEAR_K.concat(["atomc"]) });
 function gearLayers(pick, noHat) {
   // neck first, then face, then hat on top
   const mood = pick.mood && typeof MOOD_SVG !== "undefined" && MOOD_SVG && MOOD_SVG[pick.mood] ? `<g transform="translate(152 108) rotate(40)">${MOOD_SVG[pick.mood]}</g>` : "";
@@ -4716,7 +4830,8 @@ function xTag(kind, id) {
 function xThumb(kind, id) {
   const t = el("span", "xth"); t.setAttribute("aria-hidden", "true");
   try {
-    if (kind === "bd") { if (PH_IMG[id]) t.style.backgroundImage = `url("${PH_IMG[id]}")`; else { t.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, "#888"))}")`; t.style.backgroundSize = "contain"; } }
+    if (kind === "bd") { if (PH_IMG[id]) t.style.backgroundImage = `url("${PH_IMG[id]}")`; else { { const cs = getComputedStyle(document.documentElement); t.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(bdMarkup(id, (cs.getPropertyValue("--muted") || "#888").trim(), (cs.getPropertyValue("--accent") || "#d7372b").trim()))}")`; } t.style.backgroundSize = "contain"; } }
+    else if (kind === "wfx") { const w = el("span", "wfxs", "Aa"); w.dataset.fx = id; t.append(w); }
     else if (kind === "atomc") { const im = document.createElement("img"); im.src = "mascot.png"; im.alt = ""; im.style.filter = TINTS[id] || ""; t.append(im); }
     else if (GEAR_K && GEAR_K.includes(kind)) t.innerHTML = gearThumb(kind, id);
     else if (kind === "plate") t.innerHTML = plateSvg(id, 34);
@@ -4749,6 +4864,7 @@ function renderGroup(g) {
     const none = el("button", "xcard", c.k === "chime" ? "Off" : "None"); none.type = "button";
     none.setAttribute("aria-pressed", String(!settings[c.k] || !xOk(c.k, settings[c.k])));
     none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); if (c.k === "amb") ambStop(); renderGroup(g); };
+    { const t0 = c.opts[0] && xThumb(c.k, c.opts[0][0]); if (t0 && (t0.childNodes.length || t0.style.backgroundImage)) { const nt = el("span", "xth xnone"); nt.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6.5 17.5l11-11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'; none.prepend(nt); } }
     grid.append(none);
     c.opts.forEach(([id, name]) => {
       const m = lockMsg(c.k, id), b = el("button", "xcard" + (m ? " locked" : "")); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
@@ -4785,24 +4901,32 @@ function renderRewardsTab() {
     if (nu.items.length) nc.append(el("span", "fine", nu.items.slice(0, 4).join(", ") + (nu.items.length > 4 ? ` and ${nu.items.length - 4} more` : "")));
   }
   const box = $("#xTiles"); box.replaceChildren();
+  const tile = (ic, name, sub, count, pct, fn) => {
+    const b = el("button", "xtile"); b.type = "button"; const art = el("span", "xart xa-" + ic); art.innerHTML = XG_ICON[ic] || ""; if (ic === "atom") { const im = new Image(); im.src = (typeof MASCOT_URL === "string" && MASCOT_URL) || "mascot.png"; im.alt = ""; art.append(im); }
+    const bar = el("span", "bar"), f = el("i"); f.style.width = Math.max(0, Math.min(100, pct)) + "%"; bar.append(f);
+    b.append(art, el("b", "", name), el("span", "fine", sub), el("span", "xcount", count), bar); b.onclick = fn; box.append(b);
+  };
   XGROUPS.forEach(g => {
     let n = 0, tot = 0; g.keys.forEach(k => { const c = XCATS.find(x => x.k === k); if (c) { const t = xTotals(c); n += t[0]; tot += t[1]; } });
-    const b = el("button", "xtile"); b.type = "button";
-    b.append(el("b", "", g.name), el("span", "fine", g.sub), el("span", "xcount", `${n} of ${tot} unlocked`));
-    b.onclick = () => { xgCur = g; renderGroup(g); document.body.classList.add("xg"); window.scrollTo(0, 0); pvUpdate(); $("#xgDlg").show(); };
-    box.append(b);
+    tile(g.ic || "look", g.name, g.sub, `${n} of ${tot}`, tot ? n / tot * 100 : 0, () => { xgCur = g; renderGroup(g); document.body.classList.add("xg"); window.scrollTo(0, 0); pvUpdate(); $("#xgDlg").show(); });
   });
-  const se = seasonNow(), sw = seasonWords(se), sr = seasonRank(sw), st = el("button", "xtile"); st.type = "button";
-  st.append(el("b", "", "Season " + se.n), el("span", "fine", se.name), el("span", "xcount", sr.name));
-  st.onclick = openSeason; box.append(st);
-  if (!isAdult() && !isPlain()) {
-    const rk = el("button", "xtile"); rk.type = "button"; const ri = rankInfo(metrics().w);
-    rk.append(el("b", "", "Ranks"), el("span", "fine", "What each rank unlocks"), el("span", "xcount", ri.name)); rk.onclick = () => $("#rankDlg").showModal(); box.append(rk);
-    const eb = el("button", "xtile"); eb.type = "button"; const en = Object.keys(evEarned()).length;
-    eb.append(el("b", "", "Events"), el("span", "fine", "Badges from past events"), el("span", "xcount", `${en} of ${EVENTS.length} earned`)); eb.onclick = () => $("#evbDlg").showModal(); box.append(eb);
-  }
+  const se = seasonNow(), sr = seasonRank(seasonWords(se));
+  tile("pass", "Passes", "Season, ranks and events", "Season " + se.n + " · " + sr.name, sr.i / S_MAX * 100, openPasses);
   renderFunTiles();
 }
+var XG_ICON = {
+  look: '<svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="xgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a6b"/><stop offset=".5" stop-color="#e2557a"/><stop offset="1" stop-color="#7a5cf0"/></linearGradient></defs><rect x="6" y="9" width="36" height="30" rx="7" fill="url(#xgl)"/><path d="M6 32l10-9 8 7 6-5 12 10v1a7 7 0 0 1-7 7H13a7 7 0 0 1-7-7z" fill="#fff" opacity=".35"/><circle cx="33" cy="18" r="4" fill="#fff" opacity=".85"/></svg>',
+  sound: '<svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="xgs" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fd0ff"/><stop offset="1" stop-color="#3a5cf0"/></linearGradient></defs><circle cx="24" cy="24" r="18" fill="url(#xgs)"/><path d="M20 31.5V16l11-2.5v15" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.5" cy="31.5" r="3.2" fill="#fff"/><circle cx="28.5" cy="28.5" r="3.2" fill="#fff"/></svg>',
+  pass: '<svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="xgp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd86b"/><stop offset="1" stop-color="#e08a1e"/></linearGradient></defs><path d="M14 6h20v34l-10-7-10 7z" fill="url(#xgp)" stroke="rgba(0,0,0,.18)" stroke-width="1.2" stroke-linejoin="round"/><path d="M24 13l2.2 4.6 5 .6-3.7 3.4 1 5-4.5-2.5-4.5 2.5 1-5-3.7-3.4 5-.6z" fill="#fff"/></svg>',
+  atom: ''
+};
+function openPasses() { const d = $("#passDlg"), b = $("#passBody"); b.replaceChildren();
+  const se = seasonNow(), sr = seasonRank(seasonWords(se)), ri = rankInfo(metrics().w), en = Object.keys(evEarned()).length;
+  const row = (ic, t, sub, fn) => { const r = el("button", "passrow"); r.type = "button"; const a = el("span", "passic"); a.innerHTML = ic; r.append(a, Object.assign(el("span", "clt"), {}), el("span", "chev", "›")); r.children[1].append(el("b", "", t), el("span", "fine", sub)); r.onclick = () => { d.close(); fn(); }; b.append(r); };
+  row(ribbon(se.n, SEASON_COL[se.idx], 26), "Season pass", `Season ${se.n}: ${se.name} · ${sr.name}`, openSeason);
+  if (!isAdult() && !isPlain()) { row(XG_ICON.pass, "Rank rewards", `You're ${ri.name}. See what each rank unlocks`, () => $("#rankDlg").showModal());
+    row('<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="22" r="14" fill="#e8760c"/><path d="M17 36l-3 9 10-5 10 5-3-9" fill="#c8281f"/><circle cx="24" cy="22" r="8" fill="#ffd36b"/></svg>', "Event badges", `${en} of ${EVENTS.length} earned`, () => $("#evbDlg").showModal()); }
+  d.showModal(); }
 function openRewards() { renderRewardsTab(); renderBoxTile(); renderQuestRow(); show("rewards"); }
 function renderExtras() { renderRewardsTab(); if (xgCur && $("#xgDlg").open) renderGroup(xgCur); }
 
@@ -5144,6 +5268,13 @@ function renderQuestRow() {
   });
   const ms = new Date(); ms.setHours(24, 0, 0, 0); const hrs = Math.max(1, Math.round((ms - new Date()) / 3600000));
   $("#rwqLeft").textContent = n === 3 ? "All done ✓" : `${n} of 3 · new in ${hrs}h`;
+  { const old = card.querySelector(".wkq"); if (old) old.remove();
+    const { ws, c, v } = curWeek(), done = !!store.get("pace:wk", {})[ws], cnt = x => x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10);
+    const w = el("div", "qitem wkq" + (done ? " done" : "")), top = el("div", "qtop");
+    top.append(el("b", "", (done ? "✓ " : "") + "This week: " + c.name), el("span", "fine", done ? "Badge" : "Ends Sat"));
+    const bar = el("span", "bar"), f = el("i"); f.style.width = Math.min(100, v / c.goal * 100) + "%"; bar.append(f);
+    w.append(top, el("span", "fine", c.desc + (done ? "" : ` · ${cnt(Math.min(v, c.goal))} / ${fmt(c.goal)}${c.unit ? " " + c.unit : ""}`)), bar);
+    box.after(w); }
   $("#rwqNote").textContent = n === 3 ? "Nice work. New quests tomorrow." : `Each quest gives +${fmt(Q_REWARD)} season words. Finish all 3 for +${fmt(Q_ALL)} more.`;
   const dot = document.querySelector('#tabbar [data-go=rewards]'); if (dot) dot.classList.toggle("dot", boxState().n > 0);
 }
@@ -5494,6 +5625,7 @@ function step() {
 async function play() {
   if (!tokens.length || playing) return;
   bedtimeNudge();
+  { const n = store.get("pace:hintN", 0) + 1; if (n <= 3) store.set("pace:hintN", n); if (n >= 3) $("#hintRow").hidden = true; }
   if (cur >= tokens.length - 1) { cur = 0; noRewind = true; }
   if (!noRewind && !settings.hold && settings.rewind > 0 && hasPaused && cur > 0) { const k = Math.min(settings.rewind, cur); cur -= k; skipCount = k; }
   else skipCount = 0;
@@ -5607,7 +5739,7 @@ async function openBook(id) {
     const end = i + 1 < chapters.length ? chapters[i + 1].start : tokens.length, mins = Math.round((end - c.start) / wpm);
     return new Option("  ".repeat(c.depth || 0) + c.title + (mins >= 1 ? " · " + fmtMin(mins) : ""), i);
   }));
-  $("#chapterBox").hidden = chapters.length < 2;
+  $("#chBtn").hidden = chapters.length < 2; $(".chbar").hidden = chapters.length < 2; chLabelSync();
   const m = curMeta(); if (m) { m.opened = Date.now(); saveLib(); }
   ctxEl.textContent = "";
   show("reader"); render(); showContext();
@@ -5666,7 +5798,7 @@ function renderGoal() {
   const g = goalInfo(m, cur);
   $("#goalInfo").textContent = g ? g.long : "Pick a finish date and Atom works out how much to read each day.";
 }
-function openMenu() { pause(); renderBookmarks(); renderGoal(); $("#openToc").hidden = chapters.length < 2; $("#menuDlg").showModal(); }
+function openMenu() { pause(); renderBookmarks(); renderGoal(); $("#menuDlg").showModal(); }
 
 /* ---------- settings sheet ---------- */
 function renderPreview() {
@@ -5919,7 +6051,7 @@ function renderLibrary() {
   $("#empty").hidden = sorted.length > 0;
   { const cc = $("#classCard"); if (cc) cc.hidden = !lib.length || lib.length >= 3; }
   if (sorted.length) cont.append(el("h2", "sect", sorted[0].opened ? "Continue reading" : "Ready to read"), heroCard(sorted[0]));
-  const rec = sorted.slice(1, 4), rb = $("#recentBox");
+  const rec = sorted.slice(1, 5), rb = $("#recentBox");
   rb.hidden = !rec.length; $("#recent").replaceChildren(...rec.map(m => bookTile(m, false)));
   const lb = $("#libBtn"), done = lib.filter(m => m.done).length;
   lb.hidden = lib.length < 2;
@@ -6358,15 +6490,15 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-14b", WHATS = [
+const WHATS_VER = "2026-10-15a", WHATS = [
+  ["A cleaner, shinier Atom", "New icons, wallpapers and a fresh look everywhere. Rewards now has 4 simple groups: Looks, Atom, Sounds and Passes. The weekly challenge sits with your daily quests."],
+  ["Easier reader", "Tap the chapter name to jump around. Tap Aa to change the word size."],
   ["6 new scenes", "Deep Sea, Cloud Nine, City Lights, Desert Dunes, Rocky Peaks and Campfire. Earn them by reading, then pick one in Settings > Display."],
   ["New speed levels", "Atom starts at 150 wpm. Top speed starts at 250. Read 100,000 words to unlock 300."],
   ["70,000 free classics", "Search Project Gutenberg from the Class Library and add any free classic in one tap. It works offline after."],
   ["Cleaner screens", "Daily quests moved to Rewards. Stats has Today, History and Badges tabs. Rewards come in one summary when you earn several at once."],
   ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn one. Rare and legendary gear for Atom is inside."],
-  ["Chapter recaps", "After a chapter, answer one quick question. Your answers make a reading journal you can print."],
-  ["Night mode", "Tap the moon while reading for a warm, dim screen."],
-  ["Records and showcase", "Beat your best for a New record. Show 3 favorite badges on your home screen from Stats."]
+  ["Chapter recaps", "After a chapter, answer one quick question. Your answers make a reading journal you can print."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
@@ -6569,7 +6701,10 @@ function updateGreet() {
   const n = String(settings.name || "").trim().split(/\s+/)[0];
   const gs = window.__xr && xGet("greet"), gx = gs && GREET[gs], gi = h < 5 ? 0 : h < 12 ? 1 : h < 17 ? 2 : 3;
   const gg = gx ? gx[0][gi] : g;
-  { const gEl = $("#greet"); gEl.replaceChildren(); if (n) { gEl.append(document.createTextNode(`${gg}, ${gx ? gx[1] : ""}`)); const nm = el("span", "nflair"); nm.textContent = n; gEl.append(nm); } else gEl.textContent = gg; if ($("#pvGreet")) $("#pvGreet").innerHTML = gEl.innerHTML; }
+  { const gEl = $("#greet"); gEl.replaceChildren(); if (n) { gEl.append(document.createTextNode(`${gg}, ${gx ? gx[1] : ""}`)); const nm = el("span", "nflair"); nm.textContent = n; gEl.append(nm); } else gEl.textContent = gg;
+    // with no title picked, the stamp sits next to the greeting instead of alone on its own line
+    try { const st = window.__xr && xGet("stamp"); if (st && !xGet("title")) { const sp = el("span", "gstamp"); sp.innerHTML = stampHtml(st); gEl.append(sp); } } catch (e) {}
+    if ($("#pvGreet")) $("#pvGreet").innerHTML = gEl.innerHTML; }
 }
 $("#libSearch").oninput = e => { libQ = e.target.value.trim().toLowerCase(); renderShelf(); };
 $("#libBtn").onclick = openShelf;
@@ -6979,7 +7114,10 @@ $("#tvDown").onclick = () => { const b = $("#tvBody"), top = b.scrollTop; tvB = 
 $("#tvBody").onclick = e => { const i = e.target.dataset && e.target.dataset.i; if (i !== undefined) { if (+i < cur) sessBacks++; $("#textDlg").close(); seek(+i); } };
 $("#textBtn").onclick = openText;
 $("#openText").onclick = openText;
-$("#tocBtn").onclick = openToc;
+$("#tocBtn").onclick = $("#chBtn").onclick = openToc;
+$("#sizeBtn").onclick = () => { const r = $("#sizeRow"), open = r.hidden; r.hidden = !open; $("#sizeBtn").setAttribute("aria-expanded", String(open)); if (open && $("#controls").hidden) $("#pToggle").click(); };
+/* the "tap to play" tip shows for the first few reads only */
+{ const n = store.get("pace:hintN", 0); if (n >= 3) $("#hintRow").hidden = true; }
 $("#openToc").onclick = () => { $("#menuDlg").close(); openToc(); };
 $("#openSearch").onclick = () => { $("#menuDlg").close(); $("#srInput").value = ""; $("#srList").replaceChildren(); $("#srInfo").textContent = ""; $("#searchDlg").showModal(); $("#srInput").focus(); };
 $("#srInput").oninput = () => { clearTimeout(srT); srT = setTimeout(runSearch, 200); };
@@ -7266,9 +7404,12 @@ function funShow(title, calm) {
 $("#funDlg").addEventListener("close", funEnd);
 function renderFunTiles() {
   const box = $("#funTiles"); if (!box || !FUN_LVL) return; box.replaceChildren();
-  [["wrapped", "Wrapped", "Your reading story", openWrapped], ["arcade", "Arcade", "Word games after your goal", openArcade], ["calm", "Calm corner", "Quiet scenes to relax", openCalm]].forEach(([k, n, sub, fn]) => {
-    const b = el("button", "xtile"); b.type = "button"; const ok = k === "calm" || funOpen(k);
-    b.append(el("b", "", n), el("span", "fine", sub), el("span", "xcount", ok ? "Open" : "Unlocks at " + LEVELS[FUN_LVL[k]][1]));
+  const FI = { wrapped: '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="12" width="32" height="28" rx="5" fill="#e2557a"/><rect x="8" y="12" width="32" height="9" rx="4" fill="#ff7a9a"/><path d="M24 12v28" stroke="#ffd36b" stroke-width="4"/><path d="M24 12c-4-8-12-6-10-1 1 3 6 2 10 1zm0 0c4-8 12-6 10-1-1 3-6 2-10 1z" fill="#ffd36b"/></svg>',
+    arcade: '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="15" width="38" height="22" rx="11" fill="#7a5cf0"/><path d="M15 21v10M10 26h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="31" cy="23.5" r="2.6" fill="#5fe0b0"/><circle cx="36" cy="28.5" r="2.6" fill="#ffd36b"/></svg>',
+    calm: '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#2e6b8a"/><path d="M30 13a11 11 0 1 0 6 18 13 13 0 0 1-6-18z" fill="#ffe7a8"/><circle cx="15" cy="16" r="1.3" fill="#fff"/><circle cx="19" cy="31" r="1" fill="#fff"/></svg>' };
+  [["wrapped", "Wrapped", "Your reading story", openWrapped], ["arcade", "Arcade", "Word games", openArcade], ["calm", "Calm corner", "Quiet scenes", openCalm]].forEach(([k, n, sub, fn]) => {
+    const b = el("button", "xtile ftile"); b.type = "button"; const ok = k === "calm" || funOpen(k); const art = el("span", "xart"); art.innerHTML = FI[k];
+    b.append(art, el("b", "", n), el("span", "fine", sub), el("span", "xcount" + (ok ? "" : " lockd"), ok ? "Open" : "🔒 " + LEVELS[FUN_LVL[k]][1]));
     b.onclick = () => { if (ok) fn(); else toast(`${n} unlocks at ${LEVELS[FUN_LVL[k]][1]}.`); }; box.append(b);
   });
 }
