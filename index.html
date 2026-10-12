@@ -311,7 +311,7 @@ svg{display:block}
 .stage::before,.stage::after{content:"";position:absolute;left:50%;width:2px;height:16px;background:var(--muted);transform:translateX(-1px);opacity:.6}
 :root:not([data-marks]) .stage::before,:root:not([data-marks]) .stage::after,:root[data-marks=""] .stage::before,:root[data-marks=""] .stage::after{display:none}
 .stage::before{top:0}.stage::after{bottom:0}
-.word{width:100%;display:flex;justify-content:center;
+.word{width:100%;display:grid;grid-template-columns:1fr auto 1fr;
   font:500 var(--fs,44px)/1.25 var(--rf);letter-spacing:var(--ls);word-spacing:var(--ws);white-space:pre;overflow:hidden}
 .l{text-align:right}.p{color:var(--pivot,var(--focus,var(--accent)))}.r{text-align:left}
 .hint{text-align:center;color:var(--muted);font-size:13px;margin:0 0 6px}
@@ -1143,6 +1143,23 @@ body:not([data-screen=library]) .peek,body.adult .peek,body.playing .peek{displa
 .bico .flame{color:inherit;margin:0;vertical-align:0}
 
 /* ---------- premium finish ---------- */
+/* ---------- Center Lock reading view ---------- */
+.stage>.vglow,.stage>.vbeam,.stage>.vtun,.stage>.vbase,.stage>.vghost{position:absolute;pointer-events:none}
+.stage .word{position:relative;z-index:2}
+.vglow{left:50%;top:50%;width:calc(var(--fs,44px)*2.8);height:calc(var(--fs,44px)*2.2);transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--focus,var(--accent)) 15%,transparent),transparent)}
+.vbeam,.vtun,.vbase,.vghost{display:none}
+body.vw-beam .vbeam{display:block;left:50%;top:0;bottom:0;width:calc(var(--fs,44px)*1.6);transform:translateX(-50%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--focus,var(--accent)) 14%,transparent),transparent)}
+body.vw-tun .vtun{display:block;inset:0;z-index:3;background:radial-gradient(ellipse 46% 42% at 50% 50%,transparent 55%,rgba(0,0,0,.12) 100%)}
+body.vw-base .vbase{display:block;left:16%;right:16%;top:calc(50% + var(--fs,44px)*.52);height:1.5px;background:color-mix(in srgb,var(--muted) 40%,transparent)}
+body.vw-base .vbase::after{content:"";position:absolute;left:50%;top:-2.5px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--focus,var(--accent))}
+body.vw-ghost .vghost{display:block;top:50%;transform:translateY(-50%);font:500 calc(var(--fs,44px)*.5)/1 var(--rf);color:var(--muted);opacity:.35;white-space:pre;max-width:24%;overflow:hidden;text-overflow:ellipsis}
+.vgl{left:4px;text-align:left}.vgr{right:4px;text-align:right}
+body.vw-ghost .vghost.hide{visibility:hidden}
+.word .n1{color:color-mix(in srgb,var(--pivot,var(--focus,var(--accent))) 55%,var(--ink))}
+.word .n2{color:color-mix(in srgb,var(--pivot,var(--focus,var(--accent))) 25%,var(--ink))}
+body.nopivot .word .n1,body.nopivot .word .n2{color:inherit}
+body.focus .vbeam,body.focus .vtun,body.focus .vbase,body.focus .vghost{display:none!important}
+
 :root[data-theme]:not([data-theme="light"]):not([data-theme="dark"]):not([data-theme="black"]){--focus:var(--accent)}
 /* ---------- compact home ---------- */
 body.hasbooks #library .actmenu{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:41}
@@ -1463,7 +1480,7 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
     <div class="chrow"><button type="button" class="chbtn" id="chBtn" aria-label="Chapters"><span id="chLabel"></span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="chapter" hidden><select id="chapters" aria-label="Chapter" tabindex="-1"></select></div><button class="mini" id="tocBtn" type="button" hidden>Contents</button><span class="rtools"><button class="mini hearbtn iconly" id="hearBtn" type="button" aria-label="Hear this word" title="Hear this word (H)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini iconly" id="sizeBtn" type="button" aria-label="Text size" aria-expanded="false"><b style="font:700 15px Georgia,serif">A</b><b style="font:700 11px Georgia,serif">a</b></button><button class="mini" id="defBtn" type="button">Define</button><button class="mini" id="textBtn" type="button" hidden>Text</button></span></div>
     <div class="chbar" title="Book progress" aria-hidden="true"><i id="chfill"></i></div>
   </div>
-  <div class="stage" id="stage">
+  <div class="stage" id="stage"><span class="vglow" aria-hidden="true"></span><span class="vbeam" aria-hidden="true"></span><span class="vtun" aria-hidden="true"></span><span class="vbase" aria-hidden="true"></span><span class="vghost vgl" id="ghostL" aria-hidden="true"></span><span class="vghost vgr" id="ghostR" aria-hidden="true"></span>
     <div class="word" id="wordbox"><span class="l" id="L"></span><span class="p" id="P"></span><span class="r" id="R"></span></div>
   </div>
   <p class="hint" id="hintRow"><span id="hintTxt">Tap to play · swipe to step</span></p>
@@ -1940,6 +1957,15 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   <button type="button" id="goRewards" hidden>Open Rewards</button>
   </div>
   <div class="pane" data-pane="reading" hidden>
+  <p class="gt">Reading view</p>
+  <div class="grp">
+    <label class="setrow">Color fade around the focus letter <input type="checkbox" id="vwFade"></label>
+    <label class="setrow">Baseline <input type="checkbox" id="vwBase"></label>
+    <label class="setrow">Light beam <input type="checkbox" id="vwBeam"></label>
+    <label class="setrow">Tunnel (dim around the word) <input type="checkbox" id="vwTun"></label>
+    <label class="setrow">Ghost words (last and next word, faint) <input type="checkbox" id="vwGhost"></label>
+    <p class="fine">The middle letter of every word sits on the same spot, so your eyes never move. These add extra help around it.</p>
+  </div>
   <p class="gt">Reading</p>
   <div class="grp">
     <div class="setrow">Words at a time <div class="seg" id="chunkSeg"><button data-chunk="1">1</button><button data-chunk="2">2</button><button data-chunk="3">3</button></div></div>
@@ -3869,7 +3895,7 @@ function pivotOf(w) {
   const lead = w.match(/^[^\p{L}\p{N}]*/u)[0].length;
   const trail = w.match(/[^\p{L}\p{N}]*$/u)[0].length;
   const core = Math.max(1, w.length - lead - trail);
-  const o = core <= 1 ? 0 : core <= 5 ? 1 : core <= 9 ? 2 : core <= 13 ? 3 : 4;
+  const o = Math.floor(core / 2);
   return Math.max(0, Math.min(w.length - 1, lead + o));
 }
 
@@ -4164,6 +4190,14 @@ function render() {
   const mask = settings.bionic ? boldMask(text) : null;
   P.style.color = settings.pivotColor === "rainbow" ? `hsl(${(cur * 47) % 360} 85% 52%)` : "";
   paintPart(L, text, 0, p, mask); paintPart(P, text, p, p + 1, mask); paintPart(R, text, p + 1, text.length, mask);
+  // color fade: the letters next to the focus letter get lighter shades of the same color
+  if (!mask && settings.vwFade !== false && settings.pivotColor !== "rainbow") {
+    const sp = (ch, c) => { const e = document.createElement("span"); e.className = c; e.textContent = ch; return e; };
+    const a = text.slice(0, p), b = text.slice(p + 1);
+    if (a.length) L.replaceChildren(a.slice(0, -2), ...(a.length > 1 ? [sp(a.slice(-2, -1), "n2")] : []), sp(a.slice(-1), "n1"));
+    if (b.length) R.replaceChildren(sp(b.charAt(0), "n1"), ...(b.length > 1 ? [sp(b.charAt(1), "n2")] : []), b.slice(2));
+  }
+  if (settings.vwGhost) { const gl = $("#ghostL"), gr = $("#ghostR"), prv = tokens[cur - 1], nxt = tokens[last + 1], hide = text.length > 9; gl.textContent = prv ? prv.w : ""; gr.textContent = nxt ? nxt.w : ""; gl.classList.toggle("hide", hide); gr.classList.toggle("hide", hide); }
   fitWord(text, p, mask);
   if (document.documentElement.dataset.wfx === "fade" && !settings.motion) { const wb = $("#wordbox"); wb.classList.remove("fade"); void wb.offsetWidth; wb.classList.add("fade"); }
   { const [a, b] = chBounds(); prog.min = a; prog.max = Math.max(a, b - 1); }
@@ -6710,15 +6744,15 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-15c", WHATS = [
+const WHATS_VER = "2026-10-16a", WHATS = [
+  ["Center Lock", "The middle letter of every word now sits on the same spot, so your eyes never move. Try Baseline, Light beam, Tunnel and Ghost words in Settings > Reading."],
   ["32 new scenes", "Fog Harbor, Snowbound, Sand Sea, Neon Alley, Pixel Hills, Study Night, Koi Pond, Nebula and lots more. Earn them by reading, then pick one in Settings > Display."],
   ["A cleaner, shinier Atom", "New icons, wallpapers and a fresh look everywhere. Rewards now has 4 simple groups: Looks, Atom, Sounds and Passes. The weekly challenge sits with your daily quests."],
   ["Easier reader", "Tap the chapter name to jump around. Tap Aa to change the word size."],
   ["6 new scenes", "Deep Sea, Cloud Nine, City Lights, Desert Dunes, Rocky Peaks and Campfire. Earn them by reading, then pick one in Settings > Display."],
   ["New speed levels", "Atom starts at 150 wpm. Top speed starts at 250. Read 100,000 words to unlock 300."],
   ["70,000 free classics", "Search Project Gutenberg from the Class Library and add any free classic in one tap. It works offline after."],
-  ["Cleaner screens", "Daily quests moved to Rewards. Stats has Today, History and Badges tabs. Rewards come in one summary when you earn several at once."],
-  ["Mystery boxes", "Finish all 3 daily quests 5 days in a row to earn one. Rare and legendary gear for Atom is inside."]
+  ["Cleaner screens", "Daily quests moved to Rewards. Stats has Today, History and Badges tabs. Rewards come in one summary when you earn several at once."]
 ];
 function showWhatsNew() {
   const dlg = $("#whatsDlg"), ul = $("#whatsList"); ul.replaceChildren();
@@ -6791,6 +6825,11 @@ $("#modePw").addEventListener("keydown", e => { if (e.key === "Enter") $("#modeG
 $("#hapChk").onchange = e => { settings.haptic = e.target.checked; saveSettings(); if (e.target.checked) buzz(); };
 $("#peekChk").onchange = e => { settings.peek = e.target.checked; saveSettings(); if (!e.target.checked) hidePeek(); };
 $("#dimChk").onchange = e => { settings.dim = e.target.checked; saveSettings(); applyAccess(); };
+/* reading view */
+const VW = [["vwFade", true, ""], ["vwBase", true, "vw-base"], ["vwBeam", false, "vw-beam"], ["vwTun", false, "vw-tun"], ["vwGhost", false, "vw-ghost"]];
+function applyView() { VW.forEach(([k, d, c]) => { const on = settings[k] === undefined ? d : !!settings[k]; if (settings[k] === undefined) settings[k] = d; if (c) document.body.classList.toggle(c, on); const box = document.getElementById(k); if (box) box.checked = on; }); if (tokens.length) render(); }
+VW.forEach(([k]) => { const box = document.getElementById(k); if (box) box.onchange = () => { settings[k] = box.checked; saveSettings(); applyView(); }; });
+applyView();
 $("#focusStartChk").onchange = e => { settings.focusStart = e.target.checked; saveSettings(); renderPresets(); };
 $("#grabChk").onchange = e => { settings.grab = e.target.checked; saveSettings(); $("#webBtn").hidden = !settings.grab; };
 $("#schoolChk").onchange = e => { settings.schoolDays = e.target.checked; saveSettings(); refreshStreaks(); };
