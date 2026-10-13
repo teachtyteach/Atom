@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
-<meta name="atom-build" content="atom-v122"><!-- keep the same as CACHE in sw.js -->
+<meta name="atom-build" content="atom-v123"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -1566,6 +1566,16 @@ body.vw-base .pvst .vbase{left:10%;right:10%}
 /* app feel: no scroll bars anywhere (scrolling still works) */
 *{scrollbar-width:none;-ms-overflow-style:none}
 *::-webkit-scrollbar{display:none;width:0;height:0;background:transparent}
+.movedlg .sheet{text-align:center}
+.mvic{display:flex;justify-content:center}
+.mvhead h2{font:700 26px/1.2 Georgia,"Iowan Old Style",serif;margin:8px 0 6px}
+.mvhead p{margin:0 0 14px;color:var(--muted)}
+.mvsteps{list-style:none;padding:0;margin:0;display:grid;gap:12px;counter-reset:mv;text-align:left}
+.mvsteps li{counter-increment:mv;display:grid;gap:6px;padding:14px 14px 14px 54px;border:1px solid var(--line);border-radius:16px;background:var(--surface);position:relative}
+.mvsteps li::before{content:counter(mv);position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--btn-ink,#fff);font:700 15px/28px system-ui,sans-serif;text-align:center}
+.mvsteps li.done::before{content:"✓"}
+.mvsteps .btn,.mvsteps button{justify-self:start;margin-top:4px;text-decoration:none}
+.mvlater{margin:14px auto 0;display:block;background:none;border:none;color:var(--muted);box-shadow:none}
 </style>
 </head>
 <body data-screen="library">
@@ -1720,6 +1730,15 @@ body.vw-base .pvst .vbase{left:10%;right:10%}
 <dialog id="rankDlg"><div class="sheet">
   <div class="sheet-head"><h2>Rank rewards</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div id="rankBody" class="innerfold"></div>
+</div></dialog>
+<dialog id="moveDlg" class="movedlg"><div class="sheet">
+  <div class="mvhead"><span class="mvic" aria-hidden="true"><svg viewBox="0 0 48 48" width="56" height="56"><circle cx="24" cy="24" r="22" fill="var(--accent)"/><path d="M14 25h17M25 17l8 8-8 8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h2>Atom is moving!</h2>
+  <p>Atom's new home is <b>read.learnwithatom.org</b>. Bring your books, stats and rewards with you.</p></div>
+  <ol class="mvsteps">
+    <li><b>Save your backup.</b><span class="fine">It's one file with everything in it.</span><button type="button" class="primary" id="mvSave">Save my backup</button></li>
+    <li><b>Open the new Atom.</b><span class="fine">Tap Restore backup and pick your file. Then add it to your home screen.</span><a class="btn" id="mvGo" href="https://read.learnwithatom.org/" target="_blank" rel="noopener">Open read.learnwithatom.org</a></li>
+  </ol>
+  <button type="button" id="mvLater" class="mvlater">Later</button>
 </div></dialog>
 <dialog id="evbDlg"><div class="sheet">
   <div class="sheet-head"><h2>Event badges</h2><button class="icon" data-close aria-label="Close">✕</button></div>
@@ -8603,6 +8622,15 @@ renderTitleLine = function (tl, t, st) {
   N.scarf = `<path d="M-48 -10Q0 6 48 -10L46 8Q0 24 -46 8Z" fill="url(#gq-blu)" stroke="#1a5f94" stroke-width="1.2"/><path d="M-34 -5V12M-18 -1V16M-2 0V17M14 -1V16M30 -5V12" stroke="#f3f6fa" stroke-width="4.5"/><path d="M14 8L22 44H38L30 6Z" fill="url(#gq-blu-h)" stroke="#1a5f94" stroke-width="1.2"/><path d="M18 20H33M20 30H35" stroke="#f3f6fa" stroke-width="3.5"/><path d="M23 44v6M27 44v6M31 44v6M35 44v6" stroke="#2f9bd6" stroke-width="2.2" stroke-linecap="round"/>${hl("M-40 -4Q-10 8 20 4", 2)}`;
 })();
 
+/* old address: help everyone move to read.learnwithatom.org with their data */
+(function () {
+  if (!/(^|\.)readwithatom\.org$/.test(location.hostname)) return;
+  const d = $("#moveDlg"); if (!d) return;
+  const open = () => { if (!store.get("pace:welcomed", false) || d.open) return; try { prepareBackup(); } catch (e) {} if (store.get("pace:mvSaved", 0)) $("#mvSave").closest("li").classList.add("done"); d.showModal(); };
+  $("#mvSave").onclick = async () => { if (!backupFile) await prepareBackup(); await saveBackup(); store.set("pace:mvSaved", Date.now()); $("#mvSave").closest("li").classList.add("done"); };
+  $("#mvLater").onclick = () => d.close();
+  setTimeout(open, 1600);
+})();
 applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200); applyNight(); titleCheck(); setTimeout(bdayCheck, 900);
 $("#rankBody").append($("#rewardsCard")); $("#evbBody").append($("#evBadgesCard")); $("#rewardsCard").open = true; $("#evBadgesCard").open = true;
 $("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
@@ -8843,7 +8871,7 @@ async function makeBackup() {
     const r = store.get("pace:rd:" + m.id, null); if (r && r.length) rd[m.id] = r;
     if (m.hq) { const c = await dbGet("cv:" + m.id); if (c && c.img) hq[m.id] = c.img; }
   }
-  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, hq, stats, settings, wpm, fs, badges: store.get("pace:badges", {}), wk: store.get("pace:wk", {}), extra: Object.fromEntries(["ev", "sp", "sr2", "sec", "arc", "cl", "since"].map(k => [k, store.get("pace:" + k, null)])) };
+  return { format: "pace-backup", version: 1, name: settings.name || "", saved: new Date().toISOString(), lib, books, pos, bm, rd, hq, stats, settings, wpm, fs, badges: store.get("pace:badges", {}), wk: store.get("pace:wk", {}), extra: Object.fromEntries(["ev", "sp", "sr2", "sec", "arc", "cl", "since", "qb", "evp", "sth", "sgf", "pr", "bday", "tt", "jd", "box", "unlock"].map(k => [k, store.get("pace:" + k, null)])) };
 }
 async function prepareBackup() {
   const btn = $("#backupBtn"); backupFile = null; btn.disabled = true; btn.textContent = "Preparing…";
@@ -8886,6 +8914,11 @@ async function restoreBackup(file) {
     { const x = data.extra || {}, obj = v => v && typeof v === "object" && !Array.isArray(v);
       ["ev", "sp", "sec", "cl"].forEach(k => { if (!obj(x[k])) return; const h = store.get("pace:" + k, {}); Object.entries(x[k]).forEach(([id, v]) => { if (!(id in h)) h[id] = v; }); store.set("pace:" + k, h); });
       ["sr2", "arc"].forEach(k => { if (!obj(x[k])) return; const h = store.get("pace:" + k, {}); Object.entries(x[k]).forEach(([id, v]) => { if (typeof v === "number" && !(h[id] >= v)) h[id] = v; }); store.set("pace:" + k, h); });
+      // everything else (mystery box finds, event progress, earned themes...) comes along too
+      ["qb", "pr", "bday", "tt", "jd", "unlock"].forEach(k => { if (x[k] != null && store.get("pace:" + k, null) == null) store.set("pace:" + k, x[k]); });
+      ["sth", "sgf"].forEach(k => { if (!obj(x[k])) return; store.set("pace:" + k, Object.assign({}, x[k], store.get("pace:" + k, {}))); });
+      if (obj(x.evp)) { const h = store.get("pace:evp", {}); Object.entries(x.evp).forEach(([id, v]) => { if (typeof v === "number" && !(h[id] >= v)) h[id] = v; }); store.set("pace:evp", h); }
+      if (obj(x.box)) { const h = store.get("pace:box", {}); h.own = Object.assign({}, x.box.own || {}, h.own || {}); ["n", "run"].forEach(k => { if (typeof x.box[k] === "number") h[k] = Math.max(h[k] || 0, x.box[k]); }); Object.keys(x.box).forEach(k => { if (!(k in h)) h[k] = x.box[k]; }); store.set("pace:box", h); }
       if (typeof x.since === "string" && /^\d{4}-\d{2}-\d{2}$/.test(x.since) && x.since < store.get("pace:since", "9999")) store.set("pace:since", x.since); }
     if (data.settings) { const { mode: _m, pauses: _p, ...rest } = data.settings; Object.assign(settings, rest); settings.goal = Math.max(1000, +settings.goal || 1000); saveSettings(); applyTheme(); applyFont(); applyAccess(); syncHint(); }
     if (data.wpm) setWpm(data.wpm); if (data.fs) setFs(data.fs);
