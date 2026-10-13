@@ -1,5 +1,5 @@
-const CACHE = "atom-v120", STATIC = "atom-static-2";
-const DATA = ["manifest.json", "classlib.json", "storylib.json"];
+const CACHE = "atom-v101", STATIC = "atom-static-2";
+const DATA = ["manifest.json", "amb.json", "classlib.json", "storylib.json"];
 const ASSETS = ["icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2", "pdf.min.js", "pdf.worker.min.js", "dictionary.json", "mascot.png",
   "ico-cream.png", "ico-coral.png", "ico-robot.png", "ico-gold.png", "ico-diamond.png", "ico-a-blue.png", "ico-a-green.png", "ico-a-orange.png", "ico-a-purple.png", "ico-a-pink.png", "ico-a-teal.png", "ico-fern.png", "ico-hat.png", "ico-moth.png", "ico-stag.png", "ico-flame.png", "ico-owl.png", "ico-ghost.png"];
 const SHELL = "index.html";
@@ -51,15 +51,6 @@ self.addEventListener("activate", e => {
   })());
 });
 
-// the app asks for the newest page right before it reloads to update
-self.addEventListener("message", e => {
-  if (!e.data || e.data.type !== "atom-refresh") return;
-  e.waitUntil((async () => {
-    try { const res = await fetchSoon(SHELL, 15000); if (await realPage(res)) await (await caches.open(CACHE)).put(SHELL, res); } catch (err) {}
-    if (e.ports && e.ports[0]) e.ports[0].postMessage("ok");
-  })());
-});
-
 async function tell(msg) { for (const c of await self.clients.matchAll({ type: "window" })) c.postMessage(msg); }
 
 self.addEventListener("fetch", e => {
@@ -68,8 +59,6 @@ self.addEventListener("fetch", e => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   const name = url.pathname.split("/").pop();
-  // the app checking for an update: always ask the server
-  if (url.searchParams.has("fresh")) return;
   // other pages (like privacy.html) load as themselves, not as the app
   const isShell = name === SHELL || url.pathname.endsWith("/") || (req.mode === "navigate" && !/\.html$/.test(name));
 
