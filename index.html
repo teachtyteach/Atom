@@ -1738,6 +1738,11 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
    - On learnwithatom.org, each app can only unlock its own rewards.
    - On github.io test addresses it still works, but only inside that one site.
 
+   Also shared: the student's profile (name, theme, accent, font, spacing, sound),
+   the Atom streak (a day counts when the streak is kept in BOTH apps), today's 3 daily
+   missions (mixed Reading + Math), the season level (Reading words + Math answers),
+   the mystery box track, the home screen icon, and teacher mode (2 hours).
+
    KEYS below must stay APPEND-ONLY: never remove or reorder a key, only add new
    ones at the end, or students' saved rewards will shift.
 */
@@ -1745,6 +1750,10 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
   var KEYS = {"read":["h~cap","h~tophat","h~cowboy","h~chef","h~souwester","h~pirate","h~wizard","h~headph","h~crown","h~bellhop","h~halo","h~pumpkin","h~leafcrown","h~earmuffs","h~flowers","h~sgh0","h~sgh1","h~sgh2","h~sgh3","h~sgc0","h~sgc1","h~sgc2","h~sgc3","h~bdayhat","h~bucket","h~viking","h~space","h~goldcrown","h~flamecrown","f~round","f~shades","f~star","f~heart","f~monocle","f~goggles","f~sandgog","f~d3","f~stache","f~sparkle","f~snorkel","f~sgf0","f~sgf1","f~sgf2","f~sgf3","f~tape","f~nerd","f~visor","f~diamond","n~bowtie","n~scarf","n~tie","n~bandana","n~vine","n~medal","n~lei","n~badge","n~vampire","n~heartbow","n~earth","n~sgn0","n~sgn1","n~sgn2","n~sgn3","n~ribbon","t~pager","t~bookworm","t~finisher","t~explorer","t~bronze","t~owl","t~bird","t~sunday","t~keeper","t~silver","t~shelf","t~hunter","t~gold","t~marathon","t~agent","t~platinum","t~warden","t~emerald","t~diamond","t~hundred","t~champ","t~t1","t~t2","t~t3","t~t4","t~tc0","t~tc1","t~tc2","t~tc3","t~trail","t~lkeeper","t~survivor","t~wander","t~caretaker","t~ta30","t~ta100","t~ta365","c~parchment","c~butter","c~mint","c~sky","c~rose","c~lavender","c~newsprint","c~sunset","c~matcha","c~bubblegum","c~midnight","c~forest","c~slate","c~coffee","c~ocean","c~grape","c~terminal","c~frontier","c~overgrown","c~noir","c~synthwave","c~season","c~autumn","c~winter","c~spring","c~summer","c~pumpkin","c~spooky","c~harvest","c~snowfall","c~fireworks","c~valentine","c~blossom","c~earthday","c~beach","c~stem","c~aurora","c~neon","c~goldleaf","c~fog","c~cosmos","c~deepsea","c~peaks","c~city","c~campfire","c~clouds","c~dunes","c~harbor","c~lodge","c~sandsea","c~reclaimed","c~plains","c~rain","c~nlake","c~cherry","c~ember","c~ringed","c~maple","c~lavender2","c~hollow","c~palms","c~lanterns","c~alley","c~pixel","c~manor","c~falls","c~glacier","c~nebula","c~bamboo","c~reef","c~savanna","c~morning","c~storm","c~castle","c~study","c~balloons","c~koi","c~sunflower","c~fsteps","c~rising","c~twist","c~final","i~gold","i~diamond","i~a-blue","i~a-green","i~a-orange","i~a-purple","i~a-pink","i~a-teal","i~fern","i~hat","i~moth","i~stag","i~flame","i~owl","i~ghost"],"math":["h~h_u1","h~h_u2","h~h_u3","h~h_u4","h~h_u5","h~h_u6","h~h_u7","h~h_u7_5","h~h_u8","h~h_u9","h~h_u10","h~grad","h~crown","h~pi","h~e_witch","h~e_acorn","h~e_beanie","h~e_hearts","h~e_bloom","h~sh1","h~sh2","h~sh3","h~sh4","t~cadet","t~recruit","t~specialist","t~veteran","t~elite","t~legend","t~champion","t~unstoppable","t~solver","t~shifter","t~hunter","t~sniper","t~breaker","t~phantom","t~operator","t~prodigy","t~architect","t~detective","t~halfway","t~fullclear","t~grandmaster","t~pilot","t~ninja","t~rocketsci","t~brainiac","t~mathlete","t~pipion","t~whiz","t~calc","t~wizard","t~nolie","t~triple","t~lucky","t~ninelives","t~halloween_m1","t~halloween_s2","t~thanksgiving_m1","t~thanksgiving_s2","t~winter_m1","t~winter_s2","t~piday_m1","t~piday_s2","t~spring_m1","t~spring_s2","t~streaker","t~flame14","t~ironwill","t~zone","t~chall1","t~chall3","t~chall6","t~crusher","t~k1","t~machine","t~sleuth","t~casecracker","t~mastermind","t~bx_cruncher","t~bx_pencil","t~bx_gains","t~bx_whisper","t~bx_prime","t~bx_golden","t~bx_hyp","t~bx_inf","t~bx_unsolv","t~qp15","t~qp25","t~qp35","t~ls15","t~ls30","t~ls50","t~rk3","t~rk6","t~rk10","t~boss1","t~boss4","t~boss10","t~dn5","t~dn20","t~ti_s1","t~ti_s2","t~ti_s3","t~ti_s4","t~ti_w3","t~ti_w9","t~ti_w15","t~ti_w21","t~ti_w27","t~ti_w33","c~sunset","c~mint","c~rose","c~matcha","c~butter","c~newsprint","c~bubblegum","c~sky","c~lavender","c~parchment","c~midnight","c~frontier","c~noir","c~terminal","c~overgrown","c~coffee","c~synthwave","c~forest","c~ocean","c~grape","c~slate","c~winter","c~spring","c~autumn","c~summer","c~season","c~falls","c~stem","c~aurora","c~valentine","c~neon","c~goldleaf","c~earthday","c~prism","c~pumpkin","c~spooky","c~witching","c~harvest","c~cider","c~cranberry","c~snowfall","c~frost","c~evergreen","c~fireworks","c~blueberry","c~midnightpi","c~blossom","c~beach","c~meadow","c~bx_bubble","c~bx_mango","c~bx_aurora","c~bx_royal","c~bx_molten","c~m_sea1","c~m_sea2","c~m_sea3","c~m_sea4","c~th_s1","c~th_s2","c~th_s3","c~th_s4","c~m_balance","c~m_mirror","c~m_rails","c~m_slope","c~m_factory","c~m_cross","c~m_trend","c~m_launch","c~m_pyramid","c~m_vault","c~m_sails","c~m_blueprint","c~m_fractal","c~m_spiral","c~m_pimoon","c~m_honey","c~m_bridge","c~m_neon","c~m_sine","c~m_lowpoly","c~m_circuit","c~m_snow","c~m_planes","c~m_observe","c~m_tangram"]};
   // Home screen icons live on the Reading site; every site uses the student's pick.
   var ICONS = {"classic":"apple-touch-icon.png","cream":"ico-cream.png","coral":"ico-coral.png","robot":"ico-robot.png","gold":"ico-gold.png","diamond":"ico-diamond.png","a-blue":"ico-a-blue.png","a-green":"ico-a-green.png","a-orange":"ico-a-orange.png","a-purple":"ico-a-purple.png","a-pink":"ico-a-pink.png","a-teal":"ico-a-teal.png","fern":"ico-fern.png","hat":"ico-hat.png","moth":"ico-moth.png","stag":"ico-stag.png","flame":"ico-flame.png","owl":"ico-owl.png","ghost":"ico-ghost.png"}, ICON_BASE = 'https://read.learnwithatom.org/';
+  var MPOOL = {"read":{"min10":"Read for 10 minutes","min20":"Read for 20 minutes","w1500":"Read 1,500 words","goal":"Hit your daily reading goal","chap":"Finish a chapter","run3":"Read 3 minutes without pausing","define":"Look up a word with Define","two":"Read from 2 different books","bm":"Bookmark a spot in a book","hear":"Hear how a word sounds"},"math":{"major":"Get 10 right on core skills","correct":"Get 15 answers right","streak":"Hit a 5-answer streak","rapid":"Score 12+ in one Quick Play","surv":"Reach 8 in one Tower Run run","units":"Practice in 2 different units","clean":"Get 8 right with no hints"}};   // daily mission text for each app: {read:{id:text}, math:{id:text}}
+  var BREAKS = [['2026-11-23', '2026-11-27'], ['2026-12-21', '2027-01-01'], ['2027-03-22', '2027-03-26']]; // no-school weeks
+  var SEASON_RATE = 200;   // 1 right answer in Math counts the same as 200 words in Reading
+  var TEACH_MS = 2 * 3600 * 1000;
   var NAME = 'atom_locker', LOCAL = 'atom_locker_copy';
   var MAX_AGE = 60 * 60 * 24 * 400; // 400 days (browser max); refreshed on every save
   var APPS = ['read', 'math'];
@@ -1759,7 +1768,26 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
   function enc(a) { var s = ''; for (var i = 0; i < a.length; i += 6) { var v = 0; for (var j = 0; j < 6; j++) if (a[i + j]) v |= 1 << j; s += B64.charAt(v); } return s.replace(/A+$/, ''); }
   function bitsOr(x, y) { var a = dec(x), b = dec(y), n = Math.max(a.length, b.length), o = []; for (var i = 0; i < n; i++) o.push(a[i] || b[i] ? 1 : 0); return enc(o); }
 
-  function blank() { return { v: 2, rev: 0, b: { read: '', math: '' }, s: { read: '', math: '' }, last: '', ic: '' }; }
+  function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function kd(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function offDay(d) { var w = d.getDay(); if (w === 0 || w === 6) return true; var k = ymd(d); return BREAKS.some(function (b) { return k >= b[0] && k <= b[1]; }); }
+  function today() { return ymd(new Date()); }
+  function prevSchool(k) { var d = kd(k); do d.setDate(d.getDate() - 1); while (offDay(d)); return ymd(d); }
+  function hashDay(k) { var h = 7; for (var i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0; return h; }
+  function missionsFor(k) {
+    var h = hashDay('atom' + k), r = Object.keys(MPOOL.read), m = Object.keys(MPOOL.math).filter(function (x) { return x !== 'major'; });
+    var r1 = r[h % r.length], second;
+    h = (h * 1103515245 + 12345) >>> 0;
+    if (h % 2) { var r2 = r.filter(function (x) { return x !== r1; }); second = { app: 'read', id: r2[(h >>> 3) % r2.length] }; }
+    else second = { app: 'math', id: m[(h >>> 3) % m.length] };
+    return [{ app: 'read', id: r1 }, { app: 'math', id: 'major' }, second].map(function (x, i) { x.slot = i; x.txt = MPOOL[x.app][x.id]; return x; });
+  }
+
+  function blank() { return { v: 2, rev: 0, b: { read: '', math: '' }, s: { read: '', math: '' }, last: '', ic: '',
+    p: { at: 0 }, t: 0, a: { d: '', r: 0, m: 0 }, k: { n: 0, l: '', b: 0 }, q: { d: '', x: 0 }, sp: { n: 0, r: 0, m: 0 }, bx: { n: 0, run: 0, l: '' } }; }
+  var num = function (v, max) { v = Math.floor(+v || 0); return Math.max(0, Math.min(max || 1e9, v)); };
+  var dstr = function (v) { return /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : ''; };
+  var sstr = function (v, n) { return String(v == null ? '' : v).replace(/[^\p{L}\p{N} ._#,'-]/gu, '').slice(0, n); };
   function clean(w) {
     var o = blank();
     if (!w || typeof w !== 'object' || w.v !== 2) return o;
@@ -1770,15 +1798,31 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
     });
     o.last = APPS.indexOf(w.last) > -1 ? w.last : '';
     o.ic = ICONS[w.ic] ? w.ic : '';
+    var p = w.p || {};
+    o.p = { at: num(p.at, 9e15) };
+    ['n', 'th', 'ac', 'f', 'tk'].forEach(function (k) { if (p[k] != null) o.p[k] = sstr(p[k], k === 'tk' ? 70 : 30); });
+    ['sp', 'so'].forEach(function (k) { if (p[k] != null) o.p[k] = p[k] ? 1 : 0; });
+    o.t = num(w.t, 9e15);
+    var a = w.a || {}; o.a = { d: dstr(a.d), r: a.r ? 1 : 0, m: a.m ? 1 : 0 };
+    var k = w.k || {}; o.k = { n: num(k.n, 9999), l: dstr(k.l), b: num(k.b, 9999) };
+    var q = w.q || {}; o.q = { d: dstr(q.d), x: num(q.x, 7) };
+    var sp = w.sp || {}; o.sp = { n: num(sp.n, 999), r: num(sp.r), m: num(sp.m) };
+    var bx = w.bx || {}; o.bx = { n: num(bx.n, 99), run: num(bx.run, 9999), l: dstr(bx.l) };
     return o;
   }
   function merge(a, b) {
     var m = clean(a.rev >= b.rev ? a : b), other = a.rev >= b.rev ? b : a;
     APPS.forEach(function (x) { m.b[x] = bitsOr(m.b[x], other.b[x]); });
+    if (m.a.d === other.a.d) { m.a.r |= other.a.r; m.a.m |= other.a.m; } else if (other.a.d > m.a.d) m.a = other.a;
+    if (m.q.d === other.q.d) m.q.x |= other.q.x; else if (other.q.d > m.q.d) m.q = other.q;
+    if (other.k.l > m.k.l || (other.k.l === m.k.l && other.k.n > m.k.n)) m.k = other.k;
+    m.k.b = Math.max(m.k.b, other.k.b, m.k.n);
+    if (m.sp.n === other.sp.n) { m.sp.r = Math.max(m.sp.r, other.sp.r); m.sp.m = Math.max(m.sp.m, other.sp.m); } else if (other.sp.n > m.sp.n) m.sp = other.sp;
+    if (other.p.at > m.p.at) m.p = other.p;
     m.rev = Math.max(a.rev, b.rev);
     return m;
   }
-  function sameBits(a, b) { return a.b.read === b.b.read && a.b.math === b.b.math; }
+  function sameBits(a, b) { return JSON.stringify([a.b, a.a, a.q, a.k, a.sp]) === JSON.stringify([b.b, b.a, b.q, b.k, b.sp]); }
 
   function readCookie() {
     var parts = document.cookie ? document.cookie.split('; ') : [];
@@ -1874,6 +1918,100 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
         if (l.getAttribute('href') !== u) { l.removeAttribute('type'); l.href = u; }
       });
       return u;
+    },
+
+    /* ---------- one profile ---------- */
+    profile: function () { return get().p; },
+    // Merge changed fields in; anyone can change the profile.
+    setProfile: function (part) {
+      var w = get(), p = Object.assign({}, w.p), ch = false;
+      Object.keys(part || {}).forEach(function (k) { if (k === 'at') return; var v = part[k]; if (v === undefined) return; if (p[k] !== v) { p[k] = v; ch = true; } });
+      if (!ch) return false; p.at = Date.now(); w.p = clean({ v: 2, p: p }).p; write(w); return true;
+    },
+
+    /* ---------- one teacher mode (lasts 2 hours, like Atom Math) ---------- */
+    teacher: function () { return get().t > Date.now(); },
+    setTeacher: function (on) { var w = get(), t = on ? Date.now() + TEACH_MS : 0; if (!on && !w.t) return; w.t = t; write(w); },
+
+    /* ---------- Atom streak: a school day counts when the streak is kept in BOTH apps ---------- */
+    today: today, offDay: function (k) { return offDay(kd(k)); }, prevSchool: prevSchool,
+    markActive: function (app) {
+      if (!canUnlock(app)) return null;
+      var w = get(), t = today(), ch = false;
+      if (w.a.d !== t) { w.a = { d: t, r: 0, m: 0 }; ch = true; }
+      var f = app === 'read' ? 'r' : 'm';
+      if (!w.a[f]) { w.a[f] = 1; ch = true; }
+      var grew = false;
+      if (w.a.r && w.a.m && w.k.l !== t) { w.k.n = w.k.l && w.k.l === prevSchool(t) ? w.k.n + 1 : 1; w.k.l = t; w.k.b = Math.max(w.k.b, w.k.n); grew = true; ch = true; }
+      if (ch) write(w);
+      return grew ? w.k.n : null;
+    },
+    streak: function () {
+      var w = get(), t = today(), alive = w.k.l && (w.k.l === t || w.k.l === prevSchool(t));
+      var a = w.a.d === t ? w.a : { r: 0, m: 0 };
+      return { n: alive ? w.k.n : 0, best: Math.max(w.k.b, w.k.n), today: w.k.l === t, read: !!a.r, math: !!a.m };
+    },
+
+    /* ---------- daily missions: 3 a day, mixed Reading + Math, same everywhere ---------- */
+    missions: function () {
+      var w = get(), t = today(), x = w.q.d === t ? w.q.x : 0;
+      return missionsFor(t).map(function (m) { m.done = !!(x & (1 << m.slot)); return m; });
+    },
+    // Mark one of this app's missions done. Returns {all, box} so the app can celebrate.
+    missionDone: function (app, slot) {
+      if (!canUnlock(app)) return null;
+      var w = get(), t = today(), ms = missionsFor(t);
+      if (!ms[slot] || ms[slot].app !== app) return null;
+      if (w.q.d !== t) w.q = { d: t, x: 0 };
+      if (w.q.x & (1 << slot)) return null;
+      w.q.x |= 1 << slot;
+      var all = w.q.x === 7, box = false;
+      if (all && w.bx.l !== t) {
+        w.bx.run = w.bx.l && w.bx.l === prevSchool(t) ? w.bx.run + 1 : 1; w.bx.l = t;
+        if (w.bx.run % 5 === 0) { w.bx.n = Math.min(99, w.bx.n + 1); box = true; }
+      }
+      write(w);
+      return { all: all, box: box };
+    },
+
+    /* ---------- one mystery box track ---------- */
+    boxes: function () { return get().bx.n; },
+    boxRun: function () { var w = get(), t = today(); return w.bx.l && (w.bx.l === t || w.bx.l === prevSchool(t)) ? w.bx.run % 5 : 0; },
+    useBox: function () { var w = get(); if (w.bx.n < 1) return false; w.bx.n--; write(w); return true; },
+    addBoxes: function (n) { n = num(n, 99); if (!n) return; var w = get(); w.bx.n = Math.min(99, w.bx.n + n); write(w); },
+
+    /* ---------- one season level: Reading words + Math answers ---------- */
+    seasonRate: SEASON_RATE,
+    setSeason: function (app, n, raw) {
+      if (!canUnlock(app)) return;
+      var w = get(), f = app === 'read' ? 'r' : 'm'; raw = num(raw);
+      if (w.sp.n !== n) { if (n < w.sp.n) return; w.sp = { n: n, r: 0, m: 0 }; }
+      if (w.sp[f] >= raw) return;
+      w.sp[f] = raw; write(w);
+    },
+    seasonOther: function (app, n) { var w = get(); if (w.sp.n !== n) return 0; return app === 'read' ? w.sp.m : w.sp.r; },
+    seasonLevel: function (n) { var w = get(); if (w.sp.n !== n) return 1; return Math.min(100, 1 + Math.floor((w.sp.r + w.sp.m * SEASON_RATE) / 3000)); },
+
+    /* ---------- the Reading / Math switch shown in both apps ---------- */
+    switcher: function (cur) {
+      if (!document.getElementById('atomswCss')) {
+        var st = document.createElement('style'); st.id = 'atomswCss';
+        st.textContent = 'nav.atomsw{height:auto!important;min-height:0!important;line-height:1!important;box-sizing:border-box}.atomsw .asw{min-height:0!important;height:30px!important;box-sizing:border-box;line-height:1!important}.atomsw{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--ink) 7%,transparent);border:1px solid color-mix(in srgb,var(--line) 80%,transparent);flex:none;align-self:center;margin:0 6px}' +
+          '.atomsw .asw{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font:600 12.5px/1 system-ui,sans-serif;color:var(--muted);text-decoration:none;white-space:nowrap}' +
+          '.atomsw .asw.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}.atomsw .asw svg{width:15px;height:15px;flex:none}' +
+          '.atomsw a.asw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media (max-width:640px){.atomsw .asw{padding:7px 9px}.atomsw .asw span{display:none}.atomsw .asw svg{width:17px;height:17px}}';
+        document.head.appendChild(st);
+      }
+      var nav = document.createElement('nav'); nav.className = 'atomsw'; nav.setAttribute('aria-label', 'Atom apps');
+      var IC = { read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9.5-.5V19c-2.5-1.5-6-1.5-9.5.5-3.5-2-7-2-9.5-.5zM12 6v13.5"/></svg>',
+                 math: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5v6M3.5 6.5h6M14.5 6.5h6M4 15l5 5M9 15l-5 5M14.5 15.5h6M14.5 19.5h6"/></svg>' };
+      [['read', 'Reading', 'https://read.learnwithatom.org/'], ['math', 'Math', 'https://math.learnwithatom.org/']].forEach(function (x) {
+        var on = x[0] === cur, el = document.createElement(on ? 'span' : 'a');
+        el.className = 'asw' + (on ? ' on' : ''); el.innerHTML = IC[x[0]] + '<span>' + x[1] + '</span>'; el.title = 'Atom ' + x[1]; el.setAttribute('aria-label', 'Atom ' + x[1]);
+        if (on) el.setAttribute('aria-current', 'page'); else el.href = x[2];
+        nav.appendChild(el);
+      });
+      return nav;
     },
 
     exportData: function () { return get(); },
@@ -2032,7 +2170,7 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
     <div class="pvrow"><img class="mascot" src="mascot.png" alt=""><span id="pvCover"></span><svg id="pvBm" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=""/></svg><button type="button" id="pvFx">Play effects</button></div>
     <div class="pvstat"><b>Your stats</b><span id="pvStatTxt">1,240 words · 6 day streak</span><span class="bar"><i id="pvStatBar" style="width:48%"></i></span></div>
   </div>
-  <div class="card rwq" id="rwQuests" hidden><div class="rwqhead"><h2>Daily quests</h2><span class="fine" id="rwqLeft"></span></div><div id="rwqList" class="qlist"></div><p class="fine" id="rwqNote"></p></div>
+  <div class="card rwq" id="rwQuests" hidden><div class="rwqhead"><h2>Daily missions</h2><span class="fine" id="rwqLeft"></span></div><div id="rwqList" class="qlist"></div><p class="fine" id="rwqNote"></p></div>
   <button class="card boxtile" id="boxTile" type="button" hidden><span class="boxico" aria-hidden="true"></span><span class="clt"><b>Mystery boxes</b><span class="fine" id="boxCount"></span></span></button>
   <div class="card nextcard" id="nextCard"></div>
   <div class="xtiles" id="xTiles"></div>
@@ -2321,7 +2459,7 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
 </div></dialog>
 
 <dialog id="qDlg"><div class="sheet">
-  <div class="sheet-head"><h2>Today's quests</h2><button class="icon" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-head"><h2>Today's missions</h2><button class="icon" data-close aria-label="Close">✕</button></div>
   <div id="qList" class="qlist"></div>
   <p class="fine" id="qNote"></p>
 </div></dialog>
@@ -4965,7 +5103,7 @@ function tqFlush(tries) {
   if (tq.length >= 3 && !playing && !isAdult()) {
     if (document.querySelector("dialog[open]") && tries < 20) { tqFlushT = setTimeout(() => tqFlush(tries + 1), 1000); return; }
     const items = tq.splice(0), ul = $("#sumList"); ul.replaceChildren(...items.map(t => el("li", "", t)));
-    const k = items.find(t => /^(Rank up|Season reward|Title upgrade)/.test(t)) || items.find(t => /^(Quest|All 3)/.test(t)) || items[0]; if (typeof rewardFx === "function") rewardFx(k);
+    const k = items.find(t => /^(Rank up|Season reward|Title upgrade)/.test(t)) || items.find(t => /^(Quest|Mission|All 3)/.test(t)) || items[0]; if (typeof rewardFx === "function") rewardFx(k);
     $("#sumDlg").showModal(); return;
   }
   nextToast();
@@ -6942,7 +7080,7 @@ function renderQuestRow() {
     const bar = el("span", "bar"), f = el("i"); f.style.width = Math.min(100, v / c.goal * 100) + "%"; bar.append(f);
     w.append(top, el("span", "fine", c.desc + (done ? "" : ` · ${cnt(Math.min(v, c.goal))} / ${fmt(c.goal)}${c.unit ? " " + c.unit : ""}`)), bar);
     box.after(w); }
-  $("#rwqNote").textContent = n === 3 ? "Nice work. New quests tomorrow." : `Each quest gives +${fmt(Q_REWARD)} season words. Finish all 3 for +${fmt(Q_ALL)} more.`;
+  $("#rwqNote").textContent = n === 3 ? "Nice work. New missions tomorrow." : `Each Reading mission gives +${fmt(Q_REWARD)} season words. Finish all 3 for +${fmt(Q_ALL)} more.`;
   const dot = document.querySelector('#tabbar [data-go=rewards]'); if (dot) dot.classList.toggle("dot", boxState().n > 0);
 }
 function openQuests() {
@@ -6954,7 +7092,7 @@ function openQuests() {
     r.append(top, bar, el("span", "fine", `${fmt(v)} / ${fmt(Q.need)}`)); box.append(r);
   });
   const n = q.ids.filter(id => q.done[id]).length;
-  $("#qNote").textContent = (n === 3 ? "All done today. Nice work! " : `Finish all 3 for a bonus +${fmt(Q_ALL)}. `) + "Season words help you level up the season pass. New quests every day.";
+  $("#qNote").textContent = (n === 3 ? "All done today. Nice work! " : `Finish all 3 for a bonus +${fmt(Q_ALL)}. `) + "Season words help you level up the season pass. New missions every day.";
   $("#qDlg").showModal();
 }
 /* ---------- sounds made in code ---------- */
@@ -6972,7 +7110,7 @@ function sfx(kind) {
   } catch (e) {}
 }
 function rewardFx(m) {
-  const k = /^(Rank up|Season reward|Title upgrade)/.test(m) ? "level" : /^(Quest done|All 3 quests)/.test(m) ? "quest" : /^Daily goal/.test(m) ? "goal" : /^(Badge earned|Event badge|Event reward|New record|Mystery box)/.test(m) ? "badge" : "";
+  const k = /^(Rank up|Season reward|Title upgrade)/.test(m) ? "level" : /^(Quest done|Mission done|All 3 quests|All 3 missions)/.test(m) ? "quest" : /^Daily goal/.test(m) ? "goal" : /^(Badge earned|Event badge|Event reward|New record|Mystery box)/.test(m) ? "badge" : "";
   if (!k) return; sfx(k); buzz();
 }
 /* ---------- night reading ---------- */
@@ -7092,7 +7230,7 @@ function renderBoxTile() {
   const t = $("#boxTile"); if (!t) return; const b = boxState(), q = store.get("pace:q", null);
   if (isAdult() || isPlain()) { t.hidden = true; return; } t.hidden = false;
   const runNow = b.last && (b.last === todayKey() || b.last === todayKey(new Date(Date.now() - 864e5))) ? b.run : 0;
-  $("#boxCount").textContent = b.n ? `${b.n} to open!` : `${5 - (runNow % 5)} more quest day${5 - (runNow % 5) === 1 ? "" : "s"} to the next box`;
+  $("#boxCount").textContent = b.n ? `${b.n} to open!` : `${5 - (runNow % 5)} more mission day${5 - (runNow % 5) === 1 ? "" : "s"} to the next box`;
   t.classList.toggle("ready", b.n > 0);
 }
 /* ---------- personal records ---------- */
@@ -8153,7 +8291,8 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-20b", WHATS = [
+const WHATS_VER = "2026-10-20c", WHATS = [
+  ["One Atom", "Reading and Math now share more: your name and look, one Atom streak (keep your streak in both on the same day), daily missions from both apps, one season level, one mystery box track and one backup file."],
   ["Rewards from Atom Math", "Hats, titles and themes you unlock in Atom Math now work here too. Look for \"From Atom Math\" in Rewards and Themes. Reading rewards still unlock only in Atom Reading."],
   ["Titles worth winning", "Every title now has its own lettering, from Diamond Reader's icy thin caps to Sunday Scholar's script. Add a Title flair like Shine, Wave, Sparkle or Embers to any title."],
   ["Seasonal themes, earned in season", "Autumn, Winter, Spring and Summer now unlock by reading during that time of year. Autumn is up now: read on 12 different days this fall."],
@@ -8623,7 +8762,7 @@ $("#recapDlg").addEventListener("close", () => { const f = recapAfter; recapAfte
 $("#jrPrint").onclick = printJournal;
 $("#openJournal").onclick = () => { $("#menuDlg").close(); openJournal(); };
 $("#nightBtn").onclick = toggleNight;
-$("#boxTile").onclick = () => { const b = boxState(); if (b.n > 0) boxOpen(); else toast("Finish all 3 daily quests 5 days in a row to earn a mystery box."); };
+$("#boxTile").onclick = () => { const b = boxState(); if (b.n > 0) boxOpen(); else toast("Finish all 3 daily missions on 5 school days in a row to earn a mystery box."); };
 $("#boxGo").onclick = () => { if (boxState().n > 0) boxOpen(); else $("#boxDlg").close(); };
 $("#sfxChk").onchange = e => { settings.sfx = e.target.checked; saveSettings(); if (e.target.checked) sfx("quest"); };
 $("#sfxVol").oninput = e => { settings.sfxVol = +e.target.value; saveSettings(); };
@@ -9661,6 +9800,172 @@ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toas
   L.onChange(w => { if (w.b.math === lastMath) return; lastMath = w.b.math; try { applyLockUI(); renderExtras(); } catch (e) {} });
   try { applyLockUI(); applyTheme(); } catch (e) {}
   if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__locker = { publish, lockMsg: (k, id) => lockMsg(k, id), XCATS, settings, saveSettings, applyTheme, applyGear, GEAR_SVG };
+})();
+
+/* ===================== One Atom: profile, app switch, Atom streak, daily missions, season, boxes, teacher, backup =====================
+   Everything here is shared with Atom Math and learnwithatom.org through the Atom Locker. */
+(function () {
+  const L = window.AtomLocker; if (!L || !L.missions) return;
+  const student = () => !isAdult() && !isReader();
+  const MATH_URL = "https://math.learnwithatom.org/", HOME_URL = "https://learnwithatom.org/";
+
+  /* ---------- 1. one profile: name, theme, accent, font, spacing, sound ---------- */
+  const EASY = ["lexend", "dyslexic"];
+  let applying = false;
+  const tokens = () => { try { const c = getComputedStyle(document.documentElement), v = k => c.getPropertyValue(k).trim(); return ["--bg", "--surface", "--ink", "--muted", "--line", "--accent"].map(v).join(",") + "," + (/dark/.test(c.colorScheme || v("color-scheme")) ? 1 : 0); } catch (e) { return ""; } };
+  const mine = () => ({ n: settings.name || "", th: settings.theme || "auto", ac: settings.accent && settings.accent !== "default" ? settings.accent : "", f: EASY.includes(settings.font) ? settings.font : "", sp: (+settings.ls || 0) > 0 || (+settings.ws || 0) > 0 ? 1 : 0, so: settings.sfx === false ? 0 : 1, tk: tokens() });
+  const snap = () => JSON.stringify(mine());
+  let last = "";
+  function pushProfile() { if (applying) return; const now = snap(); if (now === last) return; last = now; if (L.setProfile(mine())) store.set("pace:pAt", L.profile().at); }
+  function takeProfile() {
+    const p = L.profile(); if (!p.at || p.at <= store.get("pace:pAt", 0)) return false;
+    applying = true;
+    try {
+      if (p.n && p.n !== settings.name) { settings.name = p.n; try { $("#nameInput").value = p.n; updateGreet(); } catch (e) {} }
+      if (p.th && p.th !== settings.theme && (p.th === "auto" || document.querySelector(`#themeSeg [data-theme="${p.th}"]`)) && !isLocked("theme", p.th)) settings.theme = p.th;
+      if (p.ac !== undefined) { const a = p.ac || "default"; if (a !== settings.accent && (a === "default" || (ACCENTS[a] && !isLocked("accent", a)))) settings.accent = a; }
+      if (p.f !== undefined) { if (p.f && p.f !== settings.font && !isLocked("font", p.f)) settings.font = p.f; else if (!p.f && EASY.includes(settings.font)) settings.font = "serif"; }
+      if (p.sp !== undefined) { const on = (+settings.ls || 0) > 0 || (+settings.ws || 0) > 0; if (p.sp && !on) { settings.ls = 6; settings.ws = 8; } else if (!p.sp && on) { settings.ls = 0; settings.ws = 0; } }
+      if (p.so !== undefined) settings.sfx = !!p.so;
+      saveSettings(); applyTheme(); applyFont(); applyAccess(); try { syncSettingsUI(); } catch (e) {}
+    } finally { applying = false; }
+    store.set("pace:pAt", p.at); last = snap(); return true;
+  }
+  if (!takeProfile()) { last = ""; setTimeout(pushProfile, 800); }
+  setInterval(pushProfile, 2500);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pushProfile(); });
+
+  /* ---------- 2. switch between apps ---------- */
+  { const hd = document.querySelector("#library header"), br = hd && hd.querySelector(".brand");
+    if (br) { br.style.flex = "none"; br.after(L.switcher("read")); br.style.cursor = "pointer"; br.title = "All Atom apps"; br.addEventListener("click", () => { location.href = HOME_URL; }); } }
+
+  /* ---------- 3. Atom streak: keep your streak in Reading AND Math on the same school day ---------- */
+  function markDay() {
+    if (!student()) return;
+    if (dayW(todayKey()) >= goalTarget()) { const n = L.markActive("read"); if (n) toastLater(`Atom streak: ${n} ${n === 1 ? "day" : "days"}! You kept your streak in Reading and Math today.`); }
+  }
+
+  /* ---------- 4. daily missions: 3 a day, mixed Reading + Math ---------- */
+  const SLOT = () => L.missions();
+  const myIds = () => SLOT().filter(m => m.app === "read").map(m => m.id);
+  questDay = function () {
+    const k = todayKey(); let q = store.get("pace:q", null);
+    if (!q || q.d !== k) q = { d: k, ids: myIds(), c: {}, done: {}, shared: 1 };
+    else if (!q.shared) { q.ids = myIds(); q.shared = 1; const d = {}; q.ids.forEach(id => { if (q.done[id]) d[id] = q.done[id]; }); q.done = d; q.all = 0; }
+    store.set("pace:q", q); return q;
+  };
+  questCheck = function (announce) {
+    if (!qOn()) return; const q = questDay(); let got = 0;
+    SLOT().forEach(m => {
+      if (m.app !== "read") return; const Q = QUESTS[m.id]; if (!Q) return;
+      if (!q.done[m.id] && Q.get(q) >= Q.need) { q.done[m.id] = Date.now(); got += Q_REWARD; if (announce) toastLater(`Mission done: ${Q.txt}. +${fmt(Q_REWARD)} season words`); }
+      if (q.done[m.id] && !m.done) { const r = L.missionDone("read", m.slot); if (r && r.box) toastLater("Mystery box earned! Open it in Rewards."); }
+    });
+    if (SLOT().every(m => m.done) && !q.all) { q.all = 1; got += Q_ALL; if (announce) toastLater(`All 3 missions done! Bonus +${fmt(Q_ALL)} season words`); }
+    if (got) { store.set("pace:q", q); const se = seasonNow(), b = store.get("pace:qb", {}); b[se.n] = (b[se.n] || 0) + got; store.set("pace:qb", b); seasonSync(!announce); }
+    else store.set("pace:q", q);
+    renderQuestRow();
+  };
+  boxQuestDay = function () {}; // the shared box track lives in the Atom Locker now
+  const rq0 = renderQuestRow;
+  renderQuestRow = function () {
+    rq0();
+    const card = $("#rwQuests"), box = $("#rwqList"); if (!card || card.hidden || !box) return;
+    const h = card.querySelector("h2,h3,b"); if (h && /quest/i.test(h.textContent)) h.textContent = h.textContent.replace(/quests/i, "missions").replace(/quest/i, "mission");
+    const rows = [...box.querySelectorAll(".qitem:not(.wkq)")], q = questDay();
+    const ms = SLOT(); let ri = 0;
+    const frag = [];
+    ms.forEach(m => {
+      if (m.app === "read") { if (rows[ri]) frag.push(rows[ri]); ri++; return; }
+      const r = el("div", "qitem other" + (m.done ? " done" : "")), top = el("div", "qtop");
+      top.append(el("b", "", (m.done ? "✓ " : "") + m.txt), el("span", "fine", m.done ? "Done" : "In Atom Math"));
+      r.append(top); if (!m.done) { const a = el("a", "qgo", "Open Atom Math ›"); a.href = MATH_URL; r.append(a); } frag.push(r);
+    });
+    const wk = box.querySelector(".wkq"); box.replaceChildren(...frag); if (wk) box.append(wk);
+    const n = ms.filter(m => m.done).length, mid = new Date(); mid.setHours(24, 0, 0, 0); const hrs = Math.max(1, Math.round((mid - new Date()) / 3600000));
+    $("#rwqLeft").textContent = n === 3 ? "All done ✓" : `${n} of 3 · new in ${hrs}h`;
+    let st = card.querySelector(".atomstk"); if (!st) { st = el("div", "atomstk"); box.before(st); }
+    const s = L.streak();
+    st.innerHTML = `<span class="fl" aria-hidden="true">🔥</span><span><b>Atom streak: ${s.n} ${s.n === 1 ? "day" : "days"}</b><span class="fine">${s.today ? "Done for today. See you next school day!" : `Today: Reading ${s.read ? "✓" : "–"} · Math ${s.math ? "✓" : "–"}. Keep your streak in both.`}</span></span>`;
+  };
+  { const css = document.createElement("style"); css.textContent = `#rwQuests .qitem.other{border-style:dashed}#rwQuests .qgo{font-size:12.5px;font-weight:600;color:var(--accent);text-decoration:none}
+.atomstk{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,#f08a24 12%,var(--surface));border:1px solid color-mix(in srgb,#f08a24 35%,var(--line));margin:2px 0 8px}
+.atomstk .fl{font-size:22px}.atomstk b{display:block;font-family:Georgia,serif;font-size:15px}.atomstk .fine{font-size:12.5px}`; document.head.append(css); }
+
+  /* ---------- 5. one season level: Reading words + Math right answers ---------- */
+  const sw0 = seasonWords;
+  seasonWords = function (se) { return sw0(se) + L.seasonOther("read", se.n) * L.seasonRate; };
+  function pushSeason() { try { const se = seasonNow(); L.setSeason("read", se.n, sw0(se)); } catch (e) {} }
+
+  /* ---------- 6. one mystery box track ---------- */
+  { const b = store.get("pace:box", {}); if (!store.get("pace:boxMig", false)) { if (b.n > 0) L.addBoxes(b.n); store.set("pace:boxMig", true); } }
+  const bs0 = boxState;
+  boxState = function () { const b = bs0(); b.n = L.boxes(); b.run = L.boxRun(); b.last = ""; return b; };
+  const bo0 = boxOpen;
+  boxOpen = function () { if (L.boxes() < 1) return; bo0(); L.useBox(); try { renderBoxTile(); } catch (e) {} };
+
+  /* ---------- 7. one teacher mode ---------- */
+  const ATOM_MATH_PW = "3347543f92c446c8cb04297aab3e7a17134542a1068c69a4dda8b2bbff1eb08f"; // the Atom Math teacher password works here too
+  const ua0 = unlockAdult;
+  unlockAdult = async function (pw) {
+    let ok = await ua0(pw);
+    if (!ok) { try { if (await sha256("wordsmith:" + pw) === ATOM_MATH_PW) { settings.mode = "adult"; settings.viewStudent = false; saveSettings(); applyCap(); applyAccess(); syncSettingsUI(); ok = true; } } catch (e) {} }
+    if (ok) L.setTeacher(true);
+    return ok;
+  };
+  function syncTeacher() {
+    const on = L.teacher();
+    if (on && settings.mode !== "adult") { settings.prevMode = settings.mode || "student"; settings.mode = "adult"; settings.viewStudent = false; settings.tmpTeach = 1; saveSettings(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI(); toast("Teacher mode is on for all Atom apps"); }
+    else if (!on && settings.tmpTeach) { settings.mode = settings.prevMode || "student"; delete settings.tmpTeach; delete settings.prevMode; saveSettings(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI(); }
+  }
+  let wasAdult = settings.mode === "adult";
+  setInterval(() => { const a = settings.mode === "adult"; if (wasAdult && !a && !settings.tmpTeach) L.setTeacher(false); wasAdult = a; }, 2000);
+
+  /* ---------- 8. one backup for both apps ---------- */
+  // A hidden copy of the other app answers "send me your save" and "load this save".
+  const OTHER = MATH_URL;
+  function askOther(msg, ms) {
+    return new Promise(res => {
+      if (!L.isShared) return res(null);
+      const f = document.createElement("iframe"); f.src = OTHER + "?bridge=1"; f.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9px;top:-9px"; f.setAttribute("aria-hidden", "true"); f.tabIndex = -1;
+      let done = false; const fin = v => { if (done) return; done = true; window.removeEventListener("message", on); setTimeout(() => f.remove(), 50); res(v); };
+      const on = e => { if (e.source !== f.contentWindow || !/^https:\/\/math\.learnwithatom\.org$/.test(e.origin)) return; const d = e.data || {}; if (d.atom === "ready") f.contentWindow.postMessage(msg, e.origin); else if (d.atom === "reply") fin(d); };
+      window.addEventListener("message", on); setTimeout(() => fin(null), ms || 15000); document.body.append(f);
+    });
+  }
+  const mb0 = makeBackup;
+  makeBackup = async function () {
+    const mine = await mb0(); const other = await askOther({ atom: "export" });
+    if (!other || !other.data) return mine;
+    return Object.assign(mine, { atomAll: 1, math: other.data, locker: L.exportData() });
+  };
+  const rb0 = restoreBackup;
+  restoreBackup = async function (file) {
+    let data = null; try { data = JSON.parse(await file.text()); } catch (e) {}
+    if (data && data.format === "atom-math") { const r = await askOther({ atom: "import", data: data.math }); toast(r && r.ok ? "Atom Math progress restored" : "Open Atom Math to load this save"); return { n: 0 }; }
+    const r = await rb0(data && data.format === "pace-backup" ? new File([JSON.stringify(data)], file.name, { type: "application/json" }) : file);
+    if (data && data.atomAll && data.math && r && r.n !== undefined) { const m = await askOther({ atom: "import", data: data.math }); if (data.locker) L.importData(data.locker); toast(m && m.ok ? "Reading and Math restored" : "Reading restored. Open Atom Math once, then restore there too."); }
+    return r;
+  };
+  try { prepareBackup(); } catch (e) {}
+  // When this app is the hidden copy inside Atom Math, answer its requests.
+  if (window.parent !== window && /bridge=1/.test(location.search)) {
+    const ok = o => /^https:\/\/(math\.)?learnwithatom\.org$/.test(o);
+    window.addEventListener("message", async e => {
+      if (!ok(e.origin)) return; const d = e.data || {};
+      if (d.atom === "export") { let data = null; try { data = await mb0(); } catch (x) {} e.source.postMessage({ atom: "reply", data }, e.origin); }
+      if (d.atom === "import") { let okk = false; try { const c0 = window.confirm; window.confirm = () => true; const r = await rb0(new File([JSON.stringify(d.data)], "x.Atom", { type: "application/json" })); window.confirm = c0; okk = !!(r && r.n !== undefined); } catch (x) {} e.source.postMessage({ atom: "reply", ok: okk }, e.origin); }
+    });
+    setTimeout(() => window.parent.postMessage({ atom: "ready" }, "*"), 300);
+  }
+
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__rs = { tick, questCheck: a => questCheck(a), stats: () => stats, settings, saveSettings, todayKey, store, seasonWords: se => seasonWords(se), seasonNow, boxState: () => boxState(), makeBackup: () => makeBackup(), restoreBackup: f => restoreBackup(f), unlockAdult: p => unlockAdult(p), applyTheme };
+  /* ---------- keep everything in step ---------- */
+  function tick() { try { markDay(); pushSeason(); questCheck(false); syncTeacher(); } catch (e) {} }
+  setTimeout(tick, 1200); setInterval(tick, 20000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+  { let lastW = ""; L.onChange(w => { const k = JSON.stringify([w.q, w.k, w.a, w.sp, w.bx, w.t, w.p.at]); if (k === lastW) return; lastW = k;
+      try { takeProfile(); syncTeacher(); seasonSync(true); renderQuestRow(); renderBoxTile(); } catch (e) {} }); }
 })();
 
 })();
