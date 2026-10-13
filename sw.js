@@ -1,4 +1,4 @@
-const CACHE = "atom-v124-kedadc1", STATIC = "atom-static-2";
+const CACHE = "atom-v124-k96301b", STATIC = "atom-static-2";
 const DATA = ["manifest.json", "classlib.json", "storylib.json"];
 const ASSETS = ["icon-192.png", "icon-512.png", "apple-touch-icon.png", "Lexend-Regular.woff2", "Lexend-Bold.woff2", "OpenDyslexic-Regular.woff2", "OpenDyslexic-Bold.woff2", "pdf.min.js", "pdf.worker.min.js", "dictionary.json", "mascot.png",
   "ico-cream.png", "ico-coral.png", "ico-robot.png", "ico-gold.png", "ico-diamond.png", "ico-a-blue.png", "ico-a-green.png", "ico-a-orange.png", "ico-a-purple.png", "ico-a-pink.png", "ico-a-teal.png", "ico-fern.png", "ico-hat.png", "ico-moth.png", "ico-stag.png", "ico-flame.png", "ico-owl.png", "ico-ghost.png"];
@@ -90,7 +90,7 @@ self.addEventListener("fetch", e => {
       if (hit) { e.waitUntil(check); return hit; }
       const got = await check;
       if (got) return got;
-      try { return await fetch(req); } catch (err) { return new Response("<!doctype html><meta name=viewport content='width=device-width'><body style='font:18px system-ui;padding:40px;text-align:center'>Atom needs internet the first time. Open read.learnwithatom.org once on home WiFi, then it works offline.</body>", { headers: { "Content-Type": "text/html" } }); }
+      try { return await fetch(req); } catch (err) { return new Response("<!doctype html><meta name=viewport content='width=device-width'><body style='font:18px system-ui;padding:40px;text-align:center'>Atom needs internet the first time. Open learnwithatom.org once on home WiFi, then it works offline.</body>", { headers: { "Content-Type": "text/html" } }); }
     })());
     return;
   }

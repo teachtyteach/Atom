@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
-<meta name="atom-build" content="atom-v124-kedadc1"><!-- keep the same as CACHE in sw.js -->
+<meta name="atom-build" content="atom-v124-k96301b"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
-<link rel="canonical" href="https://read.learnwithatom.org/">
+<link rel="canonical" href="https://learnwithatom.org/read/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Atom">
 <meta property="og:title" content="Atom: free speed reading">
 <meta property="og:description" content="Read one word at a time. No account, no ads, works offline.">
-<meta property="og:url" content="https://read.learnwithatom.org/">
-<meta property="og:image" content="https://read.learnwithatom.org/og.png">
+<meta property="og:url" content="https://learnwithatom.org/read/">
+<meta property="og:image" content="https://learnwithatom.org/read/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Atom. The word reading with its middle letter in red.">
@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Atom">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <style>
@@ -1729,9 +1729,14 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
    - Anything unlocked can be USED in both apps.
 
    How it works
+   - Everything lives on ONE site: learnwithatom.org (main page), /read/ and /math/.
+     One site means one Home Screen app on iPhone, so nothing gets split up.
+     (iPhone gives every Home Screen icon its own private storage.)
    - The locker lives in ONE small cookie scoped to learnwithatom.org, so
-     read., math., and the main page all see the same rewards on the same
-     device. No accounts. No database. Nothing leaves the device.
+     all three pages see the same rewards on the same device.
+     No accounts. No database. Nothing leaves the device.
+   - The old addresses (read. and math.learnwithatom.org) show a "moved" screen
+     that carries the student's progress over.
    - Each reward is one bit in a list, so the cookie stays tiny.
    - Each app also keeps a local copy. Copies are merged, so unlocks are never
      lost, and the cookie rebuilds itself if it is cleared.
@@ -1749,7 +1754,7 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
 (function () {
   var KEYS = {"read":["h~cap","h~tophat","h~cowboy","h~chef","h~souwester","h~pirate","h~wizard","h~headph","h~crown","h~bellhop","h~halo","h~pumpkin","h~leafcrown","h~earmuffs","h~flowers","h~sgh0","h~sgh1","h~sgh2","h~sgh3","h~sgc0","h~sgc1","h~sgc2","h~sgc3","h~bdayhat","h~bucket","h~viking","h~space","h~goldcrown","h~flamecrown","f~round","f~shades","f~star","f~heart","f~monocle","f~goggles","f~sandgog","f~d3","f~stache","f~sparkle","f~snorkel","f~sgf0","f~sgf1","f~sgf2","f~sgf3","f~tape","f~nerd","f~visor","f~diamond","n~bowtie","n~scarf","n~tie","n~bandana","n~vine","n~medal","n~lei","n~badge","n~vampire","n~heartbow","n~earth","n~sgn0","n~sgn1","n~sgn2","n~sgn3","n~ribbon","t~pager","t~bookworm","t~finisher","t~explorer","t~bronze","t~owl","t~bird","t~sunday","t~keeper","t~silver","t~shelf","t~hunter","t~gold","t~marathon","t~agent","t~platinum","t~warden","t~emerald","t~diamond","t~hundred","t~champ","t~t1","t~t2","t~t3","t~t4","t~tc0","t~tc1","t~tc2","t~tc3","t~trail","t~lkeeper","t~survivor","t~wander","t~caretaker","t~ta30","t~ta100","t~ta365","c~parchment","c~butter","c~mint","c~sky","c~rose","c~lavender","c~newsprint","c~sunset","c~matcha","c~bubblegum","c~midnight","c~forest","c~slate","c~coffee","c~ocean","c~grape","c~terminal","c~frontier","c~overgrown","c~noir","c~synthwave","c~season","c~autumn","c~winter","c~spring","c~summer","c~pumpkin","c~spooky","c~harvest","c~snowfall","c~fireworks","c~valentine","c~blossom","c~earthday","c~beach","c~stem","c~aurora","c~neon","c~goldleaf","c~fog","c~cosmos","c~deepsea","c~peaks","c~city","c~campfire","c~clouds","c~dunes","c~harbor","c~lodge","c~sandsea","c~reclaimed","c~plains","c~rain","c~nlake","c~cherry","c~ember","c~ringed","c~maple","c~lavender2","c~hollow","c~palms","c~lanterns","c~alley","c~pixel","c~manor","c~falls","c~glacier","c~nebula","c~bamboo","c~reef","c~savanna","c~morning","c~storm","c~castle","c~study","c~balloons","c~koi","c~sunflower","c~fsteps","c~rising","c~twist","c~final","i~gold","i~diamond","i~a-blue","i~a-green","i~a-orange","i~a-purple","i~a-pink","i~a-teal","i~fern","i~hat","i~moth","i~stag","i~flame","i~owl","i~ghost","a~coral","a~sky","a~lime","a~rose","a~teal","a~tangerine","a~ice","a~lavender","a~gold","a~magenta","a~navy","a~mint","a~crimson","a~chrome","a~violet","a~bronze","a~shadow","a~midnight","a~sunset","a~rainbow","a~galaxy","a~saA0","a~saA1","a~saA2","a~saA3","a~saB0","a~saB1","a~saB2","a~saB3","a~saC0","a~saC1","a~saC2","a~saC3","y~kcopper","y~gold","y~kbronze","y~mint","y~brass","y~rose","y~seaglass","y~ksilver","y~galaxy","y~ocean","y~lava","y~moss","y~kgold","y~fire","y~dsun","y~kplat","y~rainbow","y~holo","y~neon","y~frost","y~kemer","y~sparkle","y~kdiam","y~kchamp","y~sfA0","y~sfA1","y~sfA2","y~sfA3","y~sfB0","y~sfB1","y~sfB2","y~sfB3","p~kcopper","p~line","p~ticket","p~kbronze","p~double","p~wanted","p~dotted","p~lantern","p~ksilver","p~gold","p~leafy","p~kgold","p~pixel","p~ribbon","p~dune","p~kplat","p~corners","p~frost","p~kemer","p~neon","p~banner","p~kdiam","p~kchamp","p~spA0","p~spA1","p~spA2","p~spA3","p~spB0","p~spB1","p~spB2","p~spB3","p~spC0","p~spC1","p~spC2","p~spC3","s~kbronze","s~horseshoe","s~flame","s~ksilver","s~anchor","s~book","s~kgold","s~ivy","s~kplat","s~dsun","s~star","s~kemer","s~flake","s~kdiam","s~kchamp","s~e_patch","s~e_spooky","s~e_thanks","s~e_snow","s~e_fresh","s~e_hearts","s~e_bloom","s~e_earth","s~e_summer","s~s1","s~s2","s~s3","s~s4","s~stB0","s~stB1","s~stB2","s~stB3","s~h_lunch","s~h_after","s~h_bed","s~h_holiday","k~blue","k~green","k~orange","k~purple","k~pink"],"math":["h~h_u1","h~h_u2","h~h_u3","h~h_u4","h~h_u5","h~h_u6","h~h_u7","h~h_u7_5","h~h_u8","h~h_u9","h~h_u10","h~grad","h~crown","h~pi","h~e_witch","h~e_acorn","h~e_beanie","h~e_hearts","h~e_bloom","h~sh1","h~sh2","h~sh3","h~sh4","t~cadet","t~recruit","t~specialist","t~veteran","t~elite","t~legend","t~champion","t~unstoppable","t~solver","t~shifter","t~hunter","t~sniper","t~breaker","t~phantom","t~operator","t~prodigy","t~architect","t~detective","t~halfway","t~fullclear","t~grandmaster","t~pilot","t~ninja","t~rocketsci","t~brainiac","t~mathlete","t~pipion","t~whiz","t~calc","t~wizard","t~nolie","t~triple","t~lucky","t~ninelives","t~halloween_m1","t~halloween_s2","t~thanksgiving_m1","t~thanksgiving_s2","t~winter_m1","t~winter_s2","t~piday_m1","t~piday_s2","t~spring_m1","t~spring_s2","t~streaker","t~flame14","t~ironwill","t~zone","t~chall1","t~chall3","t~chall6","t~crusher","t~k1","t~machine","t~sleuth","t~casecracker","t~mastermind","t~bx_cruncher","t~bx_pencil","t~bx_gains","t~bx_whisper","t~bx_prime","t~bx_golden","t~bx_hyp","t~bx_inf","t~bx_unsolv","t~qp15","t~qp25","t~qp35","t~ls15","t~ls30","t~ls50","t~rk3","t~rk6","t~rk10","t~boss1","t~boss4","t~boss10","t~dn5","t~dn20","t~ti_s1","t~ti_s2","t~ti_s3","t~ti_s4","t~ti_w3","t~ti_w9","t~ti_w15","t~ti_w21","t~ti_w27","t~ti_w33","c~sunset","c~mint","c~rose","c~matcha","c~butter","c~newsprint","c~bubblegum","c~sky","c~lavender","c~parchment","c~midnight","c~frontier","c~noir","c~terminal","c~overgrown","c~coffee","c~synthwave","c~forest","c~ocean","c~grape","c~slate","c~winter","c~spring","c~autumn","c~summer","c~season","c~falls","c~stem","c~aurora","c~valentine","c~neon","c~goldleaf","c~earthday","c~prism","c~pumpkin","c~spooky","c~witching","c~harvest","c~cider","c~cranberry","c~snowfall","c~frost","c~evergreen","c~fireworks","c~blueberry","c~midnightpi","c~blossom","c~beach","c~meadow","c~bx_bubble","c~bx_mango","c~bx_aurora","c~bx_royal","c~bx_molten","c~m_sea1","c~m_sea2","c~m_sea3","c~m_sea4","c~th_s1","c~th_s2","c~th_s3","c~th_s4","c~m_balance","c~m_mirror","c~m_rails","c~m_slope","c~m_factory","c~m_cross","c~m_trend","c~m_launch","c~m_pyramid","c~m_vault","c~m_sails","c~m_blueprint","c~m_fractal","c~m_spiral","c~m_pimoon","c~m_honey","c~m_bridge","c~m_neon","c~m_sine","c~m_lowpoly","c~m_circuit","c~m_snow","c~m_planes","c~m_observe","c~m_tangram","a~ac_ice","a~ac_mint","a~ac_rose","a~ac_gold","a~ac_violet","a~ac_shadow","a~ac_rainbow","a~ac_s1","a~ac_s2","a~ac_s3","a~ac_s4","a~ag_s1","a~ag_s2","a~ag_s3","a~ag_s4","a~ac_w4","a~ac_w10","a~ac_w16","a~ac_w22","a~ac_w28","a~ac_w34","y~nf_gold","y~nf_rose","y~nf_ocean","y~nf_fire","y~nf_rainbow","y~nf_neon","y~nf_sparkle","y~nf_s1","y~nf_s2","y~nf_s3","y~nf_s4","y~nf_w2","y~nf_w8","y~nf_w14","y~nf_w20","y~nf_w26","y~nf_w32","p~pf_line","p~pf_double","p~pf_dotted","p~pf_gold","p~pf_ribbon","p~pf_corners","p~pf_neon","p~pf_s1","p~pf_s2","p~pf_s3","p~pf_s4","p~pf_w6","p~pf_w12","p~pf_w18","p~pf_w24","p~pf_w30","p~pf_w36","s~st_flame","s~st_star","s~st_bolt","s~st_heart","s~st_robot","s~st_boss","s~st_e_patch","s~st_e_spooky","s~st_e_thanks","s~st_e_snow","s~st_e_fresh","s~st_e_hearts","s~st_e_piday","s~st_e_bloom","s~st_e_earth","s~st_e_summer","s~st_s1","s~st_s2","s~st_s3","s~st_s4","s~st_w1","s~st_w7","s~st_w13","s~st_w19","s~st_w25","s~st_w31","s~st_w37","k~a_blue","k~a_green","k~a_orange","k~a_purple","k~a_pink","k~orange","k~master","k~sunset","k~aqua","k~halloween_m3","k~halloween_s3","k~thanksgiving_m3","k~thanksgiving_s3","k~winter_m3","k~winter_s3","k~piday_m3","k~piday_s3","k~spring_m3","k~spring_s3","k~sunrise","k~seafoam","k~plum","k~slate","k~honey","k~cherry","k~noir","k~qpgold","k~lsred"]};
   // Home screen icons live on the Reading site; every site uses the student's pick.
-  var ICONS = {"classic":"apple-touch-icon.png","cream":"ico-cream.png","coral":"ico-coral.png","robot":"ico-robot.png","gold":"ico-gold.png","diamond":"ico-diamond.png","a-blue":"ico-a-blue.png","a-green":"ico-a-green.png","a-orange":"ico-a-orange.png","a-purple":"ico-a-purple.png","a-pink":"ico-a-pink.png","a-teal":"ico-a-teal.png","fern":"ico-fern.png","hat":"ico-hat.png","moth":"ico-moth.png","stag":"ico-stag.png","flame":"ico-flame.png","owl":"ico-owl.png","ghost":"ico-ghost.png"}, ICON_BASE = 'https://read.learnwithatom.org/';
+  var ICONS = {"classic":"apple-touch-icon.png","cream":"ico-cream.png","coral":"ico-coral.png","robot":"ico-robot.png","gold":"ico-gold.png","diamond":"ico-diamond.png","a-blue":"ico-a-blue.png","a-green":"ico-a-green.png","a-orange":"ico-a-orange.png","a-purple":"ico-a-purple.png","a-pink":"ico-a-pink.png","a-teal":"ico-a-teal.png","fern":"ico-fern.png","hat":"ico-hat.png","moth":"ico-moth.png","stag":"ico-stag.png","flame":"ico-flame.png","owl":"ico-owl.png","ghost":"ico-ghost.png"}, ICON_BASE = 'https://learnwithatom.org/read/';
   var MPOOL = {"read":{"min10":"Read for 10 minutes","min20":"Read for 20 minutes","w1500":"Read 1,500 words","goal":"Hit your daily reading goal","chap":"Finish a chapter","run3":"Read 3 minutes without pausing","define":"Look up a word with Define","two":"Read from 2 different books","bm":"Bookmark a spot in a book","hear":"Hear how a word sounds"},"math":{"major":"Get 10 right on core skills","correct":"Get 15 answers right","streak":"Hit a 5-answer streak","rapid":"Score 12+ in one Quick Play","surv":"Reach 8 in one Tower Run run","units":"Practice in 2 different units","clean":"Get 8 right with no hints"}};   // daily mission text for each app: {read:{id:text}, math:{id:text}}
   var BREAKS = [['2026-11-23', '2026-11-27'], ['2026-12-21', '2027-01-01'], ['2027-03-22', '2027-03-26']]; // no-school weeks
   var SEASON_RATE = 200;   // 1 right answer in Math counts the same as 200 words in Reading
@@ -1761,8 +1766,14 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
 
   var host = location.hostname;
   var shared = /(^|\.)learnwithatom\.org$/.test(host);
-  var sub = host.split('.')[0];
-  var hereApp = shared && (sub === 'read' || sub === 'math') ? sub : '';
+  // old addresses: read.learnwithatom.org and math.learnwithatom.org
+  var oldHost = /^(read|math)\.learnwithatom\.org$/.test(host);
+  var sub = oldHost ? host.split('.')[0] : (/^\/read(\/|$)/.test(location.pathname) ? 'read' : /^\/math(\/|$)/.test(location.pathname) ? 'math' : '');
+  var hereApp = shared ? sub : '';
+  var SITE = 'https://learnwithatom.org/';
+  var NEW_URLS = { home: SITE, read: SITE + 'read/', math: SITE + 'math/' };
+  var URLS = oldHost ? { home: SITE, read: 'https://read.learnwithatom.org/', math: 'https://math.learnwithatom.org/' } : NEW_URLS;
+  if (!shared) URLS = { home: '../', read: '../read/', math: '../math/' };   // test copies
 
   function dec(s) { var a = []; s = s || ''; for (var i = 0; i < s.length; i++) { var v = B64.indexOf(s.charAt(i)); if (v < 0) v = 0; for (var j = 0; j < 6; j++) a.push((v >> j) & 1); } return a; }
   function enc(a) { var s = ''; for (var i = 0; i < a.length; i += 6) { var v = 0; for (var j = 0; j < 6; j++) if (a[i + j]) v |= 1 << j; s += B64.charAt(v); } return s.replace(/A+$/, ''); }
@@ -1876,6 +1887,11 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
     keys: KEYS,
     isShared: shared,
     app: hereApp,
+    urls: URLS,
+    newUrls: NEW_URLS,
+    oldHost: oldHost,
+    // other Atom pages that may talk to this one (backup bridge)
+    okOrigin: function (o) { return /^https:\/\/((read|math)\.)?learnwithatom\.org$/.test(o) || o === location.origin; },
     get: get,
 
     // Add many unlocks in one save. Returns how many were new.
@@ -2002,16 +2018,67 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
           '.atomsw a.asw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media (max-width:640px){.atomsw .asw{padding:7px 9px}.atomsw .asw span{display:none}.atomsw .asw svg{width:17px;height:17px}}@media (max-width:389px){.atomsw .asw{padding:6px 6px}.atomsw .asw svg{width:15px;height:15px}}';
         document.head.appendChild(st);
       }
-      var nav = document.createElement('nav'); nav.className = 'atomsw'; nav.setAttribute('aria-label', 'Atom apps');
-      var IC = { read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9.5-.5V19c-2.5-1.5-6-1.5-9.5.5-3.5-2-7-2-9.5-.5zM12 6v13.5"/></svg>',
+      var nav = document.createElement('nav'); nav.className = 'atomsw'; nav.setAttribute('aria-label', 'Atom home, Reading and Math');
+      var IC = { home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7M6 9v11h12V9"/></svg>', read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9.5-.5V19c-2.5-1.5-6-1.5-9.5.5-3.5-2-7-2-9.5-.5zM12 6v13.5"/></svg>',
                  math: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3.5v6M3.5 6.5h6M14.5 6.5h6M4 15l5 5M9 15l-5 5M14.5 15.5h6M14.5 19.5h6"/></svg>' };
-      [['read', 'Reading', 'https://read.learnwithatom.org/'], ['math', 'Math', 'https://math.learnwithatom.org/']].forEach(function (x) {
+      [['home', 'Home', URLS.home], ['read', 'Reading', URLS.read], ['math', 'Math', URLS.math]].forEach(function (x) {
         var on = x[0] === cur, el = document.createElement(on ? 'span' : 'a');
-        el.className = 'asw' + (on ? ' on' : ''); el.innerHTML = IC[x[0]] + '<span>' + x[1] + '</span>'; el.title = 'Atom ' + x[1]; el.setAttribute('aria-label', 'Atom ' + x[1]);
+        el.className = 'asw' + (on ? ' on' : ''); el.innerHTML = IC[x[0]] + '<span>' + x[1] + '</span>'; el.title = x[0] === 'home' ? 'All of Atom' : 'Atom ' + x[1]; el.setAttribute('aria-label', x[0] === 'home' ? 'Atom home' : 'Atom ' + x[1]);
         if (on) el.setAttribute('aria-current', 'page'); else el.href = x[2];
         nav.appendChild(el);
       });
       return nav;
+    },
+
+    /* ---------- the old addresses: carry progress over to the one-app site ---------- */
+    // pack(): resolves to {read: Reading backup or null, math: Math save or null}
+    // saveFile(): downloads a backup file (for iPhone Home Screen apps, which can't share storage)
+    mover: function (app, pack, saveFile, hasData) {
+      if (!oldHost || (window.parent !== window) || /bridge=1/.test(location.search)) return;
+      var moved = /(^|; )atom_moved=1/.test(document.cookie);
+      var ios = window.navigator.standalone === true;
+      var dest = NEW_URLS[app] + location.search + location.hash;
+      // nothing to move, or already moved (not an iPhone Home Screen icon): the old address is just a shortcut
+      var empty = false; try { empty = hasData && !hasData(); } catch (e) {}
+      if (empty || (moved && !ios)) { location.replace(dest); return; }
+      var css = 'html.atommoving #overlay{display:none!important}#atomMove::backdrop{background:#f6f4ef}#atomMove{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;border-radius:0!important;box-shadow:none!important;animation:none!important;transform:none!important;z-index:2147483000;box-sizing:border-box;background:#f6f4ef;color:#1d1b18;display:grid;place-items:center;padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));font:16px/1.45 system-ui,-apple-system,sans-serif;overflow:auto}' +
+        '#atomMove .box{max-width:420px;width:100%;display:grid;gap:14px;text-align:center}#atomMove h1{font:700 30px/1.15 Georgia,"Iowan Old Style",serif;margin:0}' +
+        '#atomMove p{margin:0;color:#6f6a61}#atomMove b{color:#1d1b18}#atomMove img{width:110px;justify-self:center}' +
+        '#atomMove button,#atomMove a.b{font:700 16px system-ui,sans-serif;min-height:50px;border-radius:999px;border:0;background:#1d1b18;color:#f6f4ef;text-decoration:none;display:grid;place-items:center;cursor:pointer;padding:0 20px}' +
+        '#atomMove::before,#atomMove::after{display:none!important}#atomMove:focus{outline:none}#atomMove :focus-visible{outline:2px solid #1d1b18!important;outline-offset:3px}#atomMove .ghost{background:none;color:#1d1b18;border:1px solid #d9d4c9}#atomMove ol{text-align:left;margin:0;padding-left:22px;display:grid;gap:8px}#atomMove #atomMvMsg{min-height:1.4em;font-size:14px;color:#6f6a61}';
+      var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+      var el = document.createElement('dialog'); el.id = 'atomMove';
+      var head = '<img src="' + SITE + 'mascot.png" alt=""><h1>Atom has a new home</h1><p>Reading and Math are now <b>one app</b> at <b>learnwithatom.org</b>. Your rewards, streak and look stay in sync there.</p>';
+      if (ios) el.innerHTML = '<div class="box">' + head + '<ol><li>Tap <b>Save backup</b>.</li><li>In Safari, go to <b>learnwithatom.org</b> and add it to your Home Screen.</li><li>Open it and tap <b>Restore from a backup</b>. Reading and Math both come back.</li><li>Delete the old Atom icons.</li></ol><button type="button" id="atomMvSave">Save backup</button><div id="atomMvMsg"></div></div>';
+      else el.innerHTML = '<div class="box">' + head + (moved ? '<p>Your progress already moved.</p><a class="b" href="' + dest + '">Open the new Atom</a><button type="button" class="ghost" id="atomMvGo">Move my progress again</button>' : '<button type="button" id="atomMvGo">Move my progress</button>') + '<div id="atomMvMsg"></div></div>';
+      document.body.appendChild(el);
+      document.documentElement.style.overflow = 'hidden'; document.documentElement.classList.add('atommoving');
+      // this app is retired here: keep its own popups out of the way
+      var keep = function () { document.querySelectorAll('dialog[open]').forEach(function (d) { if (d !== el) try { d.close(); } catch (e) {} }); if (!el.open) { try { el.showModal(); } catch (e) { el.setAttribute('open', ''); } el.tabIndex = -1; try { el.focus(); } catch (e) {} } };
+      keep(); setInterval(keep, 400); el.addEventListener('cancel', function (e) { e.preventDefault(); });
+      var msg = function (t) { var m = document.getElementById('atomMvMsg'); if (m) m.textContent = t; };
+      function send(url, data) {
+        return new Promise(function (res) {
+          var f = document.createElement('iframe'); f.src = url + '?bridge=1'; f.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9px;top:-9px'; f.setAttribute('aria-hidden', 'true');
+          var org = new URL(url).origin, done = false;
+          function fin(v) { if (done) return; done = true; window.removeEventListener('message', on); setTimeout(function () { f.remove(); }, 50); res(v); }
+          function on(e) { if (e.source !== f.contentWindow || e.origin !== org) return; var d = e.data || {}; if (d.atom === 'ready') f.contentWindow.postMessage({ atom: 'import', data: data }, org); else if (d.atom === 'reply') fin(!!d.ok); }
+          window.addEventListener('message', on); setTimeout(function () { fin(false); }, 30000); document.body.appendChild(f);
+        });
+      }
+      var b = document.getElementById('atomMvSave');
+      if (b) b.onclick = function () { try { saveFile(); msg('Saved. Now open learnwithatom.org in Safari.'); } catch (e) { msg('Could not save. Try again.'); } };
+      b = document.getElementById('atomMvGo');
+      if (b) b.onclick = async function () {
+        b.disabled = true; msg('Packing up your progress…');
+        var p = null; try { p = await pack(); } catch (e) {}
+        if (!p) { b.disabled = false; msg('Something went wrong. Try again.'); return; }
+        var okR = true, okM = true;
+        if (p.read) { msg('Moving Reading…'); okR = await send(NEW_URLS.read, p.read); }
+        if (p.math) { msg('Moving Math…'); okM = await send(NEW_URLS.math, p.math); }
+        if (okR && okM) { document.cookie = 'atom_moved=1; Path=/; Max-Age=' + MAX_AGE + '; SameSite=Lax; Domain=learnwithatom.org; Secure'; msg('Done! Opening the new Atom…'); setTimeout(function () { location.href = dest; }, 700); }
+        else { b.disabled = false; msg((okR ? '' : 'Reading did not move. ') + (okM ? '' : 'Math did not move. ') + 'Try again.'); }
+      };
     },
 
     exportData: function () { return get(); },
@@ -2188,10 +2255,10 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
 </div></dialog>
 <dialog id="moveDlg" class="movedlg"><div class="sheet">
   <div class="mvhead"><span class="mvic" aria-hidden="true"><svg viewBox="0 0 48 48" width="56" height="56"><circle cx="24" cy="24" r="22" fill="var(--accent)"/><path d="M14 25h17M25 17l8 8-8 8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h2>Atom is moving!</h2>
-  <p>Atom's new home is <b>read.learnwithatom.org</b>. Bring your books, stats and rewards with you.</p></div>
+  <p>Atom's new home is <b>learnwithatom.org</b>. Bring your books, stats and rewards with you.</p></div>
   <ol class="mvsteps">
     <li><b>Save your backup.</b><span class="fine">It's one file with everything in it.</span><button type="button" class="primary" id="mvSave">Save my backup</button></li>
-    <li><b>Open the new Atom.</b><span class="fine">Tap Restore backup and pick your file. Then add it to your home screen.</span><a class="btn" id="mvGo" href="https://read.learnwithatom.org/" target="_blank" rel="noopener">Open read.learnwithatom.org</a></li>
+    <li><b>Open the new Atom.</b><span class="fine">Tap Restore backup and pick your file. Then add it to your home screen.</span><a class="btn" id="mvGo" href="https://learnwithatom.org/read/" target="_blank" rel="noopener">Open learnwithatom.org</a></li>
   </ol>
   <button type="button" id="mvLater" class="mvlater">Later</button>
 </div></dialog>
@@ -2344,7 +2411,7 @@ button[data-theme="m_tangram"] .sw{background:var(--sc-m_tangram) center bottom/
 <h3>When Atom goes online</h3>
 <p>Atom works offline. It only uses the internet to:</p>
 <ul>
-<li><b>Load the app and updates</b> from read.learnwithatom.org (hosted on GitHub Pages).</li>
+<li><b>Load the app and updates</b> from learnwithatom.org (hosted on GitHub Pages).</li>
 <li><b>Find free classics</b> from Project Gutenberg, through books.readwithatom.org (run on Cloudflare). Only your search words are sent.</li>
 <li><b>Find a book cover</b> from Open Library, when you search for one. The title you type is sent.</li>
 <li><b>Open a web article</b> from a link you paste. Wikipedia links load directly. Other links go through r.jina.ai, which sees that link. You can turn this off in Settings.</li>
@@ -9868,7 +9935,7 @@ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toas
 (function () {
   const L = window.AtomLocker; if (!L || !L.missions) return;
   const student = () => !isAdult() && !isReader();
-  const MATH_URL = "https://math.learnwithatom.org/", HOME_URL = "https://learnwithatom.org/";
+  const MATH_URL = L.urls.math, HOME_URL = L.urls.home;
 
   /* ---------- 1. one profile: name, theme, accent, font, spacing, sound ---------- */
   const EASY = ["lexend", "dyslexic"];
@@ -9899,7 +9966,17 @@ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toas
 
   /* ---------- 2. switch between apps ---------- */
   { const hd = document.querySelector("#library header"), br = hd && hd.querySelector(".brand");
-    if (br) { br.style.flex = "none"; br.after(L.switcher("read")); br.style.cursor = "pointer"; br.title = "All Atom apps"; br.addEventListener("click", () => { location.href = HOME_URL; }); } }
+    if (br) { const gr = document.querySelector("#library .greetrow"), sw = L.switcher("read"); if (gr) { sw.style.alignSelf = "center"; sw.style.flex = "none"; sw.style.margin = "-6px 0"; gr.append(sw); } else { br.style.flex = "none"; br.after(sw); } br.style.cursor = "pointer"; br.title = "All Atom apps"; br.addEventListener("click", () => { location.href = HOME_URL; }); } }
+
+  /* ---------- 2b. one welcome for all of Atom: name and backups live on learnwithatom.org ---------- */
+  if (L.isShared && !L.oldHost && window.parent === window && !/bridge=1/.test(location.search) && !store.get("pace:welcomed", false)) {
+    const p = L.profile();
+    if (p.n) {
+      settings.name = p.n; if (!settings.mode) settings.mode = "student"; saveSettings(); store.set("pace:welcomed", true);
+      const d = $("#welcomeDlg"); if (d && d.open) d.close(); document.documentElement.classList.remove("firstrun");
+      try { $("#nameInput").value = p.n; updateGreet(); lvlCache = null; applyCap(); applyAccess(); syncSettingsUI(); } catch (e) {}
+    } else if (!lib.length && !Object.keys(stats.days).length) location.replace(L.urls.home + "?from=read");
+  }
 
   /* ---------- 3. Atom streak: keep your streak in Reading AND Math on the same school day ---------- */
   function markDay() {
@@ -9991,7 +10068,7 @@ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toas
       if (!L.isShared) return res(null);
       const f = document.createElement("iframe"); f.src = OTHER + "?bridge=1"; f.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9px;top:-9px"; f.setAttribute("aria-hidden", "true"); f.tabIndex = -1;
       let done = false; const fin = v => { if (done) return; done = true; window.removeEventListener("message", on); setTimeout(() => f.remove(), 50); res(v); };
-      const on = e => { if (e.source !== f.contentWindow || !/^https:\/\/math\.learnwithatom\.org$/.test(e.origin)) return; const d = e.data || {}; if (d.atom === "ready") f.contentWindow.postMessage(msg, e.origin); else if (d.atom === "reply") fin(d); };
+      const on = e => { if (e.source !== f.contentWindow || e.origin !== new URL(OTHER, location.href).origin) return; const d = e.data || {}; if (d.atom === "ready") f.contentWindow.postMessage(msg, e.origin); else if (d.atom === "reply") fin(d); };
       window.addEventListener("message", on); setTimeout(() => fin(null), ms || 15000); document.body.append(f);
     });
   }
@@ -10015,13 +10092,17 @@ if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toas
     return r;
   };
   try { prepareBackup(); } catch (e) {}
+  // Old address (read.learnwithatom.org): show the "moved" screen and carry progress to learnwithatom.org/read/
+  L.mover("read", async () => { const r = await mb0(); const o = await askOther({ atom: "export" }); return { read: r, math: o && o.data }; },
+    () => { if (backupFile) saveBackup(); else prepareBackup().then(saveBackup); },
+    () => (Array.isArray(lib) && lib.length > 0) || metrics().w > 0 || !!store.get("pace:welcomed", false));
   // When this app is the hidden copy inside Atom Math, answer its requests.
   if (window.parent !== window && /bridge=1/.test(location.search)) {
-    const ok = o => /^https:\/\/(math\.)?learnwithatom\.org$/.test(o);
+    const ok = o => L.okOrigin(o);
     window.addEventListener("message", async e => {
       if (!ok(e.origin)) return; const d = e.data || {};
       if (d.atom === "export") { let data = null; try { data = await mb0(); } catch (x) {} e.source.postMessage({ atom: "reply", data }, e.origin); }
-      if (d.atom === "import") { let okk = false; try { const c0 = window.confirm; window.confirm = () => true; const r = await rb0(new File([JSON.stringify(d.data)], "x.Atom", { type: "application/json" })); window.confirm = c0; okk = !!(r && r.n !== undefined); } catch (x) {} e.source.postMessage({ atom: "reply", ok: okk }, e.origin); }
+      if (d.atom === "import") { let okk = false; try { const c0 = window.confirm; window.confirm = () => true; const r = await rb0(new File([JSON.stringify(d.data)], "x.Atom", { type: "application/json" })); window.confirm = c0; okk = !!(r && r.n !== undefined); if (okk && !store.get("pace:welcomed", false)) { store.set("pace:welcomed", true); if (!settings.mode) { settings.mode = "student"; saveSettings(); } } } catch (x) {} e.source.postMessage({ atom: "reply", ok: okk }, e.origin); }
     });
     setTimeout(() => window.parent.postMessage({ atom: "ready" }, "*"), 300);
   }
@@ -10049,9 +10130,7 @@ navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type===
 html{overscroll-behavior-y:none;scrollbar-width:none;-ms-overflow-style:none}
 *{scrollbar-width:none}
 *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important}
-html,body{overflow-x:clip}
-html.atomlock,html:has(dialog[open]),html:has(#overlay:not([hidden])){overflow:hidden!important}
-html.atomlock body,html:has(dialog[open]) body,html:has(#overlay:not([hidden])) body{overflow:hidden!important}
+html.atomlock,html.atomovl,html:has(dialog[open]){overflow:hidden!important}
 dialog,#overlay,#overlay .ovbox,.rwsheet,.rwsheet .shb{overscroll-behavior:contain}
 /* small phones: Atom Reading's empty home fits without scrolling */
 @media (max-height:700px){#library .emptybox .mascot{width:56px}#library .madeby{padding-top:4px}}
