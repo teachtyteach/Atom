@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
-<meta name="atom-build" content="atom-v119"><!-- keep the same as CACHE in sw.js -->
+<meta name="atom-build" content="atom-v120"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -7760,14 +7760,14 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-19", WHATS = [
+const WHATS_VER = "2026-10-20", WHATS = [
+  ["Titles worth winning", "Every title now has its own lettering, from Diamond Reader's icy thin caps to Sunday Scholar's script. Add a Title flair like Shine, Wave, Sparkle or Embers to any title."],
   ["Seasonal themes, earned in season", "Autumn, Winter, Spring and Summer now unlock by reading during that time of year. Autumn is up now: read on 12 different days this fall."],
   ["Polished rewards", "New stamps, shinier bookplates, smoother progress bars, richer stats looks, redrawn Atom gear and 14 new Atom colors. Things you've unlocked now show first."],
   ["A brand new season pass", "Every season has its own story now: Forest Explorer, Liftoff, Magic Show and Treasure Hunt. 33 rewards each, like a magician's hat, a space visor, a treasure map frame and a gold coin bar."],
   ["Rank sets", "Every rank from Copper to Champion has its own matching set. Diamond sparkles. Gold shines. Champion glows. Your rank title shows it off too."],
   ["Collections", "5 themed reward sets to collect as you rank up: Outlaw Trail, Haunted Harbor, Overgrown, Sand Sea and Snowbound Lodge. Find them in Rewards."],
   ["Over 100 new rewards", "New book covers, bars, bookmarks, name flair, frames, greetings, hats, sounds and confetti. Every reward now shows a preview."],
-  ["Center Lock", "The middle letter of every word now sits on the same spot, so your eyes never move. Try Baseline, Light beam, Tunnel and Ghost words in Settings > Reading."],
   ["Easier reader", "Tap the chapter name to jump around. Tap Aa to change the word size."],
 ];
 function showWhatsNew() {
@@ -8457,6 +8457,143 @@ emblem = function (i, size) {
   xThumb = function (kind, id) { const t = ox(kind, id); if (t && kind === "atomc" && (id === "sunset" || id === "galaxy")) { const im = t.querySelector("img"); if (im) im.dataset.anim = id; } return t; };
 })();
 
+/* ---------- titles: every title has its own type, flair is a separate reward ---------- */
+var TFONT = {
+  palat: 'Palatino,"Palatino Linotype","Book Antiqua",Georgia,serif', round: '"Arial Rounded MT Bold","Arial Rounded MT",Nunito,"Trebuchet MS",sans-serif', futura: 'Futura,"Century Gothic","Avenir Next",sans-serif',
+  gill: '"Gill Sans","Gill Sans MT",Calibri,sans-serif', rock: 'Rockwell,"Rockwell Nova","Roboto Slab","Courier New",serif', engr: '"Academy Engraved LET",Copperplate,"Copperplate Gothic Light",serif',
+  cochin: 'Cochin,"Hoefler Text",Georgia,serif', note: 'Noteworthy,"Segoe Print","Bradley Hand",cursive', snell: '"Snell Roundhand","Segoe Script","Brush Script MT",cursive', treb: '"Trebuchet MS","Segoe UI",sans-serif',
+  didot: 'Didot,"Bodoni 72","Bodoni MT","Times New Roman",serif', hoefler: '"Hoefler Text",Garamond,"EB Garamond",Georgia,serif', chalkd: 'Chalkduster,"Comic Sans MS",cursive', copper: 'Copperplate,"Copperplate Gothic Bold","Trajan Pro",serif',
+  avenir: '"Avenir Next","Avenir","Segoe UI",sans-serif', type: '"American Typewriter","Courier New",monospace', optima: 'Optima,Candara,"Segoe UI",sans-serif', bask: 'Baskerville,"Libre Baskerville","Baskerville Old Face",Georgia,serif',
+  bodoni: '"Bodoni 72 Oldstyle","Bodoni 72","Bodoni MT",Georgia,serif', avthin: '"Avenir Next","Helvetica Neue","Segoe UI Light",sans-serif', black: '"Arial Black","Avenir Next","Helvetica Neue",sans-serif',
+  times: '"Times New Roman",Times,serif', marker: '"Marker Felt","Comic Sans MS",cursive', cond: '"Avenir Next Condensed","Arial Narrow","Roboto Condensed",sans-serif', chalk: '"Chalkboard SE",Chalkboard,"Comic Sans MS",cursive',
+  bradley: '"Bradley Hand","Segoe Print",cursive', mono: 'Menlo,"SF Mono",Consolas,monospace', savoye: '"Savoye LET","Snell Roundhand","Segoe Script",cursive', clar: 'Superclarendon,Clarendon,"Rockwell Extra Bold",Georgia,serif',
+  impact: 'Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif', verdana: 'Verdana,Geneva,sans-serif', papyrus: 'Papyrus,"Comic Sans MS",fantasy', lexend: 'Lexend,"Avenir Next",sans-serif', georgia: 'Georgia,"Iowan Old Style",serif'
+};
+// [font, css]; colors are mid tones so they read on light and dark themes
+var TSTYLE = {
+  copper: ["rock", "font-weight:800;color:#c46a32;text-shadow:0 1px 0 rgba(255,255,255,.18)"],
+  bronze: ["engr", "font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:.92em;color:#a8692a"],
+  silver: ["didot", "font-weight:700;text-transform:uppercase;letter-spacing:.22em;font-size:.88em;G:linear-gradient(180deg,#c9d2db,#7d8995 55%,#55606b)"],
+  gold: ["copper", "font-weight:700;text-transform:uppercase;letter-spacing:.08em;G:linear-gradient(180deg,#ffe27a,#d99a0b 55%,#9a6a05)"],
+  platinum: ["optima", "font-weight:600;text-transform:uppercase;letter-spacing:.25em;font-size:.86em;G:linear-gradient(180deg,#b9d3df,#6f93a5 55%,#46616e)"],
+  emerald: ["bodoni", "font-style:italic;font-weight:700;font-size:1.08em;G:linear-gradient(115deg,#0b5a32 0 25%,#1fa463 25% 50%,#5fd394 50% 58%,#1fa463 58% 80%,#0b5a32 80%)"],
+  diamond: ["avthin", "font-weight:300;text-transform:uppercase;letter-spacing:.3em;font-size:.86em;G:linear-gradient(100deg,#2b5fc9,#5fa8f0 30%,#8f7be6 55%,#3f8ff0 80%)"],
+  champ: ["black", "font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:.04em;G:linear-gradient(90deg,#9b3fe0,#d9409a 50%,#e09a0b)"],
+  pager: ["palat", "font-style:italic;font-weight:700;color:#1b7a8a"],
+  bookworm: ["round", "font-weight:700;color:#3f9e5b;letter-spacing:.02em"],
+  finisher: ["futura", "font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.88em;color:#2f9e44"],
+  explorer: ["gill", "font-style:italic;font-weight:600;color:#0c8599"],
+  owl: ["cochin", "font-style:italic;font-weight:700;color:#5a68c0"],
+  bird: ["note", "font-weight:700;color:#e8590c"],
+  sunday: ["snell", "font-weight:700;font-size:1.25em;color:#7a5cf0"],
+  keeper: ["treb", "font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#e0491c"],
+  shelf: ["hoefler", "font-variant:small-caps;font-weight:700;letter-spacing:.05em;color:#8a5a2b"],
+  hunter: ["chalkd", "color:#8a90e6"],
+  marathon: ["avenir", "font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:.02em;color:#0c8599"],
+  agent: ["type", "font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.86em;color:var(--ink)"],
+  warden: ["bask", "font-weight:700;font-style:italic;G:linear-gradient(180deg,#f5a524,#e0491c 60%,#a8240c)"],
+  hundred: ["times", "font-weight:700;text-transform:uppercase;letter-spacing:.18em;font-size:.88em;color:#b02a2a"],
+  t1: ["marker", "color:#3f8a3a"], t2: ["cond", "font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:.03em;G:linear-gradient(90deg,#e63946,#f08c1c)"],
+  t3: ["didot", "font-style:italic;font-weight:400;font-size:1.1em;color:#c026d3"], t4: ["chalk", "font-weight:700;color:#b0780a"],
+  tc0: ["bradley", "font-weight:700;font-size:1.08em;color:#2f6b3a"], tc1: ["mono", "font-weight:700;text-transform:uppercase;letter-spacing:.16em;font-size:.84em;color:#2fa8d6"],
+  tc2: ["savoye", "font-size:1.35em;G:linear-gradient(90deg,#7c3aed,#c026d3)"], tc3: ["clar", "font-weight:800;G:linear-gradient(180deg,#0f6e7a,#0f6e7a 45%,#c48a08 55%,#e0a915)"],
+  trail: ["impact", "text-transform:uppercase;letter-spacing:.1em;color:#a8702a"], lkeeper: ["optima", "font-style:italic;font-weight:600;color:#2b8f86"],
+  survivor: ["verdana", "font-weight:800;text-transform:uppercase;letter-spacing:.2em;font-size:.8em;color:#4f7d3a"], wander: ["papyrus", "font-weight:700;color:#c4561f"],
+  caretaker: ["lexend", "font-weight:300;text-transform:uppercase;letter-spacing:.24em;font-size:.84em;color:#3f7fb8"]
+};
+// the tiered titles (I, II, III) change color as they climb
+var TTIER = ["", "#7d8995", "#c48a08"];
+(function () {
+  const css = [".ttx{display:inline-block;position:relative;font-family:Georgia,serif;font-weight:700;color:var(--ink)}",
+    ".ttx[data-fx]{background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;filter:none;animation:none}",
+    ".ttx[data-fx]::before,.ttx[data-fx]::after{content:none}"];
+  Object.keys(TSTYLE).forEach(id => {
+    const [f, raw] = TSTYLE[id]; let g = ""; const body = raw.split(";").filter(x => { if (x.startsWith("G:")) { g = x.slice(2); return false; } return x; }).join(";");
+    css.push(`.ttx[data-fx=${id}]{font-family:${TFONT[f]};${body}${g ? `;background-image:${g};-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent` : ""}}`);
+  });
+  [1, 2].forEach(k => css.push(`.ttx[data-tier="${k}"]{color:${TTIER[k]}!important;-webkit-text-fill-color:${TTIER[k]}!important}`));
+  // frames with their own background keep their own text color
+  css.push(["spA0", "spA1", "spA2", "spA3", "spB0", "spB2", "spB3", "spC1", "spC2", "spC3", "kbronze", "banner", "wanted"].map(f => `:root[data-pframe=${f}] .ttx[data-fx]`).join(",") + "{background:none!important;color:inherit!important;-webkit-text-fill-color:currentColor!important}");
+  const st = document.createElement("style"); st.id = "titleCss"; st.textContent = css.join("\n"); document.head.append(st);
+})();
+/* title flair: a separate reward that works on any title */
+var TFLAIR = [["shine", "Shine", 2], ["float", "Float", 4], ["ink", "Ink underline", 6], ["glow", "Glow", 8], ["wave", "Wave", 10], ["pulse", "Heartbeat", 12], ["type", "Typewriter", 14],
+  ["snow", "Snowfall", 17], ["embers", "Embers", 20], ["neon", "Neon flicker", 23], ["sparkle", "Sparkle", 26], ["prism", "Prism", 30]];
+(function () {
+  XCATS.splice(XCATS.findIndex(c => c.k === "title") + 1, 0, { k: "tflair", label: "Title flair", opts: TFLAIR.map(([id, n]) => [id, n]) });
+  UNLOCK.tflair = {}; TFLAIR.forEach(([id, , lv]) => UNLOCK.tflair[id] = lv);
+  const g = XGROUPS.find(x => x.id === "look"); if (g && !g.keys.includes("tflair")) g.keys.splice(g.keys.indexOf("title") + 1, 0, "tflair");
+  const star = c => `background:${c};clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)`;
+  const css = [
+    ".tfx{display:inline-block;position:relative;vertical-align:baseline}",
+    "@keyframes tshine{0%,30%{background-position:130% 0}70%,100%{background-position:-130% 0}}",
+    ".tfx[data-tf=shine] .ttx::after{content:attr(data-t);position:absolute;inset:0;white-space:nowrap;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.95) 50%,transparent 62%) 0 0/260% 100%;-webkit-background-clip:text;background-clip:text;animation:tshine 3.4s ease-in-out infinite;pointer-events:none}",
+    "@keyframes tfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}.tfx[data-tf=float]{animation:tfloat 2.8s ease-in-out infinite}",
+    "@keyframes tink{0%{transform:scaleX(0);opacity:1}45%,75%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}.tfx[data-tf=ink]::after{content:\"\";position:absolute;left:0;right:0;bottom:-3px;height:2px;border-radius:2px;background:var(--accent);transform-origin:left;animation:tink 3.6s ease-in-out infinite}",
+    "@keyframes tglow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,214,120,0))}50%{filter:drop-shadow(0 0 6px rgba(255,214,120,.95))}}.tfx[data-tf=glow]{animation:tglow 2.6s ease-in-out infinite}",
+    "@keyframes twave{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}.tfx[data-tf=wave] .ttx>i{display:inline-block;font-style:inherit;white-space:pre;animation:twave 1.6s ease-in-out infinite;animation-delay:calc(var(--i) * .07s);background:inherit;-webkit-background-clip:inherit;background-clip:inherit}",
+    "@keyframes tpulse{0%,40%,100%{transform:scale(1)}15%{transform:scale(1.08)}28%{transform:scale(1.02)}}.tfx[data-tf=pulse]{animation:tpulse 1.8s ease-in-out infinite}",
+    "@keyframes ttype{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}@keyframes tcaret{50%{opacity:0}}.tfx[data-tf=type] .ttx{animation:ttype 1.6s steps(14) .3s both}.tfx[data-tf=type]::after{content:\"\";display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.12em;background:var(--accent);animation:tcaret .9s steps(1) infinite}",
+    "@keyframes tsnow{from{background-position:0 -20px,10px -40px}to{background-position:6px 20px,4px 0}}.tfx[data-tf=snow]::after{content:\"\";position:absolute;inset:-8px -4px;pointer-events:none;background:radial-gradient(circle,#fff 0 1.2px,transparent 1.6px) 0 0/16px 20px,radial-gradient(circle,#dff3ff 0 .9px,transparent 1.3px) 0 0/11px 17px;opacity:.9;animation:tsnow 2.6s linear infinite;-webkit-mask:linear-gradient(transparent,#000 25%,#000 75%,transparent);mask:linear-gradient(transparent,#000 25%,#000 75%,transparent)}",
+    "@keyframes tember{from{background-position:0 18px,8px 26px}to{background-position:4px -18px,2px -10px}}.tfx[data-tf=embers]::after{content:\"\";position:absolute;inset:-10px -4px -2px;pointer-events:none;background:radial-gradient(circle,#ffb703 0 1.2px,transparent 1.8px) 0 0/14px 22px,radial-gradient(circle,#ff6b1a 0 1px,transparent 1.5px) 0 0/19px 18px;animation:tember 2.2s linear infinite;-webkit-mask:linear-gradient(transparent,#000 30%,#000 80%,transparent);mask:linear-gradient(transparent,#000 30%,#000 80%,transparent)}",
+    "@keyframes tneon{0%,18%,22%,60%,64%,100%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 7px #ff4fd8)}20%,62%{filter:none}}.tfx[data-tf=neon]{animation:tneon 3s linear infinite}",
+    `@keyframes tspk{0%,100%{transform:scale(0) rotate(0);opacity:0}45%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.6) rotate(70deg);opacity:.8}}.tfx[data-tf=sparkle]::before,.tfx[data-tf=sparkle]::after{content:"";position:absolute;width:9px;height:9px;${star("#fff6c2")};filter:drop-shadow(0 0 2px #ffd166);animation:tspk 2.4s ease-in-out infinite;pointer-events:none}.tfx[data-tf=sparkle]::before{left:-7px;bottom:-2px;animation-delay:1.2s;width:7px;height:7px}.tfx[data-tf=sparkle]::after{right:-8px;top:-5px}`,
+    "@keyframes tprism{to{filter:hue-rotate(360deg)}}.tfx[data-tf=prism]{animation:tprism 5s linear infinite}",
+    "@media (prefers-reduced-motion:reduce){.tfx,.tfx::before,.tfx::after,.tfx .ttx,.tfx .ttx::after,.tfx .ttx>i{animation:none!important}}",
+    ".xth .ttl{font-size:11.5px;max-width:100%;flex-wrap:wrap;justify-content:center}.xth .ttl .tfx{max-width:100%}.xth .ttl .ttx{white-space:normal;word-break:break-word}"
+  ];
+  const st = document.createElement("style"); st.id = "tflairCss"; st.textContent = css.join("\n"); document.head.append(st);
+})();
+function mkTitle(text, id, tf) {
+  const w = el("span", "tfx"); if (tf) w.dataset.tf = tf;
+  const s = el("span", "ttx"); s.dataset.t = text; if (id) s.dataset.fx = TSTYLE[id] ? id : "";
+  if (id && typeof TITLE_TIERS !== "undefined" && TITLE_TIERS[id]) { const k = titleTier(id); if (k > 0) s.dataset.tier = k; }
+  if (tf === "wave") [...text].forEach((ch, i) => { const c = el("i", "", ch); c.style.setProperty("--i", i); s.append(c); }); else s.textContent = text;
+  w.append(s); return w;
+}
+renderTitleLine = function (tl, t, st) {
+  tl.innerHTML = t ? stampHtml(st) : ""; if (!t) return;
+  if (!st && t in RK_T) { const c = el("span", "kcrest"); c.innerHTML = rankCrest(RK_T[t], 16); tl.append(c); }
+  tl.append(mkTitle(typeof titleName === "function" ? titleName(t) : XNAME("title", t), t, xGet("tflair")));
+};
+(function () {
+  const ox = xThumb;
+  xThumb = function (kind, id) {
+    if (kind !== "title" && kind !== "tflair") return ox(kind, id);
+    const t = el("span", "xth"); t.setAttribute("aria-hidden", "true"); const w = el("span", "ttl");
+    if (kind === "title") { if (id in RK_T) { const c = el("span", "kcrest"); c.innerHTML = rankCrest(RK_T[id], 14); w.append(c); } w.append(mkTitle(XNAME("title", id), id, "")); }
+    else w.append(mkTitle(XNAME("title", xGet("title")) || "Title", xGet("title") || "", id));
+    t.append(w); return t;
+  };
+})();
+
+/* ---------- Atom gear: the rough pieces, redrawn ---------- */
+(function () {
+  const H = GEAR_SVG.ghat, F = GEAR_SVG.gface, N = GEAR_SVG.gneck, hl = (d, w) => `<path d="${d}" stroke="#fff" stroke-opacity=".45" stroke-width="${w || 3}" fill="none" stroke-linecap="round"/>`;
+  const fluff = (x, y) => `<g transform="translate(${x} ${y})">${[0, 1, 2, 3, 4, 5, 6, 7].map(k => { const a = k * Math.PI / 4; return `<circle cx="${(Math.cos(a) * 11).toFixed(1)}" cy="${(Math.sin(a) * 13).toFixed(1)}" r="7.5" fill="url(#gq-wht)" stroke="#e7c3d0" stroke-width="1"/>`; }).join("")}<ellipse rx="12" ry="14" fill="url(#gq-wht)"/><ellipse rx="7" ry="8.5" fill="#f6b8cc"/><ellipse cx="-2" cy="-3" rx="2.5" ry="3" fill="#fff" opacity=".7"/></g>`;
+  H.earmuffs = `<path d="M-77 -14C-86 -114 74 -134 69 -30" stroke="#8a1f3e" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M-77 -14C-86 -114 74 -134 69 -30" stroke="url(#gq-pink)" stroke-width="7" fill="none" stroke-linecap="round"/>${fluff(-79, -6)}${fluff(67, -22)}`;
+  const leaf = (x, y, a, s, c) => `<g transform="translate(${x} ${y}) rotate(${a}) scale(${s})"><path d="M0 0C-7 -6 -7 -18 0 -26C7 -18 7 -6 0 0Z" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1"/><path d="M0 -2V-22" stroke="rgba(0,0,0,.25)" stroke-width="1"/></g>`;
+  H.leafcrown = `<path d="M-38 -2Q0 -14 38 -2" stroke="#5a3a1c" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M-38 -2Q0 -14 38 -2" stroke="#8a5a2b" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/>` + [[-34, -4, -55, .9, "#d9480f"], [-24, -8, -35, 1, "#e8a50c"], [-12, -10, -15, 1.1, "#c92a2a"], [0, -11, 0, 1.2, "#f08c1c"], [12, -10, 15, 1.1, "#d9480f"], [24, -8, 35, 1, "#e8a50c"], [34, -4, 55, .9, "#a8240c"]].map(([x, y, a, s, c]) => leaf(x, y, a, s, c)).join("") + `<circle cx="0" cy="-10" r="4" fill="#8a5a2b"/><path d="M-4 -12h8" stroke="#5a3a1c" stroke-width="2.5" stroke-linecap="round"/>`;
+  H.bucket = `<path d="M-50 4Q-40 -10 -26 -10H26Q40 -10 50 4Q36 12 0 10Q-36 12 -50 4Z" fill="url(#gq-blu)" stroke="#1a5f94" stroke-width="1.5"/><path d="M-26 -9C-28 -36 -16 -42 0 -42S28 -36 26 -9Z" fill="url(#gq-blu-h)" stroke="#1a5f94" stroke-width="1.5"/><path d="M-26 -14Q0 -9 26 -14" stroke="#f3f6fa" stroke-width="5" fill="none"/><path d="M-42 2Q0 12 42 2M-22 -26Q0 -22 22 -26" stroke="#1a5f94" stroke-width="1" fill="none" stroke-dasharray="3 3" opacity=".7"/>${hl("M-16 -34Q-8 -40 4 -40", 2.5)}`;
+  H.flamecrown = `<path d="M-30 0C-34 -22 -22 -28 -22 -44C-14 -36 -12 -32 -10 -42C-6 -54 2 -56 4 -70C12 -56 12 -46 14 -40C18 -48 20 -54 26 -58C28 -42 36 -30 30 0Z" fill="#e8453c"/><path d="M-22 0C-24 -16 -16 -22 -14 -32C-8 -26 -6 -24 -4 -32C0 -42 4 -44 6 -54C12 -42 12 -34 14 -30C18 -36 20 -40 22 -44C24 -30 28 -18 22 0Z" fill="#ff9f1c"/><path d="M-12 0C-12 -10 -6 -14 -4 -20C0 -16 2 -14 4 -22C8 -14 10 -10 12 -14C14 -6 14 -2 12 0Z" fill="#ffe066"/><rect x="-32" y="-8" width="64" height="10" rx="2" fill="url(#gq-gold-h)" stroke="#8a5f05" stroke-width="1.5"/><circle cx="0" cy="-3" r="2.6" fill="#e8453c"/>`;
+  H.sgh1 = `<path d="M-30 -2C-33 -40 33 -40 30 -2Q0 6 -30 -2Z" fill="url(#gq-brn)"/><path d="M-30 -2Q-36 12 -26 24Q-20 14 -22 0Z" fill="url(#gq-brn)"/><path d="M30 -2Q36 12 26 24Q20 14 22 0Z" fill="url(#gq-brn)"/><path d="M0 -36V-2" stroke="#2e1c10" stroke-width="1.5" opacity=".6"/><path d="M-30 -2Q0 6 30 -2" stroke="#f0dcae" stroke-width="3" fill="none"/>${hl("M-20 -26Q-12 -34 -2 -35")}<g transform="translate(0 -24)"><rect x="-30" y="-4" width="60" height="6" rx="3" fill="#2e1c10"/><circle cx="-12" cy="-1" r="9" fill="url(#gq-lens)" stroke="url(#gq-brass)" stroke-width="3.5"/><circle cx="12" cy="-1" r="9" fill="url(#gq-lens)" stroke="url(#gq-brass)" stroke-width="3.5"/><path d="M-16 -5a5 5 0 0 1 5 -2M8 -5a5 5 0 0 1 5 -2" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>`;
+  H.sgh3 = `<path d="M-50 -2Q-34 -14 -22 -38Q0 -50 22 -38Q34 -14 50 -2Q26 4 0 -2Q-26 4 -50 -2Z" fill="url(#gq-navy)" stroke="#0f2a5a" stroke-width="1.5"/><path d="M-50 -2Q-26 4 0 -2Q26 4 50 -2" stroke="url(#gq-gold)" stroke-width="3" fill="none"/><path d="M-46 -6Q-30 -16 -20 -36M46 -6Q30 -16 20 -36" stroke="url(#gq-gold)" stroke-width="2" fill="none"/><circle cx="0" cy="-22" r="6" fill="url(#gq-gold)" stroke="#8a5f05"/><path d="M-3 -22h6M0 -25v6" stroke="#8a5f05" stroke-width="1.5"/><path d="M14 -36C26 -58 46 -60 54 -52C42 -52 32 -46 22 -34Z" fill="#fff" stroke="#d6d1c4" stroke-width="1.2"/>${hl("M-16 -36Q-6 -42 6 -42", 2.5)}`;
+  H.sgc0 = `${[[-28, -4, -30, .95, "#d9480f"], [-14, -8, -14, 1.15, "#e0a03a"], [0, -10, 0, 1.3, "#c92a2a"], [14, -8, 14, 1.15, "#e0a03a"], [28, -4, 30, .95, "#d9480f"]].map(([x, y, a, s, c]) => `<g transform="translate(${x} ${y}) rotate(${a}) scale(${s})"><path d="M0-22L3-14 10-17 7-9 13-6 6-3 7 4 0 0-7 4-6-3-13-6-7-9-10-17-3-14Z" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1"/></g>`).join("")}<path d="M-34 -2Q0 8 34 -2L32 -10Q0 0 -32 -10Z" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="1.5"/><path d="M0 -10c-3.4 0-5.4 2-5.4 4.6 0 3 2.5 5 5.4 5s5.4-2 5.4-5c0-2.6-2-4.6-5.4-4.6zM-6.4 -10.4c.4-2.6 3-4 6.4-4s6 1.4 6.4 4z" fill="url(#gq-brn)" transform="translate(0 3)"/>`;
+  H.sgc2 = H.sgc2.replace(/#f4efff/g, "#efe6ff").replace(/#e6e0f5/g, "#d8c8f5").replace(/#c9bde6/g, "#9b84d8");
+  F.snorkel = `<path d="M-74 -2H-62M62 -2H74" stroke="#15120e" stroke-width="7" stroke-linecap="round"/><path d="M-62 -20Q-62 -26 -54 -26H54Q62 -26 62 -20V12Q62 22 50 22H10Q0 14 -10 22H-50Q-62 22 -62 12Z" fill="url(#gq-lens)" stroke="url(#gq-blu)" stroke-width="7" stroke-linejoin="round"/>${hl("M-50 -16H-30", 3)}<path d="M62 -10Q80 -10 80 -30V-62" stroke="url(#gq-blu)" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="74" y="-72" width="12" height="12" rx="3" fill="#f08c1c"/>`;
+  F.visor = `<path d="M-70 -6Q0 -24 70 -6L66 10Q0 -4 -66 10Z" fill="url(#gq-red)" stroke="#7a1810" stroke-width="2"/><path d="M-60 -6Q0 -20 60 -6" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" fill="none"/><path d="M-70 -6L-80 -4M70 -6L80 -4" stroke="#15120e" stroke-width="5" stroke-linecap="round"/>`;
+  F.tape = `<g fill="url(#gq-lens)" opacity=".5"><rect x="-58" y="-18" width="44" height="34" rx="7"/><rect x="14" y="-18" width="44" height="34" rx="7"/></g><g fill="none" stroke="#15120e" stroke-width="5.5"><rect x="-58" y="-18" width="44" height="34" rx="7"/><rect x="14" y="-18" width="44" height="34" rx="7"/><path d="M-58 -10L-72 -14M58 -10L72 -14"/></g><rect x="-12" y="-11" width="24" height="12" rx="2" fill="url(#gq-wht)" stroke="#b9b1a4" stroke-width="1"/><path d="M-6 -11V1M0 -11V1M6 -11V1" stroke="#cfc8bc" stroke-width="1"/>${hl("M-50 -10L-40 -12", 2.5)}`;
+  F.sgf1 = `<path d="M-66 -16Q0 -32 66 -16L60 10Q0 22 -60 10Z" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="2"/><path d="M-66 -16Q0 -32 66 -16L60 10Q0 22 -60 10Z" fill="url(#gq-lens)" opacity=".35"/><path d="M-50 -14Q-20 -22 6 -22" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".85"/><path d="M-66 -16L-76 -12M66 -16L76 -12" stroke="url(#gq-steel)" stroke-width="7" stroke-linecap="round"/>`;
+  const capelet = (fill, lining, clasp) => `<path d="M-40 -8Q0 8 40 -8L48 26Q36 36 22 30Q12 40 0 34Q-12 40 -22 30Q-36 36 -48 26Z" fill="${lining}"/><path d="M-38 -8Q0 8 38 -8L44 22Q32 30 20 25Q10 34 0 29Q-10 34 -20 25Q-32 30 -44 22Z" fill="${fill}"/><path d="M-20 4Q-22 14 -20 25M0 8V29M20 4Q22 14 20 25" stroke="rgba(0,0,0,.2)" stroke-width="2" fill="none"/><path d="M-38 -8Q0 8 38 -8" stroke="rgba(255,255,255,.35)" stroke-width="2.5" fill="none"/><circle cx="0" cy="2" r="6" fill="${clasp}" stroke="#8a5f05" stroke-width="1.2"/><circle cx="-1.5" cy="0.5" r="1.6" fill="#fff" opacity=".7"/>`;
+  N.cape = capelet("url(#gq-red)", "#7a1810", "url(#gq-gold)");
+  N.rainbowcape = `<defs><linearGradient id="rbw2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8453c"/><stop offset=".2" stop-color="#f59f00"/><stop offset=".4" stop-color="#ffd43b"/><stop offset=".6" stop-color="#40c057"/><stop offset=".8" stop-color="#339af0"/><stop offset="1" stop-color="#9b5de5"/></linearGradient></defs>` + capelet("url(#rbw2)", "#4a2a7a", "url(#gq-wht)");
+  // capes don't work since we never see Atom's back: they're gone, and the magic one is now a bow tie
+  N.sgn2 = `<path d="M-2 0L-28 -17Q-33 0 -28 17Z" fill="url(#gq-pur)" stroke="#2f1a66" stroke-width="2" stroke-linejoin="round"/><path d="M2 0L28 -17Q33 0 28 17Z" fill="url(#gq-pur)" stroke="#2f1a66" stroke-width="2" stroke-linejoin="round"/><path d="M-20 -6l1 2.2 2.4.3-1.8 1.6.5 2.4-2.1-1.2-2.1 1.2.5-2.4-1.8-1.6 2.4-.3zM19 -2l1 2.2 2.4.3-1.8 1.6.5 2.4-2.1-1.2-2.1 1.2.5-2.4-1.8-1.6 2.4-.3z" fill="#f2c14e"/><rect x="-7" y="-8" width="14" height="16" rx="4" fill="#c026d3" stroke="#6a0f58" stroke-width="1.5"/><circle cx="0" cy="0" r="2.4" fill="#f2c14e"/>`;
+  S_NAMES.sgn2 = "Magic bow tie"; { const o = XCATS.find(c => c.k === "gneck").opts.find(x => x[0] === "sgn2"); if (o) o[1] = "Magic bow tie"; }
+  ["cape", "rainbowcape"].forEach(id => { delete N[id]; const c = XCATS.find(x => x.k === "gneck"); c.opts = c.opts.filter(o => o[0] !== id); const i = BOX_ITEMS.findIndex(x => x[1] === id); if (i >= 0) BOX_ITEMS.splice(i, 1); if (settings.gneck === id) { settings.gneck = ""; saveSettings(); } });
+  N.scarf = `<path d="M-48 -10Q0 6 48 -10L46 8Q0 24 -46 8Z" fill="url(#gq-blu)" stroke="#1a5f94" stroke-width="1.2"/><path d="M-34 -5V12M-18 -1V16M-2 0V17M14 -1V16M30 -5V12" stroke="#f3f6fa" stroke-width="4.5"/><path d="M14 8L22 44H38L30 6Z" fill="url(#gq-blu-h)" stroke="#1a5f94" stroke-width="1.2"/><path d="M18 20H33M20 30H35" stroke="#f3f6fa" stroke-width="3.5"/><path d="M23 44v6M27 44v6M31 44v6M35 44v6" stroke="#2f9bd6" stroke-width="2.2" stroke-linecap="round"/>${hl("M-40 -4Q-10 8 20 4", 2)}`;
+})();
+
 applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200); applyNight(); titleCheck(); setTimeout(bdayCheck, 900);
 $("#rankBody").append($("#rewardsCard")); $("#evbBody").append($("#evBadgesCard")); $("#rewardsCard").open = true; $("#evBadgesCard").open = true;
 $("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
@@ -9065,7 +9202,7 @@ window.atomUpdate = updShow;
 })();
 /* app shortcuts from the home screen icon */
 (function () { try { const g = new URLSearchParams(location.search).get("go"); if (!g) return; history.replaceState(null, "", location.pathname); setTimeout(() => { if (g === "continue") { const m = libSorted()[0]; if (m) openBook(m.id); } else if (g === "class") openClass(); else if (g === "library") openShelf(); }, 600); } catch (e) {} })();
-if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toastLater, gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, updCheck, updShow, ambStart, ambStop, ambObj: () => [AMB, actx], get ambOn() { return !!AMB.node; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__pace = { toastLater, gearDefs: () => ({ svg: GEAR_SVG, t: GEAR_T, tx: GEAR_TX, layers: p => gearLayers(p) }), setIdle(ms) { lastAct = performance.now() - ms; }, timeSecrets, confetti, seasonNow, seasonWords, seasonSync, seasonEndCheck, setSeasonDate(d) { seasonOv = d; seasonSync(true); }, showCeremony, rankInfo, startPreview, endPreview, updCheck, updShow, ambStart, ambStop, ambObj: () => [AMB, actx], get ambOn() { return !!AMB.node; }, plateSvg, seasonBest, lvlNow, isLocked, unlockList, peekNow(d) { if (d) evOverride = d; peekMaybe(true); }, hatSvg, hatFor, HAT_WINDOWS, setEvDate(d) { evOverride = d; checkEvent(false); updateEventUI(); }, setEyeMs(ms) { eyeMs = ms; }, get cur() { return cur; }, get sw() { return sessionWords; }, get shown() { return shownWords; }, get rd() { return readRanges; }, set rd(v) { readRanges = v; }, get n() { return tokens.length; }, play, pause, seek, setWpm, get lib() { return lib; }, get stats() { return stats; }, get chapters() { return chapters; }, setTimerMs(ms) { timerOn = true; timerLeft = ms; }, get settings() { return settings; }, streakInfo, backupName, makeLink } ;
 })();
 </script>
 <script>if("serviceWorker"in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
