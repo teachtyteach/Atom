@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
-<meta name="atom-build" content="atom-v121"><!-- keep the same as CACHE in sw.js -->
+<meta name="atom-build" content="atom-v122"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -4013,7 +4013,7 @@ function applyTheme() {
   if (th === "auto") delete root.dataset.theme; else root.dataset.theme = th;
   let key = th;
   if (key === "auto") key = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_BG[key];
+  const m = document.querySelector('meta[name="theme-color"]'); if (m && THEME_BG[key]) m.content = THEME_BG[key]; setTimeout(() => { if (typeof syncBarColor === "function") syncBarColor(); }, 0);
   const a = ACCENTS[settings.accent];
   if (a) root.style.setProperty("--accent", a[(key === "dark" || key === "black" || ["midnight", "forest", "slate", "coffee", "ocean", "grape", "terminal", "spooky", "harvest", "snowfall", "fireworks", "stem", "aurora", "neon", "goldleaf", "rising", "twist", "final", "fog", "cosmos", "deepsea", "peaks", "city", "campfire", "alley", "manor", "nebula", "savanna", "storm", "castle", "study", "koi", "harbor", "lodge", "sandsea", "plains", "rain", "nlake", "ember", "ringed", "hollow", "lanterns"].includes(key)) ? 1 : 0]); else root.style.removeProperty("--accent");
   if (a) root.style.setProperty("--focus", root.style.getPropertyValue("--accent")); else root.style.removeProperty("--focus");
@@ -6597,11 +6597,17 @@ function nightActive() { if (settings.night) return true; return nightAuto() && 
 /* the phone's status bar takes its color from theme-color, so tint it too in night mode */
 function syncBarColor() {
   const m = document.querySelector('meta[name="theme-color"]'); if (!m) return;
-  const bg = getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [246, 244, 239];
-  let c = bg.slice(0, 3).map(Number);
+  // read the theme's own page color (not the body's, which can be mid-change)
+  let probe = document.getElementById("barProbe"); if (!probe) { probe = document.createElement("i"); probe.id = "barProbe"; probe.style.cssText = "position:fixed;width:0;height:0;pointer-events:none;background:var(--bg)"; document.body.append(probe); }
+  const bg = getComputedStyle(probe).backgroundColor.match(/[\d.]+/g) || [246, 244, 239];
+  let c = bg.slice(0, 3).map(v => Math.round(+v <= 1 && String(v).includes(".") ? +v * 255 : +v));
   if (document.body.classList.contains("night") && document.body.dataset.screen === "reader") c = c.map((v, i) => Math.round(v * [200, 172, 140][i] / 255));
-  m.content = "#" + c.map(v => v.toString(16).padStart(2, "0")).join("");
+  const hex = "#" + c.map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, "0")).join("");
+  if (m.content !== hex) m.content = hex;
 }
+// keep the status bar in step with every theme, night mode and screen change
+setInterval(() => { if (!document.hidden) syncBarColor(); }, 1200);
+addEventListener("pageshow", () => setTimeout(syncBarColor, 60)); document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(syncBarColor, 60); });
 new MutationObserver(() => syncBarColor()).observe(document.body, { attributes: true, attributeFilter: ["class", "data-screen"] });
 function applyNight() { const on = nightActive(); document.body.classList.toggle("night", on); const b = $("#nightBtn"); if (b) { b.setAttribute("aria-pressed", String(on)); b.classList.toggle("on", on); } }
 function toggleNight() {
