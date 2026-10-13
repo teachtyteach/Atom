@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
-<meta name="atom-build" content="atom-v117"><!-- keep the same as CACHE in sw.js -->
+<meta name="atom-build" content="atom-v118"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -1478,6 +1478,86 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
 .xth[data-cov=wanted] .tcov{padding-top:9px!important}
 .xth .tpill{font-size:9.5px;max-width:100%}
 .xcard .xcat{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- polish pass ---------- */
+#bd{display:none!important}
+:root[data-cov=foil] .cover::after{animation:covfoil 2.6s ease-out 1 both!important}
+/* titles use the same type everywhere */
+.ttx{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:700;letter-spacing:.01em}
+#titleLine{font-size:15px}
+#titleLine .stmp,#pvTitle .stmp{width:20px;height:20px;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.3))}
+:root:is([data-pframe=spA1],[data-pframe=pixel]) .ttx{font-family:inherit}
+.gstamp svg{width:22px;height:22px}
+/* event badges sheet */
+#evbDlg .rgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#evbDlg .rgrid button{border-radius:16px;padding:12px 6px 10px;gap:6px;font:600 12px/1.2 system-ui,sans-serif;color:var(--ink);background:var(--surface);border:1px solid var(--line);text-align:center;white-space:normal;min-width:0}
+#evbDlg .rgrid button.lock{color:var(--muted)}
+#evbDlg .rgrid button:not(.lock){box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 55%,transparent)}
+#evbDlg .rgrid .remblem{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--line) 45%,transparent)}
+#evbDlg .rgrid button:not(.lock) .remblem{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),transparent 60%),color-mix(in srgb,var(--accent) 18%,transparent)}
+#evbDlg .rgrid .remblem svg{width:30px;height:30px}
+#evbDlg #evDetail{margin-top:12px}
+
+/* ---- progress bars: one shared finish, then each style on top ---- */
+:root[data-bar] .bar{background:color-mix(in srgb,var(--line) 85%,transparent);box-shadow:inset 0 1px 2px rgba(0,0,0,.2);border-radius:99px}
+:root[data-bar] .bar i{position:relative;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(0,0,0,.18)}
+:root[data-bar] .bar i::after{content:"";position:absolute;right:0;top:0;bottom:0;width:12px;border-radius:inherit;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6));pointer-events:none}
+:root[data-bar=stripes] .bar i{background:repeating-linear-gradient(135deg,var(--accent) 0 7px,color-mix(in srgb,var(--accent) 72%,#fff) 7px 14px);background-size:20px 20px;animation:grow .8s cubic-bezier(.2,.8,.2,1) both,bstripe 1.6s linear infinite}
+:root[data-bar=soft] .bar i{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 40%,#fff),var(--accent))}
+:root[data-bar=segments] .bar i{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent));-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 10px,transparent 10px 13px);mask-image:repeating-linear-gradient(90deg,#000 0 10px,transparent 10px 13px)}
+:root[data-bar=rope] .bar i{background:repeating-linear-gradient(62deg,rgba(255,255,255,.22) 0 2px,transparent 2px 5px),linear-gradient(180deg,#e9c48a,#b07a3a 55%,#7a4f22)}
+:root[data-bar=vines] .bar i{background:radial-gradient(ellipse 3px 1.8px at 50% 50%,#b6ea7a 95%,transparent) 0 0/14px 100%,linear-gradient(180deg,#5c9a45,#2f5d2a)}
+:root[data-bar=sand] .bar i{background:radial-gradient(rgba(120,70,20,.25) .6px,transparent .9px) 0 0/3px 3px,linear-gradient(180deg,#f6deb0,#d8a05a 60%,#b0743a)}
+:root[data-bar=candy] .bar i{background:repeating-linear-gradient(135deg,#ff4f7f 0 7px,#fff 7px 14px);background-size:20px 20px;animation:grow .8s cubic-bezier(.2,.8,.2,1) both,bstripe 1.4s linear infinite}
+:root[data-bar=kcopper] .bar i{background:repeating-linear-gradient(90deg,rgba(255,255,255,.1) 0 1px,transparent 1px 3px),linear-gradient(180deg,#f4b48a,#c46a32 55%,#6e3416)!important}
+:root[data-bar=sbrA0] .bar i{background:repeating-linear-gradient(90deg,#f3e6c8 0 5px,transparent 5px 10px) center/100% 1.5px no-repeat,linear-gradient(180deg,#6a9a45,#2f6b3a)!important}
+
+/* ---- stats looks: each one restyles the whole stats page, not just the colors ---- */
+:root[data-stat] body[data-screen=stats] :is(.card,.tile){transition:none}
+/* blueprint */
+:root[data-stat=blueprint] body[data-screen=stats] :is(.card,.tile){background:rgba(18,53,122,.55);border:1.5px dashed rgba(127,211,255,.7);border-radius:4px;box-shadow:none}
+:root[data-stat=blueprint] body[data-screen=stats] :is(h1,h2){font-family:ui-monospace,"SF Mono",Menlo,monospace;text-transform:uppercase;letter-spacing:.08em}
+:root[data-stat=blueprint] body[data-screen=stats] .tile b{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:#bfe9ff}
+:root[data-stat=blueprint] .pvstat{border-style:dashed;border-radius:4px;font-family:ui-monospace,"SF Mono",Menlo,monospace}
+/* chalkboard */
+:root[data-stat=chalk] body[data-screen=stats]{background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.06),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,255,255,.04),transparent 60%)}
+:root[data-stat=chalk] body[data-screen=stats] :is(.card,.tile){background:rgba(255,255,255,.03);border:2px solid rgba(244,241,228,.5);border-radius:8px 14px 9px 12px;box-shadow:none}
+:root[data-stat=chalk] body[data-screen=stats] :is(h1,h2,.tile b){text-shadow:0 0 1px rgba(255,255,255,.6),1px 1px 0 rgba(255,255,255,.12)}
+:root[data-stat=chalk] body[data-screen=stats] .tile b{color:#ffe27a}
+:root[data-stat=chalk] .pvstat{border:2px solid rgba(244,241,228,.5);border-radius:8px 14px 9px 12px}
+/* notebook */
+:root[data-stat=paper] body[data-screen=stats]{background-image:linear-gradient(90deg,transparent 30px,rgba(214,69,69,.45) 30px 31.5px,transparent 31.5px),repeating-linear-gradient(transparent 0 27px,#cfe0f0 27px 28px)}
+:root[data-stat=paper] body[data-screen=stats] :is(.card,.tile){background:#fffdf4;border:1px solid #e2d8b8;border-radius:3px;box-shadow:0 2px 0 #e9e1c8,0 6px 12px -8px rgba(0,0,0,.35);position:relative}
+:root[data-stat=paper] body[data-screen=stats] .tile::before{content:"";position:absolute;top:-6px;left:50%;width:34px;height:12px;margin-left:-17px;background:rgba(255,226,122,.65);transform:rotate(-3deg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+:root[data-stat=paper] body[data-screen=stats] :is(h1,h2){font-family:"Bradley Hand","Segoe Print","Comic Sans MS",cursive}
+:root[data-stat=paper] body[data-screen=stats] .tile b{font-family:"Bradley Hand","Segoe Print","Comic Sans MS",cursive;color:#2b4a8a}
+:root[data-stat=paper] .pvstat{border-radius:3px;box-shadow:0 2px 0 #e9e1c8}
+/* terminal */
+:root[data-stat=terminal] body[data-screen=stats]{background-image:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,.35) 2px 3px)}
+:root[data-stat=terminal] body[data-screen=stats] :is(.card,.tile){background:#020a04;border:1px solid #1d7a3a;border-radius:2px;box-shadow:inset 0 0 18px rgba(125,255,154,.06),0 0 10px -4px rgba(125,255,154,.4)}
+:root[data-stat=terminal] body[data-screen=stats] :is(h1,h2,.tile b,.tile span,p,b){text-shadow:0 0 6px rgba(125,255,154,.55)}
+:root[data-stat=terminal] body[data-screen=stats] h2::before{content:"> "}
+:root[data-stat=terminal] .pvstat{border-radius:2px;text-shadow:0 0 6px rgba(125,255,154,.6);box-shadow:inset 0 0 12px rgba(125,255,154,.1)}
+/* gold */
+:root[data-stat=gold] body[data-screen=stats]{background-image:radial-gradient(ellipse at 50% -10%,rgba(255,210,63,.18),transparent 60%)}
+:root[data-stat=gold] body[data-screen=stats] :is(.card,.tile){border:1.5px solid transparent;border-radius:14px;background:linear-gradient(#241b07,#1a1405) padding-box,linear-gradient(135deg,#ffe27a,#8a6a12 40%,#ffd23f 70%,#8a6a12) border-box;box-shadow:0 8px 20px -12px rgba(255,210,63,.4)}
+:root[data-stat=gold] body[data-screen=stats] :is(h1,h2){font-family:Georgia,"Iowan Old Style",serif;letter-spacing:.02em}
+:root[data-stat=gold] body[data-screen=stats] .tile b{font-family:Georgia,serif;background:linear-gradient(180deg,#fff1a8,#e0a915 55%,#a8740a);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root[data-stat=gold] .pvstat{border:1.5px solid #c9a227;box-shadow:0 6px 16px -10px rgba(255,210,63,.5)}
+/* season looks */
+:root[data-stat=ssA0] body[data-screen=stats] :is(.card,.tile){background:#fbf6e8;border:1.5px dashed #6a9a45;border-radius:6px}
+:root[data-stat=ssA0] body[data-screen=stats] :is(h1,h2){font-family:Georgia,serif;color:#2f6b3a}
+:root[data-stat=ssA0] .pvstat{border-style:dashed}
+:root[data-stat=ssA1] body[data-screen=stats] :is(.card,.tile){background:rgba(18,27,54,.85);border:1px solid #26365f;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(76,201,240,.08);background-image:linear-gradient(#4cc9f0,#4cc9f0),linear-gradient(#4cc9f0,#4cc9f0),linear-gradient(#4cc9f0,#4cc9f0),linear-gradient(#4cc9f0,#4cc9f0);background-size:12px 2px,2px 12px,12px 2px,2px 12px;background-position:0 0,0 0,100% 100%,100% 100%;background-repeat:no-repeat}
+:root[data-stat=ssA1] body[data-screen=stats] .tile b{color:#4cc9f0;text-shadow:0 0 8px rgba(76,201,240,.5)}
+:root[data-stat=ssA1] .pvstat{border-radius:4px;box-shadow:inset 0 0 0 1px rgba(76,201,240,.3)}
+:root[data-stat=ssA2] body[data-screen=stats] :is(.card,.tile){background:linear-gradient(#2a1650,#22103f);border:1.5px solid #f2c14e;border-radius:12px;box-shadow:0 0 0 3px rgba(242,193,78,.12)}
+:root[data-stat=ssA2] body[data-screen=stats] :is(h1,h2,.tile b){font-family:Georgia,serif;color:#f2c14e}
+:root[data-stat=ssA2] .pvstat{border-color:#f2c14e}
+:root[data-stat=ssA3] body[data-screen=stats] :is(.card,.tile){background:#f7e9c6;border:3px double #8a5a2b;border-radius:4px;box-shadow:0 4px 10px -6px rgba(90,58,8,.5)}
+:root[data-stat=ssA3] body[data-screen=stats] :is(h1,h2){font-family:Georgia,serif;font-style:italic}
+:root[data-stat=ssA3] body[data-screen=stats] .tile b{font-family:Georgia,serif;color:#b03a2e}
+:root[data-stat=ssA3] .pvstat{border:3px double #8a5a2b}
 </style>
 </head>
 <body data-screen="library">
@@ -5156,7 +5236,7 @@ function gearLayers(pick, noHat) {
   // neck first, then face, then hat on top
   const mood = pick.mood && typeof MOOD_SVG !== "undefined" && MOOD_SVG && MOOD_SVG[pick.mood] ? `<g transform="translate(152 108) rotate(40)">${MOOD_SVG[pick.mood]}</g>` : "";
   const bday = !pick.ghat && pick.bday && !noHat && typeof BDAY_HAT !== "undefined" && BDAY_HAT ? `<g transform="${GEAR_T.ghat}">${BDAY_HAT}</g>` : "";
-  return mood + ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_TX[k + ":" + id] || GEAR_T[k]}">${g}</g>` : ""; }).join("") + bday;
+  return mood + ["gneck", "gface", "ghat"].map(k => { const id = pick[k]; if (!id || (k === "ghat" && noHat)) return ""; const g = GEAR_SVG[k][id]; return g ? `<g transform="${GEAR_TX[k + ":" + id] || GEAR_T[k]}" filter="url(#gfx)">${g}</g>` : ""; }).join("") + bday;
 }
 function gearNow() { const o = {}; GEAR_K.forEach(k => { o[k] = xGet(k); }); try { o.mood = atomMood(); o.bday = isBday(); } catch (e) {} return o; }
 var MASCOT_URL = "mascot.png", mascotData = null, gearKey = "";
@@ -5287,7 +5367,7 @@ function renderGroup(g) {
     none.onclick = () => { settings[c.k] = ""; saveSettings(); applyExtras(); if (c.k === "amb") ambStop(); renderGroup(g); };
     { const t0 = c.opts[0] && xThumb(c.k, c.opts[0][0]); if (t0 && (t0.childNodes.length || t0.style.backgroundImage)) { const nt = el("span", "xth xnone"); nt.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6.5 17.5l11-11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'; none.prepend(nt); } }
     grid.append(none);
-    c.opts.forEach(([id, name]) => {
+    [...c.opts].sort((a, b) => (isLocked(c.k, a[0]) ? 1 : 0) - (isLocked(c.k, b[0]) ? 1 : 0)).forEach(([id, name]) => {
       const m = lockMsg(c.k, id), b = el("button", "xcard" + (m ? " locked" : "")); b.type = "button"; b.dataset.x = c.k; b.dataset.id = id;
       if (m) b.title = m;
       const th = xThumb(c.k, id); if (th) b.append(th);
@@ -5829,7 +5909,7 @@ function renderColls(g) {
     h.append(em, el("b", "", cc.name), el("p", "fine", n === tot ? cc.blurb + " Set complete!" : cc.blurb + ` Unlocks from ${LEVELS[lo][1]} to ${LEVELS[hi][1]}.`), foot, wear);
     wear.style.gridColumn = "2"; wear.style.justifySelf = "start";
     box.append(h);
-    const grid = el("div", "xgrid"); cc.items.forEach(([k, id]) => { const b = xCardFor(k, id, g, true); if (b) grid.append(b); }); box.append(grid);
+    const grid = el("div", "xgrid"); [...cc.items].sort((a, b) => (isLocked(a[0], a[1]) ? 1 : 0) - (isLocked(b[0], b[1]) ? 1 : 0)).forEach(([k, id]) => { const b = xCardFor(k, id, g, true); if (b) grid.append(b); }); box.append(grid);
   });
   if (sh) sh.scrollTop = keep;
 }
@@ -6316,7 +6396,7 @@ renderColls = function (g) {
     if (cc.grp === "story") { const lv = cc.items.map(([k, id]) => needFam(k, id)); sub += ` Unlocks from ${LEVELS[Math.min(...lv)][1]} to ${LEVELS[Math.max(...lv)][1]}.`; }
     if (n === tot) sub += " Set complete!";
     h.append(em, el("b", "", cc.name), el("p", "fine", sub), foot, wear); box.append(h);
-    const grid = el("div", "xgrid"); cc.items.forEach(([k, id]) => { const b = xCardFor(k, id, g, true); if (b) grid.append(b); }); box.append(grid);
+    const grid = el("div", "xgrid"); [...cc.items].sort((a, b) => (isLocked(a[0], a[1]) ? 1 : 0) - (isLocked(b[0], b[1]) ? 1 : 0)).forEach(([k, id]) => { const b = xCardFor(k, id, g, true); if (b) grid.append(b); }); box.append(grid);
   });
   if (sh) sh.scrollTop = keep;
 };
@@ -7669,13 +7749,13 @@ async function openClass() {
 $("#pgGo").onclick = pgSearch; $("#pgQ").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); pgSearch(); } }); $("#pgQ").addEventListener("input", () => { if (!$("#pgQ").value.trim()) pgReset(); });
 $("#classBtn").onclick = openClass; $("#classCard").onclick = openClass; $("#classCard2").onclick = openClass; $("#classBtn2").onclick = openClass;
 
-const WHATS_VER = "2026-10-18", WHATS = [
+const WHATS_VER = "2026-10-19", WHATS = [
+  ["Seasonal themes, earned in season", "Autumn, Winter, Spring and Summer now unlock by reading during that time of year. Autumn is up now: read on 12 different days this fall."],
+  ["Polished rewards", "New stamps, shinier bookplates, smoother progress bars, richer stats looks, redrawn Atom gear and 14 new Atom colors. Things you've unlocked now show first."],
   ["A brand new season pass", "Every season has its own story now: Forest Explorer, Liftoff, Magic Show and Treasure Hunt. 33 rewards each, like a magician's hat, a space visor, a treasure map frame and a gold coin bar."],
   ["Rank sets", "Every rank from Copper to Champion has its own matching set. Diamond sparkles. Gold shines. Champion glows. Your rank title shows it off too."],
   ["Collections", "5 themed reward sets to collect as you rank up: Outlaw Trail, Haunted Harbor, Overgrown, Sand Sea and Snowbound Lodge. Find them in Rewards."],
   ["Over 100 new rewards", "New book covers, bars, bookmarks, name flair, frames, greetings, hats, sounds and confetti. Every reward now shows a preview."],
-  ["Sounds made by Atom", "7 reading sounds like Rain, Campfire and Foggy harbor. They're made live in the app, so there's nothing to download."],
-  ["Every scene, redrawn", "All 40 scenes got a cleaner, prettier remaster. Seasonal and holiday themes like Autumn, Spooky, Snowfall and Fireworks now have their own art too."],
   ["Center Lock", "The middle letter of every word now sits on the same spot, so your eyes never move. Try Baseline, Light beam, Tunnel and Ghost words in Settings > Reading."],
   ["Easier reader", "Tap the chapter name to jump around. Tap Aa to change the word size."],
 ];
@@ -8185,6 +8265,187 @@ $$("#fontSeg button").forEach(b => b.onclick = () => { if (lockedTap("font", b.d
 $("#lsRange").oninput = e => { settings.ls = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $("#wsRange").oninput = e => { settings.ws = +e.target.value; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); };
 $$("#pivotSeg button").forEach(b => b.onclick = () => { if (lockedTap("pivot", b.dataset.pc)) return; settings.pivotColor = b.dataset.pc; saveSettings(); applyFont(); syncSettingsUI(); if (tokens.length) render(); });
+/* ---------- polish pass: stamps, plates, gear, bars, colors, seasonal themes ---------- */
+/* shared paint for small art (kept in one always-present spot so every copy can use it) */
+var GDEFS = `<linearGradient id="gsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
+<mask id="sperf"><rect x="0" y="0" width="24" height="24" fill="#fff"/>${[...Array(6)].map((_, i) => { const x = 3.6 + i * 3.36; return `<circle cx="${x.toFixed(2)}" cy="1" r="1.1"/><circle cx="${x.toFixed(2)}" cy="23" r="1.1"/>`; }).join("")}${[...Array(7)].map((_, i) => { const y = 2.6 + i * 3.13; return `<circle cx="2" cy="${y.toFixed(2)}" r="1.1"/><circle cx="22" cy="${y.toFixed(2)}" r="1.1"/>`; }).join("")}</mask>
+<filter id="gfx" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="1.4" result="o"/><feFlood flood-color="#15120e" flood-opacity=".5"/><feComposite in2="o" operator="in" result="ol"/><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="b"/><feOffset in="b" dx="1.5" dy="3" result="sh"/><feFlood flood-color="#000" flood-opacity=".25"/><feComposite in2="sh" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="ol"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+${[["red", "#ff6b5a", "#d7372b", "#9c1f16"], ["blk", "#4a4640", "#26231f", "#0f0e0c"], ["wht", "#ffffff", "#f1ede6", "#cfc8bc"], ["gold", "#fff0a6", "#f2c230", "#b07f0a"], ["pur", "#8f62e8", "#5b34a8", "#2f1a66"], ["blu", "#7cc8f5", "#2f9bd6", "#1a5f94"], ["navy", "#5b8de0", "#2f6db5", "#173f80"], ["pink", "#ff8ae2", "#e02fc0", "#8a1272"], ["hrt", "#ff8a7a", "#e8453c", "#a8241c"], ["grn", "#7ee3a8", "#2fbf71", "#177a44"], ["brn", "#8a5a36", "#5a3a24", "#2e1c10"], ["tan", "#f0dcae", "#c9a46a", "#8a6a3a"], ["steel", "#eef2f6", "#9aa6b2", "#56616d"], ["brass", "#ffe2a0", "#d9a03a", "#8a5a12"]].map(([n, a, b, c]) => `<linearGradient id="gq-${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".5" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient><linearGradient id="gq-${n}-h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c}"/><stop offset=".35" stop-color="${b}"/><stop offset=".6" stop-color="${a}"/><stop offset="1" stop-color="${c}"/></linearGradient>`).join("")}
+<radialGradient id="gq-lens" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#cfeeff" stop-opacity=".8"/><stop offset=".5" stop-color="#5aa8e6" stop-opacity=".45"/><stop offset="1" stop-color="#1a3f6e" stop-opacity=".6"/></radialGradient>
+<radialGradient id="gq-dark" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#5a5650"/><stop offset=".6" stop-color="#151412"/><stop offset="1" stop-color="#000"/></radialGradient>
+<radialGradient id="gq-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6c2" stop-opacity=".9"/><stop offset="1" stop-color="#ffd84a" stop-opacity="0"/></radialGradient>`;
+function gdefsMount() { if (document.getElementById("gdefs")) return; const d = document.createElementNS("http://www.w3.org/2000/svg", "svg"); d.id = "gdefs"; d.setAttribute("aria-hidden", "true"); d.setAttribute("focusable", "false"); d.style.cssText = "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none"; d.innerHTML = "<defs>" + GDEFS + "</defs>"; document.body.prepend(d); }
+gdefsMount();
+
+/* ---- Atom gear, redrawn with real shading ---- */
+(function () {
+  const H = GEAR_SVG.ghat, F = GEAR_SVG.gface, N = GEAR_SVG.gneck, hl = (d, w) => `<path d="${d}" stroke="#fff" stroke-opacity=".45" stroke-width="${w || 3}" fill="none" stroke-linecap="round"/>`;
+  Object.assign(H, {
+    cap: `<path d="M20 -4Q50 -9 60 3Q36 11 18 4Z" fill="url(#gq-red)"/><path d="M22 0Q44 -2 56 4" stroke="#7a1810" stroke-width="1.5" fill="none" opacity=".6"/><path d="M-32 -2C-35 -42 35 -42 32 -2Q0 6 -32 -2Z" fill="url(#gq-red)"/><path d="M0 -38V2M-17 -33Q-14 -16 -14 0M17 -33Q14 -16 14 0" stroke="#7a1810" stroke-width="1.4" fill="none" opacity=".5"/><path d="M-32 -2Q0 6 32 -2" stroke="#7a1810" stroke-width="2.5" fill="none"/>${hl("M-24 -26Q-18 -34 -8 -36")}<circle cx="0" cy="-38" r="4" fill="url(#gq-red)" stroke="#7a1810" stroke-width="1"/><path d="M8 -22l1.6 3.4 3.7.5-2.7 2.6.7 3.7-3.3-1.8-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" fill="#fff" opacity=".92"/>`,
+    tophat: `<ellipse cx="0" cy="-2" rx="46" ry="9" fill="url(#gq-blk)"/><path d="M-26 -4V-60Q0 -66 26 -60V-4Q0 2 -26 -4Z" fill="url(#gq-blk-h)"/><ellipse cx="0" cy="-60" rx="26" ry="5" fill="#3a3632"/><path d="M-26 -20Q0 -14 26 -20V-10Q0 -4 -26 -10Z" fill="url(#gq-red)"/><rect x="-8" y="-18" width="10" height="8" rx="1.5" fill="none" stroke="url(#gq-gold)" stroke-width="2"/>${hl("M-18 -54V-26", 4)}`,
+    chef: `<path d="M-27 -2V-20Q0 -14 27 -20V-2Q0 3 -27 -2Z" fill="url(#gq-wht)"/><path d="M-14 -17V0M0 -15V2M14 -17V0" stroke="#cfc8bc" stroke-width="1.5"/>${[[-20, -32, 14], [20, -32, 14], [0, -44, 18], [-10, -48, 11], [12, -50, 11]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="url(#gq-wht)" stroke="#d6cfc2" stroke-width="1.2"/>`).join("")}<path d="M-27 -20Q0 -14 27 -20" stroke="#d6cfc2" stroke-width="1.5" fill="none"/>${hl("M-6 -56Q2 -60 10 -58")}`,
+    pirate: `<path d="M-52 -2Q-38 -12 -25 -5Q-29 -46 0 -48Q29 -46 25 -5Q38 -12 52 -2Q30 8 0 5Q-30 8 -52 -2Z" fill="url(#gq-blk)"/><path d="M-50 -3Q-30 6 0 3Q30 6 50 -3" stroke="url(#gq-gold)" stroke-width="3" fill="none"/><path d="M-25 -6Q0 1 25 -6" stroke="url(#gq-gold)" stroke-width="2" fill="none"/><circle cx="0" cy="-27" r="7.5" fill="url(#gq-wht)"/><rect x="-4" y="-22" width="8" height="5" rx="1.5" fill="url(#gq-wht)"/><circle cx="-2.7" cy="-28" r="1.8" fill="#15120e"/><circle cx="2.7" cy="-28" r="1.8" fill="#15120e"/><path d="M-12 -14L12 -5M12 -14L-12 -5" stroke="url(#gq-wht)" stroke-width="3.2" stroke-linecap="round"/>${hl("M-16 -38Q-8 -44 2 -44", 2.5)}`,
+    wizard: `<ellipse cx="0" cy="-2" rx="48" ry="9" fill="url(#gq-pur)"/><path d="M-28 -6Q-8 -40 4 -78Q10 -84 18 -80Q10 -74 10 -60Q12 -30 28 -6Q0 2 -28 -6Z" fill="url(#gq-pur-h)"/><path d="M-27 -9Q0 -2 27 -9L25 -17Q0 -10 -25 -17Z" fill="url(#gq-gold)"/><path d="M-6 -38l2 5 5.4.5-4 3.4 1.3 5.3-4.7-2.9-4.7 2.9 1.3-5.3-4-3.4 5.4-.5z" fill="#ffe27a"/><path d="M14 -48a5 5 0 1 0 4 7 4 4 0 1 1-4-7z" fill="#ffe27a"/><circle cx="-14" cy="-24" r="1.6" fill="#ffe27a"/><circle cx="12" cy="-26" r="1.8" fill="#ffe27a"/>${hl("M-16 -18Q-6 -40 2 -66", 2.5)}`,
+    headph: `<path d="M-77 -14C-86 -114 74 -134 69 -30" stroke="#15120e" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M-77 -14C-86 -114 74 -134 69 -30" stroke="url(#gq-steel)" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="-89" y="-23" width="22" height="42" rx="9" fill="url(#gq-red)" stroke="#15120e" stroke-width="2.5"/><rect x="-71" y="-18" width="7" height="32" rx="3.5" fill="#2b2926"/>${hl("M-84 -14V6", 3)}<g transform="translate(58 -14) rotate(-10)"><rect x="0" y="-21" width="22" height="42" rx="9" fill="url(#gq-red)" stroke="#15120e" stroke-width="2.5"/><rect x="-4" y="-16" width="7" height="32" rx="3.5" fill="#2b2926"/>${hl("M15 -12V8", 3)}</g>`,
+    crown: `<path d="M-32 0L-35 -36L-17 -18L0 -46L17 -18L35 -36L32 0Z" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="2" stroke-linejoin="round"/><rect x="-32" y="-11" width="64" height="11" fill="url(#gq-gold-h)" stroke="#8a5f05" stroke-width="1.5"/><circle cx="0" cy="-5.5" r="4" fill="#e8453c" stroke="#8a1d16"/><circle cx="-18" cy="-5.5" r="3.2" fill="#2f9bd6" stroke="#1a5f94"/><circle cx="18" cy="-5.5" r="3.2" fill="#2fbf71" stroke="#177a44"/><circle cx="1" cy="-6.5" r="1.2" fill="#fff" opacity=".8"/>${[[0, -46], [-35, -36], [35, -36]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.4" fill="#fff6dd" stroke="#8a5f05" stroke-width="1"/>`).join("")}${hl("M-24 -16L-26 -30", 2.5)}`,
+    halo: `<ellipse cx="0" cy="-38" rx="40" ry="16" fill="url(#gq-glow)" opacity=".7"/><ellipse cx="0" cy="-38" rx="32" ry="9" fill="none" stroke="url(#gq-gold)" stroke-width="6.5"/><ellipse cx="0" cy="-39.5" rx="31" ry="8" fill="none" stroke="#fffbe0" stroke-width="1.6"/>`
+  });
+  const star = (cx, cy, R, r) => { let d = ""; for (let k = 0; k < 10; k++) { const rr = k % 2 ? r : R, a = -Math.PI / 2 + k * Math.PI / 5; d += (k ? "L" : "M") + (cx + rr * Math.cos(a)).toFixed(1) + " " + (cy + rr * Math.sin(a)).toFixed(1); } return d + "Z"; };
+  const heart = cx => `M${cx} 20C${cx - 27} 2 ${cx - 23} -22 ${cx - 9} -22C${cx - 3} -22 ${cx} -16 ${cx} -13C${cx} -16 ${cx + 3} -22 ${cx + 9} -22C${cx + 23} -22 ${cx + 27} 2 ${cx} 20Z`;
+  Object.assign(F, {
+    round: `<g fill="url(#gq-lens)" opacity=".55"><circle cx="-35" cy="0" r="22"/><circle cx="35" cy="0" r="22"/></g><g fill="none" stroke="url(#gq-brn)" stroke-width="5"><circle cx="-35" cy="0" r="24"/><circle cx="35" cy="0" r="24"/><path d="M-11 -2Q0 -10 11 -2M-59 -4L-72 -9M59 -4L72 -9"/></g>${hl("M-48 -10A16 16 0 0 1 -36 -18", 3)}${hl("M22 -10A16 16 0 0 1 34 -18", 3)}`,
+    shades: `<g fill="url(#gq-dark)" stroke="#0a0908" stroke-width="2.5"><path d="M-62 -16H-10Q-8 4 -20 15Q-42 22 -58 12Q-64 0 -62 -16Z"/><path d="M62 -16H10Q8 4 20 15Q42 22 58 12Q64 0 62 -16Z"/></g><path d="M-12 -12Q0 -18 12 -12" stroke="#0a0908" stroke-width="5" fill="none"/><path d="M-62 -16H62" stroke="#0a0908" stroke-width="3"/><path d="M-52 -9L-34 -9M18 -9L36 -9" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/><path d="M-30 8L-20 2M40 8L50 2" stroke="#fff" stroke-opacity=".25" stroke-width="2.5" stroke-linecap="round"/>`,
+    star: `<g fill="url(#gq-pink)" stroke="#6a0f58" stroke-width="2" stroke-linejoin="round"><path d="${star(-35, 0, 28, 12)}"/><path d="${star(35, 0, 28, 12)}"/></g><g fill="url(#gq-lens)" opacity=".5"><circle cx="-35" cy="1" r="9"/><circle cx="35" cy="1" r="9"/></g><path d="M-14 -4H14" stroke="#6a0f58" stroke-width="4"/>${hl("M-40 -16L-36 -22", 2.5)}${hl("M30 -16L34 -22", 2.5)}`,
+    heart: `<g fill="url(#gq-hrt)" stroke="#7a1810" stroke-width="2" stroke-linejoin="round"><path d="${heart(-35)}"/><path d="${heart(35)}"/></g><path d="M-12 -6H12" stroke="#7a1810" stroke-width="4"/>${hl("M-48 -12Q-46 -18 -40 -18", 2.5)}${hl("M22 -12Q24 -18 30 -18", 2.5)}`,
+    monocle: `<circle cx="35" cy="0" r="24" fill="url(#gq-lens)" opacity=".5"/><circle cx="35" cy="0" r="25" fill="none" stroke="url(#gq-gold)" stroke-width="5.5"/><circle cx="35" cy="0" r="22" fill="none" stroke="#8a5f05" stroke-width="1"/><path d="M52 18Q64 46 44 72" stroke="url(#gq-gold)" stroke-width="2.4" fill="none" stroke-dasharray="3.5 2.5"/>${hl("M20 -10A17 17 0 0 1 32 -18", 3)}`,
+    goggles: `<path d="M-82 -2H82" stroke="url(#gq-brn)" stroke-width="13"/><path d="M-82 -2H82" stroke="#2e1c10" stroke-width="1.5" stroke-dasharray="6 5" opacity=".6"/><g stroke="url(#gq-brass)" stroke-width="8" fill="url(#gq-lens)"><circle cx="-35" cy="0" r="23"/><circle cx="35" cy="0" r="23"/></g><path d="M-12 0H12" stroke="url(#gq-brass)" stroke-width="7"/><g fill="#8a5a12">${[0, 1, 2, 3, 4, 5].map(k => { const a = k * Math.PI / 3; return `<circle cx="${(-35 + Math.cos(a) * 23).toFixed(1)}" cy="${(Math.sin(a) * 23).toFixed(1)}" r="1.4"/><circle cx="${(35 + Math.cos(a) * 23).toFixed(1)}" cy="${(Math.sin(a) * 23).toFixed(1)}" r="1.4"/>`; }).join("")}</g>${hl("M-48 -8A14 14 0 0 1 -38 -14", 3)}${hl("M22 -8A14 14 0 0 1 32 -14", 3)}`,
+    d3: `<rect x="-66" y="-19" width="132" height="38" rx="7" fill="url(#gq-wht)" stroke="#15120e" stroke-width="3"/><rect x="-59" y="-13" width="45" height="26" rx="4" fill="#e63946" opacity=".82"/><rect x="14" y="-13" width="45" height="26" rx="4" fill="#22c4e6" opacity=".82"/><path d="M-54 -8H-34M20 -8H40" stroke="#fff" stroke-opacity=".6" stroke-width="2.5" stroke-linecap="round"/>`,
+    stache: `<path transform="translate(0 8) scale(.78)" d="M0 12C-6 8-14 8-22 12C-32 18-40 16-44 10C-48 8-50 2-46 0C-44 4-42 6-40 6C-42 22-30 28-18 24C-9 21-3 18 0 16C3 18 9 21 18 24C30 28 42 22 40 6C42 6 44 4 46 0C50 2 48 8 44 10C40 16 32 18 22 12C14 8 6 8 0 12Z" fill="url(#gq-brn)" stroke="#1a0f08" stroke-width="1.5"/><path d="M-30 12Q-18 8 -6 13M30 12Q18 8 6 13" stroke="#a87a50" stroke-width="1.5" fill="none" opacity=".7"/>`
+  });
+  const flower = (x, y, c, cc) => `<g transform="translate(${x} ${y})">${[0, 1, 2, 3, 4].map(k => `<ellipse cx="0" cy="-4.6" rx="3.4" ry="4.6" fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width=".8" transform="rotate(${k * 72})"/>`).join("")}<circle r="2.4" fill="${cc}"/></g>`;
+  Object.assign(N, {
+    bowtie: `<path d="M-2 0L-27 -16Q-31 0 -27 16Z" fill="url(#gq-red)" stroke="#7a1810" stroke-width="2" stroke-linejoin="round"/><path d="M2 0L27 -16Q31 0 27 16Z" fill="url(#gq-red)" stroke="#7a1810" stroke-width="2" stroke-linejoin="round"/><path d="M-20 -8Q-12 -2 -20 8M20 -8Q12 -2 20 8" stroke="#7a1810" stroke-width="1.4" fill="none" opacity=".6"/><rect x="-7" y="-8" width="14" height="16" rx="4" fill="url(#gq-red-h)" stroke="#7a1810" stroke-width="1.5"/>${hl("M-24 -10L-14 -6", 2)}`,
+    scarf: `<path d="M-48 -9Q0 5 48 -9L47 7Q0 21 -47 7Z" fill="url(#gq-blu)"/><path d="M-30 -4V11M-14 -1V14M2 0V15M18 -1V14M34 -4V11" stroke="#f3f6fa" stroke-width="4"/><path d="M14 8L25 46L38 42L28 6Z" fill="url(#gq-blu-h)"/><path d="M19 22L31 19M22 32L34 29" stroke="#f3f6fa" stroke-width="3"/><path d="M25 46l-1 6M29 45l0 6M33 44l1 6M37 43l2 5" stroke="#2f9bd6" stroke-width="2" stroke-linecap="round"/>${hl("M-40 -3Q-10 6 20 2", 2)}`,
+    tie: `<path d="M-8 -7H8L6 5H-6Z" fill="url(#gq-navy)" stroke="#0f2a5a" stroke-width="1.2"/><path d="M-6 5L6 5L11 41L0 52L-11 41Z" fill="url(#gq-navy-h)" stroke="#0f2a5a" stroke-width="1.2"/><path d="M-7 16L8 11M-9 28L9 23M-10 39L10 34" stroke="url(#gq-gold)" stroke-width="2.6"/>`,
+    bandana: `<path d="M-42 -7Q0 4 42 -7L0 36Z" fill="url(#gq-red)" stroke="#7a1810" stroke-width="1.5" stroke-linejoin="round"/><path d="M-36 -2Q0 8 36 -2" stroke="#fff" stroke-width="1.2" fill="none" stroke-dasharray="2 2.5" opacity=".8"/><g fill="#fff">${[[-14, 6], [12, 8], [0, 20], [-24, 1], [24, 2], [-6, 13], [7, 15]].map(([x, y], k) => k % 2 ? `<circle cx="${x}" cy="${y}" r="1.8"/>` : `<path d="M${x} ${y - 2.6}q2.6 0 2.6 2.6q-2.6 1-2.6 3q-2-3 0-5.6z"/>`).join("")}</g><circle cx="38" cy="-8" r="5" fill="url(#gq-red)" stroke="#7a1810" stroke-width="1.2"/>`,
+    medal: `<path d="M-15 -11L-2 24H4L-6 -11Z" fill="#2f6db5"/><path d="M15 -11L2 24H-4L6 -11Z" fill="#d7372b"/><path d="M-9 -11L1 18M9 -11L-1 18" stroke="#fff" stroke-width="2" opacity=".7"/><circle cx="0" cy="33" r="14" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="2.5"/><circle cx="0" cy="33" r="10" fill="none" stroke="#8a5f05" stroke-width="1" opacity=".6"/><path d="${star(0, 33.5, 8, 3.4)}" fill="#fff6c2" stroke="#b07f0a" stroke-width=".8"/>${hl("M-9 26A11 11 0 0 1 -3 22", 2)}`,
+    lei: `<path d="M-46 -8Q0 26 46 -8" stroke="#2f8a4c" stroke-width="3" fill="none"/>${[["#ff6fd8", "#ffd84a"], ["#ffd84a", "#e8590c"], ["#7ee3a8", "#fff"], ["#ff7a6e", "#ffd84a"], ["#7cc8f5", "#fff"], ["#ff8ae2", "#ffd84a"], ["#ffe27a", "#e8590c"], ["#c58cff", "#fff"], ["#ff6fd8", "#ffd84a"]].map(([c, cc], k) => { const t = k / 8, x = -44 + 88 * t, y = -6 + 52 * t * (1 - t) - 0; return flower(x.toFixed(1), y.toFixed(1), c, cc); }).join("")}`,
+    badge: `<path d="${star(0, 18, 22, 10)}" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="2.5" stroke-linejoin="round"/><path d="${star(0, 18, 15, 6.8)}" fill="none" stroke="#fff6c2" stroke-width="1.2" opacity=".8"/><circle cx="0" cy="18" r="5.5" fill="url(#gq-red)" stroke="#7a1810" stroke-width="1"/><circle cx="-1.5" cy="16.5" r="1.4" fill="#fff" opacity=".8"/>`
+  });
+})();
+
+// the mascot with gear is drawn as its own picture, so it carries its own copy of the paint
+(function () { const o = gearLayers; gearLayers = function (pick, noHat) { const g = o(pick, noHat); return g ? `<defs>${GDEFS}</defs>` + g : g; }; })();
+/* ---- more Atom colors ---- */
+var NEW_TINT = [["coral", "Coral", "sepia(1) saturate(3) hue-rotate(-28deg) brightness(1.12)", 1], ["sky", "Sky", "sepia(1) saturate(2.2) hue-rotate(168deg) brightness(1.18)", 2], ["lime", "Lime", "sepia(1) saturate(3.2) hue-rotate(42deg) brightness(1.18)", 4],
+  ["teal", "Teal", "sepia(1) saturate(2.6) hue-rotate(128deg) brightness(.95)", 7], ["tangerine", "Tangerine", "sepia(1) saturate(4.2) hue-rotate(-18deg) brightness(1.08)", 9], ["lavender", "Lavender", "sepia(.7) saturate(2) hue-rotate(218deg) brightness(1.22)", 12],
+  ["magenta", "Magenta", "sepia(1) saturate(3.6) hue-rotate(262deg) brightness(1.02)", 15], ["navy", "Navy", "sepia(1) saturate(3) hue-rotate(192deg) brightness(.72)", 16], ["crimson", "Crimson", "sepia(1) saturate(5) hue-rotate(-42deg) brightness(.86)", 19],
+  ["chrome", "Chrome", "grayscale(1) brightness(1.3) contrast(1.45)", 21], ["bronze", "Bronze", "sepia(1) saturate(1.5) brightness(.92) contrast(1.12)", 24], ["midnight", "Midnight", "grayscale(1) brightness(.42) contrast(1.6) drop-shadow(0 0 5px #6a8cff)", 27],
+  ["sunset", "Sunset (shifts)", "sepia(1) saturate(3)", 31], ["galaxy", "Galaxy (shifts)", "sepia(1) saturate(3)", 34]];
+(function () {
+  const c = XCATS.find(x => x.k === "atomc");
+  NEW_TINT.forEach(([id, n, f, lv]) => { TINTS[id] = f; if (!c.opts.some(o => o[0] === id)) c.opts.push([id, n]); UNLOCK.atomc[id] = lv; });
+  const st = document.createElement("style");
+  st.textContent = "@keyframes msun{0%,100%{filter:sepia(1) saturate(3) hue-rotate(-40deg) brightness(1.05)}50%{filter:sepia(1) saturate(3.4) hue-rotate(10deg) brightness(1.12)}}@keyframes mgal{0%,100%{filter:sepia(1) saturate(3) hue-rotate(200deg) brightness(.9)}50%{filter:sepia(1) saturate(3.4) hue-rotate(290deg) brightness(1.05)}}body:not(.adult).msun .mascot{animation:msun 6s ease-in-out infinite}body:not(.adult).mgal .mascot{animation:mgal 7s ease-in-out infinite}.xth img[data-anim=sunset]{animation:msun 6s ease-in-out infinite}.xth img[data-anim=galaxy]{animation:mgal 7s ease-in-out infinite}@media (prefers-reduced-motion:reduce){body .mascot{animation:none!important}}";
+  document.head.append(st);
+})();
+
+/* ---- stamps: real little stamps, seals and medals ---- */
+var STAMP_BASE = Object.assign({}, STAMP_C);
+(function () {
+  const inner = s => String(s).replace(/^<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+  const fit = (g, k) => `<g transform="translate(12 12) scale(${k}) translate(-12 -12)">${g}</g>`;
+  const postage = (c, g) => `<rect x="1" y="0" width="22" height="24" fill="#fffaf0" mask="url(#sperf)"/><rect x="1" y="0" width="22" height="24" fill="none" stroke="rgba(0,0,0,.12)" stroke-width=".6" mask="url(#sperf)"/><rect x="4" y="3" width="16" height="18" rx="1.2" fill="${c}"/><rect x="4" y="3" width="16" height="18" rx="1.2" fill="url(#gsh)"/><rect x="5.2" y="4.2" width="13.6" height="15.6" rx=".8" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width=".6"/>${fit(g, .52)}`;
+  const seal = (c, g) => { let d = ""; for (let k = 0; k < 32; k++) { const r = k % 2 ? 10.2 : 11.6, a = k * Math.PI / 16; d += (k ? "L" : "M") + (12 + r * Math.cos(a)).toFixed(2) + " " + (12 + r * Math.sin(a)).toFixed(2); } return `<path d="${d}Z" fill="${c}"/><path d="${d}Z" fill="url(#gsh)"/><circle cx="12" cy="12" r="8.4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-dasharray="1.2 1"/>${fit(g, .56)}<path d="M5.5 8.5A7.6 7.6 0 0 1 11 4.6" stroke="#fff" stroke-opacity=".55" stroke-width="1.2" fill="none" stroke-linecap="round"/>`; };
+  const medal = (c, g) => `<circle cx="12" cy="12" r="11.4" fill="${c}"/><circle cx="12" cy="12" r="11.4" fill="rgba(0,0,0,.28)"/><circle cx="12" cy="12" r="9.6" fill="${c}"/><circle cx="12" cy="12" r="9.6" fill="url(#gsh)"/>${fit(g, .6)}<path d="M5.4 9A7.4 7.4 0 0 1 10.8 4.8" stroke="#fff" stroke-opacity=".55" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
+  const hex = g => { const p = [0, 1, 2, 3, 4, 5].map(k => { const a = -Math.PI / 2 + k * Math.PI / 3; return (12 + 11.6 * Math.cos(a)).toFixed(2) + "," + (12 + 11.6 * Math.sin(a)).toFixed(2); }).join(" "), q = [0, 1, 2, 3, 4, 5].map(k => { const a = -Math.PI / 2 + k * Math.PI / 3; return (12 + 9.6 * Math.cos(a)).toFixed(2) + "," + (12 + 9.6 * Math.sin(a)).toFixed(2); }).join(" ");
+    return `<polygon points="${p}" fill="url(#gq-brass)"/><polygon points="${q}" fill="#fbf3dc"/><polygon points="${q}" fill="url(#gsh)" opacity=".6"/>${fit(g, .62)}`; };
+  const W = { flame: '<path d="M12 2c.9 3.6 5.5 5.6 5.5 10.6a5.5 5.5 0 0 1-11 0c0-2.2 1-3.8 2.2-4.9.3 1.5 1 2.2 1.9 2.5C10.3 7.6 10.6 4.6 12 2z" fill="#fff"/><path d="M12 12.5c.4 1.6 2.4 2.4 2.4 4.4a2.4 2.4 0 0 1-4.8 0c0-1 .5-1.6 1-2 .1.6.4 1 .8 1.1-.1-1.4.1-2.6.6-3.5z" fill="#ffd166"/>' };
+  const ev = (k, col) => inner(evIcon(k, col || "#fff", 24));
+  const DEF = { flame: ["post", "#e8590c", W.flame], book: ["post", "#2f6db5", ev("book")], star: ["post", "#d99a0b", ev("star")],
+    horseshoe: ["medal", "#b5652b", '<path d="M6.4 4.2C3.6 8.6 4 15.6 7.8 18.8c2.4 2 6 2 8.4 0 3.8-3.2 4.2-10.2 1.4-14.6" stroke="#fff" stroke-width="4.2" fill="none" stroke-linecap="round"/><g fill="#b5652b"><circle cx="5.6" cy="8.5" r=".9"/><circle cx="5.6" cy="13" r=".9"/><circle cx="18.4" cy="8.5" r=".9"/><circle cx="18.4" cy="13" r=".9"/></g>'],
+    anchor: ["medal", "#1f6f7a", '<g stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.6" r="2.2"/><path d="M12 6.8V20.5M7.5 10h9M4 13.2c.4 4.3 3.8 7.3 8 7.3s7.6-3 8-7.3"/></g>'],
+    ivy: ["medal", "#3f7a32", ev("leaf")], dsun: ["medal", "#d0782a", ev("sun")], flake: ["medal", "#3f86c8", ev("snow")] };
+  EVENTS.forEach(e => DEF["e_" + e.id] = ["seal", e.col, ev(e.icon)]);
+  if (typeof STAMP_X !== "undefined") Object.keys(STAMP_X).forEach(id => DEF[id] = ["post", STAMP_X[id][1], ev(STAMP_X[id][0])]);
+  ["s1", "s2", "s3", "s4", "stB0", "stB1", "stB2", "stB3"].forEach(id => { if (STAMP_BASE[id]) DEF[id] = ["hex", "", inner(STAMP_BASE[id](24))]; });
+  const draw = { post: postage, seal, medal, hex: (c, g) => hex(g) };
+  Object.keys(DEF).forEach(id => { const [kind, c, g] = DEF[id], body = draw[kind](c, g); STAMP_C[id] = n => `<svg class="stmp" viewBox="0 0 24 24" width="${n}" height="${n}" aria-hidden="true">${body}</svg>`; });
+  const ost = stampHtml;
+  stampHtml = function (id) { if (!id) return ""; if (STAMP_C[id]) return STAMP_C[id](20); return ost(id); };
+})();
+
+/* ---- bookplates, polished ---- */
+(function () {
+  const sh = '<path d="M5 9A7.6 7.6 0 0 1 10.6 4.6" stroke="#fff" stroke-opacity=".55" stroke-width="1.3" fill="none" stroke-linecap="round"/>';
+  Object.assign(PLATE_X, {
+    def: `<circle cx="12" cy="12" r="10.6" fill="#1f7a44"/><circle cx="12" cy="12" r="9.4" fill="url(#gq-grn)"/><path d="M7 12.5l3.2 3.2L17 8.8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>${sh}`,
+    seal: `<path d="M12 1.5l2.2 2 3-.5 1 2.8 2.8 1-.5 3 2 2.2-2 2.2.5 3-2.8 1-1 2.8-3-.5-2.2 2-2.2-2-3 .5-1-2.8-2.8-1 .5-3-2-2.2 2-2.2-.5-3 2.8-1 1-2.8 3 .5z" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width=".8"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#fff6c2" stroke-width=".7"/><path d="M8 12.5l3 3 5-6" stroke="#fff" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    ribbon: `<path d="M4 2.5h16v19l-8-5-8 5z" fill="url(#gq-red)" stroke="#7a1810" stroke-width=".8" stroke-linejoin="round"/><path d="M6 4.5h12" stroke="#fff" stroke-opacity=".4" stroke-width="1"/><path d="M8.5 9.5l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    wreath: `<g fill="#2f9e5b">${[0, 1, 2, 3, 4].map(k => { const d = 105 + k * 30, a = d * Math.PI / 180, x = 12 + Math.cos(a) * 8.8, y = 12 + Math.sin(a) * 8.8; return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.8" ry="1.3" transform="rotate(${d + 90} ${x.toFixed(1)} ${y.toFixed(1)})"/><ellipse cx="${(24 - x).toFixed(1)}" cy="${y.toFixed(1)}" rx="2.8" ry="1.3" transform="rotate(${-(d + 90)} ${(24 - x).toFixed(1)} ${y.toFixed(1)})"/>`; }).join("")}</g><circle cx="12" cy="12" r="5" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width=".7"/><path d="M9.8 12l1.5 1.5 2.7-3" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+    star: `<path d="M12 1.8l3 6.4 7 .8-5.2 4.7 1.5 6.9L12 17.1l-6.3 3.5 1.5-6.9L2 9l7-.8z" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="1" stroke-linejoin="round"/><path d="M12 5.5l1.6 3.4 3.6.4" stroke="#fff" stroke-opacity=".6" stroke-width="1" fill="none"/>`,
+    crown: `<path d="M3 18.5l1.5-10.5 5 4.6L12 4.8l2.5 7.8 5-4.6L21 18.5z" fill="url(#gq-gold)" stroke="#8a5f05" stroke-width="1.1" stroke-linejoin="round"/><rect x="3" y="17" width="18" height="3" rx=".8" fill="url(#gq-gold-h)" stroke="#8a5f05" stroke-width=".8"/><circle cx="12" cy="14.6" r="1.6" fill="#e8453c"/><circle cx="7.4" cy="15.4" r="1.1" fill="#2f9bd6"/><circle cx="16.6" cy="15.4" r="1.1" fill="#2fbf71"/>`
+  });
+})();
+
+/* ---- seasonal themes: earn them by reading in that season ---- */
+var SEAS_T = {
+  autumn: { nm: "fall", from: [9, 22], to: [12, 20], need: 12, kind: "days" },
+  winter: { nm: "winter", from: [12, 21], to: [3, 19], need: 5, kind: "streak" },
+  spring: { nm: "spring", from: [3, 20], to: [6, 20], need: 15000, kind: "words" },
+  summer: { nm: "summer", from: [6, 21], to: [9, 21], need: 10, kind: "days" }
+};
+function seasKey(t, k) {
+  const y = +k.slice(0, 4), md = +k.slice(5, 7) * 100 + +k.slice(8, 10), a = t.from[0] * 100 + t.from[1], b = t.to[0] * 100 + t.to[1];
+  if (a <= b) return md >= a && md <= b ? String(y) : null;
+  return md >= a ? String(y) : md <= b ? String(y - 1) : null;
+}
+function seasProg(id) {
+  const t = SEAS_T[id], g = {}, now = seasKey(t, todayKey());
+  Object.keys(stats.days || {}).sort().forEach(k => { const w = stats.days[k].w || 0; if (w < 100) return; const s = seasKey(t, k); if (s !== null) (g[s] = g[s] || []).push([k, w]); });
+  let best = 0, cur = 0;
+  for (const s in g) { const L = g[s]; let v;
+    if (t.kind === "days") v = L.length; else if (t.kind === "words") v = L.reduce((a, x) => a + x[1], 0);
+    else { let run = 0, mx = 0, prev = null; L.forEach(([k]) => { const d = keyToDate(k); run = prev && Math.round((d - prev) / 864e5) === 1 ? run + 1 : 1; prev = d; mx = Math.max(mx, run); }); v = mx; }
+    best = Math.max(best, v); if (s === now) cur = v; }
+  return { best, cur, active: now !== null };
+}
+(function () {
+  const mo = ([m, d]) => new Date(2026, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  const got = () => store.get("pace:sth", {});
+  // anyone who already had one of these themes from their rank keeps it
+  if (!store.get("pace:sgf", null)) { const keep = {}; try { const lv = lvlNow(); Object.keys(SEAS_T).concat(["season"]).forEach(id => { if ((UNLOCK.theme[id] || 0) <= lv) keep[id] = 1; }); } catch (e) {} store.set("pace:sgf", keep); }
+  const gf = store.get("pace:sgf", {});
+  const has = id => !!(gf[id] || got()[id]);
+  const what = (t, n) => t.kind === "days" ? `Read on ${n} different days` : t.kind === "words" ? `Read ${fmt(n)} words` : `Read ${n} days in a row`;
+  Object.keys(SEAS_T).forEach(id => {
+    const t = SEAS_T[id]; delete UNLOCK.theme[id];
+    THEME_SPECIAL[id] = {
+      get desc() { const p = seasProg(id), when = `${mo(t.from)} to ${mo(t.to)}`; return p.active ? `${what(t, t.need)} this ${t.nm} (${t.kind === "words" ? fmt(p.cur) : p.cur} so far, ends ${mo(t.to)})` : `${what(t, t.need)} during ${t.nm} (${when})`; },
+      test: () => has(id) || seasProg(id).best >= t.need
+    };
+  });
+  delete UNLOCK.theme.season;
+  THEME_SPECIAL.season = { desc: "Earn the Autumn, Winter, Spring and Summer themes", test: () => has("season") || Object.keys(SEAS_T).every(k => THEME_SPECIAL[k].test()) };
+  window.seasThemeCheck = function (announce) {
+    if (isAdult()) return; const g = got(); let ch = false;
+    Object.keys(SEAS_T).forEach(id => { if (!g[id] && !gf[id] && seasProg(id).best >= SEAS_T[id].need) { g[id] = todayKey(); ch = true; if (announce) toastLater("New theme: " + themeName(id)); } });
+    if (ch) { store.set("pace:sth", g); if (typeof applyLockUI === "function") applyLockUI(); }
+  };
+  const oc = checkEvent; checkEvent = function (a) { oc(a); try { seasThemeCheck(a); } catch (e) {} };
+})();
+
+try { applyLockUI(); } catch (e) {}
+/* rank emblems use the same crest art as the rank sets, with pips for the tier */
+emblem = function (i, size) {
+  const f = rankFam(i), t = i % 5 + 1, champ = f === RANKS.length - 1, h = Math.round(size * 28 / 24);
+  let pips = ""; if (!champ) for (let k = 0; k < t; k++) pips += `<circle cx="${(12 + (k - (t - 1) / 2) * 2.3).toFixed(1)}" cy="21.6" r=".85" fill="#fff" stroke="rgba(0,0,0,.35)" stroke-width=".4"/>`;
+  return rankCrest(f, size).replace(/<\/svg>$/, pips + "</svg>").replace(/height="\d+"/, `height="${h}"`);
+};
+/* ---- backdrops are gone; themes do that job now ---- */
+(function () {
+  const i = XCATS.findIndex(c => c.k === "bd"); if (i >= 0) XCATS.splice(i, 1);
+  delete UNLOCK.bd; if (settings.bd) { settings.bd = ""; saveSettings(); }
+  XGROUPS.forEach(g => { g.keys = g.keys.filter(k => k !== "bd"); }); { const g = XGROUPS.find(x => x.id === "look"); if (g) g.sub = "Covers, titles, frames, stamps"; }
+  applyBackdrop = function () { const d = $("#bd"); if (d) { d.style.backgroundImage = ""; d.hidden = true; } };
+  // the season-pass spot that held a backdrop now gives a shifting Atom color
+  const it = S_ITEMS.findIndex(x => x[0] === "bd"); if (it >= 0) S_ITEMS.splice(it, 1);
+  const c = XCATS.find(x => x.k === "atomc"), nm = ["Autumn Atom", "Starlight Atom", "Prism Atom", "Sunburst Atom"], tf = ["sepia(1) saturate(3.6) hue-rotate(-30deg) brightness(1.02)", "sepia(1) saturate(2.4) hue-rotate(185deg) brightness(.95) drop-shadow(0 0 5px #bfe9ff)", "sepia(1) saturate(3)", "sepia(1) saturate(3.4) hue-rotate(-8deg) brightness(1.15) drop-shadow(0 0 6px #ffd166)"];
+  const ids = [0, 1, 2, 3].map(i => "saC" + i); S_ITEMS.push(["atomc", 58, ids]);
+  ids.forEach((id, i) => { S_NAMES[id] = nm[i]; TINTS[id] = tf[i]; c.opts.push([id, nm[i]]); EXTRA_SPECIAL.atomc[id] = { desc: `Reach level 58 of a ${SEASON_NAMES[i]} season pass (${SZ[i].months})`, test: () => seasonBest(i) >= 58 }; });
+  COLLS.forEach(cc => {
+    if (cc.grp === "season") cc.items = S_ITEMS.filter(x => x[0] !== "theme").sort((a, b) => a[1] - b[1]).map(x => [x[0], x[2][cc.si]]);
+    else cc.items = cc.items.filter(([k]) => k !== "bd");
+  });
+  XCATS.forEach(cc => { if (cc.k === "title") return; const rk = id => (EXTRA_SPECIAL[cc.k] && EXTRA_SPECIAL[cc.k][id]) ? 1000 : needFam(cc.k, id); cc.opts = cc.opts.map((o, i) => [o, i]).sort((a, b) => rk(a[0][0]) - rk(b[0][0]) || a[1] - b[1]).map(x => x[0]); });
+})();
+(function () {
+  const ae = applyExtras;
+  applyExtras = function () { ae(); try { const at = xGet("atomc"); document.body.classList.toggle("msun", at === "sunset"); document.body.classList.toggle("mgal", at === "galaxy"); document.body.classList.toggle("mrb", at === "rainbow" || at === "saC2"); } catch (e) {} };
+  const ox = xThumb;
+  xThumb = function (kind, id) { const t = ox(kind, id); if (t && kind === "atomc" && (id === "sunset" || id === "galaxy")) { const im = t.querySelector("img"); if (im) im.dataset.anim = id; } return t; };
+})();
+
 applyIcon(); applyExtras(); renderExtras(); seasonSync(true); setTimeout(seasonEndCheck, 1200); applyNight(); titleCheck(); setTimeout(bdayCheck, 900);
 $("#rankBody").append($("#rewardsCard")); $("#evbBody").append($("#evBadgesCard")); $("#rewardsCard").open = true; $("#evBadgesCard").open = true;
 $("#rwBack").onclick = () => { if ($("#xgDlg").open) $("#xgDlg").close(); show("library"); };
