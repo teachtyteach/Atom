@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="atom-app" content="1">
-<meta name="atom-build" content="atom-v118"><!-- keep the same as CACHE in sw.js -->
+<meta name="atom-build" content="atom-v119"><!-- keep the same as CACHE in sw.js -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atom</title>
 <meta name="description" content="Atom is a free speed reader. Words show up one at a time so your eyes stay still. No account, no ads, works offline. Made for STEM Launch.">
@@ -1558,6 +1558,11 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
 :root[data-stat=ssA3] body[data-screen=stats] :is(h1,h2){font-family:Georgia,serif;font-style:italic}
 :root[data-stat=ssA3] body[data-screen=stats] .tile b{font-family:Georgia,serif;color:#b03a2e}
 :root[data-stat=ssA3] .pvstat{border:3px double #8a5a2b}
+.pvst{position:relative}
+.pvst>.vbeam,.pvst>.vtun,.pvst>.vbase,.pvst>.vghost{position:absolute;pointer-events:none}
+.pvst .word{position:relative;z-index:2}
+body.vw-tun .pvst .vtun{inset:-10px -12px;border-radius:14px}
+body.vw-base .pvst .vbase{left:10%;right:10%}
 </style>
 </head>
 <body data-screen="library">
@@ -2071,8 +2076,17 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   </div>
   <div class="pane" data-pane="display">
   <div class="preview" id="preview" aria-hidden="true">
-    <div class="word" id="pvWord"><span class="l"></span><span class="p"></span><span class="r"></span></div>
+    <div class="pvst"><span class="vbeam"></span><span class="vtun"></span><span class="vbase"></span><span class="vghost vgl">the</span><span class="vghost vgr">quick</span><div class="word" id="pvWord"><span class="l"></span><span class="p"></span><span class="r"></span></div></div>
     <div class="pctx">The quick brown fox jumps over the lazy dog.</div>
+  </div>
+  <p class="gt">Reading view</p>
+  <div class="grp">
+    <label class="setrow">Color fade around the focus letter <input type="checkbox" id="vwFade"></label>
+    <label class="setrow">Baseline <input type="checkbox" id="vwBase"></label>
+    <label class="setrow">Light beam <input type="checkbox" id="vwBeam"></label>
+    <label class="setrow">Tunnel (dim around the word) <input type="checkbox" id="vwTun"></label>
+    <label class="setrow">Ghost words (last and next word, faint) <input type="checkbox" id="vwGhost"></label>
+    <p class="fine">The middle letter of every word sits on the same spot, so your eyes never move. These add extra help around it.</p>
   </div>
   <details class="grp fold"><summary>Presets</summary>
     <p class="fine">One tap sets up a whole look. You can still change anything after.</p>
@@ -2213,15 +2227,6 @@ body.plain .card,body.plain .tile,body.plain .xtile,body.plain .grp{box-shadow:n
   <button type="button" id="goRewards" hidden>Open Rewards</button>
   </div>
   <div class="pane" data-pane="reading" hidden>
-  <p class="gt">Reading view</p>
-  <div class="grp">
-    <label class="setrow">Color fade around the focus letter <input type="checkbox" id="vwFade"></label>
-    <label class="setrow">Baseline <input type="checkbox" id="vwBase"></label>
-    <label class="setrow">Light beam <input type="checkbox" id="vwBeam"></label>
-    <label class="setrow">Tunnel (dim around the word) <input type="checkbox" id="vwTun"></label>
-    <label class="setrow">Ghost words (last and next word, faint) <input type="checkbox" id="vwGhost"></label>
-    <p class="fine">The middle letter of every word sits on the same spot, so your eyes never move. These add extra help around it.</p>
-  </div>
   <p class="gt">Reading</p>
   <div class="grp">
     <div class="setrow">Words at a time <div class="seg" id="chunkSeg"><button data-chunk="1">1</button><button data-chunk="2">2</button><button data-chunk="3">3</button></div></div>
@@ -7068,6 +7073,12 @@ function renderPreview() {
   const mask = settings.bionic ? boldMask(text) : null;
   const [L2, P2, R2] = box.children;
   paintPart(L2, text, 0, pv, mask); paintPart(P2, text, pv, pv + 1, mask); paintPart(R2, text, pv + 1, text.length, mask);
+  if (!mask && settings.vwFade !== false && settings.pivotColor !== "rainbow") {
+    const sp = (ch, c) => { const e = document.createElement("span"); e.className = c; e.textContent = ch; return e; };
+    const a = text.slice(0, pv), b = text.slice(pv + 1);
+    if (a.length) L2.replaceChildren(a.slice(0, -2), ...(a.length > 1 ? [sp(a.slice(-2, -1), "n2")] : []), sp(a.slice(-1), "n1"));
+    if (b.length) R2.replaceChildren(sp(b.charAt(0), "n1"), ...(b.length > 1 ? [sp(b.charAt(1), "n2")] : []), b.slice(2));
+  }
   box.parentNode.style.setProperty("--fs", Math.min(fs, [40, 30, 26][n - 1]) + "px");
 }
 const PRESETS = [
@@ -7833,7 +7844,7 @@ $("#dimChk").onchange = e => { settings.dim = e.target.checked; saveSettings(); 
 /* reading view */
 const VW = [["vwFade", true, ""], ["vwBase", true, "vw-base"], ["vwBeam", false, "vw-beam"], ["vwTun", false, "vw-tun"], ["vwGhost", false, "vw-ghost"]];
 function applyView() { VW.forEach(([k, d, c]) => { const on = settings[k] === undefined ? d : !!settings[k]; if (settings[k] === undefined) settings[k] = d; if (c) document.body.classList.toggle(c, on); const box = document.getElementById(k); if (box) box.checked = on; }); if (tokens.length) render(); }
-VW.forEach(([k]) => { const box = document.getElementById(k); if (box) box.onchange = () => { settings[k] = box.checked; saveSettings(); applyView(); }; });
+VW.forEach(([k]) => { const box = document.getElementById(k); if (box) box.onchange = () => { settings[k] = box.checked; saveSettings(); applyView(); renderPreview(); }; });
 applyView();
 $("#focusStartChk").onchange = e => { settings.focusStart = e.target.checked; saveSettings(); renderPresets(); };
 $("#grabChk").onchange = e => { settings.grab = e.target.checked; saveSettings(); $("#webBtn").hidden = !settings.grab; };
